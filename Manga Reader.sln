@@ -16,6 +16,35 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MangaHere", "Plugins\MangaHere\MangaHere.csproj", "{39B4C5F1-00A7-4F98-9B9F-38B91E6A764D}"
 EndProject
 Global
+	GlobalSection(TeamFoundationVersionControl) = preSolution
+		SccNumberOfProjects = 7
+		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+		SccTeamFoundationServer = https://tfs.codeplex.com/tfs/tfs24
+		SccLocalPath0 = .
+		SccProjectUniqueName1 = Plugins\\MangaFox\\MangaFox.csproj
+		SccProjectTopLevelParentUniqueName1 = Manga\u0020Reader.sln
+		SccProjectName1 = Plugins/MangaFox
+		SccLocalPath1 = Plugins\\MangaFox
+		SccProjectUniqueName2 = Plugins\\MangaReader\\MangaReader.csproj
+		SccProjectTopLevelParentUniqueName2 = Manga\u0020Reader.sln
+		SccProjectName2 = Plugins/MangaReader
+		SccLocalPath2 = Plugins\\MangaReader
+		SccProjectUniqueName3 = Plugin\u0020Template\\Plugin\u0020Template.csproj
+		SccProjectTopLevelParentUniqueName3 = Manga\u0020Reader.sln
+		SccProjectName3 = Plugin\u0020Template
+		SccLocalPath3 = Plugin\u0020Template
+		SccProjectUniqueName4 = myManga\\myManga.csproj
+		SccProjectName4 = myManga
+		SccLocalPath4 = myManga
+		SccProjectUniqueName5 = Plugins\\PluginTester\\PluginTester.csproj
+		SccProjectTopLevelParentUniqueName5 = Manga\u0020Reader.sln
+		SccProjectName5 = Plugins/PluginTester
+		SccLocalPath5 = Plugins\\PluginTester
+		SccProjectUniqueName6 = Plugins\\MangaHere\\MangaHere.csproj
+		SccProjectTopLevelParentUniqueName6 = Manga\u0020Reader.sln
+		SccProjectName6 = Plugins/MangaHere
+		SccLocalPath6 = Plugins\\MangaHere
+	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Debug|Mixed Platforms = Debug|Mixed Platforms

@@ -238,6 +238,7 @@ namespace myManga.ViewModels
 
         public MainViewModel()
         {
+            // Add Toast Notification to MainViewModel first.
             this.ViewModelToastNotification += ViewModel_Toast;
 
             toastNotification = new ToastNotification();

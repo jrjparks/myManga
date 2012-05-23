@@ -38,9 +38,11 @@
   <ItemGroup>
     <Reference Include="BakaBox">
       <HintPath>..\..\CoreDLLs\BakaBox.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="CoreMangaClasses">
       <HintPath>..\..\CoreDLLs\CoreMangaClasses.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="fastJSON">
       <HintPath>..\..\CoreDLLs\fastJSON.dll</HintPath>

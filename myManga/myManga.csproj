@@ -1,0 +1,950 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{D3CB8901-3C61-4CCA-9E39-21C2E8F7141D}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>myManga</RootNamespace>
+    <AssemblyName>myManga</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject>myManga.App</StartupObject>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignManifests>false</SignManifests>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>false</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>
+    </AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ManifestCertificateThumbprint>DAC38F5C7263518233EDB687DA993EAB0A7D5E45</ManifestCertificateThumbprint>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ManifestKeyFile>BakaBox.pfx</ManifestKeyFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="BakaBox, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\CoreDLLs\BakaBox.dll</HintPath>
+    </Reference>
+    <Reference Include="CoreMangaClasses, Version=1.0.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\CoreDLLs\CoreMangaClasses.dll</HintPath>
+    </Reference>
+    <Reference Include="fastJSON">
+      <HintPath>..\CoreDLLs\fastJSON.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="HtmlAgilityPack">
+      <HintPath>..\CoreDLLs\HtmlAgilityPack.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Manga, Version=1.0.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\CoreDLLs\Manga.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Windows.Shell">
+      <HintPath>..\CoreDLLs\Microsoft.Windows.Shell.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="MonitorControl">
+      <HintPath>..\CoreDLLs\MonitorControl.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Xaml">
+      <RequiredTargetFramework>4.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="WindowsBase" />
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+  </ItemGroup>
+  <ItemGroup>
+    <ApplicationDefinition Include="App.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </ApplicationDefinition>
+    <Compile Include="Models\LibraryItemModel.cs" />
+    <Compile Include="Models\PluginInfoModel.cs" />
+    <Compile Include="Resources\Theme\Default\MarginConverter.cs" />
+    <Compile Include="UI\Code\Converters.cs" />
+    <Compile Include="UI\Code\Other.cs" />
+    <Compile Include="UI\Controls\AdvImage.xaml.cs">
+      <DependentUpon>AdvImage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Controls\ToastNotification.xaml.cs">
+      <DependentUpon>ToastNotification.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ViewModels\AboutViewModel.cs" />
+    <Compile Include="ViewModels\LibraryViewModel.cs" />
+    <Compile Include="ViewModels\MainViewModel.cs" />
+    <Compile Include="ViewModels\QueueViewModel.cs" />
+    <Compile Include="ViewModels\ReadingViewModel.cs" />
+    <Compile Include="ViewModels\SearchViewModel.cs" />
+    <Compile Include="ViewModels\SettingsViewModel.cs" />
+    <Compile Include="ViewModels\ViewModelBase.cs" />
+    <Compile Include="Views\AboutView.xaml.cs">
+      <DependentUpon>AboutView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\LibraryView.xaml.cs">
+      <DependentUpon>LibraryView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\QueueView.xaml.cs">
+      <DependentUpon>QueueView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ReadingView.xaml.cs">
+      <DependentUpon>ReadingView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\SearchView.xaml.cs">
+      <DependentUpon>SearchView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\SettingsView.xaml.cs">
+      <DependentUpon>SettingsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\TestView.xaml.cs">
+      <DependentUpon>TestView.xaml</DependentUpon>
+    </Compile>
+    <Page Include="MainWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Compile Include="App.xaml.cs">
+      <DependentUpon>App.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="MainWindow.xaml.cs">
+      <DependentUpon>MainWindow.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Page Include="Resources\Theme\Default\DefaultBaseTheme.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Resources\Theme\Default\DefaultButtonTheme.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Resources\Theme\Default\DefaultCheckBoxTheme.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Resources\Theme\Default\DefaultHeaderedContentControlTheme.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Resources\Theme\Default\DefaultListBoxTheme.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Resources\Theme\Default\DefaultProgressBarTheme.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Resources\Theme\Default\DefaultScrollbarTheme.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Resources\Theme\Default\DefaultTabControlTheme.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Resources\Theme\Default\DefaultTheme.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Resources\Theme\Default\DefaultListViewTheme.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Resources\Theme\Default\DefaultToggleButtonTheme.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Resources\Theme\WindowBase.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Resources\ViewModel-View-Link.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UI\Controls\AdvImage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UI\Controls\ToastNotification.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\AboutView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\LibraryView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\QueueView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\ReadingView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\SearchView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\SettingsView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\TestView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <None Include="app.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <AppDesigner Include="Properties\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Images\Metro\Black\Circle\Abort.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\AC.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\Alien.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\Align-center.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\Align-justify.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\Align-left.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\Align-right.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\Android.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\Apple.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\Apply.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\Back-button.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\Backward.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\Bird.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\Bluetooth.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\Boxplot.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\Briefcase.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\Buddy.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\Cat.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\Check boxes.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\Clear.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\Clipboard-file.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\Clipboard.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\Close.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\Cloud-add.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\Cloud-delete.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\Cloud-download.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\Cloud-refresh.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\Cloud-sync.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\Cloud-upload.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\Cone.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\Configuration.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\Copyright.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\Cow.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\Create.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\Crosshair.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\Currency.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\Cut.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\Diagram.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\Dice.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\Disk-download.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\Disk-upload.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\Dog.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\Dollar.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\Down.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\Dustbin.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\Equipment.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\Erase.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\Error.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\Euro.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\Exit-button.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\Exit.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\Find.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\First.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\Flow-block.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\Forward-button.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\Forward.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\Frames.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\Full recycle bin.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\Gear.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\Go.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\Google-plus.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\Help.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\Industry.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\Infinity.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\Info.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\Last.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\Layers.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\Layout.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\Left.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\Linux.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\Login.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\Maintenance.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\Music.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\New.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\No entry.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\No.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\OK.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\Open file.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\Options.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\Out.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\Paperclip.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\Password.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\Pause button.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\Peace.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\Phone-number.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\Picture.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\Play button.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\Pound.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\Problem.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\Question.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\Radioactive.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\Recycle bin.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\Redo.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\Remove.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\Repeat.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\Resize.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\Ribbon.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\Right.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\Rotate.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\Save as.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\Save pictures.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\Send photo.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\Send-message.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\Shuffle.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\Snowflake.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\Stop button.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\Stop.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\Tools.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\Trash.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\Turn off.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\Turtle.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\Undo.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\Up.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\View.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\Warning.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\Weather-overcast.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\Weather-rain.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\Weather-snow.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\Weather-sun.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\Weather-thunder.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\Wi-fi.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\Windows-phone.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\Windows.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\Yen.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\Zoom-in.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\Zoom-out.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\Zoom.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Images\Metro\Black\Circle\add.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\back.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\basecircle.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\camera.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\cancel.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\check.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\delete.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\download.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\edit.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\favs.addto.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\favs.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\ff.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\flag.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\folder.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\heart.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\i.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\mail.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\minus.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\next.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\overflowdots.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\parent.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\pause.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\phone.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\play.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\questionmark.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\refresh.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\rew.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\save.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\search.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\settings.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\share.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\upload.png" />
+    <Resource Include="Resources\Images\Metro\Black\Circle\video.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Images\Metro\Black\No Circle\add.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\back.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\camera.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\cancel.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\check.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\delete.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\download.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\edit.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\favs.addto.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\favs.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\ff.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\flag.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\folder.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\heart.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\i.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\mail.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\minus.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\next.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\overflowdots.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\parent.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\pause.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\phone.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\play.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\questionmark.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\refresh.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\rew.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\save.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\search.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\settings.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\share.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\upload.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\video.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Images\Metro\White\Circle\add.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\back.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\basecircle.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\camera.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\cancel.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\check.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\delete.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\download.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\edit.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\favs.addto.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\favs.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\ff.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\flag.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\folder.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\heart.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\i.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\mail.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\minus.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\next.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\overflowdots.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\parent.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\pause.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\phone.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\play.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\questionmark.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\refresh.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\rew.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\save.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\search.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\settings.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\share.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\upload.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\video.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Images\Metro\White\No Circle\add.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\back.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\camera.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\cancel.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\check.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\delete.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\download.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\edit.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\favs.addto.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\favs.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\ff.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\flag.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\folder.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\heart.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\i.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\mail.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\minus.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\next.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\overflowdots.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\parent.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\pause.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\phone.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\play.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\questionmark.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\refresh.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\rew.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\save.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\search.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\settings.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\share.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\upload.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\video.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Images\Metro\Black\No Circle\Abort.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\AC.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\Alien.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\Align-center.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\Align-justify.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\Align-left.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\Align-right.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\Android.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\Apple.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\Apply.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\Back-button.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\Backward.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\Bird.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\Bluetooth.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\Boxplot.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\Briefcase.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\Buddy.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\Cat.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\Check boxes.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\Clear.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\Clipboard-file.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\Clipboard.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\Close.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\Cloud-add.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\Cloud-delete.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\Cloud-download.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\Cloud-refresh.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\Cloud-sync.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\Cloud-upload.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\Cone.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\Configuration.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\Copyright.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\Cow.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\Create.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\Crosshair.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\Currency.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\Cut.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\Diagram.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\Dice.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\Disk-download.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\Disk-upload.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\Dog.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\Dollar.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\Down.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\Dustbin.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\Equipment.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\Erase.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\Error.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\Euro.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\Exit-button.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\Exit.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\Find.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\First.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\Flow-block.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\Forward-button.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\Forward.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\Frames.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\Full recycle bin.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\Gear.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\Go.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\Google-plus.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\Help.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\Industry.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\Infinity.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\Info.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\Last.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\Layers.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\Layout.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\Left.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\Linux.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\Login.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\Maintenance.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\Music.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\New.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\No entry.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\No.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\OK.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\Open file.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\Options.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\Out.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\Paperclip.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\Password.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\Pause button.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\Peace.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\Phone-number.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\Picture.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\Play button.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\Pound.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\Problem.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\Question.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\Radioactive.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\Recycle bin.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\Redo.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\Remove.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\Repeat.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\Resize.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\Ribbon.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\Right.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\Rotate.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\Save as.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\Save pictures.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\Send photo.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\Send-message.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\Shuffle.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\Snowflake.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\Stop button.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\Stop.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\Tools.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\Trash.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\Turn off.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\Turtle.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\Undo.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\Up.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\View.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\Warning.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\Weather-overcast.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\Weather-rain.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\Weather-snow.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\Weather-sun.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\Weather-thunder.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\Wi-fi.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\Windows-phone.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\Windows.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\Yen.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\Zoom-in.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\Zoom-out.png" />
+    <Resource Include="Resources\Images\Metro\Black\No Circle\Zoom.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Images\Metro\White\Circle\Abort.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\AC.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\Alien.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\Align-center.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\Align-justify.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\Align-left.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\Align-right.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\Android.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\Apple.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\Apply.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\Back-button.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\Backward.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\Bird.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\Bluetooth.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\Boxplot.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\Briefcase.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\Buddy.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\Cat.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\Check boxes.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\Clear.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\Clipboard-file.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\Clipboard.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\Close.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\Cloud-add.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\Cloud-delete.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\Cloud-download.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\Cloud-refresh.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\Cloud-sync.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\Cloud-upload.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\Cone.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\Configuration.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\Copyright.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\Cow.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\Create.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\Crosshair.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\Currency.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\Cut.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\Diagram.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\Dice.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\Disk-download.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\Disk-upload.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\Dog.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\Dollar.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\Down.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\Dustbin.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\Equipment.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\Erase.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\Error.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\Euro.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\Exit-button.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\Exit.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\Find.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\First.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\Flow-block.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\Forward-button.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\Forward.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\Frames.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\Full recycle bin.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\Gear.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\Go.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\Google-plus.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\Help.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\Industry.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\Infinity.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\Info.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\Last.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\Layers.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\Layout.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\Left.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\Linux.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\Login.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\Maintenance.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\Music.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\New.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\No entry.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\No.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\OK.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\Open file.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\Options.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\Out.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\Paperclip.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\Password.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\Pause button.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\Peace.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\Phone-number.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\Picture.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\Play button.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\Pound.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\Problem.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\Question.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\Radioactive.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\Recycle bin.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\Redo.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\Remove.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\Repeat.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\Resize.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\Ribbon.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\Right.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\Rotate.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\Save as.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\Save pictures.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\Send photo.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\Send-message.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\Shuffle.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\Snowflake.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\Stop button.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\Stop.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\Tools.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\Trash.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\Turn off.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\Turtle.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\Undo.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\Up.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\View.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\Warning.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\Weather-overcast.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\Weather-rain.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\Weather-snow.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\Weather-sun.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\Weather-thunder.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\Wi-fi.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\Windows-phone.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\Windows.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\Yen.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\Zoom-in.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\Zoom-out.png" />
+    <Resource Include="Resources\Images\Metro\White\Circle\Zoom.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Images\Metro\White\No Circle\Abort.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\AC.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\Alien.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\Align-center.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\Align-justify.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\Align-left.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\Align-right.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\Android.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\Apple.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\Apply.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\Back-button.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\Backward.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\Bird.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\Bluetooth.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\Boxplot.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\Briefcase.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\Buddy.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\Cat.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\Check boxes.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\Clear.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\Clipboard-file.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\Clipboard.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\Close.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\Cloud-add.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\Cloud-delete.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\Cloud-download.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\Cloud-refresh.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\Cloud-sync.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\Cloud-upload.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\Cone.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\Configuration.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\Copyright.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\Cow.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\Create.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\Crosshair.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\Currency.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\Cut.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\Diagram.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\Dice.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\Disk-download.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\Disk-upload.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\Dog.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\Dollar.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\Down.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\Dustbin.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\Equipment.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\Erase.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\Error.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\Euro.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\Exit-button.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\Exit.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\Find.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\First.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\Flow-block.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\Forward-button.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\Forward.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\Frames.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\Full recycle bin.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\Gear.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\Go.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\Google-plus.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\Help.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\Industry.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\Infinity.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\Info.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\Last.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\Layers.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\Layout.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\Left.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\Linux.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\Login.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\Maintenance.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\Music.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\New.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\No entry.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\No.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\OK.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\Open file.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\Options.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\Out.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\Paperclip.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\Password.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\Pause button.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\Peace.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\Phone-number.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\Picture.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\Play button.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\Pound.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\Problem.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\Question.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\Radioactive.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\Recycle bin.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\Redo.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\Remove.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\Repeat.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\Resize.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\Ribbon.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\Right.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\Rotate.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\Save as.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\Save pictures.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\Send photo.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\Send-message.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\Shuffle.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\Snowflake.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\Stop button.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\Stop.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\Tools.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\Trash.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\Turn off.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\Turtle.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\Undo.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\Up.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\View.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\Warning.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\Weather-overcast.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\Weather-rain.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\Weather-snow.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\Weather-sun.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\Weather-thunder.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\Wi-fi.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\Windows-phone.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\Windows.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\Yen.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\Zoom-in.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\Zoom-out.png" />
+    <Resource Include="Resources\Images\Metro\White\No Circle\Zoom.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Images\Icons\FallbackMangaIcon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\DLLs\fastJSON.dll" />
+    <EmbeddedResource Include="Resources\DLLs\HtmlAgilityPack.dll" />
+    <EmbeddedResource Include="Resources\DLLs\Ionic.Zip.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\DLLs\Microsoft.Windows.Shell.dll" />
+    <EmbeddedResource Include="Resources\DLLs\MonitorControl.dll" />
+    <EmbeddedResource Include="Resources\DLLs\System.ComponentModel.Custom.Generic.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <SplashScreen Include="Resources\Images\Splash.bmp" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

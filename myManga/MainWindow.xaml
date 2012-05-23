@@ -1,0 +1,87 @@
+﻿<Window x:Class="myManga.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:shell="http://schemas.microsoft.com/winfx/2006/xaml/presentation/shell"
+        xmlns:local="clr-namespace:myManga"
+        xmlns:vm="clr-namespace:myManga.ViewModels"
+        Title="myManga" 
+        x:Name="ThisMainWindow"
+        Height="420" 
+        Width="680"
+        
+        Style="{StaticResource DarkWindow}"
+        
+        TextElement.FontFamily="Segoe UI"
+        TextElement.Foreground="White" 
+        Icon="/myManga;component/Resources/Images/Metro/White/No%20Circle/Radioactive.png">
+    <Window.CommandBindings>
+        <CommandBinding Command="{x:Static shell:SystemCommands.CloseWindowCommand}"
+                    Executed="_OnSystemCommandCloseWindow"/>
+        <CommandBinding Command="{x:Static shell:SystemCommands.MaximizeWindowCommand}"
+                    Executed="_OnSystemCommandMaximizeWindow"/>
+        <CommandBinding Command="{x:Static shell:SystemCommands.MinimizeWindowCommand}"
+                    Executed="_OnSystemCommandMinimizeWindow"/>
+        <CommandBinding Command="{x:Static shell:SystemCommands.ShowSystemMenuCommand}"
+                    Executed="_OnSystemCommandShowSystemMenu"/>
+    </Window.CommandBindings>
+    <Window.TaskbarItemInfo>
+        <TaskbarItemInfo Description="myManga">
+            <TaskbarItemInfo.ThumbButtonInfos>
+                <ThumbButtonInfo 
+                    Description="Update Info" 
+                    DismissWhenClicked="True" 
+                    ImageSource="/myManga;component/Resources/Images/Metro/White/No%20Circle/Cloud-refresh.png"
+                    Command="{Binding UpdateLibraryManga}"/>
+            </TaskbarItemInfo.ThumbButtonInfos>
+        </TaskbarItemInfo>
+    </Window.TaskbarItemInfo>
+    <Window.DataContext>
+        <vm:MainViewModel/>
+    </Window.DataContext>
+    <Window.Resources>
+        <ResourceDictionary Source="/myManga;component/Resources/ViewModel-View-Link.xaml"/>
+    </Window.Resources>
+    
+    <Grid Background="Black" TextBlock.Foreground="White" TextBlock.FontFamily="Segoe UI">
+        <TabControl
+            SelectedIndex="{Binding Path=ViewIndex, Mode=TwoWay}">
+            <TabControl.Resources>
+                <Thickness x:Key="TabItemMargin">0</Thickness>
+            </TabControl.Resources>
+            <TabItem Header="Library">
+                <ContentControl Margin="{StaticResource ResourceKey=TabItemMargin}" Content="{Binding Path=LibraryViewModel}"/>
+            </TabItem>
+            <TabItem Header="Reader" IsEnabled="{Binding Path=ReadingViewModel.IsEnabled}">
+                <ContentControl Margin="{StaticResource ResourceKey=TabItemMargin}" Content="{Binding Path=ReadingViewModel}"/>
+            </TabItem>
+            <TabItem Header="Queue">
+                <ContentControl Margin="{StaticResource ResourceKey=TabItemMargin}" Content="{Binding Path=QueueViewModel}"/>
+            </TabItem>
+            <TabItem Header="Search">
+                <ContentControl Margin="{StaticResource ResourceKey=TabItemMargin}" Content="{Binding Path=SearchViewModel}"/>
+            </TabItem>
+            <TabItem Header="Options">
+                <TabControl TabStripPlacement="Left" Background="Black">
+                    <TabItem Header="Settings">
+                        <ContentControl Margin="{StaticResource ResourceKey=TabItemMargin}" Content="{Binding Path=SettingsViewModel}"/>
+                    </TabItem>
+                    <TabItem Header="About">
+                        <ContentControl Margin="{StaticResource ResourceKey=TabItemMargin}" Content="{Binding Path=AboutViewModel}"/>
+                    </TabItem>
+                </TabControl>
+            </TabItem>
+        </TabControl>
+        
+        <TextBlock 
+            Text="myManga Beta" 
+            Grid.ZIndex="99"
+            IsHitTestVisible="False"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            Foreground="Gray"
+            Opacity="0.5"
+            FontSize="50"/>
+        
+        <ContentControl Content="{Binding Path=toastNotification}" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="25,16"/>
+    </Grid>
+</Window>

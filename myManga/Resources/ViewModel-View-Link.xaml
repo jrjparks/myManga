@@ -1,0 +1,30 @@
+﻿<ResourceDictionary 
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:ViewModel="clr-namespace:myManga.ViewModels"
+    xmlns:View="clr-namespace:myManga.Views">
+
+    <DataTemplate DataType="{x:Type ViewModel:LibraryViewModel}">
+        <View:LibraryView/>
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type ViewModel:ReadingViewModel}">
+        <View:ReadingView/>
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type ViewModel:QueueViewModel}">
+        <View:QueueView/>
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type ViewModel:SearchViewModel}">
+        <View:SearchView/>
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type ViewModel:AboutViewModel}">
+        <View:AboutView/>
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type ViewModel:SettingsViewModel}">
+        <View:SettingsView/>
+    </DataTemplate>
+</ResourceDictionary>

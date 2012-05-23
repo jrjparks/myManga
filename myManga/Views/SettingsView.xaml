@@ -1,0 +1,55 @@
+﻿<UserControl x:Class="myManga.Views.SettingsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Background="Black"
+             Foreground="White"
+             TextElement.Foreground="White"
+             TextElement.FontFamily="Segoe UI">
+    <ScrollViewer>
+        <StackPanel Orientation="Vertical">
+            <HeaderedContentControl
+                Margin="10,10,10,5"
+                Header="Window">
+                <StackPanel>
+                    <CheckBox 
+                        IsChecked="{Binding ChangeLastWindowState}" 
+                        Content="Update Window State"
+                        Foreground="White" 
+                        Style="{StaticResource MetroWhiteCheckBox}" />
+                </StackPanel>
+            </HeaderedContentControl>
+            <HeaderedContentControl
+                Margin="10,5"
+                Header="Display">
+                <StackPanel>
+                    <CheckBox Margin="0,0,0,1"
+                        IsChecked="{Binding DrawShadows}" 
+                        Content="Draw Shadows"
+                        Foreground="White" 
+                        Style="{StaticResource MetroWhiteCheckBox}" />
+                    <CheckBox Margin="0,0,0,1"
+                        IsChecked="{Binding FadeImages}" 
+                        Content="Fade Images"
+                        Foreground="White" 
+                        Style="{StaticResource MetroWhiteCheckBox}" />
+                </StackPanel>
+            </HeaderedContentControl>
+            <HeaderedContentControl
+                Margin="10,5"
+                Header="Reading">
+                <StackPanel>
+                    <CheckBox 
+                        IsChecked="{Binding AutoDownload}" 
+                        Content="Auto download next chapter. (If present)"
+                        Foreground="White" 
+                        Style="{StaticResource MetroWhiteCheckBox}" />
+                    <CheckBox 
+                        IsChecked="{Binding AutoClean}" 
+                        Content="Auto clean previous chapters. (Keeps previous chapter.)"
+                        Foreground="White" 
+                        Style="{StaticResource MetroWhiteCheckBox}" />
+                </StackPanel>
+            </HeaderedContentControl>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

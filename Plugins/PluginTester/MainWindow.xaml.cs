@@ -12,6 +12,7 @@ using BakaBox.Extensions;
 using System.Windows.Input;
 using System.Text.RegularExpressions;
 using System.IO;
+using Manga.Manager;
 
 namespace PluginTester
 {
@@ -27,18 +28,7 @@ namespace PluginTester
             if (PropertyChanged != null)
                 PropertyChanged(this, new PropertyChangedEventArgs(Name));
         }
-
-        private IMangaPluginCollection _Plugins;
-        public IMangaPluginCollection Plugins
-        {
-            get { return _Plugins; }
-            set
-            {
-                _Plugins = value;
-                OnPropertyChanged("Plugins");
-            }
-        }
-
+        
         private IMangaPlugin _SelectedPlugin;
         public IMangaPlugin SelectedPlugin
         {
@@ -146,7 +136,7 @@ namespace PluginTester
                     default: break;
 
                     case 0:
-                        SelectedPlugin = Plugins.PluginToUse_SiteUrl(Text);
+                        SelectedPlugin = Global_IMangaPluginCollection.Instance.Plugins.PluginToUse_SiteUrl(Text);
                         if (SelectedPlugin.SupportedMethods.Has(SupportedMethods.MangaInfo))
                         {
                             MangaInfo MangaInfo = SelectedPlugin.LoadMangaInformation(Text);
@@ -160,7 +150,7 @@ namespace PluginTester
                         break;
 
                     case 1:
-                        SelectedPlugin = Plugins.PluginToUse_SiteUrl(Text);
+                        SelectedPlugin = Global_IMangaPluginCollection.Instance.Plugins.PluginToUse_SiteUrl(Text);
                         if (SelectedPlugin.SupportedMethods.Has(SupportedMethods.ChapterInfo))
                             e.Result = new Object[] { 1, SelectedPlugin.LoadChapterInformation(Text) };
                         else
@@ -214,19 +204,18 @@ namespace PluginTester
 
         private void LoadPlugins()
         {
-            Plugins = new IMangaPluginCollection();
             try
             {
                 foreach (IMangaPlugin _Plugin in PluginLoader<IMangaPlugin>.LoadPluginDirectory(
                      System.IO.Path.Combine(Environment.CurrentDirectory, "Plugins"),
                      "*.manga.dll"))
                 {
-                    if (!Plugins.Contains(_Plugin.SiteName))
-                        Plugins.Add(_Plugin);
+                    if (!Global_IMangaPluginCollection.Instance.Plugins.Contains(_Plugin.SiteName))
+                        Global_IMangaPluginCollection.Instance.Plugins.Add(_Plugin);
                 }
             }
             catch { }
-            if (Plugins.Count == 0)
+            if (Global_IMangaPluginCollection.Instance.Plugins.Count == 0)
             {
                 MessageBox.Show("ERROR! No plugins detected.\n\nFile name format:\n*.manga.dll", "Err!", MessageBoxButton.OK, MessageBoxImage.Error);
                 App.Current.Shutdown();
@@ -276,7 +265,7 @@ namespace PluginTester
         }
         private void TextBoxDoWork(String Text)
         {
-            SelectedPlugin = SelectedPlugin ?? Plugins[0];
+            SelectedPlugin = SelectedPlugin ?? Global_IMangaPluginCollection.Instance.Plugins[0];
             if (!Regex.IsMatch(Text, @"(?<Protocol>\w+):\/\/(?<Domain>[\w@][\w.:@]+)\/?[\w\.?=%&=\-@/$,]*"))
                 SelectedTab = 2;
             if (!_Downloader.IsBusy)

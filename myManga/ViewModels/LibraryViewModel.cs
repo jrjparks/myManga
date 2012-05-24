@@ -17,6 +17,7 @@ using System.Windows;
 using System.Threading;
 using Manga.Archive;
 using myManga.UI;
+using BakaBox.IO;
 
 namespace myManga.ViewModels
 {
@@ -137,7 +138,7 @@ namespace myManga.ViewModels
 
             MangaDataZip.Instance.MangaInfoUpdated += (s, m, p) => LoadLibraryData(p);
 
-            LoadLibraryDirectory(IO.SafeFolder(MangaDataZip.Instance.MIZAPath));
+            LoadLibraryDirectory(MangaDataZip.Instance.MIZAPath.SafeFolder());
         }
         #endregion
 

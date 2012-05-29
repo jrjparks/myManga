@@ -19,7 +19,7 @@ namespace MangaReader
     [MangaPlugin]
     [PluginSite("MangaReader")]
     [PluginAuthor("James Parks")]
-    [PluginVersion("0.0.2")]
+    [PluginVersion("0.0.3")]
     public class MangaReader : PluginProgressChanged, IMangaPlugin
     {
         #region IMangaPlugin Vars
@@ -42,7 +42,7 @@ namespace MangaReader
         }
 
         private String ChapterNameRegEx 
-        { get { return "<h2.*href=\"(/(?<ID>\\d+))?/(?<Name>[\\w-]+)(\\.html)?.*title=\"(?<Title>[\\w\\s\\p{P}]+)\\sManga.*</h2>"; } }
+        { get { return "<h2.*href=\"(/(?<ID>\\d+))?/(?<Name>[\\w-]+)(\\.html)?.*title=\".*?>(?<Title>.+)\\sManga</a></h2>"; } }
         private String InfoNameRegEx 
         { get { return @"<h1>(?<Name>.*)\sManga</h1>"; } }
 

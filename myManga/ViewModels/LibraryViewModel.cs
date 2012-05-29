@@ -18,6 +18,7 @@ using System.Threading;
 using Manga.Archive;
 using myManga.UI;
 using BakaBox.IO;
+using BakaBox.MVVM.Communications;
 
 namespace myManga.ViewModels
 {
@@ -65,7 +66,7 @@ namespace myManga.ViewModels
                 _DetailsOpen = value;
                 OnPropertyChanged("DetailsOpen");
                 if ((CurrentMangaItem is LibraryItemModel) &&
-                    (!(CurrentInfo is MangaInfo) || !CurrentInfo.Name.Equals(CurrentMangaItem.Name)))
+                    (!(CurrentInfo is MangaInfo) || !CurrentInfo.Name.Equals(CurrentMangaItem.MangaData.Name)))
                     CurrentInfo = MangaDataZip.Instance.MangaInfo(CurrentMangaItem.MangaInfoPath);
                 else
                     CurrentInfo = null;
@@ -137,6 +138,8 @@ namespace myManga.ViewModels
             LibraryItemLoader.QueueComplete += LibraryItemLoader_QueueComplete;
 
             MangaDataZip.Instance.MangaInfoUpdated += (s, m, p) => LoadLibraryData(p);
+            Manager_v1.Instance.TaskProgress += UpdateTaskData;
+            Manager_v1.Instance.TaskComplete += UpdateTaskData;
 
             LoadLibraryDirectory(MangaDataZip.Instance.MIZAPath.SafeFolder());
         }
@@ -170,21 +173,27 @@ namespace myManga.ViewModels
 
         public void UpdateLibraryManga()
         {
-            List<MangaInfo> _Infos = new List<MangaInfo>(MangaItems.Count);
-            foreach (LibraryItemModel _Item in MangaItems)
-                if (_Item.mStatus == MangaStatus.Ongoing)
-                    _Infos.Add(MangaDataZip.Instance.MangaInfo(_Item.MangaInfoPath));
-            SendViewModelToastNotification(this, String.Format("Updating {0} Mangas...", _Infos.Count), UI.ToastNotification.DisplayLength.Normal);
-
-            foreach (MangaInfo i in _Infos)
+            if (HasInit)
             {
-                if (File.Exists(Path.Combine(Environment.CurrentDirectory, "MangaInfo", i.MangaDataName())))
-                    Manager_v1.Instance.DownloadManga(i);
-                else
+                Int32 UpdateCount = 0;
+                foreach (LibraryItemModel Item in MangaItems)
                 {
-                    SendViewModelToastNotification(this, String.Format("Downloading...\n{0}", i.Name), ToastNotification.DisplayLength.Short);
-                    Manager_v1.Instance.DownloadManga(i.InfoPage);
+                    if (Item.MangaStatus == MangaStatus.Ongoing)
+                    {
+                        ++UpdateCount;
+                        Item.Progress = 1;
+                        MangaInfo tmpInfo = MangaDataZip.Instance.MangaInfo(Item.MangaInfoPath);
+
+                        if (File.Exists(Path.Combine(Environment.CurrentDirectory, "MangaInfo", tmpInfo.MangaDataName())))
+                            Manager_v1.Instance.DownloadManga(tmpInfo, Item.SessionMangaID);
+                        else
+                        {
+                            SendViewModelToastNotification(this, String.Format("Downloading...\n{0}", tmpInfo.Name), ToastNotification.DisplayLength.Short);
+                            Manager_v1.Instance.DownloadManga(tmpInfo.InfoPage, Item.SessionMangaID);
+                        }
+                    }
                 }
+                SendViewModelToastNotification(this, String.Format("Updating {0} Mangas...", UpdateCount), UI.ToastNotification.DisplayLength.Normal);
             }
         }
 
@@ -195,13 +204,33 @@ namespace myManga.ViewModels
         #endregion
 
         #region Private
+        private delegate void TaskUpdateDelegate(Object Sender, QueuedTask<ManagerData<String, MangaInfo>> Task);
+        private void UpdateTaskData(Object Sender, QueuedTask<ManagerData<String, MangaInfo>> Task)
+        {
+            if (Application.Current.Dispatcher.Thread == Thread.CurrentThread)
+            {
+                foreach (LibraryItemModel Item in MangaItems)
+                    if (Item.SessionMangaID.Equals(Task.Guid))
+                        switch (Task.TaskStatus)
+                        {
+                            default:
+                                Item.Progress = Task.Progress;
+                                break;
+                            case System.Threading.Tasks.TaskStatus.RanToCompletion:
+                                Item.Progress = 0;
+                                break;
+                        }
+            }
+            else
+                Application.Current.Dispatcher.BeginInvoke(new TaskUpdateDelegate(UpdateTaskData), Sender, Task);
+        }
         private Int32 IndexOfMangaItemsName(String Name)
         {
             Boolean _Found = false;
             Int32 _Index = 0;
             foreach (LibraryItemModel _LibItem in MangaItems)
             {
-                if (_LibItem.Name.Equals(Name))
+                if (_LibItem.MangaData.Name.Equals(Name))
                 {
                     _Found = true;
                     break;
@@ -238,9 +267,9 @@ namespace myManga.ViewModels
 
         private void Resume_Manga(LibraryItemModel LIM)
         {
-            if (LIM.VolumeSpecified || LIM.ChapterSpecified || LIM.SubChapterSpecified)
+            if (LIM.MangaData.VolumeSpecified || LIM.MangaData.ChapterSpecified || LIM.MangaData.SubChapterSpecified)
             {
-                SendViewModelToastNotification(this, String.Format("Resuming: {0}", LIM.Name));
+                SendViewModelToastNotification(this, String.Format("Resuming: {0}", LIM.MangaData.Name));
                 MangaInfo Info = MangaDataZip.Instance.MangaInfo(LIM.MangaInfoPath);
                 RequestResumeChapter(Info);
                 DetailsOpen = false;
@@ -280,7 +309,7 @@ namespace myManga.ViewModels
                             MangaItems.Add(_NewItem);
                             break;
                     }
-                    MangaItems.Sort(Item => Item.Name, ListSortDirection.Ascending);
+                    MangaItems.Sort(Item => Item.MangaData.Name, ListSortDirection.Ascending);
 
 
                     if (_Index.Equals(-1) ? MangaItems.Last().ChapterStatus : MangaItems[_Index].ChapterStatus && !HasInit)
@@ -308,6 +337,7 @@ namespace myManga.ViewModels
             {
                 OnInitComplete();
                 HasInit = true;
+                Messenger.Instance.SendBroadcastMessage(this, "!^RequestCanExecuteUpdate");
             }
         }
         #endregion
@@ -331,10 +361,12 @@ namespace myManga.ViewModels
             get
             {
                 if (_UpdateLibrary == null)
-                    _UpdateLibrary = new DelegateCommand(UpdateLibraryManga);
+                    _UpdateLibrary = new DelegateCommand(UpdateLibraryManga, CanUpdateLibrary);
                 return _UpdateLibrary;
             }
         }
+        private Boolean CanUpdateLibrary()
+        { return HasInit; }
 
         private DelegateCommand<LibraryItemModel> _ResumeManga { get; set; }
         public ICommand ResumeManga

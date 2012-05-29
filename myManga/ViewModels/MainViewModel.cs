@@ -56,7 +56,7 @@ namespace myManga.ViewModels
                 if (!IsInDesignerMode)
                 {
                     MessageBox.Show("Unable to load plugins.\nPlease check any new plugins and try again.", "Err!", MessageBoxButton.OK, MessageBoxImage.Error);
-                    Application.Current.Shutdown(); // Do NOT shutdown Application in design mode.
+                    Application.Current.Shutdown(); // Do NOT shutdown Application in design mode. Shutting down the Application in Visual Studio is BAD!
                 }
                 else
                     SendViewModelToastNotification(this, "Did not load plugins.\nIn design mode.", ToastNotification.DisplayLength.Normal);

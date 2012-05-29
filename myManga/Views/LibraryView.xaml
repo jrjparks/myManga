@@ -33,7 +33,7 @@
             ExpandDirection="Right"
             x:Name="InfoExpander">
             <Expander.Header>
-                <TextBlock Margin="1,5"  Text="{Binding Path=CurrentMangaItem.Name, FallbackValue=Un-named}">
+                <TextBlock Margin="1,5"  Text="{Binding Path=CurrentMangaItem.MangaData.Name, FallbackValue=Un-named}">
                     <TextBlock.LayoutTransform>
                         <RotateTransform Angle="270"/>
                     </TextBlock.LayoutTransform>

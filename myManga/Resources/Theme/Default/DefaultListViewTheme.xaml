@@ -95,7 +95,7 @@
                                     Source="/myManga;component/Resources/Images/Metro/White/Circle/basecircle.png" />
                             </Border>
                             <Image Grid.ZIndex="1" x:Name="_Cover" Source="{Binding Path=Cover, FallbackValue=/myManga;component/Resources/Images/Icons/FalbackMangaIcon.png}"/>
-                            <TextBlock Grid.ZIndex="2" VerticalAlignment="Top" TextAlignment="Center" Background="#80000000" Text="{Binding Path=Name}" TextTrimming="CharacterEllipsis" MaxWidth="{Binding ElementName=_Cover, Path=ActualWidth}" />
+                            <TextBlock Grid.ZIndex="2" VerticalAlignment="Top" TextAlignment="Center" Background="#80000000" Text="{Binding Path=MangaData.Name}" TextTrimming="CharacterEllipsis" MaxWidth="{Binding ElementName=_Cover, Path=ActualWidth}" />
                             <TextBlock Grid.ZIndex="2" VerticalAlignment="Bottom" TextAlignment="Center" Background="#80000000">
                                 <TextBlock.Text>
                                     <MultiBinding StringFormat="V{0} C{1} P{2}">
@@ -119,6 +119,7 @@
                                     <Image Source="/myManga;component/Resources/Images/Metro/White/Circle/View.png" Stretch="None"/>
                                 </Button>
                             </Border>
+                            <ProgressBar Value="{Binding Path=Progress}" Visibility="{Binding Path=ProgressVisibility}" VerticalAlignment="Bottom" Margin="0,0,0,-8" Grid.ZIndex="3"/>
                         </Grid>
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="SelectionStates">

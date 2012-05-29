@@ -64,30 +64,35 @@
       <HintPath>..\CoreDLLs\BakaBox.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="CoreMangaClasses, Version=1.0.1.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="CoreMangaClasses, Version=1.0.1.1, Culture=neutral, PublicKeyToken=faec2c463a9cf11d, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\CoreDLLs\CoreMangaClasses.dll</HintPath>
-      <Private>True</Private>
+      <HintPath>Resources\DLLs\CoreMangaClasses.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="fastJSON">
-      <HintPath>..\CoreDLLs\fastJSON.dll</HintPath>
+      <HintPath>Resources\DLLs\fastJSON.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="HtmlAgilityPack">
-      <HintPath>..\CoreDLLs\HtmlAgilityPack.dll</HintPath>
+      <HintPath>Resources\DLLs\HtmlAgilityPack.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="Manga, Version=1.0.1.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Ionic.Zip, Version=1.9.1.8, Culture=neutral, PublicKeyToken=edbe51ad942a3f5c, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\CoreDLLs\Manga.dll</HintPath>
-      <Private>True</Private>
+      <HintPath>Resources\DLLs\Ionic.Zip.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Manga, Version=1.0.1.1, Culture=neutral, PublicKeyToken=faec2c463a9cf11d, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Resources\DLLs\Manga.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Microsoft.Windows.Shell">
       <HintPath>..\CoreDLLs\Microsoft.Windows.Shell.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="MonitorControl">
-      <HintPath>..\CoreDLLs\MonitorControl.dll</HintPath>
+      <HintPath>Resources\DLLs\MonitorControl.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="System" />
@@ -946,6 +951,10 @@
   </ItemGroup>
   <ItemGroup>
     <SplashScreen Include="Resources\Images\Splash.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\DLLs\CoreMangaClasses.dll" />
+    <EmbeddedResource Include="Resources\DLLs\Manga.dll" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

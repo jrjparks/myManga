@@ -15,9 +15,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PluginTester", "Plugins\Plu
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MangaHere", "Plugins\MangaHere\MangaHere.csproj", "{39B4C5F1-00A7-4F98-9B9F-38B91E6A764D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MangaPanda", "Plugins\MangaPanda\MangaPanda.csproj", "{0D226874-8721-4BC6-BCF9-EA78B487DDED}"
+EndProject
 Global
 	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 7
+		SccNumberOfProjects = 8
 		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
 		SccTeamFoundationServer = https://tfs.codeplex.com/tfs/tfs24
 		SccLocalPath0 = .
@@ -44,6 +46,10 @@ Global
 		SccProjectTopLevelParentUniqueName6 = Manga\u0020Reader.sln
 		SccProjectName6 = Plugin\u0020Template
 		SccLocalPath6 = Plugin\u0020Template
+		SccProjectUniqueName7 = Plugins\\MangaPanda\\MangaPanda.csproj
+		SccProjectTopLevelParentUniqueName7 = Manga\u0020Reader.sln
+		SccProjectName7 = Plugins/MangaPanda
+		SccLocalPath7 = Plugins\\MangaPanda
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -114,6 +120,16 @@ Global
 		{39B4C5F1-00A7-4F98-9B9F-38B91E6A764D}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{39B4C5F1-00A7-4F98-9B9F-38B91E6A764D}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{39B4C5F1-00A7-4F98-9B9F-38B91E6A764D}.Release|x86.ActiveCfg = Release|Any CPU
+		{0D226874-8721-4BC6-BCF9-EA78B487DDED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0D226874-8721-4BC6-BCF9-EA78B487DDED}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0D226874-8721-4BC6-BCF9-EA78B487DDED}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{0D226874-8721-4BC6-BCF9-EA78B487DDED}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{0D226874-8721-4BC6-BCF9-EA78B487DDED}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{0D226874-8721-4BC6-BCF9-EA78B487DDED}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0D226874-8721-4BC6-BCF9-EA78B487DDED}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0D226874-8721-4BC6-BCF9-EA78B487DDED}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{0D226874-8721-4BC6-BCF9-EA78B487DDED}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{0D226874-8721-4BC6-BCF9-EA78B487DDED}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -124,5 +140,6 @@ Global
 		{D104334C-2AE4-4716-BFAB-CCCF261D7A17} = {0430AF7C-940D-429C-B11A-AFA0F4EA2BC0}
 		{A42BBA01-A952-4AD2-8D99-0D93E9410079} = {0430AF7C-940D-429C-B11A-AFA0F4EA2BC0}
 		{39B4C5F1-00A7-4F98-9B9F-38B91E6A764D} = {0430AF7C-940D-429C-B11A-AFA0F4EA2BC0}
+		{0D226874-8721-4BC6-BCF9-EA78B487DDED} = {0430AF7C-940D-429C-B11A-AFA0F4EA2BC0}
 	EndGlobalSection
 EndGlobal

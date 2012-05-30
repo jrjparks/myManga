@@ -13,6 +13,7 @@ using System.Windows.Input;
 using System.Text.RegularExpressions;
 using System.IO;
 using Manga.Manager;
+using System.Diagnostics;
 
 namespace PluginTester
 {
@@ -250,6 +251,10 @@ namespace PluginTester
                 SelectedTab = 0;
                 if (!_Downloader.IsBusy)
                     _Downloader.RunWorkerAsync(TestURL);
+            }
+            else if(Item is PageEntry)
+            {
+                Process.Start((Item as PageEntry).LocationInfo.FullOnlinePath);
             }
         }
 

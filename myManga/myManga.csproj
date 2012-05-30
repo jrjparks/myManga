@@ -59,31 +59,27 @@
     <ManifestKeyFile>BakaBox.pfx</ManifestKeyFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="BakaBox, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="BakaBox, Version=1.0.0.1, Culture=neutral, PublicKeyToken=faec2c463a9cf11d, processorArchitecture=MSIL">
       <HintPath>..\CoreDLLs\BakaBox.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="CoreMangaClasses, Version=1.0.1.1, Culture=neutral, PublicKeyToken=faec2c463a9cf11d, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
       <HintPath>Resources\DLLs\CoreMangaClasses.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="fastJSON">
+    <Reference Include="fastJSON, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>Resources\DLLs\fastJSON.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="HtmlAgilityPack">
+    <Reference Include="HtmlAgilityPack, Version=1.4.0.0, Culture=neutral, PublicKeyToken=bd319b19eaf3b43a, processorArchitecture=MSIL">
       <HintPath>Resources\DLLs\HtmlAgilityPack.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Ionic.Zip, Version=1.9.1.8, Culture=neutral, PublicKeyToken=edbe51ad942a3f5c, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
       <HintPath>Resources\DLLs\Ionic.Zip.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Manga, Version=1.0.1.1, Culture=neutral, PublicKeyToken=faec2c463a9cf11d, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
       <HintPath>Resources\DLLs\Manga.dll</HintPath>
       <Private>False</Private>
     </Reference>
@@ -91,7 +87,7 @@
       <HintPath>..\CoreDLLs\Microsoft.Windows.Shell.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="MonitorControl">
+    <Reference Include="MonitorControl, Version=1.0.0.0, Culture=neutral, PublicKeyToken=faec2c463a9cf11d, processorArchitecture=MSIL">
       <HintPath>Resources\DLLs\MonitorControl.dll</HintPath>
       <Private>False</Private>
     </Reference>

@@ -190,17 +190,6 @@
                                                     </TextBlock>
                                                     <TextBlock x:Name="TitleName" Padding="10,0,0,0" FontSize="16" Text="{Binding Path=Name}"/>
                                                 </StackPanel>
-                                                <Button 
-                                                    Grid.Column="1"
-                                                    Height="24"
-                                                    Style="{StaticResource GlowBtn}"
-                                                    Command="{Binding Path=DataContext.ReadChapter, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl}}"
-                                                    CommandParameter="{Binding}">
-                                                    <StackPanel>
-                                                        <Image Source="/myManga;component/Resources/Images/Metro/White/No%20Circle/Layout.png" Margin="-10" Stretch="Uniform" />
-                                                        <TextBlock VerticalAlignment="Center" Text="Read"/>
-                                                    </StackPanel>
-                                                </Button>
                                             </Grid>
                                         </Border>
                                         <ControlTemplate.Triggers>

@@ -5,6 +5,7 @@
              xmlns:converter="clr-namespace:myManga.UI.Code"
              SnapsToDevicePixels="True"
              Background="Black" 
+             Focusable="False"
              DataContext="{Binding RelativeSource={RelativeSource Self}}">
     <UserControl.Resources>
         <Storyboard 
@@ -32,7 +33,7 @@
         <ScrollViewer 
             Style="{StaticResource MetroScrollViewer}"
             Opacity="0" 
-            x:Name="ImageScroll" 
+            x:Name="ImageScroll"
             HorizontalScrollBarVisibility="Auto" 
             VerticalScrollBarVisibility="Auto" 
             PanningMode="Both" 
@@ -44,7 +45,8 @@
                 Margin="5"
                 HorizontalAlignment="Center" 
                 VerticalAlignment="Center" 
-                SnapsToDevicePixels="True">
+                SnapsToDevicePixels="True"
+                Focusable="False">
                 <Border.Effect>
                     <BlurEffect x:Name="BlurEffect"/>
                 </Border.Effect>

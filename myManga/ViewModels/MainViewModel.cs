@@ -18,17 +18,15 @@ using myManga.Views;
 using System.Collections.ObjectModel;
 using BakaBox.Controls.Threading;
 using Manga.Archive;
+using BakaBox.MVVM.Communications;
+using BakaBox;
+using System.Threading;
 
 namespace myManga.ViewModels
 {
     public sealed class MainViewModel : ViewModelBase
     {
         #region Variables
-        #endregion
-
-        #region Controls
-        public ToastNotification toastNotification { get; set; }
-
         public Int32 _ViewIndex { get; set; }
         public Int32 ViewIndex
         {
@@ -39,7 +37,18 @@ namespace myManga.ViewModels
                 OnPropertyChanged("ViewIndex");
             }
         }
+        private delegate void UpdateViewIndexDelegate(Int32 value);
+        private void UpdateViewIndex(Int32 value)
+        {
+            if (Application.Current.Dispatcher.Thread == Thread.CurrentThread)
+                ViewIndex = value;
+            else
+                Application.Current.Dispatcher.Invoke(new UpdateViewIndexDelegate(UpdateViewIndex), value);
+        }
+        #endregion
 
+        #region Controls
+        public ToastNotification toastNotification { get; set; }
         #endregion
 
         #region Manga Site Plugins
@@ -85,7 +94,10 @@ namespace myManga.ViewModels
             get
             {
                 if (_LibraryViewModel == null)
+                {
                     _LibraryViewModel = new LibraryViewModel();
+                    SetupLibrary();
+                }
                 return _LibraryViewModel;
             }
         }
@@ -94,7 +106,6 @@ namespace myManga.ViewModels
         {
             if (!IsInDesignerMode)
             {
-                LibraryViewModel.InitComplete += () => toastNotification.ResumeToasts();
                 LibraryViewModel.ViewModelToastNotification += ViewModel_Toast;
                 LibraryViewModel.OpenChapter += (f, r) => OpenMZA(f, r ? ReadingViewModel.OpenPage.Resume : ReadingViewModel.OpenPage.First);
             }
@@ -108,7 +119,10 @@ namespace myManga.ViewModels
             get
             {
                 if (_ReadingViewModel == null)
+                {
                     _ReadingViewModel = new ReadingViewModel();
+                    SetupReading();
+                }
                 return _ReadingViewModel;
             }
         }
@@ -128,7 +142,10 @@ namespace myManga.ViewModels
             get
             {
                 if (_QueueViewModel == null)
+                {
                     _QueueViewModel = new QueueViewModel();
+                    SetupQueueDownloads();
+                }
                 return _QueueViewModel;
             }
         }
@@ -162,7 +179,10 @@ namespace myManga.ViewModels
                 if (Global_IMangaPluginCollection.Instance.Plugins.Count == 0)
                     SetupPlugins();
                 if (_SearchViewModel == null)
+                {
                     _SearchViewModel = new SearchViewModel();
+                    SetupSearch();
+                }
                 return _SearchViewModel;
             }
         }
@@ -181,7 +201,10 @@ namespace myManga.ViewModels
                 if (Global_IMangaPluginCollection.Instance.Plugins.Count == 0)
                     SetupPlugins();
                 if (_AboutViewModel == null)
+                {
                     _AboutViewModel = new AboutViewModel();
+                    SetupAbout();
+                }
                 return _AboutViewModel;
             }
         }
@@ -199,7 +222,10 @@ namespace myManga.ViewModels
             get
             {
                 if (_SettingsViewModel == null)
+                {
                     _SettingsViewModel = new SettingsViewModel();
+                    SetupSettings();
+                }
                 return _SettingsViewModel;
             }
         }
@@ -207,6 +233,27 @@ namespace myManga.ViewModels
         private void SetupSettings()
         {
             SettingsViewModel.ViewModelToastNotification += ViewModel_Toast;
+        }
+        #endregion
+
+        #region License
+        public LicenseViewModel _LicenseViewModel;
+        public LicenseViewModel LicenseViewModel
+        {
+            get
+            {
+                if (_LicenseViewModel == null)
+                {
+                    _LicenseViewModel = new LicenseViewModel();
+                    SetupLicense();
+                }
+                return _LicenseViewModel;
+            }
+        }
+
+        private void SetupLicense()
+        {
+            LicenseViewModel.ViewModelToastNotification += ViewModel_Toast;
         }
         #endregion
         #endregion
@@ -241,27 +288,13 @@ namespace myManga.ViewModels
             // Add Toast Notification to MainViewModel first.
             this.ViewModelToastNotification += ViewModel_Toast;
 
+            Messenger.Instance.BroadcastMessage += Instance_BroadcastMessage;
+
             toastNotification = new ToastNotification();
             toastNotification.PauseToasts();
             SendViewModelToastNotification(this, "Welcome to myManga", ToastNotification.DisplayLength.Normal);
             
             SetupMangaManager();
-
-            #region Tabs
-            SetupLibrary();
-
-            SetupReading();
-
-            SetupQueueDownloads();
-
-            SetupSearch();
-
-            #region Options
-            SetupAbout();
-
-            SetupSettings();
-            #endregion
-            #endregion
 
             if (IsInDesignerMode)
             {
@@ -271,6 +304,22 @@ namespace myManga.ViewModels
         }
 
         #region Methods
+        private void Instance_BroadcastMessage(object Sender, object Data)
+        {
+            if (Data == null) { }
+            else if (Data is String)
+            {
+                String sData = Data as String;
+                if (sData.StartsWith("!^SetViewIndex"))
+                {
+                    sData = sData.Substring("!^SetViewIndex".Length);
+                    UpdateViewIndex(Parse.TryParse<Int32>(sData, 0));
+                }
+                else if (sData.Equals("!^ResumeToast"))
+                    toastNotification.ResumeToasts();
+            }
+        }
+
         private void OpenMZA()
         {
             using (System.Windows.Forms.OpenFileDialog ofd = new System.Windows.Forms.OpenFileDialog())

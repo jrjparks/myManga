@@ -59,14 +59,6 @@
     <ManifestKeyFile>BakaBox.pfx</ManifestKeyFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="BakaBox, Version=1.0.0.1, Culture=neutral, PublicKeyToken=faec2c463a9cf11d, processorArchitecture=MSIL">
-      <HintPath>..\CoreDLLs\BakaBox.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="CoreMangaClasses, Version=1.0.1.1, Culture=neutral, PublicKeyToken=faec2c463a9cf11d, processorArchitecture=MSIL">
-      <HintPath>Resources\DLLs\CoreMangaClasses.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
     <Reference Include="fastJSON, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>Resources\DLLs\fastJSON.dll</HintPath>
       <Private>False</Private>
@@ -77,10 +69,6 @@
     </Reference>
     <Reference Include="Ionic.Zip, Version=1.9.1.8, Culture=neutral, PublicKeyToken=edbe51ad942a3f5c, processorArchitecture=MSIL">
       <HintPath>Resources\DLLs\Ionic.Zip.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Manga, Version=1.0.1.1, Culture=neutral, PublicKeyToken=faec2c463a9cf11d, processorArchitecture=MSIL">
-      <HintPath>Resources\DLLs\Manga.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Microsoft.Windows.Shell">
@@ -112,6 +100,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Base\SettingsEnum.cs" />
     <Compile Include="Models\LibraryItemModel.cs" />
     <Compile Include="Models\PluginInfoModel.cs" />
     <Compile Include="Resources\Theme\Default\MarginConverter.cs" />
@@ -125,6 +114,7 @@
     </Compile>
     <Compile Include="ViewModels\AboutViewModel.cs" />
     <Compile Include="ViewModels\LibraryViewModel.cs" />
+    <Compile Include="ViewModels\LicenseViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="ViewModels\QueueViewModel.cs" />
     <Compile Include="ViewModels\ReadingViewModel.cs" />
@@ -136,6 +126,9 @@
     </Compile>
     <Compile Include="Views\LibraryView.xaml.cs">
       <DependentUpon>LibraryView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\LicenseView.xaml.cs">
+      <DependentUpon>LicenseView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\QueueView.xaml.cs">
       <DependentUpon>QueueView.xaml</DependentUpon>
@@ -232,6 +225,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\LicenseView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\QueueView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -274,7 +271,7 @@
     <None Include="app.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+      <LastGenOutput>Settings1.Designer.cs</LastGenOutput>
     </None>
     <AppDesigner Include="Properties\" />
   </ItemGroup>
@@ -943,14 +940,29 @@
   <ItemGroup>
     <EmbeddedResource Include="Resources\DLLs\Microsoft.Windows.Shell.dll" />
     <EmbeddedResource Include="Resources\DLLs\MonitorControl.dll" />
-    <EmbeddedResource Include="Resources\DLLs\System.ComponentModel.Custom.Generic.dll" />
   </ItemGroup>
   <ItemGroup>
     <SplashScreen Include="Resources\Images\Splash.bmp" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\DLLs\CoreMangaClasses.dll" />
-    <EmbeddedResource Include="Resources\DLLs\Manga.dll" />
+    <Resource Include="Resources\Images\john parks.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\BakaBox\BakaBox.csproj">
+      <Project>{CAD747BF-8D53-4115-957C-CC07B036466C}</Project>
+      <Name>BakaBox</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\CoreDLLs\CoreMangaClasses\CoreMangaClasses.csproj">
+      <Project>{6E2916BF-2F3F-4DD5-BD7F-981F754BC531}</Project>
+      <Name>CoreMangaClasses</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\CoreDLLs\Manga\Manga.csproj">
+      <Project>{AB7D1FEA-51D1-41E7-8D2E-01D61B03E95A}</Project>
+      <Name>Manga</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="License.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

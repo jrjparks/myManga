@@ -9,6 +9,7 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
         <StackPanel>
@@ -30,9 +31,30 @@
                 </StackPanel>
             </HeaderedContentControl>
         </StackPanel>
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <Border>
+                <Image Source="/myManga;component/Resources/Images/john%20parks.png"/>
+            </Border>
+            <HeaderedContentControl Grid.Column="1" Header="About Author" Padding="4">
+                <ScrollViewer HorizontalScrollBarVisibility="Disabled">
+                    <StackPanel>
+                        <TextBlock Text="Name: John Parks"/>
+                        <TextBlock Padding="10,0,0,0" Text="AKA: Prob Caboose"/>
+                        <TextBlock Text="Location: USA"/>
+                        <TextBlock Text="Why was this application made?"/>
+                        <TextBlock Padding="10,0,0,0" Text="No other application was found that could do what I wanted."/>
+                        <TextBlock Text="More about this project at: mymanga.codeplex.com"/>
+                    </StackPanel>
+                </ScrollViewer>
+            </HeaderedContentControl>
+        </Grid>
         <HeaderedContentControl
             Header="Loaded Plugins"
-            Grid.Row="1">
+            Grid.Row="2">
             <ListView 
                 ItemsSource="{Binding Path=PluginInfoModelCollection}" 
                 Grid.Row="1" SelectionMode="Single"

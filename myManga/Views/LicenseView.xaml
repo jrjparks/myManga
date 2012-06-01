@@ -1,0 +1,63 @@
+﻿<UserControl x:Class="myManga.Views.LicenseView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300" Background="Black" Foreground="White">
+    <FlowDocumentScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" MinZoom="100">
+        <FlowDocument>
+            <Paragraph>
+                Microsoft Reciprocal License (Ms-RL)
+                <LineBreak/>
+                <LineBreak/>
+                This license governs use of the accompanying software. If you use the software, you accept this license. If you do not accept the license, do not use the software.
+                <LineBreak/>
+                <LineBreak/>
+                1. Definitions
+                <LineBreak/>
+                <LineBreak/>
+                The terms "reproduce," "reproduction," "derivative works," and "distribution" have the same meaning here as under U.S. copyright law.
+                <LineBreak/>
+                <LineBreak/>
+                A "contribution" is the original software, or any additions or changes to the software.
+                <LineBreak/>
+                <LineBreak/>
+                A "contributor" is any person that distributes its contribution under this license.
+                <LineBreak/>
+                <LineBreak/>
+                "Licensed patents" are a contributor's patent claims that read directly on its contribution.
+                <LineBreak/>
+                <LineBreak/>
+                2. Grant of Rights
+                <LineBreak/>
+                <LineBreak/>
+                (A) Copyright Grant- Subject to the terms of this license, including the license conditions and limitations in section 3, each contributor grants you a non-exclusive, worldwide, royalty-free copyright license to reproduce its contribution, prepare derivative works of its contribution, and distribute its contribution or any derivative works that you create.
+                <LineBreak/>
+                <LineBreak/>
+                (B) Patent Grant- Subject to the terms of this license, including the license conditions and limitations in section 3, each contributor grants you a non-exclusive, worldwide, royalty-free license under its licensed patents to make, have made, use, sell, offer for sale, import, and/or otherwise dispose of its contribution in the software or derivative works of the contribution in the software.
+                <LineBreak/>
+                <LineBreak/>
+                3. Conditions and Limitations
+                <LineBreak/>
+                <LineBreak/>
+                (A) Reciprocal Grants- For any file you distribute that contains code from the software (in source code or binary format), you must provide recipients the source code to that file along with a copy of this license, which license will govern that file. You may license other files that are entirely your own work and do not contain code from the software under any terms you choose.
+                <LineBreak/>
+                <LineBreak/>
+                (B) No Trademark License- This license does not grant you rights to use any contributors' name, logo, or trademarks.
+                <LineBreak/>
+                <LineBreak/>
+                (C) If you bring a patent claim against any contributor over patents that you claim are infringed by the software, your patent license from such contributor to the software ends automatically.
+                <LineBreak/>
+                <LineBreak/>
+                (D) If you distribute any portion of the software, you must retain all copyright, patent, trademark, and attribution notices that are present in the software.
+                <LineBreak/>
+                <LineBreak/>
+                (E) If you distribute any portion of the software in source code form, you may do so only under this license by including a complete copy of this license with your distribution. If you distribute any portion of the software in compiled or object code form, you may only do so under a license that complies with this license.
+                <LineBreak/>
+                <LineBreak/>
+                (F) The software is licensed "as-is." You bear the risk of using it. The contributors give no express warranties, guarantees or conditions. You may have additional consumer rights under your local laws which this license cannot change. To the extent permitted under your local laws, the contributors exclude the implied warranties of merchantability, fitness for a particular purpose and non-infringement.
+            </Paragraph>
+        </FlowDocument>
+    </FlowDocumentScrollViewer>
+</UserControl>

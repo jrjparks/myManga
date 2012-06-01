@@ -22,6 +22,7 @@ namespace MangaFox
         #region IMangaPlugin Vars
         public string SiteName { get { return "MangaFox"; } }
         public string SiteURLFormat { get { return @"mangafox\.me"; } }
+        public string SiteRefererHeader { get { return "http://www.mangafox.me/"; } }
         public SupportedMethods SupportedMethods { get { return SupportedMethods.All; } }
         #endregion
         
@@ -57,10 +58,12 @@ namespace MangaFox
             MAI.SubChapter = _Item.Groups["SubChapter"].Success ? UInt32.Parse(_Item.Groups["SubChapter"].Value) : 0;
             OnProgressChanged((Int32)Math.Round(Progress));
 
-            using (WebClient GWC = new WebClient())
+            using (WebClient WebClient = new WebClient())
             {
-                GWC.Encoding = Encoding.UTF8;
-                PageHTML = GWC.DownloadString(String.Format(PagePath, 1));
+                WebClient.Encoding = Encoding.UTF8;
+                WebClient.Headers.Clear();
+                WebClient.Headers.Add(System.Net.HttpRequestHeader.Referer, SiteRefererHeader);
+                PageHTML = WebClient.DownloadString(String.Format(PagePath, 1));
                 Match NumberOfPagesMatch = Regex.Match(PageHTML, @"of\s(\d+)"), InfoMatch = Regex.Match(PageHTML, ChapterNameRegEx);
 
                 if (NumberOfPagesMatch.Success)
@@ -88,8 +91,10 @@ namespace MangaFox
                     if (NumberOfPages > 1)
                         for (UInt32 page = 2; page <= NumberOfPages; ++page)
                         {
-                            do { System.Threading.Thread.Sleep(100); } while (GWC.IsBusy);
-                            PageHTML = GWC.DownloadString(String.Format(PagePath, page));
+                            do { System.Threading.Thread.Sleep(100); } while (WebClient.IsBusy);
+                            WebClient.Headers.Clear();
+                            WebClient.Headers.Add(System.Net.HttpRequestHeader.Referer, SiteRefererHeader);
+                            PageHTML = WebClient.DownloadString(String.Format(PagePath, page));
                             PageMatch = Regex.Match(PageHTML, RegExImageSearch);
                             if (PageMatch.Success)
                                 MAI.PageEntries.Add(new PageEntry()
@@ -118,10 +123,12 @@ namespace MangaFox
             String PageHTML;
             OnProgressChanged(3);
 
-            using (WebClient GWC = new WebClient())
+            using (WebClient WebClient = new WebClient())
             {
-                GWC.Encoding = Encoding.UTF8;
-                PageHTML = GWC.DownloadString(MI.InfoPage);
+                WebClient.Encoding = Encoding.UTF8;
+                WebClient.Headers.Clear();
+                WebClient.Headers.Add(System.Net.HttpRequestHeader.Referer, SiteRefererHeader);
+                PageHTML = WebClient.DownloadString(MI.InfoPage);
                 HtmlDocument _PageDoc = new HtmlDocument();
                 HtmlNode _PageElement;
                 
@@ -170,16 +177,20 @@ namespace MangaFox
             CoverData _Cover = new CoverData();
             String CoverRegex = @"(?<File>(http://).+?/(cover\.jpg))",
                 PageHTML, FileLocation;
-            using (WebClient GWC = new WebClient())
+            using (WebClient WebClient = new WebClient())
             {
-                GWC.Encoding = Encoding.UTF8;
-                PageHTML = GWC.DownloadString(MangaInfo.InfoPage);
+                WebClient.Encoding = Encoding.UTF8;
+                WebClient.Headers.Clear();
+                WebClient.Headers.Add(System.Net.HttpRequestHeader.Referer, SiteRefererHeader);
+                PageHTML = WebClient.DownloadString(MangaInfo.InfoPage);
                 Match coverMatch = Regex.Match(PageHTML, CoverRegex);
                 if (coverMatch.Success)
                 {
                     FileLocation = coverMatch.Groups["File"].Value;
                     _Cover.CoverName = "Cover.jpg";
-                    Stream tmpImage = new MemoryStream(GWC.DownloadData(String.Format("{0}?0", FileLocation)));
+                    WebClient.Headers.Clear();
+                    WebClient.Headers.Add(System.Net.HttpRequestHeader.Referer, SiteRefererHeader);
+                    Stream tmpImage = new MemoryStream(WebClient.DownloadData(String.Format("{0}?0", FileLocation)));
                     tmpImage.Position = 0;
                     _Cover.CoverStream = new MemoryStream();
                     tmpImage.CopyTo(_Cover.CoverStream);
@@ -200,10 +211,12 @@ namespace MangaFox
             String[] _DataArray, _ItemDataArray;
             OnProgressChanged((Int32)(Progress += 5));
 
-            using (WebClient GWC = new WebClient())
+            using (WebClient WebClient = new WebClient())
             {
-                GWC.Encoding = Encoding.UTF8;
-                _Data = GWC.DownloadString(SearchPath);
+                WebClient.Headers.Clear();
+                WebClient.Headers.Add(System.Net.HttpRequestHeader.Referer, SiteRefererHeader);
+                WebClient.Encoding = Encoding.UTF8;
+                _Data = WebClient.DownloadString(SearchPath);
 
                 _DataArray = _Data.Trim(new char[] { ']', '[' }).Split(new String[] { "],[" }, StringSplitOptions.None);
                 Step = (100D - Progress) / _DataArray.Length;
@@ -233,6 +246,8 @@ namespace MangaFox
             String _IdString;
             using (WebClient WebClient = new WebClient())
             {
+                WebClient.Headers.Clear();
+                WebClient.Headers.Add(System.Net.HttpRequestHeader.Referer, SiteRefererHeader);
                 WebClient.Encoding = Encoding.UTF8;
                 _IdString = WebClient.DownloadString(MangaRoot);
             }
@@ -248,12 +263,14 @@ namespace MangaFox
                 String.Format(
                 "\\[\"(?<VC>[\\w\\d\\s\\.]+?)(\\:(?<Title>.+?))?\",\"(?<Location>{0})\"\\]",
                 @"(v(?<Volume>\d{2,}))?/?(c(?<Chapter>\d{3,}))(\.(?<SubChapter>\d{1,}))?");
-            using (WebClient GWC = new WebClient())
+            using (WebClient WebClient = new WebClient())
             {
                 OnProgressChanged(1);
-                GWC.Encoding = Encoding.UTF8;
+                WebClient.Encoding = Encoding.UTF8;
+                WebClient.Headers.Clear();
+                WebClient.Headers.Add(System.Net.HttpRequestHeader.Referer, SiteRefererHeader);
                 String _url = String.Format("http://mangafox.me/media/js/list.{0}.js", MangaInfo.ID),
-                    _ChapterContent = GWC.DownloadString(_url);
+                    _ChapterContent = WebClient.DownloadString(_url);
                 Int32 Progress, Step;
                 OnProgressChanged(Progress = 10);
 

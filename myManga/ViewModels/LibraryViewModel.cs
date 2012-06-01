@@ -19,6 +19,7 @@ using Manga.Archive;
 using myManga.UI;
 using BakaBox.IO;
 using BakaBox.MVVM.Communications;
+using myManga.Properties;
 
 namespace myManga.ViewModels
 {
@@ -44,20 +45,12 @@ namespace myManga.ViewModels
             if (LibraryItemsLoaded != null)
                 LibraryItemsLoaded(MangaInfo);
         }
-
-        public delegate void EmptyEvent();
-        public event EmptyEvent InitComplete;
-        private void OnInitComplete()
-        {
-            if (InitComplete != null)
-                InitComplete();
-        }
         #endregion
 
         #region Variables
         private Boolean HasInit;
 
-        private Boolean _DetailsOpen { get; set; }
+        private Boolean _DetailsOpen;
         public Boolean DetailsOpen
         {
             get { return _DetailsOpen; }
@@ -106,7 +99,7 @@ namespace myManga.ViewModels
             }
         }
 
-        private LibraryItemModel _CurrentMangaItem { get; set; }
+        private LibraryItemModel _CurrentMangaItem;
         public LibraryItemModel CurrentMangaItem
         {
             get { return _CurrentMangaItem; }
@@ -114,15 +107,51 @@ namespace myManga.ViewModels
             {
                 _CurrentMangaItem = value;
                 if (value != null && DetailsOpen)
+                {
                     CurrentInfo = MangaDataZip.Instance.MangaInfo(value.MangaInfoPath);
+                }
                 OnPropertyChanged("CurrentMangaItem");
             }
         }
-        private MangaInfo _CurrentInfo { get; set; }
+        private ChapterEntryCollection origChapEntryCollection;
+        private MangaInfo _CurrentInfo;
         public MangaInfo CurrentInfo
         {
-            get { return _CurrentInfo; }
-            set { _CurrentInfo = value; OnPropertyChanged("CurrentInfo"); }
+            get
+            {
+                if (_CurrentInfo != null && origChapEntryCollection != null)
+                {
+                    ChapterEntry[] tmpChapterEntry = new ChapterEntry[origChapEntryCollection.Count];
+                    origChapEntryCollection.CopyTo(tmpChapterEntry, 0);
+                    _CurrentInfo.ChapterEntries = new ChapterEntryCollection(tmpChapterEntry);
+                    switch (Settings.Default.ChapterListOrder)
+                    {
+                        default:
+                        case Base.ChapterOrder.Ascending:
+                            break;
+
+                        case Base.ChapterOrder.Descending:
+                            _CurrentInfo.ChapterEntries.Reverse();
+                            break;
+
+                        case Base.ChapterOrder.Auto:
+                            if ((origChapEntryCollection.Count / 2) < origChapEntryCollection.IndexOf(_CurrentInfo.LastReadChapterEntry))
+                                _CurrentInfo.ChapterEntries.Reverse(); // Reverse List if more than halfway.
+                            break;
+                    }
+                }
+                return _CurrentInfo;
+            }
+            set
+            {
+                _CurrentInfo = value;
+                if (value != null)
+                    origChapEntryCollection = value.ChapterEntries;
+                else
+                    origChapEntryCollection = null;
+                Messenger.Instance.SendBroadcastMessage(this, "!^RequestCanExecuteUpdate");
+                OnPropertyChanged("CurrentInfo");
+            }
         }
         #endregion
         #endregion
@@ -142,6 +171,14 @@ namespace myManga.ViewModels
             Manager_v1.Instance.TaskComplete += UpdateTaskData;
 
             LoadLibraryDirectory(MangaDataZip.Instance.MIZAPath.SafeFolder());
+
+            Settings.Default.PropertyChanged += Default_PropertyChanged;
+        }
+
+        void Default_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName.Equals("ChapterListOrder"))
+                OnPropertyChanged("CurrentInfo");
         }
         #endregion
 
@@ -160,7 +197,13 @@ namespace myManga.ViewModels
             }
         }
         public void LoadLibraryDirectory(String FolderPath)
-        { LoadLibraryData(Directory.GetFiles(FolderPath, "*.miza", SearchOption.TopDirectoryOnly)); }
+        {
+            String[] Files = Directory.GetFiles(FolderPath, "*.miza", SearchOption.TopDirectoryOnly);
+            if (Files.Length > 0)
+                LoadLibraryData(Files);
+            else
+                EnableHasInit();
+        }
 
         public void UpdateLibraryMangaInfo(Object Sender, MangaInfo MangaInfo, String FullFilePath)
         {
@@ -241,10 +284,12 @@ namespace myManga.ViewModels
         }
 
         private void RequestOpenChapter(ChapterEntry ChapterEntry)
-        { RequestOpenChapter(ChapterEntry, CurrentInfo, false); }
+        { RequestOpenChapter(ChapterEntry, CurrentInfo, false, false); }
         private void RequestResumeChapter(MangaInfo Info)
-        { RequestOpenChapter(Info.LastReadChapterEntry, Info, true); }
-        private void RequestOpenChapter(ChapterEntry ChapterEntry, MangaInfo Info, Boolean Resume)
+        { RequestOpenChapter(Info.LastReadChapterEntry, Info, true, false); }
+        private void DownloadOpenChapter(ChapterEntry ChapterEntry)
+        { RequestOpenChapter(ChapterEntry, CurrentInfo, false, true); }
+        private void RequestOpenChapter(ChapterEntry ChapterEntry, MangaInfo Info, Boolean Resume, Boolean Download)
         {
             String _FileName = ChapterEntry.ChapterName(Info),
                         MainPath = MangaDataZip.Instance.MZAPath,
@@ -256,7 +301,7 @@ namespace myManga.ViewModels
             if (Directory.Exists(TmpPath))
                 _PosibleFiles.AddRange(Directory.GetFiles(TmpPath, _FileName, SearchOption.AllDirectories));
 
-            if (_PosibleFiles.Count > 0)
+            if (_PosibleFiles.Count > 0 && !Download)
                 OnOpenChapter(_PosibleFiles[0], Resume);
             else
             {
@@ -333,11 +378,22 @@ namespace myManga.ViewModels
                 }
                 SendViewModelToastNotification(this, Text, UI.ToastNotification.DisplayLength.Normal);
             }
+            EnableHasInit();
+        }
+
+        private void EnableHasInit()
+        {
             if (!HasInit)
             {
-                OnInitComplete();
                 HasInit = true;
                 Messenger.Instance.SendBroadcastMessage(this, "!^RequestCanExecuteUpdate");
+                if (MangaItems.Count == 0)
+                {
+                    Messenger.Instance.SendBroadcastMessage(this, "!^SetViewIndex3");
+                    SendViewModelToastNotification(this, String.Empty, ToastNotification.DisplayLength.Long);
+                    SendViewModelToastNotification(this, "It seems to be your first time running myManga.\nTo get started search for a manga to read.", ToastNotification.DisplayLength.Long);
+                }
+                Messenger.Instance.SendBroadcastMessage(this, "!^ResumeToast");
             }
         }
         #endregion
@@ -367,6 +423,24 @@ namespace myManga.ViewModels
         }
         private Boolean CanUpdateLibrary()
         { return HasInit; }
+
+        private DelegateCommand _DownloadAllChapters { get; set; }
+        public ICommand DownloadAllChapters
+        {
+            get
+            {
+                if (_DownloadAllChapters == null)
+                    _DownloadAllChapters = new DelegateCommand(DownloadAll, CanDownloadAll);
+                return _DownloadAllChapters;
+            }
+        }
+        private void DownloadAll()
+        {
+            foreach (ChapterEntry ChapEnt in origChapEntryCollection)
+                DownloadOpenChapter(ChapEnt);
+        }
+        private Boolean CanDownloadAll()
+        { return origChapEntryCollection != null; }
 
         private DelegateCommand<LibraryItemModel> _ResumeManga { get; set; }
         public ICommand ResumeManga

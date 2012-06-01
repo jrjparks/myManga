@@ -66,11 +66,11 @@ namespace MangaHere
 
         private String ChapterNameRegEx { get { return @"<title>(?<Name>.+?)\s\d"; } }
         private String InfoNameRegEx { get { return @"<title>(?<Name>.+?)\sManga"; } }
+        public string SiteRefererHeader { get { return "http://www.mangahere.com/"; } }
 
         #region IMangaPlugin Members
         public MangaArchiveInfo LoadChapterInformation(string ChapterPath)
         {
-            //http://www.mangahere.com/manga/one_piece/v60/c666/2.html
             OnProgressChanged(1);
             if (!ChapterPath.StartsWith("http://"))
                 ChapterPath = "http://" + ChapterPath;
@@ -99,6 +99,8 @@ namespace MangaHere
 
             using (WebClient WebClient = new WebClient())
             {
+                WebClient.Headers.Clear();
+                WebClient.Headers.Add(System.Net.HttpRequestHeader.Referer, SiteRefererHeader);
                 WebClient.Encoding = Encoding.UTF8;
                 PageHTML = WebClient.DownloadString(String.Format(PagePath, 1));
                 NumberOfPagesMatch = Regex.Match(PageHTML, TotalPagesRegEx);
@@ -131,6 +133,8 @@ namespace MangaHere
                         for (UInt32 page = 2; page <= NumberOfPages; ++page)
                         {
                             do { System.Threading.Thread.Sleep(100); } while (WebClient.IsBusy);
+                            WebClient.Headers.Clear();
+                            WebClient.Headers.Add(System.Net.HttpRequestHeader.Referer, SiteRefererHeader);
                             PageHTML = WebClient.DownloadString(String.Format(PagePath, page));
                             ImageMatches = Regex.Matches(PageHTML, RegExImageSearch);
                             if (ImageMatches.Count > 0)
@@ -163,6 +167,8 @@ namespace MangaHere
 
             using (WebClient WebClient = new WebClient())
             {
+                WebClient.Headers.Clear();
+                WebClient.Headers.Add(System.Net.HttpRequestHeader.Referer, SiteRefererHeader);
                 WebClient.Encoding = Encoding.UTF8;
                 PageHTML = WebClient.DownloadString(MI.InfoPage);
                 HtmlDocument _PageDoc = new HtmlDocument();
@@ -215,6 +221,8 @@ namespace MangaHere
 
             using (WebClient WebClient = new WebClient())
             {
+                WebClient.Headers.Clear();
+                WebClient.Headers.Add(System.Net.HttpRequestHeader.Referer, SiteRefererHeader);
                 Stream tmpImage = new MemoryStream(WebClient.DownloadData(ImagePath));
                 tmpImage.Position = 0;
                 _Cover.CoverStream = new MemoryStream();
@@ -233,6 +241,8 @@ namespace MangaHere
 
             using (WebClient WebClient = new WebClient())
             {
+                WebClient.Headers.Clear();
+                WebClient.Headers.Add(System.Net.HttpRequestHeader.Referer, SiteRefererHeader);
                 WebClient.Encoding = Encoding.UTF8;
                 _Data = WebClient.DownloadString(SearchPath);
                 searchData = new MangaHereData(fastJSON.JSON.Instance.ToObject<MangaHereJSON>(_Data));
@@ -266,6 +276,8 @@ namespace MangaHere
             String sID;
             using (WebClient WebClient = new WebClient())
             {
+                WebClient.Headers.Clear();
+                WebClient.Headers.Add(System.Net.HttpRequestHeader.Referer, SiteRefererHeader);
                 WebClient.Encoding = Encoding.UTF8;
                 sID = WebClient.DownloadString(MangaRoot);
             }
@@ -286,6 +298,8 @@ namespace MangaHere
             {
                 OnProgressChanged(1);
                 WebClient.Encoding = Encoding.UTF8;
+                WebClient.Headers.Clear();
+                WebClient.Headers.Add(System.Net.HttpRequestHeader.Referer, SiteRefererHeader);
                 String _url = String.Format("http://www.mangahere.com/get_chapters{0}.js", MangaInfo.ID),
                     _ChapterContent = WebClient.DownloadString(_url);
                 Double Progress, Step;

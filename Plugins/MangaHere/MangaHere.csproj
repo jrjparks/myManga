@@ -35,14 +35,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="BakaBox">
-      <HintPath>..\..\CoreDLLs\BakaBox.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="CoreMangaClasses">
-      <HintPath>..\..\CoreDLLs\CoreMangaClasses.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
     <Reference Include="fastJSON">
       <HintPath>..\..\CoreDLLs\fastJSON.dll</HintPath>
       <Private>False</Private>
@@ -63,7 +55,23 @@
     <Compile Include="MangaHere.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\BakaBox\BakaBox.csproj">
+      <Project>{CAD747BF-8D53-4115-957C-CC07B036466C}</Project>
+      <Name>BakaBox</Name>
+      <Private>False</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\..\CoreDLLs\CoreMangaClasses\CoreMangaClasses.csproj">
+      <Project>{6E2916BF-2F3F-4DD5-BD7F-981F754BC531}</Project>
+      <Name>CoreMangaClasses</Name>
+      <Private>False</Private>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>copy /Y "$(TargetPath)" "$(SolutionDir)\Plugins\$(ConfigurationName)"
+copy /Y "$(TargetPath)" "$(SolutionDir)\myManga\bin\$(ConfigurationName)\Plugins\"</PostBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

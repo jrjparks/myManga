@@ -43,8 +43,9 @@ namespace MangaReader
 
         private String ChapterNameRegEx 
         { get { return "<h2.*href=\"(/(?<ID>\\d+))?/(?<Name>[\\w-]+)(\\.html)?.*title=\".*?>(?<Title>.+)\\sManga</a></h2>"; } }
-        private String InfoNameRegEx 
+        private String InfoNameRegEx
         { get { return @"<h1>(?<Name>.*)\sManga</h1>"; } }
+        public string SiteRefererHeader { get { return "http://www.mangareader.net/"; } }
 
         #region IMangaPlugin Members
         public MangaReader() { }
@@ -75,10 +76,12 @@ namespace MangaReader
             MAI.SubChapter = 0;
             OnProgressChanged((Int32)Math.Round(Progress));
 
-            using (WebClient GWC = new WebClient())
+            using (WebClient WebClient = new WebClient())
             {
-                GWC.Encoding = Encoding.UTF8;
-                PageHTML = GWC.DownloadString(String.Format(PagePath, 1));
+                WebClient.Headers.Clear();
+                WebClient.Headers.Add(System.Net.HttpRequestHeader.Referer, SiteRefererHeader);
+                WebClient.Encoding = Encoding.UTF8;
+                PageHTML = WebClient.DownloadString(String.Format(PagePath, 1));
                 Match NumberOfPagesMatch = Regex.Match(PageHTML, @"of\s(\d+)"), InfoMatch = Regex.Match(PageHTML, ChapterNameRegEx);
                 if (NumberOfPagesMatch.Success)
                 {
@@ -108,8 +111,10 @@ namespace MangaReader
                     if(NumberOfPages > 1)
                         for (UInt32 page = 2; page <= NumberOfPages; ++page)
                         {
-                            while (GWC.IsBusy) System.Threading.Thread.Sleep(500);
-                            PageHTML = GWC.DownloadString(String.Format(PagePath, page));
+                            while (WebClient.IsBusy) System.Threading.Thread.Sleep(500);
+                            WebClient.Headers.Clear();
+                            WebClient.Headers.Add(System.Net.HttpRequestHeader.Referer, SiteRefererHeader);
+                            PageHTML = WebClient.DownloadString(String.Format(PagePath, page));
                             PageMatch = Regex.Match(PageHTML, RegExImageSearch);
                             if (PageMatch.Success)
                                 MAI.PageEntries.Add(new PageEntry()
@@ -141,10 +146,12 @@ namespace MangaReader
             Double Progress = 10, Step = 99D - (Double)Progress;
             OnProgressChanged((Int32)Math.Round(Progress));
 
-            using (WebClient GWC = new WebClient())
+            using (WebClient WebClient = new WebClient())
             {
-                GWC.Encoding = Encoding.UTF8;
-                PageHTML = GWC.DownloadString(InfoPage);
+                WebClient.Headers.Clear();
+                WebClient.Headers.Add(System.Net.HttpRequestHeader.Referer, SiteRefererHeader);
+                WebClient.Encoding = Encoding.UTF8;
+                PageHTML = WebClient.DownloadString(InfoPage);
                 HtmlDocument _PageDoc = new HtmlDocument();
                 HtmlNode _PageElement;
 
@@ -214,16 +221,20 @@ namespace MangaReader
             String PageHTML, 
                 FileLocation, 
                 CoverRegex = @"(?<File>http://s\d\.mangareader\.net/cover/(?<Name>[\w-]+)/(?<FileName>[\w-]+l\d+?)(?<Extention>\.[\w]{3,4}))";
-            using (WebClient GWC = new WebClient())
+            using (WebClient WebClient = new WebClient())
             {
-                GWC.Encoding = Encoding.UTF8;
-                PageHTML = GWC.DownloadString(MangaInfo.InfoPage);
+                WebClient.Headers.Clear();
+                WebClient.Headers.Add(System.Net.HttpRequestHeader.Referer, SiteRefererHeader);
+                WebClient.Encoding = Encoding.UTF8;
+                PageHTML = WebClient.DownloadString(MangaInfo.InfoPage);
                 Match coverMatch = Regex.Match(PageHTML, CoverRegex);
                 if (coverMatch.Success)
                 {
                     FileLocation = coverMatch.Groups["File"].Value;
                     _Cover.CoverName = coverMatch.Groups["FileName"].Value;
-                    Stream tmpImage = new MemoryStream(GWC.DownloadData(FileLocation));
+                    WebClient.Headers.Clear();
+                    WebClient.Headers.Add(System.Net.HttpRequestHeader.Referer, SiteRefererHeader);
+                    Stream tmpImage = new MemoryStream(WebClient.DownloadData(FileLocation));
                     tmpImage.Position = 0;
                     _Cover.CoverStream = new MemoryStream();
                     tmpImage.CopyTo(_Cover.CoverStream);
@@ -303,6 +314,8 @@ namespace MangaReader
             String _IdString;
             using (WebClient WebClient = new WebClient())
             {
+                WebClient.Headers.Clear();
+                WebClient.Headers.Add(System.Net.HttpRequestHeader.Referer, SiteRefererHeader);
                 WebClient.Encoding = Encoding.UTF8;
                 _IdString = WebClient.DownloadString(String.Format("{0}/1", MangaRoot));
             }
@@ -317,6 +330,8 @@ namespace MangaReader
             using (WebClient WebClient = new WebClient())
             {
                 OnProgressChanged(1);
+                WebClient.Headers.Clear();
+                WebClient.Headers.Add(System.Net.HttpRequestHeader.Referer, SiteRefererHeader);
                 WebClient.Encoding = Encoding.UTF8;
                 String _url = String.Format("http://www.mangareader.net/actions/selector/?id={0}&which=0", ID),
                     _ChapterContent = "{\"data\":" + WebClient.DownloadString(_url) + "}";

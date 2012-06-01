@@ -62,11 +62,14 @@
             </TabItem>
             <TabItem Header="Options">
                 <TabControl TabStripPlacement="Left" Background="Black">
+                    <TabItem Header="About">
+                        <ContentControl Margin="{StaticResource ResourceKey=TabItemMargin}" Content="{Binding Path=AboutViewModel}"/>
+                    </TabItem>
                     <TabItem Header="Settings">
                         <ContentControl Margin="{StaticResource ResourceKey=TabItemMargin}" Content="{Binding Path=SettingsViewModel}"/>
                     </TabItem>
-                    <TabItem Header="About">
-                        <ContentControl Margin="{StaticResource ResourceKey=TabItemMargin}" Content="{Binding Path=AboutViewModel}"/>
+                    <TabItem Header="License">
+                        <ContentControl Margin="{StaticResource ResourceKey=TabItemMargin}" Content="{Binding Path=LicenseViewModel}"/>
                     </TabItem>
                 </TabControl>
             </TabItem>

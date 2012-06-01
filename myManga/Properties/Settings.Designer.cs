@@ -73,7 +73,7 @@ namespace myManga.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
         public bool AutoDownload {
             get {
                 return ((bool)(this["AutoDownload"]));
@@ -85,13 +85,25 @@ namespace myManga.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
         public bool AutoClean {
             get {
                 return ((bool)(this["AutoClean"]));
             }
             set {
                 this["AutoClean"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Ascending")]
+        public global::myManga.Base.ChapterOrder ChapterListOrder {
+            get {
+                return ((global::myManga.Base.ChapterOrder)(this["ChapterListOrder"]));
+            }
+            set {
+                this["ChapterListOrder"] = value;
             }
         }
     }

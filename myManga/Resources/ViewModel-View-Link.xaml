@@ -27,4 +27,8 @@
     <DataTemplate DataType="{x:Type ViewModel:SettingsViewModel}">
         <View:SettingsView/>
     </DataTemplate>
+
+    <DataTemplate DataType="{x:Type ViewModel:LicenseViewModel}">
+        <View:LicenseView/>
+    </DataTemplate>
 </ResourceDictionary>

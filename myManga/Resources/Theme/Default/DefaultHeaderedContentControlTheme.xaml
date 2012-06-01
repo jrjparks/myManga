@@ -23,8 +23,8 @@
                                     Text="{TemplateBinding Header}"/>
                             </Border>
                             <ContentPresenter
-                                Margin="2"
                                 Grid.Row="1"
+                                Margin="{TemplateBinding Padding}"
                                 Content="{TemplateBinding Content}"/>
                         </Grid>
                     </Border>

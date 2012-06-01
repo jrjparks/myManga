@@ -15,10 +15,13 @@
       <Value Profile="(Default)">True</Value>
     </Setting>
     <Setting Name="AutoDownload" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
+      <Value Profile="(Default)">True</Value>
     </Setting>
     <Setting Name="AutoClean" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="ChapterListOrder" Type="myManga.Base.ChapterOrder" Scope="User">
+      <Value Profile="(Default)">Ascending</Value>
     </Setting>
   </Settings>
 </SettingsFile>

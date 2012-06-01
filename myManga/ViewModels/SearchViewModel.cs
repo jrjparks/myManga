@@ -10,6 +10,8 @@ using System.Windows;
 using Manga.Manager;
 using System.ComponentModel;
 using myManga.UI;
+using Manga.Info;
+using System.Threading;
 
 namespace myManga.ViewModels
 {
@@ -22,6 +24,28 @@ namespace myManga.ViewModels
             get { return _SearchCollection; }
             set { _SearchCollection = value; OnPropertyChanged("SearchCollection"); }
         }
+        private delegate void UpdateSearchCollectionDelegate(SearchInfoCollection value);
+        private void UpdateSearchCollection(SearchInfoCollection value)
+        {
+            if (Application.Current.Dispatcher.Thread == Thread.CurrentThread)
+                SearchCollection = value;
+            else
+                Application.Current.Dispatcher.Invoke(new UpdateSearchCollectionDelegate(UpdateSearchCollection), value);
+        }
+
+        private SearchInfo _SearchInf;
+        public SearchInfo SearchInf
+        {
+            get { return _SearchInf; }
+            set
+            {
+                _SearchInf = value;
+                DetailsInfo = null;
+                DetailsOpen = DetailsOpen;
+                DetailsEnabled = (value != null);
+                OnPropertyChanged("SearchInf");
+            }
+        }
 
         private IMangaPlugin _Plugin;
         public IMangaPlugin Plugin
@@ -30,6 +54,7 @@ namespace myManga.ViewModels
             set { _Plugin = value; OnPropertyChanged("Plugin"); }
         }
 
+        #region Progress
         private Double _Progress;
         public Double Progress
         {
@@ -53,14 +78,74 @@ namespace myManga.ViewModels
                 OnPropertyChanged("ProgressVisibility");
             }
         }
+        private delegate void UpdateProgressDelegate(Double value);
+        private void UpdateProgress(Double value)
+        {
+            if (Application.Current.Dispatcher.Thread == Thread.CurrentThread)
+                Progress = value;
+            else
+                Application.Current.Dispatcher.Invoke(new UpdateProgressDelegate(UpdateProgress), value);
+        }
+        #endregion
 
-        private QueuedBackgroundWorker<String> _SearchQueueWorker;
-        private QueuedBackgroundWorker<String> SearchQueueWorker
+        #region Details
+        private Boolean _DetailsOpen;
+        public Boolean DetailsOpen
+        {
+            get { return _DetailsOpen; }
+            set
+            {
+                _DetailsOpen = value;
+                if (value)
+                    if (_Plugin != null && SearchInf != null)
+                        Details(SearchInf.InformationLocation);
+                OnPropertyChanged("DetailsOpen");
+            }
+        }
+
+        private Boolean _DetailsEnabled;
+        public Boolean DetailsEnabled
+        {
+            get { return _DetailsEnabled; }
+            set
+            {
+                _DetailsEnabled = value;
+                if (!value)
+                {
+                    DetailsOpen = false;
+                    DetailsInfo = null;
+                }
+                OnPropertyChanged("DetailsEnabled");
+            }
+        }
+
+        private MangaInfo _DetailsInfo;
+        public MangaInfo DetailsInfo
+        {
+            get { return _DetailsInfo; }
+            set
+            {
+                _DetailsInfo = value;
+                OnPropertyChanged("DetailsInfo");
+            }
+        }
+        private delegate void UpdateDetailsInfoDelegate(MangaInfo value);
+        private void UpdateDetailsInfo(MangaInfo value)
+        {
+            if (Application.Current.Dispatcher.Thread == Thread.CurrentThread)
+                DetailsInfo = value;
+            else
+                Application.Current.Dispatcher.Invoke(new UpdateDetailsInfoDelegate(UpdateDetailsInfo), value);
+        }
+        #endregion
+
+        private QueuedBackgroundWorker<WorkerTask> _SearchQueueWorker;
+        private QueuedBackgroundWorker<WorkerTask> SearchQueueWorker
         {
             get
             {
                 if (_SearchQueueWorker == null)
-                    _SearchQueueWorker = new QueuedBackgroundWorker<String>();
+                    _SearchQueueWorker = new QueuedBackgroundWorker<WorkerTask>();
                 return _SearchQueueWorker;
             }
         }
@@ -107,8 +192,7 @@ namespace myManga.ViewModels
             SearchQueueWorker.WorkerReportsProgress = true;
             SearchQueueWorker.DoWork += SearchQueueWorker_DoWork;
             SearchQueueWorker.RunWorkerCompleted += SearchQueueWorker_RunWorkerCompleted;
-            SearchQueueWorker.ProgressChanged += (s, e) =>
-                { Progress = (UInt32)e.ProgressPercentage; };
+            SearchQueueWorker.ProgressChanged += (s, e) => UpdateProgress(e.ProgressPercentage);
         }
         #endregion
 
@@ -123,24 +207,44 @@ namespace myManga.ViewModels
         #region SearchQueueWorker
         private void SearchQueueWorker_DoWork(Object s, DoWorkEventArgs e)
         {
-            QueuedTask<String> Task = e.Argument as QueuedTask<String>;
+            QueuedTask<WorkerTask> Task = e.Argument as QueuedTask<WorkerTask>;
             if (_Plugin != null)
             {
-                if (_Plugin.SupportedMethods.Has(SupportedMethods.Search))
-                {
-                    _Plugin.ProgressChanged += _Plugin_ProgressChanged;
-                    e.Result = Plugin.Search(Task.Data, 50);
-                    _Plugin.ProgressChanged -= _Plugin_ProgressChanged;
-                }
-                else
-                    e.Result = "Search is not supported by this site.";
+                if (Task.Data.Work != String.Empty && Task.Data.Work.Length >= 2)
+                    switch (Task.Data.wType)
+                    {
+                        default:
+                        case WorkerTask.WorkType.Search:
+                            if (_Plugin.SupportedMethods.Has(SupportedMethods.Search))
+                            {
+                                _Plugin.ProgressChanged += _Plugin_ProgressChanged;
+                                e.Result = Plugin.Search(Task.Data.Work, 50);
+                                _Plugin.ProgressChanged -= _Plugin_ProgressChanged;
+                            }
+                            else
+                                e.Result = "Search is not supported by this site.";
+                            break;
+
+                        case WorkerTask.WorkType.Details:
+                            if (_Plugin.SupportedMethods.Has(SupportedMethods.MangaInfo))
+                            {
+                                _Plugin.ProgressChanged += _Plugin_ProgressChanged;
+                                e.Result = Plugin.LoadMangaInformation(Task.Data.Work);
+                                _Plugin.ProgressChanged -= _Plugin_ProgressChanged;
+                            }
+                            else
+                                e.Result = "MangaInfo is not supported by this site.\nDO NOT USE IT!";
+                            break;
+                    }
             }
         }
         private void SearchQueueWorker_RunWorkerCompleted(Object s, RunWorkerCompletedEventArgs e)
         {
-            Progress = 0;
+            UpdateProgress(0);
             if (e.Result is SearchInfoCollection)
-                SearchCollection = e.Result as SearchInfoCollection;
+                UpdateSearchCollection(e.Result as SearchInfoCollection);
+            else if (e.Result is MangaInfo)
+                UpdateDetailsInfo(e.Result as MangaInfo);
             else if (e.Result is String)
                 SendViewModelToastNotification(this, e.Result as String, UI.ToastNotification.DisplayLength.Normal);
         }
@@ -150,7 +254,12 @@ namespace myManga.ViewModels
         private void Search(String SearchText)
         {
             if (Plugin != null)
-                SearchQueueWorker.AddToQueue(SearchText);
+                SearchQueueWorker.AddToQueue(new WorkerTask(SearchText, WorkerTask.WorkType.Search));
+        }
+        private void Details(String DetailsURL)
+        {
+            if (Plugin != null)
+                SearchQueueWorker.AddToQueue(new WorkerTask(DetailsURL, WorkerTask.WorkType.Details));
         }
 
         private void _Plugin_ProgressChanged(object Sender, int Progress, object Data)
@@ -163,5 +272,18 @@ namespace myManga.ViewModels
         #region Public
         #endregion
         #endregion
+
+        private class WorkerTask
+        {
+            public enum WorkType { Search, Details }
+            public WorkType wType { get; set; }
+            public String Work { get; set; }
+
+            public WorkerTask()
+                : this(String.Empty, WorkType.Search)
+            { }
+            public WorkerTask(String Work, WorkType wType)
+            { this.Work = Work; this.wType = wType; }
+        }
     }
 }

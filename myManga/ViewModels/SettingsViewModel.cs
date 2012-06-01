@@ -45,6 +45,18 @@ namespace myManga.ViewModels
                 Settings.Default.Save();
             }
         }
+
+        public Base.ChapterOrder ChapterListOrder
+        {
+            get { return Settings.Default.ChapterListOrder; }
+            set
+            {
+                OnPropertyChanging("ChapterListOrder");
+                Settings.Default.ChapterListOrder = value;
+                OnPropertyChanged("ChapterListOrder");
+                Settings.Default.Save();
+            }
+        }
         #endregion
 
         #region Reader

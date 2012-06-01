@@ -40,23 +40,11 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="BakaBox, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\CoreDLLs\BakaBox.dll</HintPath>
-    </Reference>
-    <Reference Include="CoreMangaClasses, Version=1.0.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\CoreDLLs\CoreMangaClasses.dll</HintPath>
-    </Reference>
     <Reference Include="fastJSON">
       <HintPath>..\..\CoreDLLs\fastJSON.dll</HintPath>
     </Reference>
     <Reference Include="HtmlAgilityPack">
       <HintPath>..\..\CoreDLLs\HtmlAgilityPack.dll</HintPath>
-    </Reference>
-    <Reference Include="Manga, Version=1.0.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\CoreDLLs\Manga.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -120,6 +108,20 @@
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <AppDesigner Include="Properties\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\BakaBox\BakaBox.csproj">
+      <Project>{CAD747BF-8D53-4115-957C-CC07B036466C}</Project>
+      <Name>BakaBox</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\CoreDLLs\CoreMangaClasses\CoreMangaClasses.csproj">
+      <Project>{6E2916BF-2F3F-4DD5-BD7F-981F754BC531}</Project>
+      <Name>CoreMangaClasses</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\CoreDLLs\Manga\Manga.csproj">
+      <Project>{AB7D1FEA-51D1-41E7-8D2E-01D61B03E95A}</Project>
+      <Name>Manga</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -35,10 +35,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="CoreMangaClasses, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>DLLs\CoreMangaClasses.dll</HintPath>
-    </Reference>
     <Reference Include="HtmlAgilityPack, Version=1.4.0.0, Culture=neutral, PublicKeyToken=bd319b19eaf3b43a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>DLLs\HtmlAgilityPack.dll</HintPath>
@@ -56,12 +52,21 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="DLLs\BakaBox.dll" />
-    <Content Include="DLLs\CoreMangaClasses.dll" />
     <Content Include="DLLs\HtmlAgilityPack.dll" />
     <Content Include="DLLs\Ionic.Zip.dll" />
-    <Content Include="DLLs\Manga.dll" />
     <Content Include="ReadMe.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\BakaBox\BakaBox.csproj">
+      <Project>{CAD747BF-8D53-4115-957C-CC07B036466C}</Project>
+      <Name>BakaBox</Name>
+      <Private>False</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\CoreDLLs\CoreMangaClasses\CoreMangaClasses.csproj">
+      <Project>{6E2916BF-2F3F-4DD5-BD7F-981F754BC531}</Project>
+      <Name>CoreMangaClasses</Name>
+      <Private>False</Private>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

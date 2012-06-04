@@ -157,7 +157,7 @@ namespace myManga.ViewModels
             {
                 String _FileName = String.Format("{0}.mza", FileName),
                         MainPath = MangaDataZip.Instance.MZAPath,
-                        TmpPath = Manga.Archive.MangaArchiveData.TmpFolder;
+                        TmpPath = ZipNamingExtensions.TempSaveLocation;
                 List<String> _PosibleFiles = new List<String>();
                 if (Directory.Exists(MainPath))
                     _PosibleFiles.AddRange(Directory.GetFiles(MainPath, _FileName, SearchOption.AllDirectories));
@@ -325,11 +325,9 @@ namespace myManga.ViewModels
             using (System.Windows.Forms.OpenFileDialog ofd = new System.Windows.Forms.OpenFileDialog())
             {
                 ofd.Filter = "Manga Archives|*.mza";
-                ofd.InitialDirectory = Manga.Archive.MangaArchiveData.TmpFolder;
+                ofd.InitialDirectory = ZipNamingExtensions.TempSaveLocation;
                 if (ofd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-                {
                     OpenMZA(ofd.FileName, ReadingViewModel.OpenPage.First);
-                }
             }
         }
 

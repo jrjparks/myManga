@@ -10,6 +10,7 @@ namespace Manga
     [DebuggerStepThrough]
     public static class NamingExtensions
     {
+        #region MangaDate
         public static String MangaDataName(this MangaData Data)
         { return Data.MangaDataName(true); }
         public static String MangaDataName(this MangaData Data, Boolean WithExtention)
@@ -29,7 +30,9 @@ namespace Manga
             }
             return String.Format("{0}{1}", FileName, WithExtention ? Extention : String.Empty).SafeFileName();
         }
-        
+        #endregion
+
+        #region ChapterEntry
         public static String ChapterName(this ChapterEntry ChapterEntry, MangaData Data)
         { return ChapterEntry.ChapterName(Data, true); }
         public static String ChapterName(this ChapterEntry ChapterEntry, String MangaName)
@@ -47,5 +50,6 @@ namespace Manga
                 FileName += String.Format(".{0}", ChapterEntry.SubChapter);
             return String.Format("{0}{1}", FileName, WithExtention ? Extention : String.Empty).SafeFileName();
         }
+        #endregion
     }
 }

@@ -5,7 +5,8 @@
              Background="Black"
              Foreground="White"
              FontFamily="Segoe UI"
-             Padding="3">
+             Padding="3"
+             TextElement.Foreground="White">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition/>
@@ -26,8 +27,12 @@
             <TextBlock Text="{Binding Path=AssemblyCopyright}" FontSize="14"/>
             <HeaderedContentControl Header="Icon Sources" Margin="3,5">
                 <StackPanel>
-                    <TextBlock Text="www.iconsforwindows8.com" Margin="5,2"/>
-                    <TextBlock Text="metro.windowswiki.info" Margin="5,2"/>
+                    <TextBlock Margin="5,2">
+                        <Hyperlink Foreground="White" FontWeight="Bold" NavigateUri="http://www.iconsforwindows8.com/" RequestNavigate="Hyperlink_RequestNavigate">iconsforwindows8</Hyperlink>
+                    </TextBlock>
+                    <TextBlock Margin="5,2">
+                        <Hyperlink Foreground="White" FontWeight="Bold" NavigateUri="http://metro.windowswiki.info/" RequestNavigate="Hyperlink_RequestNavigate">metro.windowswiki.info</Hyperlink>
+                    </TextBlock>
                 </StackPanel>
             </HeaderedContentControl>
         </StackPanel>
@@ -42,12 +47,17 @@
             <HeaderedContentControl Grid.Column="1" Header="About Author" Padding="4">
                 <ScrollViewer HorizontalScrollBarVisibility="Disabled">
                     <StackPanel>
-                        <TextBlock Text="Name: John Parks"/>
+                        <TextBlock Text="Name: James Parks"/>
                         <TextBlock Padding="10,0,0,0" Text="AKA: Prob Caboose"/>
                         <TextBlock Text="Location: USA"/>
                         <TextBlock Text="Why was this application made?"/>
-                        <TextBlock Padding="10,0,0,0" Text="No other application was found that could do what I wanted."/>
-                        <TextBlock Text="More about this project at: mymanga.codeplex.com"/>
+                        <TextBlock Padding="10,0,0,0">
+                            No other application was found that could do what I wanted.
+                            More can be found <Hyperlink Foreground="White" FontWeight="Bold" NavigateUri="http://mymanga.codeplex.com/#About" RequestNavigate="Hyperlink_RequestNavigate">here</Hyperlink>.
+                        </TextBlock>
+                        <TextBlock>
+                                More about this project at: <Hyperlink Foreground="White" FontWeight="Bold" NavigateUri="http://mymanga.codeplex.com/" RequestNavigate="Hyperlink_RequestNavigate">http://mymanga.codeplex.com/</Hyperlink>
+                        </TextBlock>
                     </StackPanel>
                 </ScrollViewer>
             </HeaderedContentControl>

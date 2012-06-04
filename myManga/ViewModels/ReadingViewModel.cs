@@ -29,7 +29,7 @@ namespace myManga.ViewModels
         public MangaArchiveInfo ArchiveInfo
         {
             get { return _MangaArchiveInfo; }
-            set { _MangaArchiveInfo = value; OnPropertyChanged("ArchiveInfo"); }
+            set { _MangaArchiveInfo = value; OnPropertyChanged("ArchiveInfo"); OnPropertyChanged("ChapterName"); }
         }
 
         private Dictionary<Guid, OpenPage> _DownloadingTasks;
@@ -72,6 +72,27 @@ namespace myManga.ViewModels
             {
                 _MIZALocation = value;
                 OnPropertyChanged("MIZALocation");
+            }
+        }
+
+        public String ChapterName
+        {
+            get
+            {
+                if (ArchiveInfo != null)
+                {
+                    if (Info == null)
+                        return ArchiveInfo.MangaDataName(false);
+                    else
+                    {
+                        String ChapterName = Info.ChapterEntries.GetChapterByNumber(ArchiveInfo.Volume, ArchiveInfo.Chapter, ArchiveInfo.SubChapter).Name;
+                        if (ChapterName.Equals(String.Empty))
+                            return ArchiveInfo.MangaDataName(false);
+                        else
+                            return String.Format("{0} - {1}", ArchiveInfo.MangaDataName(false), ChapterName);
+                    }
+                }
+                return String.Empty;
             }
         }
 
@@ -396,10 +417,9 @@ namespace myManga.ViewModels
         {
             PageView.SourceStream = MangaDataZip.Instance.PageStream(Info.Page, ArchiveInfo, MZALocation);
             if (Info != null && Info.InfoPage != String.Empty)
-                MangaDataZip.Instance.UpdateMIZA(Info);
+                MangaDataZip.Instance.MIZA(Info);
             if (Settings.Default.AutoDownload && Info != null)
-                if (Info.Page > ArchiveInfo.PageEntries.Count / 2)
-                    DownloadNextChapter();
+                DownloadNextChapter();
         }
 
         private void DownloadNextChapter()

@@ -5,13 +5,16 @@
     xmlns:manager="clr-namespace:Manga.Manager;assembly=Manga"
     Background="Black" Foreground="White" TextElement.Foreground="White">
     <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" MinHeight="21"/>
             <RowDefinition/>
-            <RowDefinition Height="Auto" MinHeight="21"/>
         </Grid.RowDefinitions>
         <ListBox 
-            Grid.Row="1"
+            Grid.Row="1" Grid.Column="1"
             ItemsSource="{Binding Path=SearchCollection, IsAsync=True}"
             SelectedItem="{Binding Path=SearchInf, IsAsync=True}"
             Background="Transparent"
@@ -83,60 +86,30 @@
                 </Style>
             </ListBox.Resources>
         </ListBox>
-        <Border BorderBrush="White" BorderThickness="0,0,0,1">
-            <Grid Margin="0,0,0,8">
+        <Expander 
+            Grid.Row="1" 
+            Background="#252525"
+            Foreground="White" 
+            FontSize="17" 
+            x:Name="DetailsExpander" 
+            IsEnabled="{Binding DetailsEnabled}" 
+            IsExpanded="{Binding DetailsOpen}" 
+            ExpandDirection="Right">
+            <Expander.Header>
+                <TextBlock Margin="1,5"  Text="{Binding Path=SearchInf.Title, StringFormat=Details - {0}, FallbackValue=Details - Unknown}">
+                    <TextBlock.LayoutTransform>
+                        <RotateTransform Angle="270"/>
+                    </TextBlock.LayoutTransform>
+                </TextBlock>
+            </Expander.Header>
+            <Grid DataContext="{Binding Path=DetailsInfo, IsAsync=True}" TextElement.FontSize="12">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition/>
+                    <ColumnDefinition />
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
-                <ComboBox
-                    Margin="3,1,0,1"
-                    ItemsSource="{Binding Source={x:Static manager:Global_IMangaPluginCollection.Instance}, Path=Plugins}"
-                    SelectedItem="{Binding Path=Plugin}"
-                    DisplayMemberPath="SiteName"/>
-                <TextBox 
-                    x:Name="SearchText"
-                    Grid.Column="1"
-                    Background="#00000000"
-                    Foreground="White"
-                    FontSize="16"
-                    BorderThickness="0"
-                    VerticalAlignment="Center">
-                    <TextBox.InputBindings>
-                        <KeyBinding 
-                            Key="Enter" 
-                            Command="{Binding Path=SearchMangaText}"
-                            CommandParameter="{Binding ElementName=SearchText, Path=Text}"/>
-                    </TextBox.InputBindings>
-                </TextBox>
-                <Button 
-                    Grid.Column="2" 
-                    Margin="2" 
-                    Command="{Binding Path=SearchMangaText}"
-                    CommandParameter="{Binding ElementName=SearchText, Path=Text}">
-                    <StackPanel Orientation="Horizontal">
-                        <Image Width="21" Margin="-3"
-                        Source="/myManga;component/Resources/Images/Metro/Black/No%20Circle/Find.png"/>
-                        <TextBlock Padding="2,0,0,0" Text="Search" VerticalAlignment="Center"/>
-                    </StackPanel>
-                </Button>
-                <ProgressBar
-                    Grid.ColumnSpan="3"
-                    Grid.ZIndex="99"
-                    Value="{Binding Path=Progress, Mode=OneWay, FallbackValue=50}"
-                    VerticalAlignment="Bottom"
-                    IsHitTestVisible="False"
-                    Visibility="{Binding Path=ProgressVisibility}"
-                    Margin="0,0,0,-17"/>
-            </Grid>
-        </Border>
-        <Expander Grid.Row="2" Header="{Binding Path=SearchInf.Title, StringFormat=Details - {0}, FallbackValue=Details - Unknown}" Foreground="White" FontSize="17" x:Name="DetailsExpander" IsEnabled="{Binding DetailsEnabled}" IsExpanded="{Binding DetailsOpen}">
-            <Grid DataContext="{Binding Path=DetailsInfo, IsAsync=True}" TextElement.FontSize="12">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
-                    <RowDefinition Height="150"/>
-                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
                 <StackPanel>
                     <TextBlock Margin="3,1" TextWrapping="Wrap">
@@ -188,7 +161,7 @@
                                                                 </MultiBinding>
                                                             </TextBlock.Text>
                                                     </TextBlock>
-                                                    <TextBlock x:Name="TitleName" Padding="10,0,0,0" FontSize="16" Text="{Binding Path=Name}"/>
+                                                    <TextBlock x:Name="TitleName" Padding="10,0,0,0" FontSize="16" Text="{Binding Path=Name, FallbackValue=Un-Named}"/>
                                                 </StackPanel>
                                             </Grid>
                                         </Border>
@@ -203,9 +176,6 @@
                                             <Trigger Property="IsMouseOver" Value="True">
                                                 <Setter TargetName="_Item" Property="Background" Value="#999"/>
                                             </Trigger>
-                                            <DataTrigger Binding="{Binding Path=Name}" Value="">
-                                                <Setter TargetName="TitleName" Property="Visibility" Value="Collapsed"/>
-                                            </DataTrigger>
                                         </ControlTemplate.Triggers>
                                     </ControlTemplate>
                                 </Setter.Value>
@@ -213,8 +183,63 @@
                         </Style>
                     </ListBox.Resources>
                 </ListBox>
-                <ToggleButton Grid.Row="2" IsChecked="{Binding ElementName=DetailsExpander, Path=IsExpanded, Mode=TwoWay, IsAsync=True}" Height="17"/>
+                <ToggleButton Grid.RowSpan="2" IsChecked="{Binding ElementName=DetailsExpander, Path=IsExpanded, Mode=TwoWay, IsAsync=True}" Width="17" Grid.Column="1">
+                    <ToggleButton.Background>
+                        <LinearGradientBrush EndPoint="1,0.5" StartPoint="0,0.5">
+                            <GradientStop Color="#111" Offset="1" />
+                            <GradientStop Color="#252525" Offset="0.5" />
+                        </LinearGradientBrush>
+                    </ToggleButton.Background>
+                </ToggleButton>
             </Grid>
         </Expander>
+        <Border BorderBrush="White" BorderThickness="0,0,0,1" Grid.ColumnSpan="2">
+            <Grid Margin="0,0,0,8">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <ComboBox
+                    Margin="3,1,0,1"
+                    ItemsSource="{Binding Source={x:Static manager:Global_IMangaPluginCollection.Instance}, Path=Plugins}"
+                    SelectedItem="{Binding Path=Plugin}"
+                    DisplayMemberPath="SiteName"/>
+                <TextBox 
+                    x:Name="SearchText"
+                    Grid.Column="1"
+                    Background="#00000000"
+                    Foreground="White"
+                    FontSize="16"
+                    BorderThickness="0"
+                    VerticalAlignment="Center">
+                    <TextBox.InputBindings>
+                        <KeyBinding 
+                            Key="Enter" 
+                            Command="{Binding Path=SearchMangaText}"
+                            CommandParameter="{Binding ElementName=SearchText, Path=Text}"/>
+                    </TextBox.InputBindings>
+                </TextBox>
+                <Button 
+                    Grid.Column="2" 
+                    Margin="2" 
+                    Command="{Binding Path=SearchMangaText}"
+                    CommandParameter="{Binding ElementName=SearchText, Path=Text}">
+                    <StackPanel Orientation="Horizontal">
+                        <Image Width="21" Margin="-3"
+                        Source="/myManga;component/Resources/Images/Metro/Black/No%20Circle/Find.png"/>
+                        <TextBlock Padding="2,0,0,0" Text="Search" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
+                <ProgressBar
+                    Grid.ColumnSpan="3"
+                    Grid.ZIndex="99"
+                    Value="{Binding Path=Progress, Mode=OneWay, FallbackValue=50}"
+                    VerticalAlignment="Bottom"
+                    IsHitTestVisible="False"
+                    Visibility="{Binding Path=ProgressVisibility}"
+                    Margin="0,0,0,-17"/>
+            </Grid>
+        </Border>
     </Grid>
 </UserControl>

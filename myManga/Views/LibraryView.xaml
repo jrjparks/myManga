@@ -64,6 +64,7 @@
                         HorizontalContentAlignment="Stretch"
                         BorderThickness="0"
                         AlternationCount="2"
+                        VirtualizingStackPanel.VirtualizationMode="Recycling"
                         ScrollViewer.HorizontalScrollBarVisibility="Disabled">
                         <ListBox.Resources>
                             <Style TargetType="{x:Type ListBoxItem}">
@@ -86,7 +87,7 @@
                                                                 </MultiBinding>
                                                             </TextBlock.Text>
                                                         </TextBlock>
-                                                        <TextBlock x:Name="TitleName" Padding="10,0,0,0" FontSize="18" Text="{Binding Path=Name}"/>
+                                                        <TextBlock x:Name="TitleName" Padding="10,0,0,0" FontSize="18" Text="{Binding Path=Name, FallbackValue=Un-Named}"/>
                                                     </StackPanel>
                                                     <Button 
                                                     Grid.Column="1"
@@ -112,9 +113,6 @@
                                                 <Trigger Property="IsMouseOver" Value="True">
                                                     <Setter TargetName="_Item" Property="Background" Value="#999"/>
                                                 </Trigger>
-                                                <DataTrigger Binding="{Binding Path=Name}" Value="">
-                                                    <Setter TargetName="TitleName" Property="Visibility" Value="Collapsed"/>
-                                                </DataTrigger>
                                             </ControlTemplate.Triggers>
                                         </ControlTemplate>
                                     </Setter.Value>

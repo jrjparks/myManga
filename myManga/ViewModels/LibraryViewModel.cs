@@ -25,6 +25,22 @@ namespace myManga.ViewModels
 {
     public sealed class LibraryViewModel : ViewModelBase
     {
+        #region Classes
+        private class LibraryDataClass
+        {
+            public MangaInfo MangaInfo { get; set; }
+            public String DataPath { get; set; }
+
+            public LibraryDataClass()
+                : this(null, String.Empty) { }
+            public LibraryDataClass(MangaInfo MangaInfo, String DataPath)
+            {
+                this.MangaInfo = MangaInfo;
+                this.DataPath = DataPath;
+            }
+        }
+        #endregion
+
         #region Events
         public delegate void OpenChapterFileEvent(String File, Boolean Resume);
         public event OpenChapterFileEvent OpenChapter;
@@ -166,7 +182,7 @@ namespace myManga.ViewModels
             LibraryItemLoader.RunWorkerCompleted += _LibraryItemLoader_RunWorkerCompleted;
             LibraryItemLoader.QueueComplete += LibraryItemLoader_QueueComplete;
 
-            MangaDataZip.Instance.MangaInfoUpdated += (s, m, p) => LoadLibraryData(p);
+            MangaDataZip.Instance.MangaInfoUpdated += UpdateLibraryMangaInfo;
             Manager_v1.Instance.TaskProgress += UpdateTaskData;
             Manager_v1.Instance.TaskComplete += UpdateTaskData;
 
@@ -175,7 +191,7 @@ namespace myManga.ViewModels
             Settings.Default.PropertyChanged += Default_PropertyChanged;
         }
 
-        void Default_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        private void Default_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName.Equals("ChapterListOrder"))
                 OnPropertyChanged("CurrentInfo");
@@ -261,6 +277,8 @@ namespace myManga.ViewModels
                                 break;
                             case System.Threading.Tasks.TaskStatus.RanToCompletion:
                                 Item.Progress = 0;
+                                if (Item.ChapterStatus)
+                                    SendViewModelToastNotification(this, String.Format("{0} has more chapters to read.", Item.MangaData.Name), UI.ToastNotification.DisplayLength.Normal);
                                 break;
                         }
             }
@@ -283,17 +301,18 @@ namespace myManga.ViewModels
             return _Found ? _Index : -1;
         }
 
+        #region Chapter Request
         private void RequestOpenChapter(ChapterEntry ChapterEntry)
-        { RequestOpenChapter(ChapterEntry, CurrentInfo, false, false); }
+        { ChapterWorkerData(ChapterEntry, CurrentInfo, false, false); }
         private void RequestResumeChapter(MangaInfo Info)
-        { RequestOpenChapter(Info.LastReadChapterEntry, Info, true, false); }
+        { ChapterWorkerData(Info.LastReadChapterEntry, Info, true, false); }
         private void DownloadOpenChapter(ChapterEntry ChapterEntry)
-        { RequestOpenChapter(ChapterEntry, CurrentInfo, false, true); }
-        private void RequestOpenChapter(ChapterEntry ChapterEntry, MangaInfo Info, Boolean Resume, Boolean Download)
+        { ChapterWorkerData(ChapterEntry, CurrentInfo, false, true); }
+        private void ChapterWorkerData(ChapterEntry ChapterEntry, MangaInfo Info, Boolean Resume, Boolean Download)
         {
             String _FileName = ChapterEntry.ChapterName(Info),
-                        MainPath = MangaDataZip.Instance.MZAPath,
-                        TmpPath = Manga.Archive.MangaArchiveData.TmpFolder;
+                           MainPath = MangaDataZip.Instance.MZAPath,
+                           TmpPath = ZipNamingExtensions.TempSaveLocation;
 
             List<String> _PosibleFiles = new List<String>();
             if (Directory.Exists(MainPath))
@@ -302,13 +321,17 @@ namespace myManga.ViewModels
                 _PosibleFiles.AddRange(Directory.GetFiles(TmpPath, _FileName, SearchOption.AllDirectories));
 
             if (_PosibleFiles.Count > 0 && !Download)
+            {
+                DetailsOpen = false;
                 OnOpenChapter(_PosibleFiles[0], Resume);
+            }
             else
             {
                 SendViewModelToastNotification(this, String.Format("Downloading...\n{0}", ChapterEntry.ChapterName(Info, false), ToastNotification.DisplayLength.Short));
-                Manager_v1.Instance.DownloadChapter(ChapterEntry.UrlLink);
+                Manager_v1.Instance.DownloadChapter(ChapterEntry);
             }
         }
+        #endregion
 
         private void Resume_Manga(LibraryItemModel LIM)
         {
@@ -321,16 +344,17 @@ namespace myManga.ViewModels
             }
         }
 
-        void _LibraryItemLoader_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
+        #region Library Loading
+        private void _LibraryItemLoader_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
         {
             QueuedTask<String> _Data = e.Argument as QueuedTask<String>;
             if (File.Exists(_Data.Data))
-                e.Result = new LibraryDataClass() { MangaInfo = MangaDataZip.Instance.MangaInfo(_Data.Data), DataPath = _Data.Data };
+                e.Result = new LibraryDataClass(MangaDataZip.Instance.MangaInfo(_Data.Data), _Data.Data);
             else
                 e.Result = String.Format("File does not exist.\n{0}", _Data.Data);
         }
 
-        void _LibraryItemLoader_RunWorkerCompleted(object sender, System.ComponentModel.RunWorkerCompletedEventArgs e)
+        private void _LibraryItemLoader_RunWorkerCompleted(object sender, System.ComponentModel.RunWorkerCompletedEventArgs e)
         {
             if (e.Result is String)
                 SendViewModelToastNotification(this, e.Result as String);
@@ -367,7 +391,7 @@ namespace myManga.ViewModels
             }
         }
 
-        void LibraryItemLoader_QueueComplete(object Sender)
+        private void LibraryItemLoader_QueueComplete(object Sender)
         {
             while (NewChapters.Count > 0)
             {
@@ -380,6 +404,7 @@ namespace myManga.ViewModels
             }
             EnableHasInit();
         }
+        #endregion
 
         private void EnableHasInit()
         {
@@ -453,11 +478,5 @@ namespace myManga.ViewModels
             }
         }
         #endregion
-    }
-
-    internal class LibraryDataClass
-    {
-        public MangaInfo MangaInfo { get; set; }
-        public String DataPath { get; set; }
     }
 }

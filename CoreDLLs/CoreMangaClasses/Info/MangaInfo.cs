@@ -118,16 +118,6 @@ namespace Manga.Info
 
         #region Ignores
         [XmlIgnore]
-        public String MISaveName
-        {
-            get { return (base.MemberwiseClone() as MangaInfo).MangaDataName(); }
-        }
-        [XmlIgnore]
-        public String LastReadMZA
-        {
-            get { return (base.MemberwiseClone() as MangaArchiveInfo).MangaDataName(); }
-        }
-        [XmlIgnore]
         public ChapterEntry LastReadChapterEntry
         {
             get { return ChapterEntries.GetChapterByNumber(Volume, Chapter, SubChapter); }

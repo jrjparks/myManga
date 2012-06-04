@@ -27,6 +27,12 @@ namespace MangaPlugin
         {
             get { throw new NotImplementedException(); }
         }
+
+        // The Referer Headder to tell the site where we are coming from. Usualy the site itself.
+        public string SiteRefererHeader
+        {
+            get { throw new NotImplementedException(); }
+        }
         #endregion
 
         #region IMangaPlugin Methods

@@ -174,7 +174,7 @@
     </Style>
 
     <!-- SimpleStyles: ScrollViewer -->
-    <Style TargetType="{x:Type ScrollViewer}">
+    <!--<Style TargetType="{x:Type ScrollViewer}">
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type ScrollViewer}">
@@ -274,7 +274,7 @@
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
-    </Style>
+    </Style>-->
     <Style TargetType="{x:Type ScrollViewer}" x:Key="MetroScrollViewer">
         <Setter Property="Template">
             <Setter.Value>

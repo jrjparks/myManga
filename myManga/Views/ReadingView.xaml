@@ -54,7 +54,7 @@
                 Maximum="2" 
                 LargeChange="0.1" 
                 SmallChange="0.05" 
-                Focusable="False" />
+                Focusable="False" MouseDown="Slider_MouseDown" />
             <Border
                 Grid.Column="2">
                 <Border.Background>
@@ -101,7 +101,7 @@
                 VerticalAlignment="Top"
                 Foreground="GhostWhite"
                 Padding="0,5"
-                Text="{Binding Path=ArchiveInfo.MAISaveName, FallbackValue=No\ File}"/>
+                Text="{Binding Path=ChapterName, FallbackValue=No\ File}"/>
             <Border
                 Grid.Column="0">
                 <Border.Background>

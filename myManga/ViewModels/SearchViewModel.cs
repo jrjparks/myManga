@@ -12,6 +12,7 @@ using System.ComponentModel;
 using myManga.UI;
 using Manga.Info;
 using System.Threading;
+using myManga.Properties;
 
 namespace myManga.ViewModels
 {
@@ -183,6 +184,7 @@ namespace myManga.ViewModels
         #region Constructor
         public SearchViewModel()
         {
+            Progress = 0;
             GIMPC_PropertyChanged(null, new PropertyChangedEventArgs("Plugins"));
             _SQWEvents();
             Global_IMangaPluginCollection.Instance.PropertyChanged += GIMPC_PropertyChanged;
@@ -229,7 +231,19 @@ namespace myManga.ViewModels
                             if (_Plugin.SupportedMethods.Has(SupportedMethods.MangaInfo))
                             {
                                 _Plugin.ProgressChanged += _Plugin_ProgressChanged;
-                                e.Result = Plugin.LoadMangaInformation(Task.Data.Work);
+                                MangaInfo tmpMangaInfo = Plugin.LoadMangaInformation(Task.Data.Work);
+                                switch (Settings.Default.ChapterListOrder)
+                                {
+                                    default:
+                                    case Base.ChapterOrder.Ascending:
+                                        break;
+
+                                    case Base.ChapterOrder.Auto:
+                                    case Base.ChapterOrder.Descending:
+                                        tmpMangaInfo.ChapterEntries.Reverse();
+                                        break;
+                                }
+                                e.Result = tmpMangaInfo;
                                 _Plugin.ProgressChanged -= _Plugin_ProgressChanged;
                             }
                             else
@@ -265,7 +279,7 @@ namespace myManga.ViewModels
         private void _Plugin_ProgressChanged(object Sender, int Progress, object Data)
         {
             if (SearchQueueWorker != null)
-                SearchQueueWorker.ReportProgress(Progress, Data);
+                SearchQueueWorker.ReportProgress(1 + Progress, Data);
         }
         #endregion
 

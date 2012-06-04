@@ -11,6 +11,8 @@ using Manga.Core;
 using Manga.Info;
 using Manga.Plugin;
 using Manga.Zip;
+using System.Windows;
+using System.Threading;
 
 namespace Manga.Manager
 {
@@ -114,6 +116,22 @@ namespace Manga.Manager
                 return _Worker;
             }
         }
+        private delegate Guid AddWorkDelegate(ManagerData<String, MangaInfo> value);
+        private delegate Guid AddWorkIDDelegate(ManagerData<String, MangaInfo> value, Guid id);
+        private Guid AddWorkerTask(ManagerData<String, MangaInfo> value)
+        {
+            if (Application.Current.Dispatcher.Thread == Thread.CurrentThread)
+                return Worker.AddToQueue(value);
+            else
+                return (Guid)Application.Current.Dispatcher.Invoke(new AddWorkDelegate(AddWorkerTask), value);
+        }
+        private Guid AddWorkerTask(ManagerData<String, MangaInfo> value, Guid id)
+        {
+            if (Application.Current.Dispatcher.Thread == Thread.CurrentThread)
+                return Worker.AddToQueue(value, id);
+            else
+                return (Guid)Application.Current.Dispatcher.Invoke(new AddWorkIDDelegate(AddWorkerTask), value, id);
+        }
         #endregion
 
         #region Members
@@ -122,43 +140,43 @@ namespace Manga.Manager
         public Guid DownloadManga(String InfoPage)
         {
             ManagerData<String, MangaInfo> Data = new ManagerData<String, MangaInfo>(InfoPage, DownloadType.Manga, InfoPage);
-            return Worker.AddToQueue(Data);
+            return AddWorkerTask(Data);
         }
         public Guid DownloadManga(String InfoPage, Guid TaskID)
         {
             ManagerData<String, MangaInfo> Data = new ManagerData<String, MangaInfo>(InfoPage, DownloadType.Manga, InfoPage);
-            return Worker.AddToQueue(Data, TaskID);
+            return AddWorkerTask(Data, TaskID);
         }
         public Guid DownloadManga(MangaInfo MangaInfo)
         {
             ManagerData<String, MangaInfo> Data = new ManagerData<String, MangaInfo>(MangaInfo.Name, DownloadType.Manga, MangaInfo.InfoPage, MangaInfo);
-            return Worker.AddToQueue(Data);
+            return AddWorkerTask(Data);
         }
         public Guid DownloadManga(MangaInfo MangaInfo, Guid TaskID)
         {
             ManagerData<String, MangaInfo> Data = new ManagerData<String, MangaInfo>(MangaInfo.Name, DownloadType.Manga, MangaInfo.InfoPage, MangaInfo);
-            return Worker.AddToQueue(Data, TaskID);
+            return AddWorkerTask(Data, TaskID);
         }
 
         public Guid DownloadChapter(String ChapterPage)
         {
             ManagerData<String, MangaInfo> Data = new ManagerData<String, MangaInfo>(ChapterPage, DownloadType.Chapter, ChapterPage);
-            return Worker.AddToQueue(Data);
+            return AddWorkerTask(Data);
         }
         public Guid DownloadChapter(String ChapterPage, Guid TaskID)
         {
             ManagerData<String, MangaInfo> Data = new ManagerData<String, MangaInfo>(ChapterPage, DownloadType.Chapter, ChapterPage);
-            return Worker.AddToQueue(Data, TaskID);
+            return AddWorkerTask(Data, TaskID);
         }
         public Guid DownloadChapter(ChapterEntry ChapterEntry)
         {
-            ManagerData<String, MangaInfo> Data = new ManagerData<String, MangaInfo>(ChapterEntry.Name, DownloadType.Chapter, ChapterEntry.UrlLink);
-            return Worker.AddToQueue(Data);
+            ManagerData<String, MangaInfo> Data = new ManagerData<String, MangaInfo>(ChapterEntry.Name.Equals(String.Empty) ? ChapterEntry.UrlLink : ChapterEntry.Name, DownloadType.Chapter, ChapterEntry.UrlLink);
+            return AddWorkerTask(Data);
         }
         public Guid DownloadChapter(ChapterEntry ChapterEntry, Guid TaskID)
         {
-            ManagerData<String, MangaInfo> Data = new ManagerData<String, MangaInfo>(ChapterEntry.Name, DownloadType.Chapter, ChapterEntry.UrlLink);
-            return Worker.AddToQueue(Data, TaskID);
+            ManagerData<String, MangaInfo> Data = new ManagerData<String, MangaInfo>(ChapterEntry.Name.Equals(String.Empty) ? ChapterEntry.UrlLink : ChapterEntry.Name, DownloadType.Chapter, ChapterEntry.UrlLink);
+            return AddWorkerTask(Data, TaskID);
         }
         #endregion
 
@@ -174,10 +192,10 @@ namespace Manga.Manager
         #region Worker Members
         private void PluginReportA(Object s, Int32 p, Object d)
         {
-            Worker.ReportProgress(p / 3, d);
+            Worker.ReportProgress(1 + (p / 3), d);
             if (d is MangaArchiveInfo || d is MangaInfo)
             {
-                Worker.ActiveTask.Data.UpdateTitle((d as MangaData).MangaDataName());
+                Worker.ActiveTask.Data.UpdateTitle((d as MangaData).MangaDataName(false));
                 OnNameUpdated(Worker.ActiveTask);
             }
         }
@@ -185,156 +203,161 @@ namespace Manga.Manager
         {
             Worker.ReportProgress(33 + (p / 3), d);
         }
-        private void PluginReportC(Object s, Int32 p, MangaDataZip.FileType f, Object d)
+        private void PluginReportC(Object s, ProgressChangedEventArgs e)
         {
-            Worker.ReportProgress(66 + (p / 3), d);
+            Worker.ReportProgress(66 + (e.ProgressPercentage / 3), e.UserState);
         }
 
         void Worker_DoWork(object sender, DoWorkEventArgs e)
         {
             QueuedTask<ManagerData<String, MangaInfo>> Task = e.Argument as QueuedTask<ManagerData<String, MangaInfo>>;
-            IMangaPlugin Plugin;
-            switch (Task.Data.DownloadType)
+            try
             {
-                default: break;
+                IMangaPlugin Plugin;
+                switch (Task.Data.DownloadType)
+                {
+                    default: break;
 
-                case DownloadType.Manga:
-                    #region Manga Downloader
-                    Boolean IsUpdate = (Task.Data.Parameter != null), 
-                        IsUpdateNeeded = !IsUpdate;
+                    case DownloadType.Manga:
+                        #region Manga Downloader
+                        Boolean IsUpdate = (Task.Data.Parameter != null),
+                            IsUpdateNeeded = !IsUpdate;
 
-                    String InfoPage = Task.Data.Data;
-                    Plugin = Global_IMangaPluginCollection.Instance.Plugins.PluginToUse_SiteUrl(InfoPage);
+                        String InfoPage = Task.Data.Data;
+                        Plugin = Global_IMangaPluginCollection.Instance.Plugins.PluginToUse_SiteUrl(InfoPage);
 
-                    if (e.Cancel) throw new Exception("Canceled");
-                    Plugin.ProgressChanged += PluginReportA;
-                    MangaInfo MI = Plugin.LoadMangaInformation(InfoPage);
-                    Plugin.ProgressChanged -= PluginReportA;
-
-                    if (e.Cancel) throw new Exception("Canceled");
-                    if (IsUpdate)
-                    {
-                        MangaInfo oldMI = Task.Data.Parameter;
-                        MI.Volume = oldMI.Volume;
-                        MI.Chapter = oldMI.Chapter;
-                        MI.SubChapter = oldMI.SubChapter;
-                        MI.Page = oldMI.Page;
-                        IsUpdateNeeded = !MI.Equals(oldMI);
-                        oldMI = null;
-                    }
-
-                    if (IsUpdateNeeded)
-                    {
-                        if (e.Cancel) throw new Exception("Canceled");
-                        Plugin.ProgressChanged += PluginReportB;
-                        CoverData CD = IsUpdate ? null : Plugin.GetCoverImage(MI);
-                        Plugin.ProgressChanged -= PluginReportB;
-
-                        if (e.Cancel) throw new Exception("Canceled");
-                        MangaDataZip.Instance.ProgressChanged += PluginReportC;
-                        if (IsUpdate)
-                            Task.Data.UpdateData(MangaDataZip.Instance.UpdateMIZA(MI));
-                        else
-                            Task.Data.UpdateData(MangaDataZip.Instance.WriteMIZA(MI, CD));
-                        MangaDataZip.Instance.ProgressChanged -= PluginReportC;
-                    }
-
-                    Worker.ReportProgress(100);
-                    #endregion
-                    break;
-
-                case DownloadType.Chapter:
-                    #region Chapter Downloader
-                    Plugin = Global_IMangaPluginCollection.Instance.Plugins.PluginToUse_SiteUrl(Task.Data.Data);
-                    try
-                    {
                         if (e.Cancel) throw new Exception("Canceled");
                         Plugin.ProgressChanged += PluginReportA;
-                        MangaArchiveInfo MAI = Plugin.LoadChapterInformation(Task.Data.Data);
+                        MangaInfo MI = Plugin.LoadMangaInformation(InfoPage);
                         Plugin.ProgressChanged -= PluginReportA;
 
                         if (e.Cancel) throw new Exception("Canceled");
-                        #region Download Images
-                        using (WebClient WebClient = new WebClient())
+                        if (IsUpdate)
                         {
-                            String RemotePath, LocalPath;
-                            UInt32 FileSize;
-                            Boolean Retry;
-
-                            LocationInfoCollection InfoCollection = MAI.PageEntries.DownloadLocations;
-
-                            Double Progress = 0D, Step = 100D / InfoCollection.Count;
-                            foreach (LocationInfo Page in InfoCollection)
-                            {
-                                if (e.Cancel) break;
-                                RemotePath = Page.FullOnlinePath;
-                                LocalPath = Path.Combine(MAI.TmpFolderLocation.SafeFolder(), Path.GetFileName(RemotePath).SafeFileName());
-
-                                FileInfo LocalFile;
-                                Retry = false;
-                            retry:
-                                try
-                                {
-                                    LocalFile = new FileInfo(LocalPath);
-                                    if (LocalFile.Exists)
-                                        LocalFile.Delete();
-
-                                    #region Random
-                                    MatchCollection RandomNumbers = Regex.Matches(RemotePath, @"\[R(\d+)-(\d+)\]");
-                                    Random r = new Random();
-                                    Int32 rNumber;
-                                    foreach (Match rNumberMatch in RandomNumbers)
-                                    {
-                                        rNumber = r.Next(Int32.Parse(rNumberMatch.Groups[1].Value), Int32.Parse(rNumberMatch.Groups[2].Value));
-                                        RemotePath = RemotePath.Replace(rNumberMatch.Value, rNumber.ToString());
-                                    }
-                                    #endregion
-
-                                    WebClient.Headers.Clear();
-                                    WebClient.Headers.Add(System.Net.HttpRequestHeader.Referer, Plugin.SiteRefererHeader);
-                                    WebClient.DownloadFile(RemotePath, LocalPath);
-                                    FileSize = Parse.TryParse<UInt32>(WebClient.ResponseHeaders[System.Net.HttpResponseHeader.ContentLength].ToString(), 0);
-                                    LocalFile = new FileInfo(LocalPath);
-                                    if (!LocalFile.Exists)
-                                        throw new Exception("File not downloaded.");
-                                    else if (LocalFile.Length < FileSize)
-                                    {
-                                        LocalFile.Delete();
-                                        throw new Exception("File not completely downloaded.");
-                                    }
-                                }
-                                catch (Exception ex)
-                                {
-                                    if (!Retry)
-                                    {
-                                        RemotePath = Page.FullAltOnlinePath;
-                                        Retry = true;
-                                        goto retry;
-                                    }
-                                    else
-                                        throw new Exception("Error Downloading Image.", ex);
-                                }
-                                PluginReportB(this, (Int32)(Progress += Step), Page.FileName);
-                            }
-                            if (e.Cancel) throw new Exception("Canceled");
+                            MangaInfo oldMI = Task.Data.Parameter;
+                            MI.Volume = oldMI.Volume;
+                            MI.Chapter = oldMI.Chapter;
+                            MI.SubChapter = oldMI.SubChapter;
+                            MI.Page = oldMI.Page;
+                            IsUpdateNeeded = !MI.Equals(oldMI);
+                            oldMI = null;
                         }
+
+                        if (IsUpdateNeeded)
+                        {
+                            if (Worker.CancellationPending) throw new Exception("Canceled");
+                            Plugin.ProgressChanged += PluginReportB;
+                            CoverData CD = IsUpdate ? null : Plugin.GetCoverImage(MI);
+                            Plugin.ProgressChanged -= PluginReportB;
+
+                            if (Worker.CancellationPending) throw new Exception("Canceled");
+                            MangaDataZip.Instance.MangaInfoUpdateChanged += PluginReportC;
+                            Task.Data.UpdateData(MangaDataZip.Instance.MIZA(MI, CD));
+                            MangaDataZip.Instance.MangaInfoUpdateChanged -= PluginReportC;
+                        }
+
+                        Worker.ReportProgress(100);
                         #endregion
+                        break;
 
-                        if (e.Cancel) throw new Exception("Canceled");
-                        MangaDataZip.Instance.ProgressChanged += PluginReportC;
-                        Task.Data.UpdateData(MangaDataZip.Instance.WriteMZA(MAI));
-                        MangaDataZip.Instance.ProgressChanged -= PluginReportC;
-                    }
-                    catch (Exception ex) { throw ex; }
-                    finally
-                    {
-                        Plugin = null;
-                    }
-                    Worker.ReportProgress(100);
+                    case DownloadType.Chapter:
+                        #region Chapter Downloader
+                        Plugin = Global_IMangaPluginCollection.Instance.Plugins.PluginToUse_SiteUrl(Task.Data.Data);
+                        try
+                        {
+                            if (Worker.CancellationPending) throw new Exception("Canceled");
+                            Plugin.ProgressChanged += PluginReportA;
+                            MangaArchiveInfo MAI = Plugin.LoadChapterInformation(Task.Data.Data);
+                            Plugin.ProgressChanged -= PluginReportA;
 
-                    e.Result = Task;
-                    #endregion
-                    break;
+                            if (Worker.CancellationPending) throw new Exception("Canceled");
+                            #region Download Images
+                            using (WebClient WebClient = new WebClient())
+                            {
+                                String RemotePath, LocalPath;
+                                UInt32 FileSize;
+                                Boolean Retry;
+
+                                LocationInfoCollection InfoCollection = MAI.PageEntries.DownloadLocations;
+
+                                Double Progress = 0D, Step = 100D / InfoCollection.Count;
+                                foreach (LocationInfo Page in InfoCollection)
+                                {
+                                    if (e.Cancel) break;
+                                    RemotePath = Page.FullOnlinePath;
+                                    LocalPath = Path.Combine(MAI.TempPath().SafeFolder(), Path.GetFileName(RemotePath).SafeFileName());
+
+                                    FileInfo LocalFile;
+                                    Retry = false;
+                                retry:
+                                    try
+                                    {
+                                        if (Worker.CancellationPending) throw new Exception("Canceled");
+                                        LocalFile = new FileInfo(LocalPath);
+                                        if (LocalFile.Exists)
+                                            LocalFile.Delete();
+
+                                        #region Random
+                                        MatchCollection RandomNumbers = Regex.Matches(RemotePath, @"\[R(\d+)-(\d+)\]");
+                                        Random r = new Random();
+                                        Int32 rNumber;
+                                        foreach (Match rNumberMatch in RandomNumbers)
+                                        {
+                                            rNumber = r.Next(Int32.Parse(rNumberMatch.Groups[1].Value), Int32.Parse(rNumberMatch.Groups[2].Value));
+                                            RemotePath = RemotePath.Replace(rNumberMatch.Value, rNumber.ToString());
+                                        }
+                                        #endregion
+
+                                        WebClient.Headers.Clear();
+                                        WebClient.Headers.Add(System.Net.HttpRequestHeader.Referer, Plugin.SiteRefererHeader);
+                                        WebClient.DownloadFile(RemotePath, LocalPath);
+                                        FileSize = Parse.TryParse<UInt32>(WebClient.ResponseHeaders[System.Net.HttpResponseHeader.ContentLength].ToString(), 0);
+                                        LocalFile = new FileInfo(LocalPath);
+                                        if (!LocalFile.Exists)
+                                            throw new Exception("File not downloaded.");
+                                        else if (LocalFile.Length < FileSize)
+                                        {
+                                            LocalFile.Delete();
+                                            throw new Exception("File not completely downloaded.");
+                                        }
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        if (!Retry)
+                                        {
+                                            RemotePath = Page.FullAltOnlinePath;
+                                            Retry = true;
+                                            goto retry;
+                                        }
+                                        else
+                                            throw new Exception("Error Downloading Image.", ex);
+                                    }
+                                    PluginReportB(this, (Int32)(Progress += Step), Page.FileName);
+                                }
+                                if (Worker.CancellationPending) throw new Exception("Canceled");
+                            }
+                            #endregion
+
+                            if (e.Cancel) throw new Exception("Canceled");
+                            MangaDataZip.Instance.MangaArchiveUpdateChanged += PluginReportC;
+                            Task.Data.UpdateData(MangaDataZip.Instance.MZA(MAI));
+                            MangaDataZip.Instance.MangaArchiveUpdateChanged -= PluginReportC;
+                        }
+                        catch (Exception ex) { throw ex; }
+                        finally
+                        {
+                            Plugin = null;
+                        }
+                        Worker.ReportProgress(100);
+
+                        e.Result = Task;
+                        #endregion
+                        break;
+                }
+            }
+            catch(Exception ex)
+            {
+                String a = ex.Message;
             }
             e.Result = Task;
         }

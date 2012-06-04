@@ -6,7 +6,7 @@
         xmlns:vm="clr-namespace:myManga.ViewModels"
         Title="myManga" 
         x:Name="ThisMainWindow"
-        Height="420" 
+        Height="460" 
         Width="680"
         
         Style="{StaticResource DarkWindow}"

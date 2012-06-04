@@ -10,7 +10,7 @@
     <ListView
         BorderThickness="0"
         Background="Black"
-        ItemsSource="{Binding Path=_MangaTasks}"
+        ItemsSource="{Binding Path=MangaTasks}"
         HorizontalContentAlignment="Stretch" TabIndex="1" Focusable="False">
         <ListView.Resources>
             <Style TargetType="{x:Type ListViewItem}">

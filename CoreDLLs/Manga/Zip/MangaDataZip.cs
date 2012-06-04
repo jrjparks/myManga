@@ -248,7 +248,7 @@ namespace Manga.Zip
         
         #region Write
         public String MZA(MangaArchiveInfo MangaArchiveInfo)
-        { return MZA(MangaArchiveInfo, MZAPath, MangaArchiveInfo.MangaDataName()); }
+        { return MZA(MangaArchiveInfo, Path.Combine(MZAPath, MangaArchiveInfo.Name.SafeFileName()), MangaArchiveInfo.MangaDataName()); }
         public String MZA(MangaArchiveInfo MangaArchiveInfo, String DestFolder, String FileName)
         {
             Double Progress = 0, Step = 0;

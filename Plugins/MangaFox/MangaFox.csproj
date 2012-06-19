@@ -35,6 +35,10 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>
+    </ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="fastJSON">
       <HintPath>..\..\CoreDLLs\fastJSON.dll</HintPath>
@@ -56,9 +60,6 @@
   <ItemGroup>
     <Compile Include="MangaFox.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="icon.ico" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\BakaBox\BakaBox.csproj">

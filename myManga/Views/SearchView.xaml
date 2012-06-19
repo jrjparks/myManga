@@ -102,7 +102,7 @@
                     </TextBlock.LayoutTransform>
                 </TextBlock>
             </Expander.Header>
-            <Grid DataContext="{Binding Path=DetailsInfo, IsAsync=True}" TextElement.FontSize="12">
+            <Grid DataContext="{Binding Path=DetailsInfo, IsAsync=True}" TextElement.FontSize="12" Width="336">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition />
                     <ColumnDefinition Width="Auto" />
@@ -161,7 +161,7 @@
                                                                 </MultiBinding>
                                                             </TextBlock.Text>
                                                     </TextBlock>
-                                                    <TextBlock x:Name="TitleName" Padding="10,0,0,0" FontSize="16" Text="{Binding Path=Name, FallbackValue=Un-Named}"/>
+                                                    <TextBlock x:Name="TitleName" Padding="10,0,0,0" FontSize="16" Text="{Binding Path=Name, FallbackValue=Un-Named}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis"/>
                                                 </StackPanel>
                                             </Grid>
                                         </Border>
@@ -227,11 +227,12 @@
                     CommandParameter="{Binding ElementName=SearchText, Path=Text}">
                     <StackPanel Orientation="Horizontal">
                         <Image Width="21" Margin="-3"
-                        Source="/myManga;component/Resources/Images/Metro/Black/No%20Circle/Find.png"/>
-                        <TextBlock Padding="2,0,0,0" Text="Search" VerticalAlignment="Center"/>
+                            Source="/myManga;component/Resources/Images/Metro/Black/No%20Circle/Find.png"/>
+                        <TextBlock Padding="2,0,0,0" Text="{DynamicResource ResourceKey=SearchButtonText}" VerticalAlignment="Center" Foreground="Black"/>
                     </StackPanel>
                 </Button>
                 <ProgressBar
+                    x:Name="loadProgress"
                     Grid.ColumnSpan="3"
                     Grid.ZIndex="99"
                     Value="{Binding Path=Progress, Mode=OneWay, FallbackValue=50}"

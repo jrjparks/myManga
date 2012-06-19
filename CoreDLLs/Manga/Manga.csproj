@@ -44,8 +44,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Ionic.Zip">
-      <HintPath>..\..\DLLs\Ionic.Zip.dll</HintPath>
-      <Private>False</Private>
+      <HintPath>..\Ionic.Zip.dll</HintPath>
     </Reference>
     <Reference Include="PresentationFramework" />
     <Reference Include="System" />
@@ -61,8 +60,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Manager\Global IMangaPluginCollection.cs" />
+    <Compile Include="Manager\ImageDownloadTest.cs" />
     <Compile Include="Manager\ManagerData.cs" />
-    <Compile Include="Manager\Manager_v1.cs" />
+    <Compile Include="Manager\DownloadManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Zip\MangaDataZip.cs" />
     <Compile Include="Zip\Naming.cs" />

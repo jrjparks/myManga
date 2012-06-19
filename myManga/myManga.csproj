@@ -58,6 +58,9 @@
   <PropertyGroup>
     <ManifestKeyFile>BakaBox.pfx</ManifestKeyFile>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>Resources\codeplex.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="fastJSON, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>Resources\DLLs\fastJSON.dll</HintPath>
@@ -162,6 +165,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="Resources\Localization\Dictionary_en-US.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Resources\Theme\Default\DefaultBaseTheme.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -963,6 +970,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="License.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\codeplex.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

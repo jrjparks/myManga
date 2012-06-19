@@ -4,6 +4,9 @@ using Manga.Core;
 using Manga.Info;
 using System.IO;
 using System.Diagnostics;
+using System.ComponentModel;
+using BakaBox.Controls;
+using System.Text;
 
 namespace Manga.Plugin
 {
@@ -30,7 +33,7 @@ namespace Manga.Plugin
     public interface IMangaPlugin
     {
         #region Events
-        event PluginProgressChanged.ProgressChange ProgressChanged;
+        event ProgressChangedEventHandler ProgressChanged;
         #endregion
 
         #region IMangaPlugin Properties
@@ -103,19 +106,30 @@ namespace Manga.Plugin
     }
 
     [DebuggerStepThrough]
-    public class PluginProgressChanged
+    public class IMangaPluginBase
     {
-        public delegate void ProgressChange(Object Sender, Int32 Progress, Object Data);
-        public event ProgressChange ProgressChanged;
+        public event ProgressChangedEventHandler ProgressChanged;
         protected virtual void OnProgressChanged(Int32 Progress)
         {
             if (ProgressChanged != null)
-                ProgressChanged(this, Progress, default(MangaData));
+                ProgressChanged(this, new ProgressChangedEventArgs(Progress, default(MangaData)));
         }
         protected virtual void OnProgressChanged(Int32 Progress, Object Data)
         {
             if (ProgressChanged != null)
-                ProgressChanged(this, Progress, Data);
+                ProgressChanged(this, new ProgressChangedEventArgs(Progress, Data));
+        }
+
+        protected void ThrowLicensed(String Title)
+        { throw new Exception(String.Format("Manga Licensed|{0}", Title)); }
+
+        protected WebClient ConfigureWebClient(String SiteRefererHeader)
+        {
+            WebClient WebClient = new WebClient();
+            WebClient.Headers.Clear();
+            WebClient.Headers.Add(System.Net.HttpRequestHeader.Referer, SiteRefererHeader);
+            WebClient.Encoding = Encoding.UTF8;
+            return WebClient;
         }
     }
 }

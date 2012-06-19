@@ -10,9 +10,9 @@ using BakaBox.IO;
 namespace Manga.Archive
 {
     [DebuggerStepThrough]
-    public class MangaArchiveData
+    public partial class MangaArchiveConst
     {
-        public static String InfoFileName { get { return "Info.ma"; } }
+        public const String InfoFileName = "Info.ma";
     }
 
     /// <summary>
@@ -38,13 +38,15 @@ namespace Manga.Archive
 
         #region Constructors
         public MangaArchiveInfo(MangaArchiveInfo MangaArchiveInfo)
-            : base(MangaArchiveInfo as MangaData)
+            : base()
         {
+            base.Init(MangaArchiveInfo as MangaData);
             PageEntries = MangaArchiveInfo.PageEntries;
         }
         public MangaArchiveInfo(MangaData MangaData)
-            : base(MangaData)
+            : base()
         {
+            base.Init(MangaData);
             PageEntries = new PageEntryCollection();
         }
         public MangaArchiveInfo()

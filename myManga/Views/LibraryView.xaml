@@ -33,7 +33,7 @@
             ExpandDirection="Right"
             x:Name="InfoExpander">
             <Expander.Header>
-                <TextBlock Margin="1,5"  Text="{Binding Path=CurrentMangaItem.MangaData.Name, FallbackValue=Un-named}">
+                <TextBlock Margin="1,5"  Text="{Binding Path=CurrentMangaItem.Name, FallbackValue=Un-named}">
                     <TextBlock.LayoutTransform>
                         <RotateTransform Angle="270"/>
                     </TextBlock.LayoutTransform>
@@ -87,7 +87,7 @@
                                                                 </MultiBinding>
                                                             </TextBlock.Text>
                                                         </TextBlock>
-                                                        <TextBlock x:Name="TitleName" Padding="10,0,0,0" FontSize="18" Text="{Binding Path=Name, FallbackValue=Un-Named}"/>
+                                                        <TextBlock x:Name="TitleName" Padding="10,0,0,0" FontSize="18" Text="{Binding Path=Name, FallbackValue=Un-Named}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis"/>
                                                     </StackPanel>
                                                     <Button 
                                                     Grid.Column="1"
@@ -124,12 +124,18 @@
                     <Grid
                         Grid.Row="1">
                         <TextBlock Text="Chapters:" FontSize="19" Padding="3"/>
-                        <Button 
-                            Content="Download All" 
+                        <StackPanel
                             HorizontalAlignment="Right" 
-                            VerticalAlignment="Center"
-                            FontSize="13"
-                            Command="{Binding Path=DownloadAllChapters}"/>
+                            VerticalAlignment="Center">
+                            <Button 
+                                Content="Download Remaining" 
+                                FontSize="13"
+                                Command="{Binding Path=DataContext.DownloadRemainingChapters, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Expander}}}"/>
+                            <Button 
+                                Content="Download All" 
+                                FontSize="13"
+                                Command="{Binding Path=DataContext.DownloadAllChapters, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Expander}}}"/>
+                        </StackPanel>
                     </Grid>
                     <StackPanel>
                         <TextBlock Margin="3,1" TextWrapping="Wrap">
@@ -149,6 +155,9 @@
                         </TextBlock>
                         <TextBlock Margin="3,1" TextWrapping="Wrap">
                         <Bold Foreground="LightGray">Genre:</Bold> <Run Text="{Binding Path=Genre, FallbackValue=Unknown, Mode=OneWay}"/>
+                        </TextBlock>
+                        <TextBlock Margin="3,1" TextWrapping="Wrap">
+                        <Bold Foreground="LightGray">Manga Site:</Bold> <Run Text="{Binding Path=Site, FallbackValue=Unknown, Mode=OneWay}"/>
                         </TextBlock>
                     </StackPanel>
 
@@ -170,29 +179,19 @@
             HorizontalAlignment="Left" 
             VerticalAlignment="Bottom" 
             SnapsToDevicePixels="True"
-            Margin="0,5"
-            Style="{StaticResource GlowBtn}" 
+            Margin="1,3"
             Command="{Binding Path=UpdateLibrary}">
-            <Border 
-                TextElement.Foreground="White" 
-                TextElement.FontSize="12" 
-                Background="#00FFFFFF" 
-                BorderBrush="White" 
-                BorderThickness="2" 
-                CornerRadius="9" 
-                Padding="0,0,5,0">
-                <Border.LayoutTransform>
-                    <RotateTransform Angle="270"/>
-                </Border.LayoutTransform>
-                <StackPanel Orientation="Horizontal">
-                    <Image 
-                        Source="/myManga;component/Resources/Images/Metro/White/No Circle/refresh.png" 
-                        Stretch="Uniform" 
-                        Height="21" 
-                        Margin="-2"/>
-                    <TextBlock Text="Refresh" VerticalAlignment="Center"/>
-                </StackPanel>
-            </Border>
+            <Button.LayoutTransform>
+                <RotateTransform Angle="270"/>
+            </Button.LayoutTransform>
+            <StackPanel Orientation="Horizontal">
+                <Image 
+                    Source="/myManga;component/Resources/Images/Metro/Black/No Circle/refresh.png" 
+                    Stretch="Uniform" 
+                    Height="21" 
+                    Margin="-2"/>
+                <TextBlock Text="{DynamicResource ResourceKey=RefreshButtonText}" VerticalAlignment="Center"/>
+            </StackPanel>
         </Button>
     </Grid>
 </UserControl>

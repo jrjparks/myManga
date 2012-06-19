@@ -177,7 +177,7 @@ namespace myManga.ViewModels
         private void AddMangaInfoForDownload(SearchInfo Item)
         {
             SendViewModelToastNotification(this, String.Format("Downloading...\n{0}", Item.Title), ToastNotification.DisplayLength.Short);
-            Manager_v1.Instance.DownloadManga(Item.InformationLocation);
+            DownloadManager.Instance.DownloadManga(Item.InformationLocation);
         }
         #endregion
 
@@ -276,10 +276,10 @@ namespace myManga.ViewModels
                 SearchQueueWorker.AddToQueue(new WorkerTask(DetailsURL, WorkerTask.WorkType.Details));
         }
 
-        private void _Plugin_ProgressChanged(object Sender, int Progress, object Data)
+        private void _Plugin_ProgressChanged(object Sender, ProgressChangedEventArgs e)
         {
             if (SearchQueueWorker != null)
-                SearchQueueWorker.ReportProgress(1 + Progress, Data);
+                SearchQueueWorker.ReportProgress(1 + e.ProgressPercentage, e.UserState);
         }
         #endregion
 

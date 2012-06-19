@@ -10,6 +10,7 @@ using Manga.Core;
 using Manga.Info;
 using System.Windows;
 using System.Threading;
+using System.Collections.Generic;
 
 namespace myManga.ViewModels
 {
@@ -17,15 +18,15 @@ namespace myManga.ViewModels
     {
         public QueueViewModel()
         {
-            Manager_v1.Instance.TaskAdded += UpdateTaskData;
-            Manager_v1.Instance.TaskBeginning += UpdateTaskData;
-            Manager_v1.Instance.TaskProgress += UpdateTaskData;
-            Manager_v1.Instance.TaskComplete += UpdateTaskData;
+            DownloadManager.Instance.TaskAdded += UpdateTaskData;
+            DownloadManager.Instance.TaskBeginning += UpdateTaskData;
+            DownloadManager.Instance.TaskProgress += UpdateTaskData;
+            DownloadManager.Instance.TaskComplete += UpdateTaskData;
 
-            Manager_v1.Instance.TaskFaulted += RemoveMangaTask;
-            Manager_v1.Instance.TaskRemoved += RemoveMangaTask;
+            DownloadManager.Instance.TaskFaulted += RemoveMangaTask;
+            DownloadManager.Instance.TaskRemoved += RemoveMangaTask;
 
-            Manager_v1.Instance.NameUpdated += (s, t) =>
+            DownloadManager.Instance.NameUpdated += (s, t) =>
             {
                 Int32 Index = IndexOfTaskID(t.Guid);
                 if (Index >= 0)
@@ -52,11 +53,14 @@ namespace myManga.ViewModels
         #region Private
         private void UpdateTaskData(Object Sender, QueuedTask<ManagerData<String, MangaInfo>> Task)
         {
-            Int32 _TaskIDIndex = IndexOfTaskID(Task.Guid);
-            if (!_TaskIDIndex.Equals(-1))
-                MangaTasks[_TaskIDIndex].Progress = Task.Progress;
-            else
-                AddMangaTask(new ListQueueItem() { ID = Task.Guid, Progress = Task.Progress, Title = Task.Data.Title });
+            if (!RecentlyRemoved.Contains(Task.Guid))
+            {
+                Int32 _TaskIDIndex = IndexOfTaskID(Task.Guid);
+                if (!_TaskIDIndex.Equals(-1))
+                    MangaTasks[_TaskIDIndex].Progress = Task.Progress;
+                else
+                    AddMangaTask(new ListQueueItem() { ID = Task.Guid, Progress = Task.Progress, Title = Task.Data.Title });
+            }
         }
         private Int32 IndexOfTaskID(Guid TaskID)
         {
@@ -78,20 +82,14 @@ namespace myManga.ViewModels
 
         private void DeleteMangaTask(Guid Guid)
         {
-            Int32 _Index = IndexOfTaskID(Guid);
-            if (!Manager_v1.Instance.CancelTask(Guid))
-                if (_Index >= 0)
-                    RemoveMangaTask(_Index);
+            if (!DownloadManager.Instance.CancelTask(Guid))
+                RemoveMangaTask(Guid);
         }
 
         private void RemoveMangaTask(Object Sender, QueuedTask<ManagerData<String, MangaInfo>> Task)
         {
-            Int32 Index = IndexOfTaskID(Task.Guid);
-            if (Index >= 0)
-            {
-                RemoveMangaTask(Index);
-                SendViewModelToastNotification(this, String.Format("Removed Task: {0}\n{1}", Task.Data.Title, Task.Guid));
-            }
+            RemoveMangaTask(Task.Guid);
+            SendViewModelToastNotification(this, String.Format("Removed Task: {0}\n{1}", Task.Data.Title, Task.Guid));
         }
         #endregion
 
@@ -111,11 +109,31 @@ namespace myManga.ViewModels
             }
         }
 
-        private delegate void RemoveMangaTaskDelegate(Int32 value);
-        private void RemoveMangaTask(Int32 value)
+        private List<Guid> _RecentlyRemoved;
+        private List<Guid> RecentlyRemoved
+        {
+            get
+            {
+                if (_RecentlyRemoved == null)
+                    _RecentlyRemoved = new List<Guid>(20);
+                return _RecentlyRemoved;
+            }
+        }
+
+        private delegate void RemoveMangaTaskDelegate(Guid value);
+        private void RemoveMangaTask(Guid value)
         {
             if (Application.Current.Dispatcher.Thread == Thread.CurrentThread)
-                MangaTasks.RemoveAt(value);
+            {
+                Int32 Index;
+                if ((Index = IndexOfTaskID(value)) >= 0)
+                {
+                    MangaTasks.RemoveAt(Index);
+                    if (RecentlyRemoved.Count == RecentlyRemoved.Capacity)
+                        RecentlyRemoved.RemoveAt(RecentlyRemoved.Count - 1);
+                    RecentlyRemoved.Add(value);
+                }
+            }
             else
                 Application.Current.Dispatcher.Invoke(new RemoveMangaTaskDelegate(RemoveMangaTask), value);
         }

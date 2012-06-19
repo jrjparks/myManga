@@ -13,15 +13,17 @@ using Manga.Plugin;
 using Manga.Zip;
 using System.Windows;
 using System.Threading;
+using System.Threading.Tasks;
+using BakaBox.MVVM.Communications;
 
 namespace Manga.Manager
 {
-    public sealed class Manager_v1
+    public sealed class DownloadManager
     {
         #region Instance
-        private static Manager_v1 _Instance;
+        private static DownloadManager _Instance;
         private static Object SyncObj = new Object();
-        public static Manager_v1 Instance
+        public static DownloadManager Instance
         {
             get
             {
@@ -30,14 +32,14 @@ namespace Manga.Manager
                     lock (SyncObj)
                     {
                         if (_Instance == null)
-                        { _Instance = new Manager_v1(); }
+                        { _Instance = new DownloadManager(); }
                     }
                 }
                 return _Instance;
             }
         }
 
-        private Manager_v1()
+        private DownloadManager()
         {
             Worker.WorkerReportsProgress = Worker.WorkerSupportsCancellation = true;
             Worker.DoWork += Worker_DoWork;
@@ -132,6 +134,9 @@ namespace Manga.Manager
             else
                 return (Guid)Application.Current.Dispatcher.Invoke(new AddWorkIDDelegate(AddWorkerTask), value, id);
         }
+
+        public Boolean IsBusy
+        { get { return Worker.IsBusy; } }
         #endregion
 
         #region Members
@@ -183,6 +188,9 @@ namespace Manga.Manager
         #region Remove Tasks
         public Boolean CancelTask(Guid TaskID)
         { return Worker.CancelTask(TaskID); }
+
+        public void CancelAll()
+        { Worker.CancelQueue(); }
         #endregion
         #endregion
 
@@ -190,18 +198,18 @@ namespace Manga.Manager
         #endregion
 
         #region Worker Members
-        private void PluginReportA(Object s, Int32 p, Object d)
+        private void PluginReportA(Object s, ProgressChangedEventArgs e)
         {
-            Worker.ReportProgress(1 + (p / 3), d);
-            if (d is MangaArchiveInfo || d is MangaInfo)
+            Worker.ReportProgress(1 + (e.ProgressPercentage / 3), e.UserState);
+            if (e.UserState is MangaArchiveInfo || e.UserState is MangaInfo)
             {
-                Worker.ActiveTask.Data.UpdateTitle((d as MangaData).MangaDataName(false));
+                Worker.ActiveTask.Data.UpdateTitle((e.UserState as MangaData).MangaDataName(false));
                 OnNameUpdated(Worker.ActiveTask);
             }
         }
-        private void PluginReportB(Object s, Int32 p, Object d)
+        private void PluginReportB(Object s, ProgressChangedEventArgs e)
         {
-            Worker.ReportProgress(33 + (p / 3), d);
+            Worker.ReportProgress(33 + (e.ProgressPercentage / 3), e.UserState);
         }
         private void PluginReportC(Object s, ProgressChangedEventArgs e)
         {
@@ -226,12 +234,12 @@ namespace Manga.Manager
                         String InfoPage = Task.Data.Data;
                         Plugin = Global_IMangaPluginCollection.Instance.Plugins.PluginToUse_SiteUrl(InfoPage);
 
-                        if (e.Cancel) throw new Exception("Canceled");
+                        if (Worker.CancellationPending) throw new Exception("Canceled");
                         Plugin.ProgressChanged += PluginReportA;
                         MangaInfo MI = Plugin.LoadMangaInformation(InfoPage);
                         Plugin.ProgressChanged -= PluginReportA;
 
-                        if (e.Cancel) throw new Exception("Canceled");
+                        if (Worker.CancellationPending) throw new Exception("Canceled");
                         if (IsUpdate)
                         {
                             MangaInfo oldMI = Task.Data.Parameter;
@@ -239,7 +247,7 @@ namespace Manga.Manager
                             MI.Chapter = oldMI.Chapter;
                             MI.SubChapter = oldMI.SubChapter;
                             MI.Page = oldMI.Page;
-                            IsUpdateNeeded = !MI.Equals(oldMI);
+                            IsUpdateNeeded = !MI.ChapterEntries.Count.Equals(oldMI.ChapterEntries.Count);
                             oldMI = null;
                         }
 
@@ -263,12 +271,14 @@ namespace Manga.Manager
                     case DownloadType.Chapter:
                         #region Chapter Downloader
                         Plugin = Global_IMangaPluginCollection.Instance.Plugins.PluginToUse_SiteUrl(Task.Data.Data);
+                        String LocalFolder = String.Empty;
                         try
                         {
                             if (Worker.CancellationPending) throw new Exception("Canceled");
                             Plugin.ProgressChanged += PluginReportA;
                             MangaArchiveInfo MAI = Plugin.LoadChapterInformation(Task.Data.Data);
                             Plugin.ProgressChanged -= PluginReportA;
+                            LocalFolder = MAI.TempPath();
 
                             if (Worker.CancellationPending) throw new Exception("Canceled");
                             #region Download Images
@@ -283,9 +293,9 @@ namespace Manga.Manager
                                 Double Progress = 0D, Step = 100D / InfoCollection.Count;
                                 foreach (LocationInfo Page in InfoCollection)
                                 {
-                                    if (e.Cancel) break;
+                                    if (Worker.CancellationPending) break;
                                     RemotePath = Page.FullOnlinePath;
-                                    LocalPath = Path.Combine(MAI.TempPath().SafeFolder(), Path.GetFileName(RemotePath).SafeFileName());
+                                    LocalPath = Path.Combine(LocalFolder, Path.GetFileName(RemotePath).SafeFileName());
 
                                     FileInfo LocalFile;
                                     Retry = false;
@@ -332,18 +342,23 @@ namespace Manga.Manager
                                         else
                                             throw new Exception("Error Downloading Image.", ex);
                                     }
-                                    PluginReportB(this, (Int32)(Progress += Step), Page.FileName);
+                                    PluginReportB(this, new ProgressChangedEventArgs((Int32)(Progress += Step), Page.FileName));
                                 }
                                 if (Worker.CancellationPending) throw new Exception("Canceled");
                             }
                             #endregion
 
-                            if (e.Cancel) throw new Exception("Canceled");
+                            if (Worker.CancellationPending) throw new Exception("Canceled");
                             MangaDataZip.Instance.MangaArchiveUpdateChanged += PluginReportC;
                             Task.Data.UpdateData(MangaDataZip.Instance.MZA(MAI));
                             MangaDataZip.Instance.MangaArchiveUpdateChanged -= PluginReportC;
                         }
-                        catch (Exception ex) { throw ex; }
+                        catch (Exception ex)
+                        {
+                            if (!LocalFolder.Equals(String.Empty))
+                                MangaDataZip.CleanUnusedFolders(LocalFolder);
+                            throw ex;
+                        }
                         finally
                         {
                             Plugin = null;
@@ -355,9 +370,11 @@ namespace Manga.Manager
                         break;
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                String a = ex.Message;
+                if (true)
+                    Messenger.Instance.SendBroadcastMessage(String.Format("#^{0}", ex.Message));
+                Task.SetStatus(TaskStatus.Faulted);
             }
             e.Result = Task;
         }

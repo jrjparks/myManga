@@ -75,8 +75,8 @@ namespace myManga.ViewModels
                 _DetailsOpen = value;
                 OnPropertyChanged("DetailsOpen");
                 if ((CurrentMangaItem is LibraryItemModel) &&
-                    (!(CurrentInfo is MangaInfo) || !CurrentInfo.Name.Equals(CurrentMangaItem.MangaData.Name)))
-                    CurrentInfo = MangaDataZip.Instance.MangaInfo(CurrentMangaItem.MangaInfoPath);
+                    (!(CurrentInfo is MangaInfo) || !CurrentInfo.Name.Equals(CurrentMangaItem.Name)))
+                    CurrentInfo = MangaDataZip.Instance.GetMangaInfo(CurrentMangaItem.MangaInfoPath);
                 else
                     CurrentInfo = null;
             }
@@ -124,7 +124,7 @@ namespace myManga.ViewModels
                 _CurrentMangaItem = value;
                 if (value != null && DetailsOpen)
                 {
-                    CurrentInfo = MangaDataZip.Instance.MangaInfo(value.MangaInfoPath);
+                    CurrentInfo = MangaDataZip.Instance.GetMangaInfo(value.MangaInfoPath);
                 }
                 OnPropertyChanged("CurrentMangaItem");
             }
@@ -183,8 +183,8 @@ namespace myManga.ViewModels
             LibraryItemLoader.QueueComplete += LibraryItemLoader_QueueComplete;
 
             MangaDataZip.Instance.MangaInfoUpdated += UpdateLibraryMangaInfo;
-            Manager_v1.Instance.TaskProgress += UpdateTaskData;
-            Manager_v1.Instance.TaskComplete += UpdateTaskData;
+            DownloadManager.Instance.TaskProgress += UpdateTaskData;
+            DownloadManager.Instance.TaskComplete += UpdateTaskData;
 
             LoadLibraryDirectory(MangaDataZip.Instance.MIZAPath.SafeFolder());
 
@@ -241,14 +241,14 @@ namespace myManga.ViewModels
                     {
                         ++UpdateCount;
                         Item.Progress = 1;
-                        MangaInfo tmpInfo = MangaDataZip.Instance.MangaInfo(Item.MangaInfoPath);
+                        MangaInfo tmpInfo = MangaDataZip.Instance.GetMangaInfo(Item.MangaInfoPath);
 
                         if (File.Exists(Path.Combine(Environment.CurrentDirectory, "MangaInfo", tmpInfo.MangaDataName())))
-                            Manager_v1.Instance.DownloadManga(tmpInfo, Item.SessionMangaID);
+                            DownloadManager.Instance.DownloadManga(tmpInfo, Item.SessionMangaID);
                         else
                         {
                             SendViewModelToastNotification(this, String.Format("Downloading...\n{0}", tmpInfo.Name), ToastNotification.DisplayLength.Short);
-                            Manager_v1.Instance.DownloadManga(tmpInfo.InfoPage, Item.SessionMangaID);
+                            DownloadManager.Instance.DownloadManga(tmpInfo.InfoPage, Item.SessionMangaID);
                         }
                     }
                 }
@@ -278,7 +278,7 @@ namespace myManga.ViewModels
                             case System.Threading.Tasks.TaskStatus.RanToCompletion:
                                 Item.Progress = 0;
                                 if (Item.ChapterStatus)
-                                    SendViewModelToastNotification(this, String.Format("{0} has more chapters to read.", Item.MangaData.Name), UI.ToastNotification.DisplayLength.Normal);
+                                    SendViewModelToastNotification(this, String.Format("{0} has more chapters to read.", Item.Name), UI.ToastNotification.DisplayLength.Normal);
                                 break;
                         }
             }
@@ -291,7 +291,7 @@ namespace myManga.ViewModels
             Int32 _Index = 0;
             foreach (LibraryItemModel _LibItem in MangaItems)
             {
-                if (_LibItem.MangaData.Name.Equals(Name))
+                if (_LibItem.Name.Equals(Name))
                 {
                     _Found = true;
                     break;
@@ -303,12 +303,12 @@ namespace myManga.ViewModels
 
         #region Chapter Request
         private void RequestOpenChapter(ChapterEntry ChapterEntry)
-        { ChapterWorkerData(ChapterEntry, CurrentInfo, false, false); }
+        { ChapterWorkerData(ChapterEntry, CurrentInfo, false, false, true); }
         private void RequestResumeChapter(MangaInfo Info)
-        { ChapterWorkerData(Info.LastReadChapterEntry, Info, true, false); }
+        { ChapterWorkerData(Info.LastReadChapterEntry, Info, true, false, true); }
         private void DownloadOpenChapter(ChapterEntry ChapterEntry)
-        { ChapterWorkerData(ChapterEntry, CurrentInfo, false, true); }
-        private void ChapterWorkerData(ChapterEntry ChapterEntry, MangaInfo Info, Boolean Resume, Boolean Download)
+        { ChapterWorkerData(ChapterEntry, CurrentInfo, false, true, true); }
+        private void ChapterWorkerData(ChapterEntry ChapterEntry, MangaInfo Info, Boolean Resume, Boolean Download, Boolean Toast)
         {
             String _FileName = ChapterEntry.ChapterName(Info),
                            MainPath = MangaDataZip.Instance.MZAPath,
@@ -327,18 +327,19 @@ namespace myManga.ViewModels
             }
             else
             {
-                SendViewModelToastNotification(this, String.Format("Downloading...\n{0}", ChapterEntry.ChapterName(Info, false), ToastNotification.DisplayLength.Short));
-                Manager_v1.Instance.DownloadChapter(ChapterEntry);
+                if (Toast)
+                    SendViewModelToastNotification(this, String.Format("Downloading...\n{0}", ChapterEntry.ChapterName(Info, false), ToastNotification.DisplayLength.Short));
+                DownloadManager.Instance.DownloadChapter(ChapterEntry);
             }
         }
         #endregion
 
         private void Resume_Manga(LibraryItemModel LIM)
         {
-            if (LIM.MangaData.VolumeSpecified || LIM.MangaData.ChapterSpecified || LIM.MangaData.SubChapterSpecified)
+            if (LIM.VolumeSpecified || LIM.ChapterSpecified || LIM.SubChapterSpecified)
             {
-                SendViewModelToastNotification(this, String.Format("Resuming: {0}", LIM.MangaData.Name));
-                MangaInfo Info = MangaDataZip.Instance.MangaInfo(LIM.MangaInfoPath);
+                SendViewModelToastNotification(this, String.Format("Resuming: {0}", LIM.Name));
+                MangaInfo Info = MangaDataZip.Instance.GetMangaInfo(LIM.MangaInfoPath);
                 RequestResumeChapter(Info);
                 DetailsOpen = false;
             }
@@ -349,7 +350,7 @@ namespace myManga.ViewModels
         {
             QueuedTask<String> _Data = e.Argument as QueuedTask<String>;
             if (File.Exists(_Data.Data))
-                e.Result = new LibraryDataClass(MangaDataZip.Instance.MangaInfo(_Data.Data), _Data.Data);
+                e.Result = new LibraryDataClass(MangaDataZip.Instance.GetMangaInfo(_Data.Data), _Data.Data);
             else
                 e.Result = String.Format("File does not exist.\n{0}", _Data.Data);
         }
@@ -378,14 +379,15 @@ namespace myManga.ViewModels
                             MangaItems.Add(_NewItem);
                             break;
                     }
-                    MangaItems.Sort(Item => Item.MangaData.Name, ListSortDirection.Ascending);
+                    MangaItems.Sort(Item => Item.Name, ListSortDirection.Ascending);
 
-
-                    if (_Index.Equals(-1) ? MangaItems.Last().ChapterStatus : MangaItems[_Index].ChapterStatus && !HasInit)
+                    if (LDC.MangaInfo.Licensed)
+                        NewChapters.Enqueue(String.Format("{0} is licensed in your country.", LDC.MangaInfo.Name));
+                    else if (_Index.Equals(-1) ? MangaItems.Last().ChapterStatus : MangaItems[_Index].ChapterStatus && !HasInit)
                         NewChapters.Enqueue(String.Format("{0} has more chapters to read.", LDC.MangaInfo.Name));
 
                     if (_LibraryItemLoader.IsQueueEmpty &&
-                        !(CurrentMangaItem is LibraryItemModel))
+                        !(CurrentMangaItem is LibraryItemModel) && HasInit)
                         CurrentMangaItem = MangaItems.First();
                 }
             }
@@ -419,6 +421,10 @@ namespace myManga.ViewModels
                     SendViewModelToastNotification(this, "It seems to be your first time running myManga.\nTo get started search for a manga to read.", ToastNotification.DisplayLength.Long);
                 }
                 Messenger.Instance.SendBroadcastMessage(this, "!^ResumeToast");
+
+                if (_LibraryItemLoader.IsQueueEmpty &&
+                    !(CurrentMangaItem is LibraryItemModel))
+                    CurrentMangaItem = MangaItems.First();
             }
         }
         #endregion
@@ -455,17 +461,36 @@ namespace myManga.ViewModels
             get
             {
                 if (_DownloadAllChapters == null)
-                    _DownloadAllChapters = new DelegateCommand(DownloadAll, CanDownloadAll);
+                    _DownloadAllChapters = new DelegateCommand(DownloadAll, CanDownload);
                 return _DownloadAllChapters;
             }
         }
         private void DownloadAll()
         {
+            SendViewModelToastNotification(this, String.Format("Downloading {0} chapters.", origChapEntryCollection.Count));
             foreach (ChapterEntry ChapEnt in origChapEntryCollection)
-                DownloadOpenChapter(ChapEnt);
+                ChapterWorkerData(ChapEnt, CurrentInfo, false, true, false);
         }
-        private Boolean CanDownloadAll()
+        private Boolean CanDownload()
         { return origChapEntryCollection != null; }
+
+        private DelegateCommand _DownloadRemainingChapters { get; set; }
+        public ICommand DownloadRemainingChapters
+        {
+            get
+            {
+                if (_DownloadRemainingChapters == null)
+                    _DownloadRemainingChapters = new DelegateCommand(DownloadRemaining, CanDownload);
+                return _DownloadRemainingChapters;
+            }
+        }
+        private void DownloadRemaining()
+        {
+            Int32 Index = origChapEntryCollection.IndexOf(CurrentInfo.LastReadChapterEntry);
+            SendViewModelToastNotification(this, String.Format("Downloading {0} chapters.", origChapEntryCollection.Count - Index));
+            for (; Index < origChapEntryCollection.Count; ++Index)
+                ChapterWorkerData(origChapEntryCollection[Index], CurrentInfo, false, true, false);
+        }
 
         private DelegateCommand<LibraryItemModel> _ResumeManga { get; set; }
         public ICommand ResumeManga

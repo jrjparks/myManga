@@ -7,7 +7,7 @@ using Manga.Plugin;
 
 namespace MangaPlugin
 {
-    public class MangaPlugin : PluginProgressChanged, IMangaPlugin
+    public class MangaPlugin : IMangaPluginBase, IMangaPlugin
     {
         #region IMangaPlugin Vars
         // Site Name, Plain Text

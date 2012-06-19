@@ -97,7 +97,7 @@ namespace myManga.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Ascending")]
+        [global::System.Configuration.DefaultSettingValueAttribute("Auto")]
         public global::myManga.Base.ChapterOrder ChapterListOrder {
             get {
                 return ((global::myManga.Base.ChapterOrder)(this["ChapterListOrder"]));

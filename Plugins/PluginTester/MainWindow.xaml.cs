@@ -44,10 +44,8 @@ namespace PluginTester
             }
         }
 
-        void _SelectedPlugin_ProgressChanged(object Sender, int _Progress, object Data)
-        {
-            Progress = _Progress;
-        }
+        void _SelectedPlugin_ProgressChanged(object Sender, ProgressChangedEventArgs e)
+        { Progress = e.ProgressPercentage; }
         private Int32 _Progress;
         public Int32 Progress
         {

@@ -17,7 +17,7 @@ namespace MangaFox
     [PluginSite("MangaFox")]
     [PluginAuthor("James Parks")]
     [PluginVersion("0.0.3")]
-    public class MangaFox : PluginProgressChanged, IMangaPlugin
+    public class MangaFox : IMangaPluginBase, IMangaPlugin
     {
         #region IMangaPlugin Vars
         public string SiteName { get { return "MangaFox"; } }
@@ -58,17 +58,19 @@ namespace MangaFox
             MAI.SubChapter = _Item.Groups["SubChapter"].Success ? UInt32.Parse(_Item.Groups["SubChapter"].Value) : 0;
             OnProgressChanged((Int32)Math.Round(Progress));
 
-            using (WebClient WebClient = new WebClient())
+            using (WebClient WebClient = ConfigureWebClient(SiteRefererHeader))
             {
-                WebClient.Encoding = Encoding.UTF8;
-                WebClient.Headers.Clear();
-                WebClient.Headers.Add(System.Net.HttpRequestHeader.Referer, SiteRefererHeader);
                 PageHTML = WebClient.DownloadString(String.Format(PagePath, 1));
+
                 Match NumberOfPagesMatch = Regex.Match(PageHTML, @"of\s(\d+)"), InfoMatch = Regex.Match(PageHTML, ChapterNameRegEx);
+
+                if (InfoMatch.Success)
+                    MAI.Name = InfoMatch.Groups["Name"].Value;
+                if (Regex.IsMatch(PageHTML, @"(licensed)(.*?)(not\savailable)"))
+                    ThrowLicensed(MAI.Name);
 
                 if (NumberOfPagesMatch.Success)
                 {
-                    MAI.Name = InfoMatch.Groups["Name"].Value;
                     MAI.ID = ParseID(PageHTML);
                     UInt32 NumberOfPages = UInt32.Parse(NumberOfPagesMatch.Groups[1].Value);
                     Step /= (Double)NumberOfPages;
@@ -123,18 +125,19 @@ namespace MangaFox
             String PageHTML;
             OnProgressChanged(3);
 
-            using (WebClient WebClient = new WebClient())
+            using (WebClient WebClient = ConfigureWebClient(SiteRefererHeader))
             {
-                WebClient.Encoding = Encoding.UTF8;
-                WebClient.Headers.Clear();
-                WebClient.Headers.Add(System.Net.HttpRequestHeader.Referer, SiteRefererHeader);
                 PageHTML = WebClient.DownloadString(MI.InfoPage);
                 HtmlDocument _PageDoc = new HtmlDocument();
                 HtmlNode _PageElement;
-                
+
                 _PageDoc.LoadHtml(PageHTML);
 
                 MI.Name = Regex.Match(PageHTML, InfoNameRegEx).Groups["Name"].Value;
+
+                if (Regex.IsMatch(PageHTML, @"(licensed)(.*?)(not\savailable)"))
+                    ThrowLicensed(MI.Name);
+
                 MI.ID = ParseID(PageHTML);
                 OnProgressChanged(7, MI as MangaData);
 
@@ -177,7 +180,7 @@ namespace MangaFox
             CoverData _Cover = new CoverData();
             String CoverRegex = @"(?<File>(http://).+?/(cover\.jpg))",
                 PageHTML, FileLocation;
-            using (WebClient WebClient = new WebClient())
+            using (WebClient WebClient = ConfigureWebClient(SiteRefererHeader))
             {
                 WebClient.Encoding = Encoding.UTF8;
                 WebClient.Headers.Clear();
@@ -211,25 +214,25 @@ namespace MangaFox
             String[] _DataArray, _ItemDataArray;
             OnProgressChanged((Int32)(Progress += 5));
 
-            using (WebClient WebClient = new WebClient())
+            using (WebClient WebClient = ConfigureWebClient(SiteRefererHeader))
             {
-                WebClient.Headers.Clear();
-                WebClient.Headers.Add(System.Net.HttpRequestHeader.Referer, SiteRefererHeader);
-                WebClient.Encoding = Encoding.UTF8;
                 _Data = WebClient.DownloadString(SearchPath);
 
                 _DataArray = _Data.Trim(new char[] { ']', '[' }).Split(new String[] { "],[" }, StringSplitOptions.None);
                 Step = (100D - Progress) / _DataArray.Length;
                 foreach (String _Match in _DataArray)
                 {
-                    _ItemDataArray = _Match.Trim('"').Split(new String[] { "\",\"" }, StringSplitOptions.None);
-                    SearchCollection.Add(
-                                new SearchInfo(
-                                    _ItemDataArray[1],
-                                    String.Format("http://mangafox.me/icon/{0}.jpg", _ItemDataArray[0]),
-                                    _ItemDataArray[4],
-                                    String.Format("http://www.mangafox.me/manga/{0}", _ItemDataArray[2]),
-                                    UInt32.Parse(_ItemDataArray[0])));
+                    _ItemDataArray = _Match.Split(new String[] { "\",\"" }, StringSplitOptions.None);
+                    for (Int32 i = 0; i < _ItemDataArray.Length; ++i)
+                        _ItemDataArray[i] = _ItemDataArray[i].Trim('"');
+                    if (!TestForLicense(String.Format("http://www.mangafox.me/manga/{0}", _ItemDataArray[2])))
+                        SearchCollection.Add(
+                                    new SearchInfo(
+                                        _ItemDataArray[1],
+                                        String.Format("http://mangafox.me/icon/{0}.jpg", _ItemDataArray[0]),
+                                        _ItemDataArray[4],
+                                        String.Format("http://www.mangafox.me/manga/{0}", _ItemDataArray[2]),
+                                        UInt32.Parse(_ItemDataArray[0])));
                     OnProgressChanged((Int32)(Progress += Step));
                 }
                 SearchCollection.TrimExcess();
@@ -238,20 +241,25 @@ namespace MangaFox
         }
         #endregion
 
+        private Boolean TestForLicense(String Path)
+        {
+            Boolean License = false;
+            using (WebClient WebClient = ConfigureWebClient(SiteRefererHeader))
+                License = Regex.IsMatch(WebClient.DownloadString(Path), @"(licensed)(.*?)(not\savailable)");
+            return License;
+        }
+
         private String NameToUrlName(String Name)
         { return Regex.Replace(Name, @"\W+", "_").Trim('_').ToLower(); }
 
-        private UInt32 ChapterId(String MangaRoot)
+        private UInt32 GetSeriesID(String MangaRoot)
         {
-            String _IdString;
-            using (WebClient WebClient = new WebClient())
+            String sID;
+            using (WebClient WebClient = ConfigureWebClient(SiteRefererHeader))
             {
-                WebClient.Headers.Clear();
-                WebClient.Headers.Add(System.Net.HttpRequestHeader.Referer, SiteRefererHeader);
-                WebClient.Encoding = Encoding.UTF8;
-                _IdString = WebClient.DownloadString(MangaRoot);
+                sID = WebClient.DownloadString(MangaRoot);
             }
-            return ParseID(_IdString);
+            return ParseID(sID);
         }
         private UInt32 ParseID(String HTML)
         { return Parse.TryParse<UInt32>(Regex.Match(HTML, @"sid=(?<ID>\d+?);").Groups["ID"].Value, 0); }
@@ -263,12 +271,9 @@ namespace MangaFox
                 String.Format(
                 "\\[\"(?<VC>[\\w\\d\\s\\.]+?)(\\:(?<Title>.+?))?\",\"(?<Location>{0})\"\\]",
                 @"(v(?<Volume>\d{2,}))?/?(c(?<Chapter>\d{3,}))(\.(?<SubChapter>\d{1,}))?");
-            using (WebClient WebClient = new WebClient())
+            using (WebClient WebClient = ConfigureWebClient(SiteRefererHeader))
             {
                 OnProgressChanged(1);
-                WebClient.Encoding = Encoding.UTF8;
-                WebClient.Headers.Clear();
-                WebClient.Headers.Add(System.Net.HttpRequestHeader.Referer, SiteRefererHeader);
                 String _url = String.Format("http://mangafox.me/media/js/list.{0}.js", MangaInfo.ID),
                     _ChapterContent = WebClient.DownloadString(_url);
                 Int32 Progress, Step;

@@ -1,17 +1,19 @@
 ﻿using System;
+using System.ComponentModel;
 using System.IO;
 using System.Text;
+using BakaBox.IO;
+using BakaBox.IO.XML;
 using Ionic.Zip;
 using Manga.Archive;
 using Manga.Info;
-using BakaBox.IO.XML;
-using System.Diagnostics;
-using BakaBox.IO;
-using System.ComponentModel;
+using Manga.Core;
 
 namespace Manga.Zip
 {
-    //[DebuggerStepThrough]
+#if RELEASE
+    [DebuggerStepThrough]
+#endif
     public sealed class MangaDataZip : NotifyPropChangeBase, IDisposable
     {
         #region Instance
@@ -77,7 +79,7 @@ namespace Manga.Zip
         public String SaveLocation
         {
             get { return _SaveLocation; }
-            set { _SaveLocation = value; OnPropertyChanged("SaveLocation"); }
+            set { _SaveLocation = value.SafeFolder(); OnPropertyChanged("SaveLocation"); }
         }
 
         private ReadOptions _ZipReadOptions;
@@ -97,7 +99,7 @@ namespace Manga.Zip
 
         #region Constructor
         private MangaDataZip()
-        { SaveLocation = DefaultSaveLocation; }
+        { SaveLocation = DefaultSaveLocation.SafeFolder(); }
         #endregion
 
         #region Disposable
@@ -132,9 +134,21 @@ namespace Manga.Zip
         }
         #endregion
 
+        #region Auto
+        public String AutoZip(MangaData MangaData)
+        {
+            if (MangaData is MangaInfo)
+                return MIZA(MangaData as MangaInfo);
+            else if (MangaData is MangaArchiveInfo)
+                return MZA(MangaData as MangaArchiveInfo);
+            else
+                return String.Empty;
+        }
+        #endregion
+
         #region MangaInfo
         public String MIZAPath
-        { get { return Path.Combine(SaveLocation, "MangaInfo"); } }
+        { get { return Path.Combine(SaveLocation, "MangaInfo").SafeFolder(); } }
         public String CreateMIZAPath(MangaInfo MangaInfo)
         { return Path.Combine(MIZAPath, MangaInfo.MangaDataName()); }
 
@@ -154,17 +168,17 @@ namespace Manga.Zip
                 OnMangaInfoUpdateChanged(5);
                 zipFile.Comment = MangaInfo.Name;
                 zipFile.CompressionLevel = Ionic.Zlib.CompressionLevel.BestCompression;
-                zipFile.CompressionMethod = CompressionMethod.Deflate;
+                zipFile.CompressionMethod = Ionic.Zip.CompressionMethod.Deflate;
                 zipFile.UseZip64WhenSaving = Zip64Option.AsNecessary;
                 OnMangaInfoUpdateChanged(10);
                 if (CoverDataExists)
                 {
                     CoverData.CoverStream.Position = 0;
-                    zipFile.UpdateEntry(MangaInfoData.CoverName, CoverData.CoverStream);
+                    zipFile.UpdateEntry(MangaInfoConst.CoverName, CoverData.CoverStream);
                 }
                 OnMangaInfoUpdateChanged(25);
 
-                zipFile.UpdateEntry(MangaInfoData.InfoFileName, MangaInfo.SerializeObject());
+                zipFile.UpdateEntry(MangaInfoConst.InfoFileName, MangaInfo.SerializeObject());
 
                 OnMangaInfoUpdateChanged(50);
 
@@ -189,52 +203,54 @@ namespace Manga.Zip
 
         #region Read
         public Stream CoverStream(String MIZA_Path)
-        { return GetCoverStream(MIZA_Path); }
-        public static Stream GetCoverStream(String MIZA_Path)
         {
-            MemoryStream _Cover = new MemoryStream();
+            MemoryStream CoverStream = new MemoryStream();
 
             if (File.Exists(MIZA_Path))
             {
-                using (ZipFile zipFile = ZipFile.Read(MIZA_Path, new ReadOptions() { Encoding = Encoding.UTF8 }))
+                using (ZipFile zipFile = ZipFile.Read(MIZA_Path, ZipReadOptions))
                 {
-                    if (zipFile.ContainsEntry(MangaInfoData.CoverName))
+                    if (zipFile.ContainsEntry(MangaInfoConst.CoverName))
                     {
-                        Stream _Data = new MemoryStream();
-                        zipFile[MangaInfoData.CoverName].Extract(_Data);
-                        _Data.Position = 0;
-                        _Data.CopyTo(_Cover);
-                        _Cover.Position = 0;
-                        _Data.Close();
+                        using (Stream CoverData = new MemoryStream())
+                        {
+                            zipFile[MangaInfoConst.CoverName].Extract(CoverData);
+                            CoverData.Position = 0;
+                            CoverData.CopyTo(CoverStream);
+                            CoverStream.Position = 0;
+                            CoverData.Close();
+                        }
                     }
+                    else
+                        CoverStream = (MemoryStream)Stream.Null;
                 }
             }
-            _Cover.Position = 0;
-            return _Cover;
+            CoverStream.Position = 0;
+            return CoverStream;
         }
 
-        public MangaInfo MangaInfo(String MIZA_Path)
-        { return GetMangaInfo(MIZA_Path); }
-        public static MangaInfo GetMangaInfo(String MIZA_Path)
+        public MangaInfo GetMangaInfo(String MIZA_Path)
         {
-            MangaInfo _mInfo = null;
+            MangaInfo MangaInfoInfo = null;
 
             if (File.Exists(MIZA_Path))
             {
-                using (ZipFile zipFile = ZipFile.Read(MIZA_Path, new ReadOptions() { Encoding = Encoding.UTF8 }))
+                using (ZipFile zipFile = ZipFile.Read(MIZA_Path, ZipReadOptions))
                 {
-                    if (zipFile.ContainsEntry(MangaInfoData.InfoFileName))
+                    if (zipFile.ContainsEntry(MangaInfoConst.InfoFileName))
                     {
-                        Stream _Data = new MemoryStream();
-                        zipFile[MangaInfoData.InfoFileName].Extract(_Data);
-                        _Data.Position = 0;
-                        _mInfo = _Data.DeserializeStream<MangaInfo>();
-                        _Data.Close();
+                        using (Stream MangaInfoData = new MemoryStream())
+                        {
+                            zipFile[MangaInfoConst.InfoFileName].Extract(MangaInfoData);
+                            MangaInfoData.Position = 0;
+                            MangaInfoInfo = MangaInfoData.DeserializeStream<MangaInfo>();
+                            MangaInfoData.Close();
+                        }
                     }
                 }
             }
 
-            return _mInfo;
+            return MangaInfoInfo;
         }
         #endregion
 
@@ -242,9 +258,9 @@ namespace Manga.Zip
 
         #region MangaArchive
         public String MZAPath
-        { get { return Path.Combine(SaveLocation, "MangaArchives"); } }
+        { get { return Path.Combine(SaveLocation, "MangaArchives").SafeFolder(); } }
         public String CreateMZAPath(MangaArchiveInfo MangaArchiveInfo)
-        { return Path.Combine(MZAPath, MangaArchiveInfo.Name.SafeFileName(), MangaArchiveInfo.MangaDataName().SafeFileName()); }
+        { return Path.Combine(MZAPath, MangaArchiveInfo.Name, MangaArchiveInfo.MangaDataName()).SafeFolder(); }
         
         #region Write
         public String MZA(MangaArchiveInfo MangaArchiveInfo)
@@ -252,7 +268,7 @@ namespace Manga.Zip
         public String MZA(MangaArchiveInfo MangaArchiveInfo, String DestFolder, String FileName)
         {
             Double Progress = 0, Step = 0;
-            String DestFilePath = Path.Combine(DestFolder, FileName);
+            String DestFilePath = Path.Combine(DestFolder, FileName), TempSource = MangaArchiveInfo.TempPath();
             Boolean FileExists = File.Exists(DestFilePath);
             OnMangaArchiveUpdateChanged((Int32)Math.Round(++Progress));
 
@@ -260,10 +276,10 @@ namespace Manga.Zip
             {
                 zipFile.Comment = MangaArchiveInfo.Name;
                 zipFile.CompressionLevel = Ionic.Zlib.CompressionLevel.BestCompression;
-                zipFile.CompressionMethod = CompressionMethod.Deflate;
+                zipFile.CompressionMethod = Ionic.Zip.CompressionMethod.Deflate;
                 zipFile.UseZip64WhenSaving = Zip64Option.AsNecessary;
 
-                zipFile.UpdateEntry(MangaArchiveData.InfoFileName, MangaArchiveInfo.SerializeObject());
+                zipFile.UpdateEntry(MangaArchiveConst.InfoFileName, MangaArchiveInfo.SerializeObject());
 
                 OnMangaArchiveUpdateChanged((Int32)Math.Round(++Progress));
                 Step = (49D - Progress) / MangaArchiveInfo.PageEntries.Count;
@@ -283,11 +299,11 @@ namespace Manga.Zip
                 if (FileExists)
                     zipFile.Save();
                 else
-                    zipFile.CloudSafeSave(MangaArchiveInfo.TempPath(), DestFolder, FileName);
+                    zipFile.CloudSafeSave(TempSource, DestFolder, FileName);
 
                 zipFile.SaveProgress -= MangaArchiveZipSaveProgress;
             }
-            CleanUnusedFolders(MangaArchiveInfo, MangaArchiveInfo.TempPath());
+            CleanUnusedFolders(TempSource);
             OnMangaArchiveUpdateChanged(100);
             OnMangaArchiveUpdated(MangaArchiveInfo, DestFilePath);
             return DestFilePath;
@@ -301,7 +317,7 @@ namespace Manga.Zip
 
             if (File.Exists(MZA_Path))
             {
-                using (ZipFile zipFile = ZipFile.Read(MZA_Path, new ReadOptions() { Encoding = Encoding.UTF8 }))
+                using (ZipFile zipFile = ZipFile.Read(MZA_Path, ZipReadOptions))
                 {
                     if (MangaArchiveInfo.PageEntries.Contains(PageNumber))
                     {
@@ -321,20 +337,18 @@ namespace Manga.Zip
             return _Page;
         }
         public Stream PageStream(UInt32 PageNumber, String MZA_Path)
-        { return GetPageStream(PageNumber, MZA_Path); }
-        public static Stream GetPageStream(UInt32 PageNumber, String MZA_Path)
         {
             MemoryStream _Page = new MemoryStream();
 
             if (File.Exists(MZA_Path))
             {
-                using (ZipFile zipFile = ZipFile.Read(MZA_Path, new ReadOptions() { Encoding = Encoding.UTF8 }))
+                using (ZipFile zipFile = ZipFile.Read(MZA_Path, ZipReadOptions))
                 {
                     MangaArchiveInfo _MangaArchiveInfo;
-                    if (zipFile.ContainsEntry(MangaArchiveData.InfoFileName))
+                    if (zipFile.ContainsEntry(MangaArchiveConst.InfoFileName))
                     {
                         Stream _Data = new MemoryStream();
-                        zipFile[MangaArchiveData.InfoFileName].Extract(_Data);
+                        zipFile[MangaArchiveConst.InfoFileName].Extract(_Data);
                         _Data.Position = 0;
                         _MangaArchiveInfo = _Data.DeserializeStream<MangaArchiveInfo>();
                         _Data.Close();
@@ -343,11 +357,13 @@ namespace Manga.Zip
                             String imgName = _MangaArchiveInfo.PageName(PageNumber);
                             if (zipFile.ContainsEntry(imgName))
                             {
-                                _Data = new MemoryStream();
-                                zipFile[imgName].Extract(_Data);
-                                _Data.Position = 0;
-                                _Data.CopyTo(_Page);
-                                _Data.Close();
+                                using (Stream StreamData = new MemoryStream())
+                                {
+                                    zipFile[imgName].Extract(StreamData);
+                                    StreamData.Position = 0;
+                                    StreamData.CopyTo(_Page);
+                                    StreamData.Close();
+                                }
                             }
                         }
                     }
@@ -358,41 +374,41 @@ namespace Manga.Zip
             return _Page;
         }
 
-        public MangaArchiveInfo MangaArchiveInfo(String MZA_Path)
-        { return GetMangaArchiveInfo(MZA_Path); }
-        public static MangaArchiveInfo GetMangaArchiveInfo(String MZA_Path)
+        public MangaArchiveInfo GetMangaArchiveInfo(String MZA_Path)
         {
-            MangaArchiveInfo _mArchiveInfo = null;
+            MangaArchiveInfo ArchiveInfo = null;
 
             if (File.Exists(MZA_Path))
             {
-                using (ZipFile zipFile = ZipFile.Read(MZA_Path, new ReadOptions() { Encoding = Encoding.UTF8 }))
+                using (ZipFile zipFile = ZipFile.Read(MZA_Path, ZipReadOptions))
                 {
-                    if (zipFile.ContainsEntry(MangaArchiveData.InfoFileName))
+                    if (zipFile.ContainsEntry(MangaArchiveConst.InfoFileName))
                     {
-                        Stream _Data = new MemoryStream();
-                        zipFile[MangaArchiveData.InfoFileName].Extract(_Data);
-                        _Data.Position = 0;
-                        _mArchiveInfo = _Data.DeserializeStream<MangaArchiveInfo>();
-                        _Data.Close();
+                        using (Stream StreamData = new MemoryStream())
+                        {
+                            zipFile[MangaArchiveConst.InfoFileName].Extract(StreamData);
+                            StreamData.Position = 0;
+                            ArchiveInfo = StreamData.DeserializeStream<MangaArchiveInfo>();
+                            StreamData.Close();
+                        }
                     }
                 }
             }
 
-            return _mArchiveInfo;
+            return ArchiveInfo;
         }
         #endregion
 
         #endregion
 
-        #region Static Methods
+        #region Private Methods
 
         /// <summary>
         /// Cleans the directory where a chapter was stored.
         /// </summary>
         /// <param name="MangaArchiveInfo">The Manga Archive Info</param>
         /// <param name="SavePath">The higher path</param>
-        public static void CleanUnusedFolders(MangaArchiveInfo MangaArchiveInfo, String SavePath)
+        public static void CleanUnusedFolders(String SavePath)
         {
             Boolean Retried;
             DirectoryInfo DirectoryPath = new DirectoryInfo(SavePath);
@@ -423,25 +439,40 @@ namespace Manga.Zip
         /// <param name="FileName">File name within the zip.</param>
         /// <param name="ZipPath">Location of the zip file.</param>
         /// <returns></returns>
-        public static Stream GetFileStream(String FileName, String ZipPath)
+        private Stream GetFileStream(String FileName, String ZipPath)
         {
             Stream _FileStream = new MemoryStream();
             if (File.Exists(ZipPath))
             {
-                using (ZipFile zipFile = ZipFile.Read(ZipPath, new ReadOptions() { Encoding = Encoding.UTF8 }))
+                using (ZipFile zipFile = ZipFile.Read(ZipPath, ZipReadOptions))
                 {
                     if (zipFile.ContainsEntry(FileName))
                     {
-                        Stream _Data = new MemoryStream();
-                        zipFile[FileName].Extract(_Data);
-                        _Data.Position = 0;
-                        _Data.CopyTo(_FileStream);
-                        _Data.Close();
+                        using (Stream StreamData = new MemoryStream())
+                        {
+                            zipFile[FileName].Extract(StreamData);
+                            StreamData.Position = 0;
+                            StreamData.CopyTo(_FileStream);
+                            StreamData.Close();
+                        }
                     }
                 }
             }
             _FileStream.Position = 0;
             return _FileStream;
+        }
+        private T GetObject<T>(String ObjFileName, String ZipPath)
+        {
+            T Obj = default(T);
+            using (Stream tmpStream = GetFileStream(ObjFileName, ZipPath))
+            {
+                if (tmpStream != null && !tmpStream.Equals(Stream.Null))
+                {
+                    Obj = tmpStream.DeserializeStream<T>();
+                }
+                tmpStream.Close();
+            }
+            return Obj;
         }
         #endregion
     }

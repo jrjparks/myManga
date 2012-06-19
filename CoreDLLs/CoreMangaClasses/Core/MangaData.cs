@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Xml.Serialization;
 using System.Diagnostics;
+using BakaBox.MVVM;
+using System.ComponentModel;
 
 namespace Manga.Core
 {
@@ -8,21 +10,23 @@ namespace Manga.Core
     /// This class is used to store data about manga.
     /// </summary>
     [XmlRoot("MangaData"), DebuggerStepThrough]
-    public class MangaData : NotifyPropChangeBase
+    public abstract class MangaData : ModelBase
     {
         #region Private Vars
+        [XmlIgnore, EditorBrowsable(EditorBrowsableState.Never)]
+        protected String _Site;
         [XmlIgnore]
-        protected String _Site { get; set; }
-        [XmlIgnore]
-        protected String _Name { get; set; }
-        [XmlIgnore]
-        protected UInt32 _ID { get; set; }
-        [XmlIgnore]
-        protected UInt32 _Volume { get; set; }
-        [XmlIgnore]
-        protected UInt32 _Chapter { get; set; }
-        [XmlIgnore]
-        protected UInt32 _SubChapter { get; set; }
+        protected String _Name;
+        [XmlIgnore, EditorBrowsable(EditorBrowsableState.Never)]
+        protected UInt32 _ID;
+        [XmlIgnore, EditorBrowsable(EditorBrowsableState.Never)]
+        protected UInt32 _Volume;
+        [XmlIgnore, EditorBrowsable(EditorBrowsableState.Never)]
+        protected UInt32 _Chapter;
+        [XmlIgnore, EditorBrowsable(EditorBrowsableState.Never)]
+        protected UInt32 _SubChapter;
+        [XmlIgnore, EditorBrowsable(EditorBrowsableState.Never)]
+        protected UInt32 _Page;
         #endregion
 
         #region Public Vars
@@ -86,29 +90,41 @@ namespace Manga.Core
                 OnPropertyChanged("SubChapter");
             }
         }
+        [XmlAttribute("Page")]
+        public UInt32 Page
+        {
+            get { return _Page; }
+            set
+            {
+                _Page = value;
+                OnPropertyChanged("Page");
+            }
+        }
         #endregion
 
         #region XML Specifiers
-        [XmlIgnore]
+        [XmlIgnore, EditorBrowsable(EditorBrowsableState.Never)]
         public Boolean SiteSpecified { get { return !Site.Equals(String.Empty); } }
-        [XmlIgnore]
+        [XmlIgnore, EditorBrowsable(EditorBrowsableState.Never)]
         public Boolean NameSpecified { get { return !Name.Equals(String.Empty); } }
-        [XmlIgnore]
+        [XmlIgnore, EditorBrowsable(EditorBrowsableState.Never)]
         public Boolean IDSpecified { get { return !ID.Equals(UInt32.MinValue); } }
-        [XmlIgnore]
+        [XmlIgnore, EditorBrowsable(EditorBrowsableState.Never)]
         public Boolean VolumeSpecified { get { return !Volume.Equals(UInt32.MinValue); } }
-        [XmlIgnore]
+        [XmlIgnore, EditorBrowsable(EditorBrowsableState.Never)]
         public Boolean ChapterSpecified { get { return !Chapter.Equals(UInt32.MinValue); } }
-        [XmlIgnore]
+        [XmlIgnore, EditorBrowsable(EditorBrowsableState.Never)]
         public Boolean SubChapterSpecified { get { return !SubChapter.Equals(UInt32.MinValue); } }
+        [XmlIgnore, EditorBrowsable(EditorBrowsableState.Never)]
+        public Boolean PageSpecified { get { return !Page.Equals(UInt32.MinValue); } }
         #endregion
 
-        public MangaData()
+        public void Init()
         {
             Name = Site = String.Empty;
             Volume = Chapter = SubChapter = ID = UInt32.MinValue;
         }
-        public MangaData(MangaData MangaData)
+        public void Init(MangaData MangaData)
         {
             Name = MangaData.Name;
             Site = MangaData.Site;

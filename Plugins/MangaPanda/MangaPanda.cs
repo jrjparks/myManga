@@ -25,7 +25,7 @@ namespace MangaPanda
     [PluginSite("MangaPanda")]
     [PluginAuthor("Reuben Castelino")]
     [PluginVersion("0.0.1")]
-    public class MangaPanda : PluginProgressChanged, IMangaPlugin
+    public class MangaPanda : IMangaPluginBase, IMangaPlugin
     {
         #region IMangaPlugin Vars
         public string SiteName { get { return "MangaPanda"; } }
@@ -81,11 +81,8 @@ namespace MangaPanda
             MAI.SubChapter = 0;
             OnProgressChanged((Int32)Math.Round(Progress));
 
-            using (WebClient WebClient = new WebClient())
+            using (WebClient WebClient = ConfigureWebClient(SiteRefererHeader))
             {
-                WebClient.Headers.Clear();
-                WebClient.Headers.Add(System.Net.HttpRequestHeader.Referer, SiteRefererHeader);
-                WebClient.Encoding = Encoding.UTF8;
                 PageHTML = WebClient.DownloadString(String.Format(PagePath, 1));
                 Match NumberOfPagesMatch = Regex.Match(PageHTML, @"of\s(\d+)"), InfoMatch = Regex.Match(PageHTML, ChapterNameRegEx);
                 if (NumberOfPagesMatch.Success)
@@ -151,11 +148,8 @@ namespace MangaPanda
             Double Progress = 10, Step = 99D - (Double)Progress;
             OnProgressChanged((Int32)Math.Round(Progress));
 
-            using (WebClient WebClient = new WebClient())
+            using (WebClient WebClient = ConfigureWebClient(SiteRefererHeader))
             {
-                WebClient.Headers.Clear();
-                WebClient.Headers.Add(System.Net.HttpRequestHeader.Referer, SiteRefererHeader);
-                WebClient.Encoding = Encoding.UTF8;
                 PageHTML = WebClient.DownloadString(InfoPage);
                 HtmlDocument _PageDoc = new HtmlDocument();
                 HtmlNode _PageElement;
@@ -226,11 +220,8 @@ namespace MangaPanda
             String PageHTML,
                 FileLocation,
                 CoverRegex = @"(?<File>http://s\d\.mangapanda\.com/cover/(?<Name>[\w-]+)/(?<FileName>[\w-]+l\d+?)(?<Extention>\.[\w]{3,4}))";
-            using (WebClient WebClient = new WebClient())
+            using (WebClient WebClient = ConfigureWebClient(SiteRefererHeader))
             {
-                WebClient.Headers.Clear();
-                WebClient.Headers.Add(System.Net.HttpRequestHeader.Referer, SiteRefererHeader);
-                WebClient.Encoding = Encoding.UTF8;
                 PageHTML = WebClient.DownloadString(MangaInfo.InfoPage);
                 Match coverMatch = Regex.Match(PageHTML, CoverRegex);
                 if (coverMatch.Success)
@@ -267,11 +258,8 @@ namespace MangaPanda
             String[] _DataArray;
             OnProgressChanged((Int32)(Progress += 5));
 
-            using (WebClient WebClient = new WebClient())
+            using (WebClient WebClient = ConfigureWebClient(SiteRefererHeader))
             {
-                WebClient.Headers.Clear();
-                WebClient.Headers.Add(System.Net.HttpRequestHeader.Referer, SiteRefererHeader);
-                WebClient.Encoding = Encoding.UTF8;
                 using (Stream _s = new MemoryStream(WebClient.DownloadData(SearchPath)))
                 {
                     using (StreamReader _sr = new StreamReader(_s))
@@ -319,11 +307,8 @@ namespace MangaPanda
         private UInt32 ChapterId(String MangaRoot)
         {
             String _IdString;
-            using (WebClient WebClient = new WebClient())
+            using (WebClient WebClient = ConfigureWebClient(SiteRefererHeader))
             {
-                WebClient.Headers.Clear();
-                WebClient.Headers.Add(System.Net.HttpRequestHeader.Referer, SiteRefererHeader);
-                WebClient.Encoding = Encoding.UTF8;
                 _IdString = WebClient.DownloadString(String.Format("{0}/1", MangaRoot));
             }
             return ParseID(_IdString);
@@ -334,12 +319,9 @@ namespace MangaPanda
         private ChapterEntryCollection ChapterList(UInt32 ID)
         {
             ChapterEntryCollection _Chapters = new ChapterEntryCollection();
-            using (WebClient WebClient = new WebClient())
+            using (WebClient WebClient = ConfigureWebClient(SiteRefererHeader))
             {
                 OnProgressChanged(1);
-                WebClient.Headers.Clear();
-                WebClient.Headers.Add(System.Net.HttpRequestHeader.Referer, SiteRefererHeader);
-                WebClient.Encoding = Encoding.UTF8;
                 String _url = String.Format("http://www.mangapanda.com/actions/selector/?id={0}&which=0", ID),
                     _ChapterContent = "{\"data\":" + WebClient.DownloadString(_url) + "}";
                 Int32 Progress, Step;

@@ -78,7 +78,7 @@
                         </Border.RenderTransform>
                         <Grid>
                             <Border 
-                                x:Name="_IconBorder"
+                                x:Name="_NewIconBorder"
                                 Grid.ZIndex="4" 
                                 Background="Black" 
                                 HorizontalAlignment="Right" 
@@ -89,19 +89,37 @@
                                 BorderThickness="1"
                                 Visibility="Collapsed">
                                 <Image 
-                                    x:Name="_IconImg" 
+                                    x:Name="_NewIconImg" 
+                                    Width="32" 
+                                    Height="32" 
+                                    Source="/myManga;component/Resources/Images/Metro/White/Circle/basecircle.png" />
+                            </Border>
+                            <Border 
+                                x:Name="_LicenseIconBorder"
+                                Grid.ZIndex="4" 
+                                Background="Black" 
+                                HorizontalAlignment="Left" 
+                                VerticalAlignment="Top" 
+                                Margin="-16,-16,0,0" 
+                                CornerRadius="99" 
+                                BorderBrush="Black" 
+                                BorderThickness="1"
+                                Visibility="Collapsed">
+                                <Image 
+                                    x:Name="_LicenseIconImg" 
                                     Width="32" 
                                     Height="32" 
                                     Source="/myManga;component/Resources/Images/Metro/White/Circle/basecircle.png" />
                             </Border>
                             <Image Grid.ZIndex="1" x:Name="_Cover" Source="{Binding Path=Cover, FallbackValue=/myManga;component/Resources/Images/Icons/FalbackMangaIcon.png}"/>
-                            <TextBlock Grid.ZIndex="2" VerticalAlignment="Top" TextAlignment="Center" Background="#80000000" Text="{Binding Path=MangaData.Name}" TextTrimming="CharacterEllipsis" MaxWidth="{Binding ElementName=_Cover, Path=ActualWidth}" />
+                            <TextBlock Grid.ZIndex="2" VerticalAlignment="Top" TextAlignment="Center" Background="#80000000" Text="{Binding Path=Name}" TextTrimming="CharacterEllipsis" MaxWidth="{Binding ElementName=_Cover, Path=ActualWidth}" />
                             <TextBlock Grid.ZIndex="2" VerticalAlignment="Bottom" TextAlignment="Center" Background="#80000000">
                                 <TextBlock.Text>
-                                    <MultiBinding StringFormat="V{0} C{1} P{2}">
-                                        <Binding Path="Volume" FallbackValue="0"/>
-                                        <Binding Path="Chapter" FallbackValue="0"/>
-                                        <Binding Path="Page" FallbackValue="0"/>
+                                    <MultiBinding StringFormat="{}V{0} C{1}.{2} P{3}">
+                                        <Binding Path="Volume" FallbackValue="0" TargetNullValue="0"/>
+                                        <Binding Path="Chapter" FallbackValue="0" TargetNullValue="0"/>
+                                        <Binding Path="SubChapter" FallbackValue="0" TargetNullValue="0"/>
+                                        <Binding Path="Page" FallbackValue="0" TargetNullValue="0"/>
                                     </MultiBinding>
                                 </TextBlock.Text>
                             </TextBlock>
@@ -125,20 +143,20 @@
                             <VisualStateGroup x:Name="SelectionStates">
                                 <VisualState x:Name="Unselected">
                                     <Storyboard Storyboard.TargetName="_ItemBorder" SpeedRatio="3">
-                                        <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)" To="1"/>
-                                        <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)" To="1"/>
+                                        <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)" To="0.9"/>
+                                        <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)" To="0.9"/>
                                     </Storyboard>
                                 </VisualState>
                                 <VisualState x:Name="Selected">
                                     <Storyboard Storyboard.TargetName="_ItemBorder" SpeedRatio="3">
-                                        <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)" To="1.1"/>
-                                        <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)" To="1.1"/>
+                                        <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)" To="1"/>
+                                        <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)" To="1"/>
                                     </Storyboard>
                                 </VisualState>
                                 <VisualState x:Name="SelectedUnfocused">
                                     <Storyboard Storyboard.TargetName="_ItemBorder">
-                                        <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)" To="1.05"/>
-                                        <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)" To="1.05"/>
+                                        <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)" To="0.95"/>
+                                        <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)" To="0.95"/>
                                     </Storyboard>
                                 </VisualState>
                             </VisualStateGroup>
@@ -149,8 +167,12 @@
                             <Setter TargetName="ResumeBtn" Property="Visibility" Value="Visible"/>
                         </Trigger>
                         <DataTrigger Binding="{Binding Path=ChapterStatus}" Value="True">
-                            <Setter TargetName="_IconImg" Property="Source" Value="/myManga;component/Resources/Images/Metro/White/Circle/New.png"/>
-                            <Setter TargetName="_IconBorder" Property="Visibility" Value="Visible"/>
+                            <Setter TargetName="_NewIconImg" Property="Source" Value="/myManga;component/Resources/Images/Metro/White/Circle/New.png"/>
+                            <Setter TargetName="_NewIconBorder" Property="Visibility" Value="Visible"/>
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding Path=Licensed}" Value="True">
+                            <Setter TargetName="_LicenseIconImg" Property="Source" Value="/myManga;component/Resources/Images/Metro/White/Circle/Error.png"/>
+                            <Setter TargetName="_LicenseIconBorder" Property="Visibility" Value="Visible"/>
                         </DataTrigger>
                         <DataTrigger Binding="{Binding Path=DrawShadow}" Value="True">
                             <Setter TargetName="_ItemBorder" Property="Effect">

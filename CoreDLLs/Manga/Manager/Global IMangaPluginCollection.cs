@@ -1,9 +1,12 @@
 ﻿using System;
 using Manga.Plugin;
+using BakaBox.MVVM;
+using BakaBox.DLL;
+using System.IO;
 
 namespace Manga.Manager
 {
-    public sealed class Global_IMangaPluginCollection : BakaBox.MVVM.ModelBase
+    public sealed class Global_IMangaPluginCollection : ModelBase
     {
         #region Instance
         private static Global_IMangaPluginCollection _Instance;
@@ -42,6 +45,12 @@ namespace Manga.Manager
         #endregion
 
         #region Public Members
+        #region Collection Loading
+        public void LoadPlugins(String FolderPath)
+        { AddPlugins(PluginLoader<IMangaPlugin>.LoadPluginDirectory(FolderPath, "*.manga.dll")); }
+        #endregion
+
+        #region Collection Management
         public void AddPlugins(params IMangaPlugin[] Plugins)
         {
             OnPropertyChanging("Plugins");
@@ -74,6 +83,7 @@ namespace Manga.Manager
                 this.Plugins.RemoveAt(Index);
             OnPropertyChanged("Plugins");
         }
+        #endregion
         #endregion
     }
 }

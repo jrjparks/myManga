@@ -18,6 +18,41 @@ namespace myManga.ViewModels
 {
     public sealed class ReadingViewModel : ViewModelBase
     {
+        #region Private Classes
+        private sealed class PreDownloadInfoClass
+        {
+            public String Title { get; private set; }
+            public Guid Guid { get; private set; }
+            public OpenPage OpenPage { get; private set; }
+
+            public void Empty()
+            {
+                Title = String.Empty;
+                Guid = Guid.Empty;
+                OpenPage = OpenPage.Resume;
+            }
+
+            public void SetTitle(String Title)
+            { this.Title = Title; }
+            public void SetGuid(Guid Guid)
+            { this.Guid = Guid; }
+            public void SetOpenPage(OpenPage OpenPage)
+            { this.OpenPage = OpenPage; }
+
+
+            public PreDownloadInfoClass()
+            { Empty(); }
+            public PreDownloadInfoClass(String Title, Guid Guid)
+                : this(Title, Guid, OpenPage.Resume) { }
+            public PreDownloadInfoClass(String Title, Guid Guid, OpenPage OpenPage)
+            {
+                SetTitle(Title);
+                SetGuid(Guid);
+                SetOpenPage(OpenPage);
+            }
+        }
+        #endregion
+
         #region Variables
         private MangaInfo _MangaInfo { get; set; }
         public MangaInfo Info
@@ -29,29 +64,19 @@ namespace myManga.ViewModels
         public MangaArchiveInfo ArchiveInfo
         {
             get { return _MangaArchiveInfo; }
-            set { _MangaArchiveInfo = value; OnPropertyChanged("ArchiveInfo"); OnPropertyChanged("ChapterName"); }
+            set { _MangaArchiveInfo = value; OnPropertyChanged("ArchiveInfo"); }
         }
 
-        private Dictionary<Guid, OpenPage> _DownloadingTasks;
-        private Dictionary<Guid, OpenPage> DownloadingTasks
+        private PreDownloadInfoClass _PreDownloadInfo;
+        private PreDownloadInfoClass PreDownloadInfo
         {
             get
             {
-                if (_DownloadingTasks == null)
-                    _DownloadingTasks = new Dictionary<Guid, OpenPage>();
-                return _DownloadingTasks;
+                if (_PreDownloadInfo == null)
+                    _PreDownloadInfo = new PreDownloadInfoClass();
+                return _PreDownloadInfo;
             }
-        }
-
-        private Dictionary<String, Guid> _PreDownloadChapters;
-        private Dictionary<String, Guid> PreDownloadChapters
-        {
-            get
-            {
-                if (_PreDownloadChapters == null)
-                    _PreDownloadChapters = new Dictionary<String, Guid>();
-                return _PreDownloadChapters;
-            }
+            set { _PreDownloadInfo = value; }
         }
 
         private String _MZALocation { get; set; }
@@ -258,29 +283,44 @@ namespace myManga.ViewModels
 
             Progress = 0;
 
-            Manager_v1.Instance.TaskProgress += (s, t) => TaskUpdated(s, t);
-            Manager_v1.Instance.TaskComplete += (s, t) => TaskUpdated(s, t);
-            Manager_v1.Instance.TaskRemoved += (s, t) => TaskUpdated(s, t);
-            Manager_v1.Instance.QueueComplete += (s) => { Progress = 0; };
+            DownloadManager.Instance.TaskProgress += (s, t) => TaskUpdated(s, t);
+            DownloadManager.Instance.TaskComplete += (s, t) => TaskUpdated(s, t);
+            DownloadManager.Instance.TaskRemoved += (s, t) => TaskUpdated(s, t);
+            DownloadManager.Instance.TaskFaulted += (s, t) => TaskUpdated(s, t);
+            DownloadManager.Instance.QueueComplete += (s) => { Progress = 0; };
         }
 
         public Boolean OpenMZA(String MZA_Path)
         { return OpenMZA(MZA_Path, OpenPage.Resume); }
         public Boolean OpenMZA(String MZA_Path, OpenPage OpenPage)
+        { return OpenMZA(MZA_Path, OpenPage, false); }
+        public Boolean OpenMZA(String MZA_Path, OpenPage OpenPage, Boolean Internal)
         {
+            if (!Internal)
+                PreDownloadInfo.Empty();
             Progress = 0;
-            ArchiveInfo = MangaDataZip.Instance.MangaArchiveInfo(MZALocation = MZA_Path);
+
+            ArchiveInfo = MangaDataZip.Instance.GetMangaArchiveInfo(MZALocation = MZA_Path);
 
             MIZALocation = MangaDataZip.Instance.CreateMIZAPath(new MangaInfo(ArchiveInfo as MangaData));
 
             if (File.Exists(MIZALocation))
-                Info = MangaDataZip.Instance.MangaInfo(MIZALocation);
+            {
+                Info = MangaDataZip.Instance.GetMangaInfo(MIZALocation);
+                Info.TotalPage = (UInt32)ArchiveInfo.PageEntries.Count;
+                MangaDataZip.Instance.MIZA(Info);
+                if (Info.Licensed)
+                    SendViewModelToastNotification(this, "The manga you are reading has been Licensed.\nNew chapters will not be downloaded, please switch sites with a new search.", ToastNotification.DisplayLength.Long);
+            }
             else
                 Info = new MangaInfo(ArchiveInfo as MangaData);
             
             Info.Volume = ArchiveInfo.Volume;
             Info.Chapter = ArchiveInfo.Chapter;
             Info.SubChapter = ArchiveInfo.SubChapter;
+
+
+            OnPropertyChanged("ChapterName");
 
             PageView.ScrollToOption =
                 (Info.ReadDirection == ReadDirection.FromRight) ?
@@ -314,28 +354,21 @@ namespace myManga.ViewModels
         #region Private
         private void TaskUpdated(Object Sender, QueuedTask<ManagerData<String, MangaInfo>> Task)
         {
-            if (DownloadingTasks.ContainsKey(Task.Guid) || PreDownloadChapters.ContainsKey(Task.Data.Title))
+            if (PreDownloadInfo.Guid.Equals(Task.Guid))
             {
                 switch (Task.TaskStatus)
                 {
                     default: break;
 
                     case System.Threading.Tasks.TaskStatus.RanToCompletion:
-                        if (DownloadingTasks.ContainsKey(Task.Guid))
-                        {
-                            OpenMZA(Task.Data.Data, DownloadingTasks[Task.Guid]);
-                            DownloadingTasks.Remove(Task.Guid);
-                        }
-                        if (PreDownloadChapters.ContainsKey(Task.Data.Title))
-                        {
-                            Progress = 0;
-                            PreDownloadChapters.Remove(Task.Data.Title);
-                        }
+                        if (PreDownloadInfo.OpenPage != OpenPage.Resume)
+                            OpenMZA(Task.Data.Data, PreDownloadInfo.OpenPage);
+                        PreDownloadInfo.Empty();
                         Progress = 0;
                         break;
 
+                    case System.Threading.Tasks.TaskStatus.Canceled:
                     case System.Threading.Tasks.TaskStatus.Faulted:
-                        DownloadingTasks.Remove(Task.Guid);
                         Progress = 0;
                         SendViewModelToastNotification(this, String.Format("Error downloading chapter.\n{0}", Sender.ToString()), ToastNotification.DisplayLength.Long);
                         break;
@@ -399,13 +432,25 @@ namespace myManga.ViewModels
                         ChapterFilePath = Path.Combine(Path.GetDirectoryName(MZALocation), ChapterFileName);
 
                     if (File.Exists(ChapterFilePath))
-                        OpenMZA(ChapterFilePath, PageDirection.Equals(PageDirection.Next) ? OpenPage.First : OpenPage.Last);
-                    else if(!PreDownloadChapters.ContainsKey(ArchiveChapter.ChapterName(Info)))
+                        OpenMZA(ChapterFilePath, PageDirection.Equals(PageDirection.Next) ? OpenPage.First : OpenPage.Last, true);
+                    else if (!Info.Licensed)
                     {
-                        SendViewModelToastNotification(this, String.Format("Downloading Chapter.\n{0}", ChapterFileName));
-                        DownloadingTasks.Add(Manager_v1.Instance.DownloadChapter(ArchiveChapter.UrlLink), PageDirection.Equals(PageDirection.Next) ? OpenPage.First : OpenPage.Last);
+                        if (PreDownloadInfo.Guid.Equals(Guid.Empty))
+                        {
+                            SendViewModelToastNotification(this, String.Format("Downloading Chapter.\n{0}", ChapterFileName));
+                            PreDownloadInfo.SetTitle(ChapterFileName);
+                            PreDownloadInfo.SetGuid(DownloadManager.Instance.DownloadChapter(ArchiveChapter.UrlLink));
+                            PreDownloadInfo.SetOpenPage(PageDirection.Equals(PageDirection.Next) ? OpenPage.First : OpenPage.Last);
+                        }
+                        else if (PreDownloadInfo.OpenPage.Equals(OpenPage.Resume))
+                            PreDownloadInfo.SetOpenPage(PageDirection.Equals(PageDirection.Next) ? OpenPage.First : OpenPage.Last);
+                        else
+                            SendViewModelToastNotification(this, "Hold on I'm downloading as fast as I can...");
                     }
+                    else if (Info.Licensed)
+                        SendViewModelToastNotification(this, String.Format("myManga can not download the next chapter of this manga from the specified site.\n'{0}' is licensed, and not available from the current site.\nPlease search for '{0}' on a site other than '{1}'", Info.Name, Info.Site), UI.ToastNotification.DisplayLength.Long);
                 }
+                else if (Info.Status == MangaStatus.Complete) SendViewModelToastNotification(this, String.Format("Congratulations! You have completely read {0}.", Info.Name), ToastNotification.DisplayLength.Long);
                 else
                     SendViewModelToastNotification(this, (PageDirection.Equals(ReadingViewModel.PageDirection.Next)) ? "The author and artist are tired.\nBe patient." : "That chapter will NEVER exist.\n!NEVER!", ToastNotification.DisplayLength.Long);
             }
@@ -424,18 +469,23 @@ namespace myManga.ViewModels
 
         private void DownloadNextChapter()
         {
-            ChapterEntry CurrentArchiveChapter = Info.ChapterEntries[ArchiveInfo.Volume, ArchiveInfo.Chapter, ArchiveInfo.SubChapter];
-            Int32 Index = Info.ChapterEntries[CurrentArchiveChapter];
-            if (Index < Info.ChapterEntries.Count - 1)
+            if (Info != null) { }
+            else if (!Info.Licensed)
             {
-                CurrentArchiveChapter = Info.ChapterEntries[++Index];
-                String ChapterFileName = CurrentArchiveChapter.ChapterName(Info),
-                    ChapterFilePath = Path.Combine(Path.GetDirectoryName(MZALocation), ChapterFileName);
-                if (!File.Exists(ChapterFilePath) &&
-                    !PreDownloadChapters.ContainsKey(ChapterFileName))
+                ChapterEntry CurrentArchiveChapter = Info.ChapterEntries[ArchiveInfo.Volume, ArchiveInfo.Chapter, ArchiveInfo.SubChapter];
+                Int32 Index = Info.ChapterEntries[CurrentArchiveChapter];
+                if (Index < Info.ChapterEntries.Count - 1)
                 {
-                    SendViewModelToastNotification(this, String.Format("Downloading Chapter.\n{0}", ChapterFileName));
-                    PreDownloadChapters.Add(ChapterFileName, Manager_v1.Instance.DownloadChapter(CurrentArchiveChapter.UrlLink));
+                    CurrentArchiveChapter = Info.ChapterEntries[++Index];
+                    String ChapterFileName = CurrentArchiveChapter.ChapterName(Info),
+                        ChapterFilePath = Path.Combine(Path.GetDirectoryName(MZALocation), ChapterFileName);
+                    if (!File.Exists(ChapterFilePath) && PreDownloadInfo.Guid.Equals(Guid.Empty))
+                    {
+                        SendViewModelToastNotification(this, String.Format("Downloading Chapter.\n{0}", ChapterFileName));
+                        PreDownloadInfo.SetTitle(ChapterFileName);
+                        PreDownloadInfo.SetGuid(DownloadManager.Instance.DownloadChapter(CurrentArchiveChapter.UrlLink));
+                        PreDownloadInfo.SetOpenPage(OpenPage.Resume);
+                    }
                 }
             }
         }

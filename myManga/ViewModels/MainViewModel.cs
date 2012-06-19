@@ -54,30 +54,24 @@ namespace myManga.ViewModels
         #region Manga Site Plugins
         private void SetupPlugins()
         {
-            try
+            if (!IsInDesignerMode)
             {
-                Global_IMangaPluginCollection.Instance.AddPlugins(PluginLoader<IMangaPlugin>.LoadPluginDirectory(
-                     System.IO.Path.Combine(Environment.CurrentDirectory, "Plugins"),
-                     "*.manga.dll").ToArray());
-            }
-            catch
-            {
-                if (!IsInDesignerMode)
+                try
+                { Global_IMangaPluginCollection.Instance.LoadPlugins(Path.Combine(Environment.CurrentDirectory, "Plugins")); }
+                catch
                 {
                     MessageBox.Show("Unable to load plugins.\nPlease check any new plugins and try again.", "Err!", MessageBoxButton.OK, MessageBoxImage.Error);
                     Application.Current.Shutdown(); // Do NOT shutdown Application in design mode. Shutting down the Application in Visual Studio is BAD!
                 }
-                else
-                    SendViewModelToastNotification(this, "Did not load plugins.\nIn design mode.", ToastNotification.DisplayLength.Normal);
             }
+            else
+                SendViewModelToastNotification(this, "Did not load plugins.\nIn design mode.", ToastNotification.DisplayLength.Normal);
         }
         #endregion
 
         #region Manga Manager
         private void SetupMangaManager()
-        {
-            Manager_v1.Instance.TaskFaulted += TaskFaulted;
-        }
+        { DownloadManager.Instance.TaskFaulted += TaskFaulted; }
 
         private void TaskFaulted(Object Sender, QueuedTask<ManagerData<String, MangaInfo>> Task)
         { toastNotification.ShowToast(String.Format("Error Downloading: {0}\n{1}\n{2}", Task.Data.Title, Task.Guid.ToString(), Sender.ToString()), ToastNotification.DisplayLength.Long); }
@@ -285,14 +279,15 @@ namespace myManga.ViewModels
 
         public MainViewModel()
         {
-            // Add Toast Notification to MainViewModel first.
+            // Add Toast Notification to MainViewModel first. Herp Derp!
             this.ViewModelToastNotification += ViewModel_Toast;
 
             Messenger.Instance.BroadcastMessage += Instance_BroadcastMessage;
+            Application.Current.Exit += Current_Exit;
 
             toastNotification = new ToastNotification();
             toastNotification.PauseToasts();
-            SendViewModelToastNotification(this, "Welcome to myManga", ToastNotification.DisplayLength.Normal);
+            SendViewModelToastNotification(this, "Welcome to myManga\nCheckout myManga.codeplex.com for the latest updates.", ToastNotification.DisplayLength.Long);
             
             SetupMangaManager();
 
@@ -300,6 +295,24 @@ namespace myManga.ViewModels
             {
                 SendViewModelToastNotification(this, "myManga is running in the designer.", ToastNotification.DisplayLength.Long);
                 toastNotification.ResumeToasts();
+            }
+        }
+
+        void Current_Exit(object sender, ExitEventArgs e)
+        {
+            DownloadManager.Instance.CancelAll();
+
+            for (Byte i = 0; i < 3; ++i)
+            {
+                if (Directory.Exists(ZipNamingExtensions.TempSaveLocation))
+                {
+                    try
+                    {
+                        Directory.Delete(ZipNamingExtensions.TempSaveLocation, true);
+                        break;
+                    }
+                    catch { Thread.Sleep(5); }
+                }
             }
         }
 
@@ -317,6 +330,16 @@ namespace myManga.ViewModels
                 }
                 else if (sData.Equals("!^ResumeToast"))
                     toastNotification.ResumeToasts();
+                else if (sData.StartsWith("#^Manga Licensed|"))
+                {
+                    String MangaTitle = sData.Substring("#^Manga Licensed|".Length), tmpPath = Path.Combine(MangaDataZip.Instance.MIZAPath, String.Format("{0}.miza", MangaTitle));
+                    MangaInfo tmpMI = MangaDataZip.Instance.GetMangaInfo(tmpPath);
+                    tmpMI.Licensed = true;
+                    LibraryViewModel.UpdateLibraryMangaInfo(null, tmpMI, tmpPath);
+                    MangaDataZip.Instance.MIZA(tmpMI);
+
+                    SendViewModelToastNotification(this, String.Format("Unable to download: {0}\nThe manga is licensed, and not available from the current site.", MangaTitle, ToastNotification.DisplayLength.Long));
+                }
             }
         }
 

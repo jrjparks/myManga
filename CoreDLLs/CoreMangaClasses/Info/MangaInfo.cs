@@ -3,15 +3,18 @@ using System.Diagnostics;
 using System.Xml.Serialization;
 using Manga.Core;
 using Manga.Archive;
+using System.ComponentModel;
 
 namespace Manga.Info
 {
     [DebuggerStepThrough]
-    public class MangaInfoData
+    public class MangaInfoConst
     {
-        public static String InfoFileName { get { return "Info.mi"; } }
-        public static String CoverName { get { return "Cover.jpg"; } }
+        public const String InfoFileName = "Info.mi";
+        public const String CoverName = "Cover.jpg";
     }
+
+    
 
     /// <summary>
     /// This class stores detailed information about manga.
@@ -21,40 +24,52 @@ namespace Manga.Info
     {
         #region Private
         [XmlIgnore]
-        protected UInt32 _Page { get; set; }
+        protected UInt32 _TotalPage;
+        [XmlIgnore]
+        protected Boolean _Licensed;
 
         [XmlIgnore]
-        protected String _InfoPage { get; set; }
+        protected String _InfoPage;
         [XmlIgnore]
-        protected ReadDirection _ReadDirection { get; set; }
+        protected ReadDirection _ReadDirection;
 
         [XmlIgnore]
-        protected MangaStatus _Status { get; set; }
+        protected MangaStatus _Status;
 
         [XmlIgnore]
-        protected String _AltTitle { get; set; }
+        protected String _AltTitle;
         [XmlIgnore]
-        protected String _Released { get; set; }
+        protected String _Released;
         [XmlIgnore]
-        protected String _Author { get; set; }
+        protected String _Author;
         [XmlIgnore]
-        protected String _Artist { get; set; }
+        protected String _Artist;
         [XmlIgnore]
-        protected String _Genre { get; set; }
+        protected String _Genre;
 
         [XmlIgnore]
-        protected ChapterEntryCollection _ChapterEntries { get; set; }
+        protected ChapterEntryCollection _ChapterEntries;
         #endregion
 
         #region Attributes
-        [XmlAttribute("Page")]
-        public UInt32 Page
+        [XmlAttribute("TotalPage")]
+        public UInt32 TotalPage
         {
-            get { return _Page; }
+            get { return _TotalPage; }
             set
             {
-                _Page = value;
-                OnPropertyChanged("Page");
+                _TotalPage = value;
+                OnPropertyChanged("TotalPage");
+            }
+        }
+        [XmlAttribute("Licensed")]
+        public Boolean Licensed
+        {
+            get { return _Licensed; }
+            set
+            {
+                _Licensed = value;
+                OnPropertyChanged("Licensed");
             }
         }
 
@@ -122,12 +137,15 @@ namespace Manga.Info
         {
             get { return ChapterEntries.GetChapterByNumber(Volume, Chapter, SubChapter); }
         }
+        [XmlIgnore, EditorBrowsable(EditorBrowsableState.Never)]
+        public Boolean LicensedSpecified { get { return Licensed; } }
         #endregion
 
         #region Constructors
         public MangaInfo(MangaInfo MangaInfo)
-            : base(MangaInfo)
+            : base()
         {
+            base.Init(MangaInfo);
             AltTitle = MangaInfo.AltTitle;
             Released = MangaInfo.Released;
             Artist = MangaInfo.Artist;
@@ -140,11 +158,17 @@ namespace Manga.Info
             ChapterEntries = MangaInfo.ChapterEntries;
         }
         public MangaInfo(MangaData MangaData)
-            : base(MangaData) 
-        { MMI_Init(); }
+            : base()
+        {
+            base.Init(MangaData);
+            MMI_Init();
+        }
         public MangaInfo()
-            : base() 
-        { MMI_Init(); }
+            : base()
+        {
+            base.Init();
+            MMI_Init();
+        }
 
         private void MMI_Init()
         {

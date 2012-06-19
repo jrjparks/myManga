@@ -2,11 +2,12 @@
 using System.IO;
 using Manga.Info;
 using System.Diagnostics;
+using System.ComponentModel;
 
 namespace Manga
 {
-    [DebuggerStepThrough]
-    public class CoverData : NotifyPropChangeBase
+    [DebuggerStepThrough, EditorBrowsable(EditorBrowsableState.Never)]
+    public sealed class CoverData : NotifyPropChangeBase
     {
         protected Stream _CoverStream { get; set; }
         protected String _CoverName { get; set; }
@@ -43,7 +44,7 @@ namespace Manga
     }
 
     [DebuggerStepThrough]
-    public class MangaInfoCoverData
+    public sealed class MangaInfoCoverData
     {
         public CoverData CoverData { get; set; }
         public MangaInfo MangaInfo { get; set; }

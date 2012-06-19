@@ -13,7 +13,7 @@
         
         TextElement.FontFamily="Segoe UI"
         TextElement.Foreground="White" 
-        Icon="/myManga;component/Resources/Images/Metro/White/No%20Circle/Radioactive.png">
+        Icon="/myManga;component/Resources/codeplex.ico">
     <Window.CommandBindings>
         <CommandBinding Command="{x:Static shell:SystemCommands.CloseWindowCommand}"
                     Executed="_OnSystemCommandCloseWindow"/>
@@ -48,42 +48,50 @@
             <TabControl.Resources>
                 <Thickness x:Key="TabItemMargin">0</Thickness>
             </TabControl.Resources>
-            <TabItem Header="Library">
+            <TabItem Header="{DynamicResource ResourceKey=LibraryTabText}">
                 <ContentControl Margin="{StaticResource ResourceKey=TabItemMargin}" Content="{Binding Path=LibraryViewModel}"/>
             </TabItem>
-            <TabItem Header="Reader" IsEnabled="{Binding Path=ReadingViewModel.IsEnabled}">
+            <TabItem Header="{DynamicResource ResourceKey=ReaderTabText}" IsEnabled="{Binding Path=ReadingViewModel.IsEnabled}">
                 <ContentControl Margin="{StaticResource ResourceKey=TabItemMargin}" Content="{Binding Path=ReadingViewModel}"/>
             </TabItem>
-            <TabItem Header="Queue">
+            <TabItem Header="{DynamicResource ResourceKey=QueueTabText}">
                 <ContentControl Margin="{StaticResource ResourceKey=TabItemMargin}" Content="{Binding Path=QueueViewModel}"/>
             </TabItem>
-            <TabItem Header="Search">
+            <TabItem Header="{DynamicResource ResourceKey=SearchTabText}">
                 <ContentControl Margin="{StaticResource ResourceKey=TabItemMargin}" Content="{Binding Path=SearchViewModel}"/>
             </TabItem>
-            <TabItem Header="Options">
+            <TabItem Header="{DynamicResource ResourceKey=OptionsTabText}">
                 <TabControl TabStripPlacement="Left" Background="Black">
-                    <TabItem Header="About">
+                    <TabItem Header="{DynamicResource ResourceKey=AboutTabText}">
                         <ContentControl Margin="{StaticResource ResourceKey=TabItemMargin}" Content="{Binding Path=AboutViewModel}"/>
                     </TabItem>
-                    <TabItem Header="Settings">
+                    <TabItem Header="{DynamicResource ResourceKey=SettingsTabText}">
                         <ContentControl Margin="{StaticResource ResourceKey=TabItemMargin}" Content="{Binding Path=SettingsViewModel}"/>
                     </TabItem>
-                    <TabItem Header="License">
+                    <TabItem Header="{DynamicResource ResourceKey=LicenseTabText}">
                         <ContentControl Margin="{StaticResource ResourceKey=TabItemMargin}" Content="{Binding Path=LicenseViewModel}"/>
                     </TabItem>
                 </TabControl>
             </TabItem>
         </TabControl>
-        
-        <TextBlock 
-            Text="myManga Beta" 
+
+        <StackPanel
             Grid.ZIndex="99"
             IsHitTestVisible="False"
-            HorizontalAlignment="Center"
             VerticalAlignment="Center"
-            Foreground="Gray"
             Opacity="0.5"
-            FontSize="50"/>
+            TextElement.Foreground="Gray">
+            <StackPanel HorizontalAlignment="Center">
+                <Grid Margin="5,0,0,-20" TextElement.FontSize="16" TextElement.FontWeight="Bold">
+                    <TextBlock Text="myManga.codeplex.com" HorizontalAlignment="Left" />
+                    <TextBlock Text="{Binding Path=AboutViewModel.AssemblyVersion, StringFormat=v{0}}" HorizontalAlignment="Right" />
+                </Grid>
+                <TextBlock 
+                    Text="myManga Beta"
+                    FontSize="50"
+                    Margin="0,0,0,0"/>
+                </StackPanel>
+        </StackPanel>
         
         <ContentControl Content="{Binding Path=toastNotification}" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="25,16"/>
     </Grid>

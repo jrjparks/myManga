@@ -11,7 +11,7 @@ namespace BakaBox.DLL
     /// </summary>
     /// <typeparam name="T">Class type to load.</typeparam>
     [DebuggerStepThrough]
-    public class PluginLoader<T>
+    public sealed class PluginLoader<T>
     {
         /// <summary>
         /// Generic constructor
@@ -23,15 +23,15 @@ namespace BakaBox.DLL
         /// </summary>
         /// <param name="Path">Directory of plugins.</param>
         /// <returns>List of type T plugins.</returns>
-        public static List<T> LoadPluginDirectory(String Path) { return LoadPluginDirectory(Path, "*.dll"); }
-        
+        public static T[] LoadPluginDirectory(String Path) { return LoadPluginDirectory(Path, "*.dll"); }
+
         /// <summary>
         /// Load plugins based on a filter.
         /// </summary>
         /// <param name="Path">Directory of plugins.</param>
         /// <param name="Filter">Plugin name filter.</param>
         /// <returns>List of type T plugins.</returns>
-        public static List<T> LoadPluginDirectory(String Path, String Filter)
+        public static T[] LoadPluginDirectory(String Path, String Filter)
         {
             List<T> Plugins = new List<T>();
             String[] PossiblePluginFiles = Directory.GetFiles(Path, Filter, SearchOption.TopDirectoryOnly);
@@ -40,7 +40,7 @@ namespace BakaBox.DLL
                 Plugins.AddRange(LoadPlugin(PossiblePluginFile));
 
             Plugins.TrimExcess();
-            return Plugins;
+            return Plugins.ToArray();
         }
         
         /// <summary>
@@ -48,7 +48,7 @@ namespace BakaBox.DLL
         /// </summary>
         /// <param name="Path">Path of plugin file.</param>
         /// <returns>List of type T plugins.</returns>
-        public static List<T> LoadPlugin(String Path)
+        public static T[] LoadPlugin(String Path)
         {
             List<T> Plugins = new List<T>();
             try
@@ -67,7 +67,7 @@ namespace BakaBox.DLL
                 throw new Exception(String.Format("Unable to load '{0}'", System.IO.Path.GetFileName(Path)), ex);
             }
             Plugins.TrimExcess();
-            return Plugins;
+            return Plugins.ToArray();
         }
     }
 }

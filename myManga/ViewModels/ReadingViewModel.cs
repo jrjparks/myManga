@@ -469,7 +469,7 @@ namespace myManga.ViewModels
 
         private void DownloadNextChapter()
         {
-            if (Info != null) { }
+            if (Info == null) { }
             else if (!Info.Licensed)
             {
                 ChapterEntry CurrentArchiveChapter = Info.ChapterEntries[ArchiveInfo.Volume, ArchiveInfo.Chapter, ArchiveInfo.SubChapter];

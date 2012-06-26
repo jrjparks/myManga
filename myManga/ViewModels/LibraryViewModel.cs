@@ -486,10 +486,25 @@ namespace myManga.ViewModels
         }
         private void DownloadRemaining()
         {
-            Int32 Index = origChapEntryCollection.IndexOf(CurrentInfo.LastReadChapterEntry);
-            SendViewModelToastNotification(this, String.Format("Downloading {0} chapters.", origChapEntryCollection.Count - Index));
-            for (; Index < origChapEntryCollection.Count; ++Index)
-                ChapterWorkerData(origChapEntryCollection[Index], CurrentInfo, false, true, false);
+            Int32 Count = 0;
+            foreach (ChapterEntry Chapter in origChapEntryCollection)
+            {
+                String _FileName = Chapter.ChapterName(CurrentInfo),
+                           MainPath = MangaDataZip.Instance.MZAPath,
+                           TmpPath = ZipNamingExtensions.TempSaveLocation;
+                List<String> _PosibleFiles = new List<String>();
+                if (Directory.Exists(MainPath))
+                    _PosibleFiles.AddRange(Directory.GetFiles(MainPath, _FileName, SearchOption.AllDirectories));
+                if (Directory.Exists(TmpPath))
+                    _PosibleFiles.AddRange(Directory.GetFiles(TmpPath, _FileName, SearchOption.AllDirectories));
+
+                if (_PosibleFiles.Count.Equals(0))
+                {
+                    ++Count;
+                    ChapterWorkerData(Chapter, CurrentInfo, false, true, false);
+                }
+            }
+            SendViewModelToastNotification(this, String.Format("Downloading {0} chapters.", Count));
         }
 
         private DelegateCommand<LibraryItemModel> _ResumeManga { get; set; }

@@ -263,8 +263,6 @@ namespace Manga.Manager
                             Task.Data.UpdateData(MangaDataZip.Instance.MIZA(MI, CD));
                             MangaDataZip.Instance.MangaInfoUpdateChanged -= PluginReportC;
                         }
-
-                        Worker.ReportProgress(100);
                         #endregion
                         break;
 
@@ -363,7 +361,6 @@ namespace Manga.Manager
                         {
                             Plugin = null;
                         }
-                        Worker.ReportProgress(100);
 
                         e.Result = Task;
                         #endregion
@@ -376,6 +373,7 @@ namespace Manga.Manager
                     Messenger.Instance.SendBroadcastMessage(String.Format("#^{0}", ex.Message));
                 Task.SetStatus(TaskStatus.Faulted);
             }
+            Worker.ReportProgress(100);
             e.Result = Task;
         }
         #endregion

@@ -7,35 +7,55 @@
     TextBlock.Foreground="White"
     Foreground="White"
     Background="Black">
-    <ListView
-        BorderThickness="0"
-        Background="Black"
-        ItemsSource="{Binding Path=MangaTasks}"
-        HorizontalContentAlignment="Stretch" TabIndex="1" Focusable="False">
-        <ListView.Resources>
-            <Style TargetType="{x:Type ListViewItem}">
-                <Setter Property="Template">
-                    <Setter.Value>
-                        <ControlTemplate>
-                            <Grid TextBlock.FontFamily="Segoe UI">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="1.1*"/>
-                                    <ColumnDefinition Width="Auto"/>
-                                    <!--<ColumnDefinition Width="Auto"/>-->
-                                </Grid.ColumnDefinitions>
-                                <TextBlock 
-                                    Text="{Binding Path=Title}" 
-                                    Grid.Column="0" 
-                                    VerticalAlignment="Center" 
-                                    Padding="3,0" 
-                                    Foreground="White"
-                                    FontSize="16"/>
-                                <ProgressBar
-                                    Margin="0,1"
-                                    Value="{Binding Path=Progress}" 
-                                    Grid.Column="1" />
-                                <!--<Button
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <Border BorderBrush="White" BorderThickness="0,0,0,1">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="Tasks" Margin="5,4" FontSize="14"/>
+                <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="5,4">
+                    <Button Content="Clean" Command="{Binding Path=CleanTasks}"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+        <ListView
+            Grid.Row="1"
+            BorderThickness="0"
+            Background="Black"
+            ItemsSource="{Binding Path=MangaTasks}"
+            HorizontalContentAlignment="Stretch" 
+            TabIndex="1" 
+            Focusable="False">
+            <ListView.Resources>
+                <Style TargetType="{x:Type ListViewItem}">
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate>
+                                <Grid TextBlock.FontFamily="Segoe UI">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="1.1*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <!--<ColumnDefinition Width="Auto"/>-->
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock 
+                                        Text="{Binding Path=Title}" 
+                                        Grid.Column="0" 
+                                        VerticalAlignment="Center" 
+                                        Padding="3,0" 
+                                        Foreground="White"
+                                        FontSize="16"/>
+                                    <ProgressBar
+                                        Margin="0,1"
+                                        Value="{Binding Path=Progress}" 
+                                        Grid.Column="1" />
+                                    <!--<Button
                                     Margin="1"
                                     Style="{StaticResource BlankBtn}" 
                                     Command="{Binding Path=DataContext.OpenTask, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ItemsControl}}}" 
@@ -45,21 +65,22 @@
                                         Height="21" 
                                         Source="/myManga;component/Resources/Images/Metro/White/Circle/play.png" />
                                 </Button>-->
-                                <Button
-                                    Margin="1"
-                                    Style="{StaticResource BlankBtn}" 
-                                    Command="{Binding Path=DataContext.DeleteTask, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ItemsControl}}}"
-                                    CommandParameter="{Binding Path=ID}"
-                                    Grid.Column="3">
-                                    <Image 
-                                        Height="21" 
-                                        Source="/myManga;component/Resources/Images/Metro/White/Circle/delete.png" />
-                                </Button>
-                            </Grid>
-                        </ControlTemplate>
-                    </Setter.Value>
-                </Setter>
-            </Style>
-        </ListView.Resources>
-    </ListView>
+                                    <Button
+                                        Margin="1"
+                                        Style="{StaticResource BlankBtn}" 
+                                        Command="{Binding Path=DataContext.DeleteTask, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ItemsControl}}}"
+                                        CommandParameter="{Binding Path=ID}"
+                                        Grid.Column="3">
+                                        <Image 
+                                            Height="21" 
+                                            Source="/myManga;component/Resources/Images/Metro/White/Circle/delete.png" />
+                                    </Button>
+                                </Grid>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </ListView.Resources>
+        </ListView>
+    </Grid>
 </UserControl>

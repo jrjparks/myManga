@@ -137,6 +137,24 @@ namespace myManga.ViewModels
             else
                 Application.Current.Dispatcher.Invoke(new RemoveMangaTaskDelegate(RemoveMangaTask), value);
         }
+
+        private delegate void CleanMangaTasksDelegate();
+        private void CleanMangaTasks()
+        {
+            if (Application.Current.Dispatcher.Thread == Thread.CurrentThread)
+            {
+                List<Guid> ItemGuids = new List<Guid>(MangaTasks.Count);
+                foreach (ListQueueItem MangaItem in MangaTasks)
+                    if (MangaItem.Progress == 100)
+                        ItemGuids.Add(MangaItem.ID);
+                foreach (Guid ID in ItemGuids)
+                    RemoveMangaTask(ID);
+
+            }
+            else
+                Application.Current.Dispatcher.Invoke(new CleanMangaTasksDelegate(CleanMangaTasks));
+        }
+
         private delegate void AddMangaTaskDelegate(ListQueueItem value);
         private void AddMangaTask(ListQueueItem value)
         {
@@ -175,6 +193,17 @@ namespace myManga.ViewModels
                 if (_DeleteTask == null)
                     _DeleteTask = new DelegateCommand<Guid>(DeleteMangaTask);
                 return _DeleteTask;
+            }
+        }
+
+        private DelegateCommand _CleanTasks { get; set; }
+        public ICommand CleanTasks
+        {
+            get
+            {
+                if (_CleanTasks == null)
+                    _CleanTasks = new DelegateCommand(CleanMangaTasks);
+                return _CleanTasks;
             }
         }
         #endregion

@@ -13,7 +13,7 @@
         
         TextElement.FontFamily="Segoe UI"
         TextElement.Foreground="White" 
-        Icon="/myManga;component/Resources/codeplex.ico">
+        Icon="/myManga;component/Resources/Icon.ico">
     <Window.CommandBindings>
         <CommandBinding Command="{x:Static shell:SystemCommands.CloseWindowCommand}"
                     Executed="_OnSystemCommandCloseWindow"/>
@@ -43,6 +43,24 @@
     </Window.Resources>
     
     <Grid Background="Black" TextBlock.Foreground="White" TextBlock.FontFamily="Segoe UI">
+        <Grid.Triggers>
+            <EventTrigger RoutedEvent="Grid.Loaded">
+                <BeginStoryboard>
+                    <Storyboard>
+                        <DoubleAnimation 
+                            Storyboard.TargetName="watermark"
+                            Storyboard.TargetProperty="Opacity"
+                            BeginTime="0:0:10" From="1" To="0"/>
+                        <ObjectAnimationUsingKeyFrames 
+                            Storyboard.TargetName="watermark"
+                            Storyboard.TargetProperty="Visibility">
+                            <DiscreteObjectKeyFrame KeyTime="0:0:12" Value="{x:Static Visibility.Hidden}"/>
+                        </ObjectAnimationUsingKeyFrames>
+                    </Storyboard>
+                </BeginStoryboard>
+            </EventTrigger>
+        </Grid.Triggers>
+        
         <TabControl
             SelectedIndex="{Binding Path=ViewIndex, Mode=TwoWay}">
             <TabControl.Resources>
@@ -76,11 +94,14 @@
         </TabControl>
 
         <StackPanel
+            x:Name="watermark"
             Grid.ZIndex="99"
             IsHitTestVisible="False"
             VerticalAlignment="Center"
-            Opacity="0.5"
-            TextElement.Foreground="Gray">
+            TextElement.Foreground="White">
+            <StackPanel.Effect>
+                <DropShadowEffect/>
+            </StackPanel.Effect>
             <StackPanel HorizontalAlignment="Center">
                 <Grid Margin="5,0,0,-20" TextElement.FontSize="16" TextElement.FontWeight="Bold">
                     <TextBlock Text="myManga.codeplex.com" HorizontalAlignment="Left" />

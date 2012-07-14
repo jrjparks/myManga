@@ -59,7 +59,7 @@
     <ManifestKeyFile>BakaBox.pfx</ManifestKeyFile>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>Resources\codeplex.ico</ApplicationIcon>
+    <ApplicationIcon>Icon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="fastJSON, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
@@ -949,9 +949,6 @@
     <EmbeddedResource Include="Resources\DLLs\MonitorControl.dll" />
   </ItemGroup>
   <ItemGroup>
-    <SplashScreen Include="Resources\Images\Splash.bmp" />
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="Resources\Images\john parks.png" />
   </ItemGroup>
   <ItemGroup>
@@ -972,7 +969,13 @@
     <Resource Include="License.txt" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\codeplex.ico" />
+    <SplashScreen Include="Resources\Images\Splash.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icon.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Icon.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -176,7 +176,7 @@
     
     <!--Window Chrome-->
     <Style TargetType="{x:Type Window}" x:Key="DarkWindow">
-        <Setter Property="MinWidth" Value="500"/>
+        <Setter Property="MinWidth" Value="680"/>
         <Setter Property="MinHeight" Value="460"/>
         <Setter Property="shell:WindowChrome.WindowChrome">
             <Setter.Value>

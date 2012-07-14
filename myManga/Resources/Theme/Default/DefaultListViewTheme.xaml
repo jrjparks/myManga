@@ -73,9 +73,11 @@
                         RenderTransformOrigin="0.5,0.5"
                         
                         SnapsToDevicePixels="True">
+                        <!--
                         <Border.RenderTransform>
                             <ScaleTransform ScaleX="0" ScaleY="0"/>
                         </Border.RenderTransform>
+                        -->
                         <Grid>
                             <Border 
                                 x:Name="_NewIconBorder"
@@ -139,6 +141,7 @@
                             </Border>
                             <ProgressBar Value="{Binding Path=Progress}" Visibility="{Binding Path=ProgressVisibility}" VerticalAlignment="Bottom" Margin="0,0,0,-8" Grid.ZIndex="3"/>
                         </Grid>
+                        <!--
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="SelectionStates">
                                 <VisualState x:Name="Unselected">
@@ -161,6 +164,7 @@
                                 </VisualState>
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
+                        -->
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsSelected" Value="True">

@@ -58,9 +58,9 @@ namespace myManga.ViewModels
             {
                 try
                 { Global_IMangaPluginCollection.Instance.LoadPlugins(Path.Combine(Environment.CurrentDirectory, "Plugins")); }
-                catch
+                catch(Exception ex)
                 {
-                    MessageBox.Show("Unable to load plugins.\nPlease check any new plugins and try again.", "Err!", MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show(String.Format("Unable to load plugins.\nPlease check any new plugins and try again.\n{0}", ex.Message), "Err!", MessageBoxButton.OK, MessageBoxImage.Error);
                     Application.Current.Shutdown(); // Do NOT shutdown Application in design mode. Shutting down the Application in Visual Studio is BAD!
                 }
             }

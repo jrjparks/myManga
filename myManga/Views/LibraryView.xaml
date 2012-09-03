@@ -7,6 +7,12 @@
     xmlns:bakabox="clr-namespace:System.Windows.Controls;assembly=BakaBox"
     SnapsToDevicePixels="True" 
     TextElement.FontFamily="Segoe UI">
+    <UserControl.Resources>
+        <ContextMenu x:Key="libContextMenu">
+            <MenuItem Header="Delete" Command="{Binding DeleteLibraryItem}"/>
+            <MenuItem Header="Bookmark"/>
+        </ContextMenu>
+    </UserControl.Resources>
     <Grid Background="#252525">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" />
@@ -21,8 +27,8 @@
             ItemsSource="{Binding Path=MangaItems, IsAsync=True}"
             SelectionMode="Single" Grid.Column="1"
             ScrollViewer.PanningMode="VerticalOnly"
-            Style="{StaticResource BalancedWrapListView}"
-            ItemContainerStyle="{StaticResource LibraryListViewItem}"/>
+            ItemContainerStyle="{StaticResource LibraryListViewItem}"
+            Style="{StaticResource BalancedWrapListView}"/>
         <Expander
             IsExpanded="{Binding Path=DetailsOpen, Mode=TwoWay, IsAsync=True}"
             Background="#252525"
@@ -55,6 +61,7 @@
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="1*" />
+                        <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
                     <ListBox
                         x:Name="ChapterList"
@@ -170,8 +177,16 @@
                             <LinearGradientBrush EndPoint="1,0.5" StartPoint="0,0.5">
                                 <GradientStop Color="#111" Offset="0.5" />
                                 <GradientStop Color="#555" Offset="1" />
-                            </LinearGradientBrush></ToggleButton.Background>
+                            </LinearGradientBrush>
+                        </ToggleButton.Background>
                     </ToggleButton>
+                    
+                    <Grid Grid.Row="3">
+                        <StackPanel Orientation="Horizontal">
+                            <Button Command="{Binding Path=DataContext.DeleteLibraryItem, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Expander}}}" Content="Delete"/>
+                            <Button Command="{Binding Path=DataContext.BookmarkLibraryItem, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Expander}}}" Content="Bookmark"/>
+                        </StackPanel>
+                    </Grid>
                 </Grid>
             </Border>
         </Expander>

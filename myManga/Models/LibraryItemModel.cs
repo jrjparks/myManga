@@ -8,10 +8,12 @@ using Manga.Core;
 using BakaBox.MVVM;
 using myManga.Properties;
 using System.Windows;
+using Manga.Zip;
+using System.IO;
 
 namespace myManga.Models
 {
-    public sealed class LibraryItemModel : MangaData
+    public sealed class LibraryItemModel : MangaInfo
     {
         #region Fields
         private ImageSource _Cover;
@@ -106,28 +108,35 @@ namespace myManga.Models
             set { _MangaInfoPath = value; OnPropertyChanged("MangaInfoPath"); }
         }
 
-        private ChapterEntry _LastChapter;
         private ChapterEntry LastChapter
         {
-            get { return _LastChapter; }
-            set { _LastChapter = value; OnPropertyChanged("LastChapter"); }
+            get { return (ChapterEntries != null) ? ChapterEntries.Last() : null; }
         }
 
-        private ItemStatus _Status;
-        public ItemStatus Status
+        private ItemStatus _ItemWorkStatus;
+        public ItemStatus ItemWorkStatus
         {
-            get { return _Status; }
-            set { _Status = value; OnPropertyChanged("Status"); }
+            get { return _ItemWorkStatus; }
+            set { _ItemWorkStatus = value; OnPropertyChanged("ItemWorkStatus"); }
         }
 
-        protected Boolean _Licensed;
-        public Boolean Licensed
+        public new Boolean Licensed
         {
             get { return _Licensed; }
             set
             {
                 _Licensed = value;
                 OnPropertyChanged("Licensed");
+            }
+        }
+
+        public new Boolean KeepChapters
+        {
+            get { return _KeepChapters; }
+            set
+            {
+                _KeepChapters = value;
+                OnPropertyChanged("KeepChapters");
             }
         }
 
@@ -141,7 +150,7 @@ namespace myManga.Models
             Downloading = 0x16,
             Updated = 0x32
         }
-        
+
         public Boolean DrawShadow
         { get { return Settings.Default.DrawShadows; } }
 
@@ -186,13 +195,6 @@ namespace myManga.Models
             CreateShadowLitener();
             MangaInfoPath = _MangaInfoPath;
         }
-        public LibraryItemModel(MangaData MangaData, String _MangaInfoPath)
-        {
-            CreateShadowLitener();
-            base.Init(MangaData);
-            UpdateMangaInfo(MangaData);
-            MangaInfoPath = _MangaInfoPath;
-        }
         public LibraryItemModel(MangaInfo MangaInfo, String _MangaInfoPath)
         {
             CreateShadowLitener();
@@ -225,11 +227,11 @@ namespace myManga.Models
         public void UpdateMangaInfo(MangaInfo MangaInfo)
         {
             UpdateMangaInfo(MangaInfo as MangaData);
-
+            ChapterEntries = MangaInfo.ChapterEntries;
             TotalPage = MangaInfo.TotalPage;
             MangaStatus = MangaInfo.Status;
-            LastChapter = MangaInfo.ChapterEntries.Last();
             Licensed = MangaInfo.Licensed;
+            KeepChapters = MangaInfo.KeepChapters;
         }
         #endregion
     }

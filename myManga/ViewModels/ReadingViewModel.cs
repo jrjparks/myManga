@@ -342,7 +342,7 @@ namespace myManga.ViewModels
                     ChapterIndex = (UInt32)(ArchiveInfo.PageEntries.Count - 1);
                     break;
             }
-            if (Settings.Default.AutoClean && Info != null)
+            if (Settings.Default.AutoClean && Info != null && !Info.KeepChapters)
                 CleanPrevChapter();
 
             SendViewModelToastNotification(this, String.Format("Opened {0}.", ArchiveInfo.MangaDataName()));
@@ -462,7 +462,14 @@ namespace myManga.ViewModels
         {
             PageView.SourceStream = MangaDataZip.Instance.PageStream(Info.Page, ArchiveInfo, MZALocation);
             if (Info != null && Info.InfoPage != String.Empty)
-                MangaDataZip.Instance.MIZA(Info);
+            {
+                MangaInfo tmpInfo = MangaDataZip.Instance.GetMangaInfo(MIZALocation);
+                tmpInfo.Volume = Info.Volume;
+                tmpInfo.Chapter = Info.Chapter;
+                tmpInfo.SubChapter = Info.SubChapter;
+                tmpInfo.Page = Info.Page;
+                MangaDataZip.Instance.MIZA(tmpInfo);
+            }
             if (Settings.Default.AutoDownload && Info != null)
                 DownloadNextChapter();
         }

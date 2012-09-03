@@ -147,7 +147,7 @@ namespace myManga.UI
             }
         }
 
-        public enum DisplayLength { Short = 1000, Normal = 2000, Long = 3000 }
+        public enum DisplayLength { Short = 1000, Normal = 5000, Long = 10000 }
 
         public void ShowToast(String Message) 
         { ShowToast(Message, TimeSpan.FromSeconds(5)); }

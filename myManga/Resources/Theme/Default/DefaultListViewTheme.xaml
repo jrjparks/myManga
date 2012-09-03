@@ -97,12 +97,29 @@
                                     Source="/myManga;component/Resources/Images/Metro/White/Circle/basecircle.png" />
                             </Border>
                             <Border 
-                                x:Name="_LicenseIconBorder"
+                                x:Name="_BookmarkIconBorder"
                                 Grid.ZIndex="4" 
                                 Background="Black" 
                                 HorizontalAlignment="Left" 
                                 VerticalAlignment="Top" 
                                 Margin="-16,-16,0,0" 
+                                CornerRadius="99" 
+                                BorderBrush="Black" 
+                                BorderThickness="1"
+                                Visibility="Collapsed">
+                                <Image 
+                                    x:Name="_BookmarkIconImg" 
+                                    Width="32" 
+                                    Height="32" 
+                                    Source="/myManga;component/Resources/Images/Metro/White/Circle/basecircle.png" />
+                            </Border>
+                            <Border 
+                                x:Name="_LicenseIconBorder"
+                                Grid.ZIndex="4" 
+                                Background="Black" 
+                                HorizontalAlignment="Center" 
+                                VerticalAlignment="Top" 
+                                Margin="0,-16,0,0" 
                                 CornerRadius="99" 
                                 BorderBrush="Black" 
                                 BorderThickness="1"
@@ -177,6 +194,10 @@
                         <DataTrigger Binding="{Binding Path=Licensed}" Value="True">
                             <Setter TargetName="_LicenseIconImg" Property="Source" Value="/myManga;component/Resources/Images/Metro/White/Circle/Error.png"/>
                             <Setter TargetName="_LicenseIconBorder" Property="Visibility" Value="Visible"/>
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding Path=KeepChapters}" Value="True">
+                            <Setter TargetName="_BookmarkIconImg" Property="Source" Value="/myManga;component/Resources/Images/Metro/White/Circle/heart.png"/>
+                            <Setter TargetName="_BookmarkIconBorder" Property="Visibility" Value="Visible"/>
                         </DataTrigger>
                         <DataTrigger Binding="{Binding Path=DrawShadow}" Value="True">
                             <Setter TargetName="_ItemBorder" Property="Effect">

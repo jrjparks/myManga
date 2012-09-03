@@ -65,7 +65,7 @@
                         Style="{StaticResource MetroWhiteCheckBox}" />
                     <CheckBox 
                         IsChecked="{Binding AutoClean}" 
-                        Content="Auto clean previous chapters. (Keeps previous chapter.)"
+                        Content="Auto clean previous chapters. (Deletes previous chapter.)"
                         Foreground="White" 
                         Style="{StaticResource MetroWhiteCheckBox}" />
                 </StackPanel>

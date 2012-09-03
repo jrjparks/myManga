@@ -27,6 +27,8 @@ namespace Manga.Info
         protected UInt32 _TotalPage;
         [XmlIgnore]
         protected Boolean _Licensed;
+        [XmlIgnore]
+        protected Boolean _KeepChapters;
 
         [XmlIgnore]
         protected String _InfoPage;
@@ -70,6 +72,16 @@ namespace Manga.Info
             {
                 _Licensed = value;
                 OnPropertyChanged("Licensed");
+            }
+        }
+        [XmlAttribute("KeepChapters")]
+        public Boolean KeepChapters
+        {
+            get { return _KeepChapters; }
+            set
+            {
+                _KeepChapters = value;
+                OnPropertyChanged("KeepChapters");
             }
         }
 
@@ -156,6 +168,7 @@ namespace Manga.Info
             ReadDirection = MangaInfo.ReadDirection;
             Status = MangaInfo.Status;
             ChapterEntries = MangaInfo.ChapterEntries;
+            KeepChapters = MangaInfo.KeepChapters;
         }
         public MangaInfo(MangaData MangaData)
             : base()
@@ -177,6 +190,7 @@ namespace Manga.Info
             Status = MangaStatus.Ongoing;
             ReadDirection = ReadDirection.FromRight;
             ChapterEntries = new ChapterEntryCollection();
+            KeepChapters = false;
         }
         #endregion
     }

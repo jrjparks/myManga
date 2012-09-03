@@ -126,6 +126,8 @@ namespace myManga.ViewModels
                 {
                     CurrentInfo = MangaDataZip.Instance.GetMangaInfo(value.MangaInfoPath);
                 }
+                else
+                    CurrentInfo = null;
                 OnPropertyChanged("CurrentMangaItem");
             }
         }
@@ -398,7 +400,7 @@ namespace myManga.ViewModels
             while (NewChapters.Count > 0)
             {
                 String Text = NewChapters.Dequeue();
-                for(Int32 l = 0; l < 24 && NewChapters.Count > 0; ++l)
+                for (Int32 l = 0; l < 24 && NewChapters.Count > 0; ++l)
                 {
                     Text = String.Format("{0}\n{1}", Text, NewChapters.Dequeue());
                 }
@@ -425,6 +427,33 @@ namespace myManga.ViewModels
                 if (_LibraryItemLoader.IsQueueEmpty &&
                     !(CurrentMangaItem is LibraryItemModel))
                     CurrentMangaItem = MangaItems.First();
+            }
+        }
+
+        private void DeleteItem()
+        {
+            if (CurrentMangaItem != null)
+            {
+                if (File.Exists(CurrentMangaItem.MangaInfoPath))
+                    if (MessageBox.Show(String.Format("Are you sure you wish to delete '{0}'", CurrentMangaItem.Name), "Delete?", MessageBoxButton.YesNo, MessageBoxImage.Warning, MessageBoxResult.No) == MessageBoxResult.Yes)
+                    {
+                        File.Delete(CurrentMangaItem.MangaInfoPath);
+                        if (!File.Exists(CurrentMangaItem.MangaInfoPath))
+                            SendViewModelToastNotification(this, String.Format("{0} has been deleted...", CurrentMangaItem.Name), ToastNotification.DisplayLength.Long);
+                        MangaItems.Remove(CurrentMangaItem);
+                    }
+            }
+        }
+
+        private void BookmarkItem()
+        {
+            if (CurrentMangaItem != null)
+            {
+                MangaInfo tmpInfo = MangaDataZip.Instance.GetMangaInfo(CurrentMangaItem.MangaInfoPath);
+                tmpInfo.KeepChapters = !tmpInfo.KeepChapters;
+                String dir = Path.GetDirectoryName(CurrentMangaItem.MangaInfoPath), file = Path.GetFileName(CurrentMangaItem.MangaInfoPath);
+                MangaDataZip.Instance.MIZA(tmpInfo, null, dir, file);
+                UpdateLibraryMangaInfo(this, tmpInfo, CurrentMangaItem.MangaInfoPath);
             }
         }
         #endregion
@@ -517,6 +546,31 @@ namespace myManga.ViewModels
                 return _ResumeManga;
             }
         }
+
+        private DelegateCommand _DeleteLibraryItem { get; set; }
+        public ICommand DeleteLibraryItem
+        {
+            get
+            {
+                if (_DeleteLibraryItem == null)
+                    _DeleteLibraryItem = new DelegateCommand(DeleteItem, CanContextMenuLibraryItem);
+                return _DeleteLibraryItem;
+            }
+        }
+
+        private DelegateCommand _BookmarkLibraryItem { get; set; }
+        public ICommand BookmarkLibraryItem
+        {
+            get
+            {
+                if (_BookmarkLibraryItem == null)
+                    _BookmarkLibraryItem = new DelegateCommand(BookmarkItem, CanContextMenuLibraryItem);
+                return _BookmarkLibraryItem;
+            }
+        }
+        private Boolean CanContextMenuLibraryItem()
+        { return CurrentMangaItem != null; }
+
         #endregion
     }
 }

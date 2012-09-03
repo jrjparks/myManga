@@ -57,7 +57,6 @@
                 <ControlTemplate TargetType="{x:Type Thumb}">
                     <Border
                         Name="Thumb"
-                        CornerRadius="2" 
                         Background="#C0C0C0"
                         BorderBrush="#404040"
                         BorderThickness="1" />
@@ -195,11 +194,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type Thumb}">
-                    <Border Name="Thumb" Background="{TemplateBinding Background}" Margin="1">
-                        <Border.Effect>
-                            <BlurEffect KernelType="Box" Radius="1" RenderingBias="Performance"/>
-                        </Border.Effect>
-                    </Border>
+                    <Border Name="Thumb" Background="{TemplateBinding Background}" BorderThickness="1" BorderBrush="{TemplateBinding Foreground}"/>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
@@ -207,12 +202,12 @@
     <Style x:Key="{x:Type ScrollBar}" TargetType="{x:Type ScrollBar}">
         <Setter Property="SnapsToDevicePixels" Value="True"/>
         <Setter Property="OverridesDefaultStyle" Value="True"/>
-        <Setter Property="Foreground" Value="White"/>
-        <Setter Property="Background" Value="#00000000"/>
+        <Setter Property="Foreground" Value="Gray"/>
+        <Setter Property="Background" Value="LightGray"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type ScrollBar}">
-                    <Border Background="{TemplateBinding Background}">
+                    <Border Background="#00000000">
                         <Track 
                             Name="PART_Track"
                             IsDirectionReversed="True">
@@ -224,7 +219,8 @@
                             <Track.Thumb>
                                 <Thumb
                                     x:Name="Thumb" Opacity="1"
-                                    Background="{TemplateBinding Foreground}"
+                                    Foreground="{TemplateBinding Foreground}"
+                                    Background="{TemplateBinding Background}"
                                     Style="{StaticResource MetroScrollBarThumb}"/>
                             </Track.Thumb>
                             <Track.IncreaseRepeatButton>

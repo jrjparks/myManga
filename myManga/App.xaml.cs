@@ -14,10 +14,11 @@ namespace myManga
     [DebuggerStepThrough]
     public partial class App : Application
     {
+        private readonly EmbeddedDLLs _edll;
         public App()
         {
-            EmbeddedDLLs.Instance.SetEmbeddedDLLResourceLocation("Resources.DLLs");
-            AppDomain.CurrentDomain.AssemblyResolve += EmbeddedDLLs.Instance.ResolveAssembly;
+            _edll = new EmbeddedDLLs("Resources.DLLs");
+            AppDomain.CurrentDomain.AssemblyResolve += _edll.ResolveAssembly;
             InitializeComponent();
         }
     }

@@ -9,34 +9,13 @@ namespace BakaBox.DLL
     [DebuggerStepThrough]
     public class EmbeddedDLLs
     {
-        #region Instance
-        private static EmbeddedDLLs _Instance;
-        private static Object SyncObj = new Object();
-        /// <summary>
-        /// <para>Instance of EmbeddedDLLs. Use: </para>
-        /// <para>AppDomain.CurrentDomain.AssemblyResolve += EmbeddedDLLs.Instance.ResolveAssembly;</para>
-        /// </summary>
-        public static EmbeddedDLLs Instance
-        {
-            get
-            {
-                if (_Instance == null)
-                {
-                    lock (SyncObj)
-                    {
-                        if (_Instance == null)
-                        { _Instance = new EmbeddedDLLs(); }
-                    }
-                }
-                return _Instance;
-            }
-        }
-        #endregion
-
         #region Constructor
-        private EmbeddedDLLs() 
+        public EmbeddedDLLs()
+            : this("Resources")
+        { }
+        public EmbeddedDLLs(String ResourceLocation)
         {
-            SetEmbeddedDLLResourceLocation("Resources");
+            SetEmbeddedDLLResourceLocation(ResourceLocation);
             SetExecutingAssembly(Assembly.GetEntryAssembly());
         }
         #endregion
@@ -58,7 +37,7 @@ namespace BakaBox.DLL
         /// <summary>
         /// Location of Embedded DLLs
         /// </summary>
-        public String EmbeddedDLLResourceLocation 
+        public String EmbeddedDLLResourceLocation
         { get; private set; }
         /// <summary>
         /// Set location of Embedded DLLs
@@ -70,7 +49,7 @@ namespace BakaBox.DLL
         /// <summary>
         /// Default: EntryAssembly
         /// </summary>
-        public Assembly ExecutingAssembly 
+        public Assembly ExecutingAssembly
         { get; private set; }
         /// <summary>
         /// Change the Executing Assembly.

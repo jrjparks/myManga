@@ -8,30 +8,6 @@ using System.Diagnostics;
 namespace BakaBox.Controls.Threading
 {
     [DebuggerStepThrough]
-    public class QueuedWorker<T>
-    {
-        public delegate void TaskDelegate(Object Sender, QueuedTask<T> Task);
-        public delegate void CompleteDelegate(Object Sender);
-    }
-    [DebuggerStepThrough]
-    public class TransferClass
-    {
-        public Guid TaskID { get; private set; }
-        public Object[] Data { get; private set; }
-
-        public TransferClass(Guid TaskID, params Object[] Data)
-        {
-            SetTaskID(TaskID);
-            SetData(Data);
-        }
-
-        public void SetTaskID(Guid TaskID)
-        { this.TaskID = TaskID; }
-        public void SetData(params Object[] Data)
-        { this.Data = Data; ; }
-    }
-
-    [DebuggerStepThrough]
     public class QueuedBackgroundWorker<T> : BackgroundWorker
     {
         #region Events
@@ -71,6 +47,12 @@ namespace BakaBox.Controls.Threading
             if (TaskRemoved != null)
                 TaskRemoved(this, Task);
         }
+        public event QueuedWorker<T>.TaskDelegate DoTaskWork;
+        protected virtual void OnDoTaskWork(QueuedTask<T> Task)
+        {
+            if (DoTaskWork != null)
+                DoTaskWork(this, Task);
+        }
 
         public event QueuedWorker<T>.CompleteDelegate QueueComplete;
         protected virtual void OnQueueComplete()
@@ -106,29 +88,28 @@ namespace BakaBox.Controls.Threading
         {
             lock (this)
             {
-                if (this.IsQueueEmpty)
+                if (this.IsQueueEmpty && !this.IsBusy)
                 { ActiveTask = null; OnQueueComplete(); }
-                else if (!IsPaused)
-                    if (!this.IsBusy)
-                    {
-                        if (WorkerCancellationToken == null) { }
-                        else if (WorkerCancellationToken.IsCancellationRequested)
-                            WorkerCancellationToken.Dispose();
-                        WorkerCancellationToken = new CancellationTokenSource();
+                else if (!IsPaused && !this.IsBusy)
+                {
+                    if (WorkerCancellationToken == null) { }
+                    else if (WorkerCancellationToken.IsCancellationRequested)
+                        WorkerCancellationToken.Dispose();
+                    WorkerCancellationToken = new CancellationTokenSource();
 
-                        ActiveTask = DataQueue.Dequeue();
-                        ActiveTask.SetStatus(TaskStatus.WaitingToRun);
-                        OnTaskBeginning(ActiveTask);
-                        base.RunWorkerAsync(ActiveTask);
-                    }
+                    ActiveTask = DataQueue.Peek();
+                    ActiveTask.SetStatus(TaskStatus.WaitingToRun);
+                    OnTaskBeginning(ActiveTask);
+                    base.RunWorkerAsync(ActiveTask);
+                }
             }
         }
 
         #region Queue Adding
-        private new void RunWorkerAsync()
+        private virtual new void RunWorkerAsync()
         { }
-        private new void RunWorkerAsync(Object Data)
-        { }
+        private virtual new void RunWorkerAsync(Object Data)
+        { AddToQueue((T)Data); }
         public void RunWorkerAsync(T Data)
         { AddToQueue(Data); }
         public Guid AddToQueue(T Data)
@@ -235,7 +216,7 @@ namespace BakaBox.Controls.Threading
         }
 
         #region BackgroundWorker Members
-        protected override void OnRunWorkerCompleted(RunWorkerCompletedEventArgs e)
+        protected virtual override void OnRunWorkerCompleted(RunWorkerCompletedEventArgs e)
         {
             lock (ActiveTask)
             {
@@ -250,11 +231,12 @@ namespace BakaBox.Controls.Threading
                     OnTaskComplete(ActiveTask);
                 }
             }
+            DataQueue.Dequeue();
             base.OnRunWorkerCompleted(e);
             CheckForNewWork();
         }
 
-        protected override void OnProgressChanged(ProgressChangedEventArgs e)
+        protected virtual override void OnProgressChanged(ProgressChangedEventArgs e)
         {
             lock (ActiveTask)
             {
@@ -265,7 +247,7 @@ namespace BakaBox.Controls.Threading
             base.OnProgressChanged(e);
         }
 
-        protected override void OnDoWork(DoWorkEventArgs e)
+        protected virtual override void OnDoWork(DoWorkEventArgs e)
         {
             try
             {
@@ -273,7 +255,7 @@ namespace BakaBox.Controls.Threading
                 {
                     ActiveTask.SetStatus(TaskStatus.Running);
                 }
-                base.OnDoWork(e);
+                OnDoTaskWork(ActiveTask);
             }
             catch
             {
@@ -368,5 +350,29 @@ namespace BakaBox.Controls.Threading
             ID = Guid.Empty;
             Status = TaskStatus.Created;
         }
+    }
+
+    [DebuggerStepThrough]
+    public class QueuedWorker<T>
+    {
+        public delegate void TaskDelegate(Object Sender, QueuedTask<T> Task);
+        public delegate void CompleteDelegate(Object Sender);
+    }
+    [DebuggerStepThrough]
+    public class TransferClass
+    {
+        public Guid TaskID { get; private set; }
+        public Object[] Data { get; private set; }
+
+        public TransferClass(Guid TaskID, params Object[] Data)
+        {
+            SetTaskID(TaskID);
+            SetData(Data);
+        }
+
+        public void SetTaskID(Guid TaskID)
+        { this.TaskID = TaskID; }
+        public void SetData(params Object[] Data)
+        { this.Data = Data; ; }
     }
 }

@@ -122,6 +122,10 @@
       <Project>{AB7D1FEA-51D1-41E7-8D2E-01D61B03E95A}</Project>
       <Name>Manga</Name>
     </ProjectReference>
+    <ProjectReference Include="..\MangaFox\MangaFox.csproj">
+      <Project>{D774C18B-3489-4696-9D3E-A7416C2ADCE6}</Project>
+      <Name>MangaFox</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

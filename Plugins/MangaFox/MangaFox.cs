@@ -10,6 +10,7 @@ using Manga.Plugin;
 using Manga;
 using BakaBox.Controls;
 using BakaBox;
+using System.Collections.Generic;
 
 namespace MangaFox
 {
@@ -25,8 +26,8 @@ namespace MangaFox
         public string SiteRefererHeader { get { return "http://www.mangafox.me/"; } }
         public SupportedMethods SupportedMethods { get { return SupportedMethods.All; } }
         #endregion
-        
-        private String ChapterNameRegEx { get { return @"(?:>)(?<Name>.+)(?:\sManga</a>)"; } }
+
+        private String ChapterNameRegEx { get { return @"(?:<a\shref.*?>)(?<Name>.*?)(?:\sManga</a>)"; } }
         private String InfoNameRegEx { get { return @"<title>(?<Name>.+?)\sManga"; } }
 
         #region IMangaPlugin Members
@@ -121,7 +122,7 @@ namespace MangaFox
         public MangaInfo LoadMangaInformation(String InfoPage)
         {
             OnProgressChanged(1);
-            MangaInfo MI = new MangaInfo() { InfoPage = InfoPage, Site = SiteName};
+            MangaInfo MI = new MangaInfo() { InfoPage = InfoPage, Site = SiteName };
             String PageHTML;
             OnProgressChanged(3);
 
@@ -138,7 +139,21 @@ namespace MangaFox
                 if (Regex.IsMatch(PageHTML, @"(licensed)(.*?)(not\savailable)"))
                     ThrowLicensed(MI.Name);
 
+                _PageElement = _PageDoc.GetElementbyId("series_info");
+                List<Object> _MangaInfo = new List<Object>();
+
+                foreach (HtmlNode _TR in _PageElement.SelectNodes("//div"))
+                {
+                    //if (_MangaInfo.Count < 8)
+                    //{
+                        _MangaInfo.Add(_TR.InnerText.Trim());
+                    //}
+                    //else break;
+                }
+                _MangaInfo.TrimExcess();
+
                 MI.ID = ParseID(PageHTML);
+                //MI.Status = _PageDoc.DocumentNode.SelectSingleNode("").InnerHtml.Contains("")? MangaStatus.Complete : MangaStatus.Ongoing;
                 OnProgressChanged(7, MI as MangaData);
 
                 _PageElement = _PageDoc.GetElementbyId("title");
@@ -207,7 +222,7 @@ namespace MangaFox
         {
             Double Progress = 0D, Step;
             SearchInfoCollection SearchCollection = new SearchInfoCollection();
-            
+
             if (100 < Limit) Limit = 100;
             else if (Limit < 1) Limit = 1;
             String SearchPath = String.Format("http://mangafox.me/ajax/search.php?term={0}", Text), _Data;
@@ -267,10 +282,10 @@ namespace MangaFox
         private ChapterEntryCollection ChapterList(MangaInfo MangaInfo)
         {
             ChapterEntryCollection _Chapters = new ChapterEntryCollection();
-            String ParseRegEx = 
+            String ParseRegEx =
                 String.Format(
                 "\\[\"(?<VC>[\\w\\d\\s\\.]+?)(\\:(?<Title>.+?))?\",\"(?<Location>{0})\"\\]",
-                @"(v(?<Volume>\d{2,}))?/?(c(?<Chapter>\d{3,}))(\.(?<SubChapter>\d{1,}))?");
+                @"(v(?<Volume>\w{2,}))?/?(c(?<Chapter>\d{3,}))(\.(?<SubChapter>\d{1,}))?");
             using (WebClient WebClient = ConfigureWebClient(SiteRefererHeader))
             {
                 OnProgressChanged(1);
@@ -283,15 +298,25 @@ namespace MangaFox
                 Step = (Int32)((100D - Progress) / _Items.Count);
                 foreach (Match _Item in _Items)
                 {
+                    UInt32 v = 0, c = 0, sc = 0;
+                    if (_Item.Groups["Volume"].Success)
+                        UInt32.TryParse(_Item.Groups["Volume"].Value, out v);
+
+                    if (_Item.Groups["Chapter"].Success) 
+                        UInt32.TryParse(_Item.Groups["Chapter"].Value, out c);
+
+                    if (_Item.Groups["SubChapter"].Success) 
+                        UInt32.TryParse(_Item.Groups["SubChapter"].Value, out sc);
+
                     if (_Item.Success)
                         _Chapters.Add(
                             new ChapterEntry()
                             {
                                 Name = _Item.Groups["Title"].Value,
-                                UrlLink = Path.Combine(MangaInfo.InfoPage, _Item.Groups["Location"].Value).Replace("\\","/"),
-                                Volume = _Item.Groups["Volume"].Success ? UInt32.Parse(_Item.Groups["Volume"].Value) : 0,
-                                Chapter = _Item.Groups["Chapter"].Success ? UInt32.Parse(_Item.Groups["Chapter"].Value) : 0,
-                                SubChapter = _Item.Groups["SubChapter"].Success ? UInt32.Parse(_Item.Groups["SubChapter"].Value) : 0
+                                UrlLink = Path.Combine(MangaInfo.InfoPage, _Item.Groups["Location"].Value).Replace("\\", "/"),
+                                Volume = v,
+                                Chapter = c,
+                                SubChapter = sc
                             }
                         );
                     OnProgressChanged(Progress += Step);

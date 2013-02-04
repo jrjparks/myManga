@@ -106,9 +106,7 @@ namespace BakaBox.Controls.Threading
         }
 
         #region Queue Adding
-        private virtual new void RunWorkerAsync()
-        { }
-        private virtual new void RunWorkerAsync(Object Data)
+        public virtual new void RunWorkerAsync(Object Data)
         { AddToQueue((T)Data); }
         public void RunWorkerAsync(T Data)
         { AddToQueue(Data); }
@@ -216,7 +214,7 @@ namespace BakaBox.Controls.Threading
         }
 
         #region BackgroundWorker Members
-        protected virtual override void OnRunWorkerCompleted(RunWorkerCompletedEventArgs e)
+        protected virtual void OnRunWorkerCompleted(RunWorkerCompletedEventArgs e)
         {
             lock (ActiveTask)
             {
@@ -236,7 +234,7 @@ namespace BakaBox.Controls.Threading
             CheckForNewWork();
         }
 
-        protected virtual override void OnProgressChanged(ProgressChangedEventArgs e)
+        protected virtual void OnProgressChanged(ProgressChangedEventArgs e)
         {
             lock (ActiveTask)
             {
@@ -247,7 +245,7 @@ namespace BakaBox.Controls.Threading
             base.OnProgressChanged(e);
         }
 
-        protected virtual override void OnDoWork(DoWorkEventArgs e)
+        protected virtual void OnDoWork(DoWorkEventArgs e)
         {
             try
             {

@@ -45,9 +45,9 @@ namespace Manga.Manager_v2
             ZipManager.SaveFileToZip("", e.ToString());
         }
 
-        public void Download(String URI, String ZipFile)
+        public void Download(String URI, String LocalPath, String ZipFile)
         {
-            zdz.Add(Downloader.Download(URI, "", Plugins.PluginToUse_SiteUrl(URI)), ZipFile);
+            zdz.Add(Downloader.Download(URI, LocalPath, Plugins.PluginToUse_SiteUrl(URI)), ZipFile);
         }
         #endregion
 
@@ -86,6 +86,5 @@ namespace Manga.Manager_v2
             OnPropertyChanged("Plugins");
         }
         #endregion
-
     }
 }

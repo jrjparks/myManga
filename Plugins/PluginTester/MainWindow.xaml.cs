@@ -203,11 +203,11 @@ namespace PluginTester
 
         private void LoadPlugins()
         {
+            Global_IMangaPluginCollection.Instance.Plugins.Add(new MangaFox.MangaFox());
             try
             {
                 foreach (IMangaPlugin _Plugin in PluginLoader<IMangaPlugin>.LoadPluginDirectory(
-                     System.IO.Path.Combine(Environment.CurrentDirectory, "Plugins"),
-                     "*.manga.dll"))
+                     System.IO.Path.Combine(Environment.CurrentDirectory, "Plugins"), "*.manga.dll"))
                 {
                     if (!Global_IMangaPluginCollection.Instance.Plugins.Contains(_Plugin.SiteName))
                         Global_IMangaPluginCollection.Instance.Plugins.Add(_Plugin);

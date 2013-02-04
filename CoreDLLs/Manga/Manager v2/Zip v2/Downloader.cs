@@ -14,7 +14,8 @@ namespace Manga.Manager_v2
     {
         #region Events
 
-        public event EventHandler<FileInfo> DownloadComplete;
+        public delegate void FileEvent(Object sender, FileInfo fileinfo);
+        public event FileEvent DownloadComplete;
         private void OnDownloadComplete(FileInfo fi)
         {
             if (DownloadComplete != null)
@@ -53,17 +54,17 @@ namespace Manga.Manager_v2
             using (WebClient _wc = new WebClient())
             {
                 #region Random
-                MatchCollection RandomNumbers = Regex.Matches(Task.Data.Address, @"\[R(\d+)-(\d+)\]");
+                MatchCollection RandomNumbers = Regex.Matches(Task.Data.RemoteAddress, @"\[R(\d+)-(\d+)\]");
                 Random r = new Random();
                 foreach (Match rNumberMatch in RandomNumbers)
-                    Task.Data.Address = Task.Data.Address.Replace(rNumberMatch.Value, r.Next(Int32.Parse(rNumberMatch.Groups[1].Value), Int32.Parse(rNumberMatch.Groups[2].Value)).ToString());
+                    Task.Data.RemoteAddress = Task.Data.RemoteAddress.Replace(rNumberMatch.Value, r.Next(Int32.Parse(rNumberMatch.Groups[1].Value), Int32.Parse(rNumberMatch.Groups[2].Value)).ToString());
                 #endregion
 
                 _wc.Headers.Clear();
                 if (!Task.Data.RefererHeader.Equals(String.Empty))
                     _wc.Headers.Add(System.Net.HttpRequestHeader.Referer, Task.Data.RefererHeader);
 
-                _wc.DownloadFile(Task.Data.Address, Task.Data.LocalPath);
+                _wc.DownloadFile(Task.Data.RemoteAddress, Task.Data.LocalPath);
             }
         }
 
@@ -78,14 +79,14 @@ namespace Manga.Manager_v2
 
     public class DownloadData
     {
-        private String _address;
+        private String _remoteAddress;
         private String _localPath;
         private String _refererHeader;
 
-        public String Address
+        public String RemoteAddress
         {
-            get { return _address; }
-            set { _address = value; }
+            get { return _remoteAddress; }
+            set { _remoteAddress = value; }
         }
 
         public String LocalPath
@@ -99,9 +100,9 @@ namespace Manga.Manager_v2
             get { return _refererHeader; }
         }
 
-        public DownloadData(String Address, String LocalPath, String RefererHeader)
+        public DownloadData(String RemoteAddress, String LocalPath, String RefererHeader)
         {
-            _address = Address;
+            _remoteAddress = RemoteAddress;
             _localPath = LocalPath;
             _refererHeader = RefererHeader;
         }

@@ -59,6 +59,11 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Manager v2\TaskManager.cs" />
+    <Compile Include="Manager v2\Tasks\DownloadImageTask.cs" />
+    <Compile Include="Manager v2\Tasks\Task.cs" />
+    <Compile Include="Manager v2\Tasks\UpdateMangaArchive.cs" />
+    <Compile Include="Manager v2\Tasks\UpdateMangaInfo.cs" />
     <Compile Include="Manager v2\Zip v2\Downloader.cs" />
     <Compile Include="Manager v2\IMangaManager.cs" />
     <Compile Include="Manager v2\Zip v2\Zip v2 TaskData.cs" />
@@ -89,6 +94,7 @@
       <Private>False</Private>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -151,7 +151,7 @@ namespace MangaReader
 
                 _PageDoc.LoadHtml(PageHTML);
 
-                MI.Name = Regex.Match(PageHTML, InfoNameRegEx).Groups["Name"].Value;
+                MI.Name = System.Net.WebUtility.HtmlDecode(Regex.Match(PageHTML, InfoNameRegEx).Groups["Name"].Value);
 
                 _PageElement = _PageDoc.GetElementbyId("mangaproperties");
                 List<Object> _MangaInfo = new List<Object>();

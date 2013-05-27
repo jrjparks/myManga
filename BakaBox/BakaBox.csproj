@@ -70,7 +70,16 @@
     <Compile Include="Extensions\ObservableCollectionExtensions.cs" />
     <Compile Include="Extensions\QueueExtensions.cs" />
     <Compile Include="IO\Naming.cs" />
+    <Compile Include="SafeIO\SafeIO.cs" />
     <Compile Include="MVVM\Communications\Messenger.cs" />
+    <Compile Include="Net\Downloader\Downloader.cs" />
+    <Compile Include="Net\Downloader\DownloadData.cs" />
+    <Compile Include="Net\Downloader\DownloaderWebClient.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Tasks\FileData.cs" />
+    <Compile Include="Tasks\FileMode.cs" />
+    <Compile Include="Tasks\State.cs" />
     <Compile Include="Touch\Manipulation.cs" />
     <Compile Include="WPF Controls\BalancedWrapPanel\BalancedWrapPanel.cs" />
     <Compile Include="WPF Controls\BalancedWrapPanel\LengthConverter.cs" />

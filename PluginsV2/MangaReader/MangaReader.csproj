@@ -5,11 +5,11 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{AB7D1FEA-51D1-41E7-8D2E-01D61B03E95A}</ProjectGuid>
+    <ProjectGuid>{464AFB21-FAA4-4E39-8799-690006360F72}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Manga</RootNamespace>
-    <AssemblyName>Manga</AssemblyName>
+    <RootNamespace>MangaReader</RootNamespace>
+    <AssemblyName>MangaReader</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SccProjectName>SAK</SccProjectName>
@@ -20,12 +20,11 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
-    <Optimize>true</Optimize>
+    <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Debug\Manga.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -35,67 +34,29 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
-  <PropertyGroup>
-    <SignAssembly>false</SignAssembly>
-  </PropertyGroup>
-  <PropertyGroup>
-    <AssemblyOriginatorKeyFile>
-    </AssemblyOriginatorKeyFile>
-  </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Ionic.Zip">
-      <HintPath>..\Ionic.Zip.dll</HintPath>
-    </Reference>
-    <Reference Include="PresentationFramework" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.Xaml" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Manager v2\IO\SafeIO.cs" />
-    <Compile Include="Manager v2\TaskManager.cs" />
-    <Compile Include="Manager v2\Tasks\DownloadImageTask.cs" />
-    <Compile Include="Manager v2\Tasks\Task.cs" />
-    <Compile Include="Manager v2\Tasks\UpdateMangaArchive.cs" />
-    <Compile Include="Manager v2\Tasks\UpdateMangaInfo.cs" />
-    <Compile Include="Manager v2\Zip v2\Downloader.cs" />
-    <Compile Include="Manager v2\IMangaManager.cs" />
-    <Compile Include="Manager v2\Zip v2\Zip v2 TaskData.cs" />
-    <Compile Include="Manager v2\Zip v2\Zip v2.cs" />
-    <Compile Include="Manager v2\Zip\MangaZip.cs" />
-    <Compile Include="Manager v2\Zip\ZipDataHandler.cs" />
-    <Compile Include="Manager v2\Zip\ZipDataType.cs" />
-    <Compile Include="Manager\Global IMangaPluginCollection.cs" />
-    <Compile Include="Manager\ImageDownloadTest.cs" />
-    <Compile Include="Manager\ManagerData.cs" />
-    <Compile Include="Manager\DownloadManager.cs" />
+    <Compile Include="MangaReader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Zip\MangaDataZip.cs" />
-    <Compile Include="Zip\Naming.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="License.txt" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\BakaBox\BakaBox.csproj">
       <Project>{CAD747BF-8D53-4115-957C-CC07B036466C}</Project>
       <Name>BakaBox</Name>
-      <Private>False</Private>
     </ProjectReference>
-    <ProjectReference Include="..\CoreMangaClasses\CoreMangaClasses.csproj">
-      <Project>{6E2916BF-2F3F-4DD5-BD7F-981F754BC531}</Project>
-      <Name>CoreMangaClasses</Name>
-      <Private>False</Private>
+    <ProjectReference Include="..\IMangaSite\IMangaSite.csproj">
+      <Project>{A2AFEBF7-7843-44C0-BE65-1D9D693D7081}</Project>
+      <Name>IMangaSite</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

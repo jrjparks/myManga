@@ -35,6 +35,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IMangaSite", "PluginsV2\IMa
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MangaReader", "PluginsV2\MangaReader\MangaReader.csproj", "{464AFB21-FAA4-4E39-8799-690006360F72}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{41240457-8FBE-4F95-A894-6FD3837C0F66}"
+	ProjectSection(SolutionItems) = preProject
+		myMangaPlugins.xml = myMangaPlugins.xml
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(TeamFoundationVersionControl) = preSolution
 		SccNumberOfProjects = 13

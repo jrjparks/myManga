@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<myMangaPlugins xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" BaseURL="https://mymanga.svn.codeplex.com/svn/">
+  <PluginCollection>
+    <Plugin Name="MangaReader" Path="PluginsV2/MangaReader/{BUILD-TYPE}/MangaReader.manga.dll"/>
+  </PluginCollection>
+</myMangaPlugins>

@@ -5,6 +5,7 @@ using System.Text;
 using System.Diagnostics;
 using System.Threading;
 using BakaBox.Tasks;
+using System.IO;
 
 namespace IMangaSite
 {
@@ -38,6 +39,17 @@ namespace IMangaSite
         }
 
         private SynchronizationContext SyncContext { get; set; }
+
+        private Dictionary<Guid, Action<Stream>> requestCallbackLink;
+        public Dictionary<Guid, Action<Stream>> RequestCallbackLink
+        {
+            get
+            {
+                if (requestCallbackLink != null)
+                    requestCallbackLink = new Dictionary<Guid, Action<Stream>>();
+                return requestCallbackLink;
+            }
+        }
 
         public BaseMangaSite()
         {

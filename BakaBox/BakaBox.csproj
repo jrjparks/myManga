@@ -67,6 +67,7 @@
     </Compile>
     <Compile Include="DLL\EmbeddedDLLs.cs" />
     <Compile Include="DLL\PluginLoader.cs" />
+    <Compile Include="DLL\PluginManager.cs" />
     <Compile Include="Extensions\ObservableCollectionExtensions.cs" />
     <Compile Include="Extensions\QueueExtensions.cs" />
     <Compile Include="IO\Naming.cs" />

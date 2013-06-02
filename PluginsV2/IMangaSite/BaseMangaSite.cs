@@ -6,14 +6,21 @@ using System.Diagnostics;
 using System.Threading;
 using BakaBox.Tasks;
 using System.IO;
+using System.Reflection;
 
 namespace IMangaSite
 {
     [DebuggerStepThrough]
-    public class BaseMangaSite : IMangaSite
+    public class BaseMangaSite
     {
+        public event EventHandler InfoEvent;
+
+        public event EventHandler ChapterListEvent;
+
+        public event EventHandler ChapterImageListEvent;
+        
         public event EventHandler<DownloadRequest> DownloadRequested;
-        protected virtual void OnDownloadRequested(Object sender, DownloadRequest e)
+        protected virtual void OnDownloadRequested(DownloadRequest e)
         {
             if (DownloadRequested != null)
             {
@@ -26,7 +33,7 @@ namespace IMangaSite
         }
 
         public event EventHandler<FileData> FileIORequested;
-        protected virtual void OnFileIORequested(Object sender, FileData e)
+        protected virtual void OnFileIORequested(FileData e)
         {
             if (DownloadRequested != null)
             {
@@ -38,22 +45,38 @@ namespace IMangaSite
             }
         }
 
-        private SynchronizationContext SyncContext { get; set; }
+        protected SynchronizationContext SyncContext { get; set; }
 
-        private Dictionary<Guid, Action<Stream>> requestCallbackLink;
-        public Dictionary<Guid, Action<Stream>> RequestCallbackLink
+        protected Dictionary<Guid, Action<Guid, Stream>> requestCallbackLinks;
+        public Dictionary<Guid, Action<Guid, Stream>> RequestCallbackLinks
         {
             get
             {
-                if (requestCallbackLink != null)
-                    requestCallbackLink = new Dictionary<Guid, Action<Stream>>();
-                return requestCallbackLink;
+                if (requestCallbackLinks != null)
+                    requestCallbackLinks = new Dictionary<Guid, Action<Guid, Stream>>();
+                return requestCallbackLinks;
             }
         }
 
         public BaseMangaSite()
         {
             SyncContext = SynchronizationContext.Current;
+        }
+
+        protected IMangaSiteDataAttribute iMangaSiteData { get; set; }
+        public IMangaSiteDataAttribute IMangaSiteData
+        {
+            get
+            {
+                if (iMangaSiteData == null)
+                {
+                    MemberInfo Info = this.GetType();
+                    Object[] Attribs = Info.GetCustomAttributes(typeof(IMangaSiteDataAttribute), true);
+                    if (Attribs.Length > 0)
+                        iMangaSiteData = Attribs[0] as IMangaSiteDataAttribute;
+                }
+                return iMangaSiteData;
+            }
         }
     }
 }

@@ -7,6 +7,7 @@ using System.Reflection;
 namespace BakaBox.DLL
 {
     [DebuggerStepThrough]
+    [Serializable]
     public class EmbeddedDLLs
     {
         #region Constructor

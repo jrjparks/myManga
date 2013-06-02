@@ -48,8 +48,8 @@ namespace BakaBox.Net.Downloader
                     DownloadData downloadData = state as DownloadData;
 
                     downloaderWebClient.Headers.Clear();
-                    foreach (NameValueCollection header in downloadData.WebHeaders)
-                        downloaderWebClient.Headers.Add(header);
+                    foreach (String header in downloadData.WebHeaders.AllKeys)
+                        downloaderWebClient.Headers.Add(header, downloadData.WebHeaders[header]);
                     downloaderWebClient.Encoding = downloadData.WebEncoding;
 
                     downloadData.State = State.Active;

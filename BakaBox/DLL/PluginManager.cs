@@ -3,59 +3,71 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using System.Collections;
 
 namespace BakaBox.DLL
 {
-    public class PluginManager
+    public class PluginManager<T, C> where C : ICollection<T>, new()
     {
-        #region Instance
-        private static PluginManager _Instance;
-        private static Object SyncObj = new Object();
-        public static PluginManager Instance
-        {
-            get
-            {
-                if (_Instance == null)
-                {
-                    lock (SyncObj)
-                    {
-                        if (_Instance == null)
-                        { _Instance = new PluginManager(); }
-                    }
-                }
-                return _Instance;
-            }
-        }
-
-        private PluginManager()
+        #region Constructor
+        public PluginManager()
         {
             SyncContext = SynchronizationContext.Current;
-            AppDomain = AppDomain.CreateDomain(AppDomainName);
+            PluginCollection = new C();
         }
         #endregion
 
         #region Fields
-        private SynchronizationContext SyncContext { get; set; }
-        public AppDomain AppDomain { get; set; }
+        public C PluginCollection { get; set; }
 
+        private SynchronizationContext SyncContext { get; set; }
+        private AppDomain pluginAppDomain { get; set; }
+        public AppDomain PluginAppDomain
+        {
+            get
+            {
+                if (pluginAppDomain == null)
+                    pluginAppDomain = AppDomain.CreateDomain(AppDomainName);
+                return pluginAppDomain;
+            }
+            set { pluginAppDomain = value; }
+        }
+
+        private String pluginAppDomainName { get; set; }
+        /// <summary>
+        /// Changing the AppDomainName will unload the current AppDomain and Clear the current PluginCollection.
+        /// </summary>
         public String AppDomainName
         {
-            get {
-                if (AppDomain != null)
-                    return AppDomain.FriendlyName;
-                return "PluginDomain";
+            get
+            {
+                if (pluginAppDomainName == null || pluginAppDomainName == String.Empty)
+                    pluginAppDomainName = "PluginDomain";
+                return pluginAppDomainName;
             }
-            set {
-                if (AppDomain != null)
-                {
-                    AppDomain.Unload(AppDomain);
-                }
-                AppDomain = AppDomain.CreateDomain(AppDomainName);
+            set
+            {
+                pluginAppDomainName = value;
+                if (PluginAppDomain != null)
+                    AppDomain.Unload(PluginAppDomain);
+                if (PluginCollection.Count > 0)
+                    PluginCollection.Clear();
+                PluginAppDomain = AppDomain.CreateDomain(AppDomainName);
             }
         }
         #endregion
 
         #region Methods
+        public void LoadPlugin(String FilePath)
+        {
+            foreach (T plugin in PluginLoader<T>.LoadPlugin(FilePath))
+                PluginCollection.Add(plugin);
+        }
+        public void LoadPluginDirectory(String Directory)
+        {
+            foreach (T plugin in PluginLoader<T>.LoadPluginDirectory(Directory))
+                PluginCollection.Add(plugin);
+        }
         #endregion
     }
 }

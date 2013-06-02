@@ -1,0 +1,64 @@
+﻿<Window x:Class="PluginV2Tester_Application.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="MainWindow" Height="350" Width="525"
+        DataContext="{Binding RelativeSource={RelativeSource Self}}"
+        Foreground="Black">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <ListBox Grid.Row="1">
+            <ListBox.Items>
+                <Button Content="Test Info Download" Click="Button_Click" />
+                <TextBlock/>
+                <Button Content="Test Chapter Download"/>
+            </ListBox.Items>
+        </ListBox>
+        <ListView
+            Grid.Row="2"
+            ItemsSource="{Binding Path=PluginInfoModelCollection}">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn 
+                            Header="Name" 
+                            CellTemplate="{DynamicResource ResourceKey=NameCellTemplate}"
+                            Width="Auto"/>
+                    <GridViewColumn 
+                            Header="Author" 
+                            CellTemplate="{DynamicResource ResourceKey=AuthorCellTemplate}"
+                            Width="Auto"/>
+                    <GridViewColumn 
+                            Header="Supported Methods" 
+                            CellTemplate="{DynamicResource ResourceKey=SupportedMethodsCellTemplate}"
+                            Width="Auto"/>
+                </GridView>
+            </ListView.View>
+            <ListView.Resources>
+                <DataTemplate x:Key="NameCellTemplate">
+                    <TextBlock 
+                            Text="{Binding Name}"
+                            TextAlignment="Center"
+                            HorizontalAlignment="Center" 
+                            VerticalAlignment="Center"/>
+                </DataTemplate>
+                <DataTemplate x:Key="AuthorCellTemplate">
+                    <TextBlock 
+                            Text="{Binding Author}"
+                            TextAlignment="Center"
+                            HorizontalAlignment="Center" 
+                            VerticalAlignment="Center"/>
+                </DataTemplate>
+                <DataTemplate x:Key="SupportedMethodsCellTemplate">
+                    <TextBlock 
+                            Text="{Binding SupportedMethods}"
+                            TextAlignment="Center"
+                            HorizontalAlignment="Center" 
+                            VerticalAlignment="Center"/>
+                </DataTemplate>
+            </ListView.Resources>
+        </ListView>
+    </Grid>
+</Window>

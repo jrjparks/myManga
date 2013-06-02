@@ -49,6 +49,7 @@
     <Compile Include="DownloadRequest.cs" />
     <Compile Include="Enums.cs" />
     <Compile Include="IMangaSite.cs" />
+    <Compile Include="IMangaSiteCollection.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

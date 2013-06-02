@@ -10,7 +10,6 @@ namespace IMangaSite
     public interface IMangaSite
     {
         #region Properties
-        Dictionary<Guid, Action<Stream>> RequestCallbackLink;
         #endregion
 
         #region Events
@@ -18,19 +17,21 @@ namespace IMangaSite
         event EventHandler<DownloadRequest> DownloadRequested;
         event EventHandler<FileData> FileIORequested;
 
-        event EventHandler<List<Object>> InfoEvent;
+        event EventHandler InfoEvent;
 
-        event EventHandler<List<Object>> ChapterListEvent;
-        event EventHandler<List<Object>> ChapterImageListEvent;
+        event EventHandler ChapterListEvent;
+        event EventHandler ChapterImageListEvent;
         #endregion
 
         #region Methods
-        public Guid RequestInfo();
+        IMangaSiteDataAttribute IMangaSiteData { get; }
 
-        public Guid RequestChapterList();
-        public Guid RequestChapterImageList();
+        Guid RequestInfo(String InfoURL);
 
-        void RequestCallbackLink(Guid Request, Action<Stream> Callback);
+        Guid RequestChapterList();
+        Guid RequestChapterImageList();
+
+        Object ParseResponse(Stream Content);
         #endregion
     }
 }

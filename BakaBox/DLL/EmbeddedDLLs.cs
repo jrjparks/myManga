@@ -71,7 +71,10 @@ namespace BakaBox.DLL
         /// <returns></returns>
         public Assembly ResolveAssembly(Object Sender, ResolveEventArgs args)
         {
-            String resourceName = String.Format("{0}.{1}.{2}.dll", new AssemblyName(ExecutingAssembly.FullName).Name, EmbeddedDLLResourceLocation, new AssemblyName(args.Name).Name);
+            String resourceName = String.Format("{0}.{1}.{2}.dll",
+                new AssemblyName(ExecutingAssembly.FullName).Name,
+                EmbeddedDLLResourceLocation,
+                new AssemblyName(args.Name).Name);
             if (!DLLs.ContainsKey(resourceName))
                 using (Stream stream = ExecutingAssembly.GetManifestResourceStream(resourceName))
                 {

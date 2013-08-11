@@ -9,6 +9,7 @@ using BakaBox;
 using System.Windows.Controls;
 using BakaBox.Net.Downloader;
 using System.Text;
+using System.Collections.ObjectModel;
 
 namespace PluginV2Tester_Application
 {
@@ -49,67 +50,52 @@ namespace PluginV2Tester_Application
                 PropertyChanged(this, new PropertyChangedEventArgs(Name));
         }
 
-        private List<IMangaSiteDataAttribute> pluginInfoModelCollection;
-        public List<IMangaSiteDataAttribute> PluginInfoModelCollection
+        private ObservableCollection<IMangaSiteDataAttribute> pluginInfoModelCollection;
+        public ObservableCollection<IMangaSiteDataAttribute> PluginInfoModelCollection
         {
             get
             {
                 if (pluginInfoModelCollection == null)
-                    pluginInfoModelCollection = new List<IMangaSiteDataAttribute>();
+                    pluginInfoModelCollection = new ObservableCollection<IMangaSiteDataAttribute>();
                 return pluginInfoModelCollection;
             }
-            set { pluginInfoModelCollection = value; OnPropertyChanged("PluginInfoModelCollection"); }
+        }
+
+        private ObservableCollection<IMangaPluginManagerUpdate> iMangaPluginManagerUpdates;
+        public ObservableCollection<IMangaPluginManagerUpdate> IMangaPluginManagerUpdates
+        {
+            get
+            {
+                if (iMangaPluginManagerUpdates == null)
+                    iMangaPluginManagerUpdates = new ObservableCollection<IMangaPluginManagerUpdate>();
+                return iMangaPluginManagerUpdates;
+            }
         }
         public MainWindow()
         {
             PluginRequests = new Dictionary<Guid, IMangaSite.IMangaSite>();
-            foreach (IMangaSite.IMangaSite plugin in Singleton<PluginManager<IMangaSite.IMangaSite, IMangaSiteCollection>>.Instance.PluginCollection)
+            foreach (IMangaSite.IMangaSite plugin in Singleton<IMangaPluginManager>.Instance.PluginCollection)
             {
                 PluginInfoModelCollection.Add(plugin.IMangaSiteData);
-                plugin.DownloadRequested += DownloadRequested;
             }
-            Singleton<Downloader>.Instance.DownloadUpdate += DownloadUpdate;
+            Singleton<IMangaPluginManager>.Instance.DownloadUpdate += DownloadUpdate;
             InitializeComponent();
         }
 
-        void DownloadUpdate(object sender, DownloadData e)
+        void DownloadUpdate(object sender, IMangaPluginManagerUpdate e)
         {
-            if (PluginRequests.ContainsKey(e.Id))
-            {
-                switch (e.State)
+            Boolean found = false;
+            foreach (IMangaPluginManagerUpdate IMangaUpdate in IMangaPluginManagerUpdates)
+                if (IMangaUpdate.Id.Equals(e.Id))
                 {
-                    default:
-                        break;
-
-                    case BakaBox.Tasks.State.Active:
-                        break;
-
-                    case BakaBox.Tasks.State.Completed:
-                        PluginRequests[e.Id].ParseResponse(e.ResultStream);
-                        PluginRequests.Remove(e.Id);
-                        break;
-
-                    case BakaBox.Tasks.State.CompletedWithError:
-                        PluginRequests.Remove(e.Id);
-                        break;
-
-                    case BakaBox.Tasks.State.Pending:
-                        break;
+                    found = true;
+                    IMangaUpdate.Progress = e.Progress;
+                    IMangaUpdate.Data = e.Data;
+                    IMangaUpdate.Error = e.Error;
+                    break;
                 }
-            }
-        }
-
-        void DownloadRequested(object sender, DownloadRequest e)
-        {
-            DownloadData dd = new DownloadData()
-            {
-                Id = e.Id,
-                RemoteURL = e.RemoteURL,
-                WebEncoding = Encoding.UTF8
-            };
-            dd.WebHeaders.Add(System.Net.HttpRequestHeader.Referer, (sender as IMangaSite.IMangaSite).IMangaSiteData.RefererHeader);
-            PluginRequests.Add(e.Id, (sender as IMangaSite.IMangaSite));
-            Singleton<Downloader>.Instance.Download(dd);
+            if (!found)
+                IMangaPluginManagerUpdates.Add(e);
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
@@ -117,16 +103,20 @@ namespace PluginV2Tester_Application
             if (sender is Button)
             {
                 Button button = (sender as Button);
+                Random rand = new Random((int)DateTime.Now.Ticks);
                 switch (button.Content.ToString())
                 {
                     default:
                         break;
 
                     case "Test Info Download":
-                        Singleton<PluginManager<IMangaSite.IMangaSite, IMangaSiteCollection>>.Instance.PluginCollection[0].RequestInfo("http://www.mangareader.net/actions/selector/?id=4112&which=0");
+                        Singleton<IMangaPluginManager>.Instance.PluginCollection[0].RequestInfo(String.Format("http://www.mangareader.net/actions/selector/?id={0}&which=0", rand.Next(2000) + 100));
                         break;
 
-                    case "Test Chapter Download":
+                    case "Test Info Download (RAND Count)":
+                        int t = rand.Next(5);
+                        for (int i = 0; i < t; ++i)
+                            Singleton<IMangaPluginManager>.Instance.PluginCollection[0].RequestInfo(String.Format("http://www.mangareader.net/actions/selector/?id={0}&which=0", rand.Next(2000) + 100));
                         break;
                 }
             }

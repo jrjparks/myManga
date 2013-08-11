@@ -113,6 +113,16 @@ namespace IMangaSite
         {
             get { return Items.IndexOf(item); }
         }
+        public IMangaSite this[String name]
+        {
+            get
+            {
+                IMangaSite iMangaSite = Items.FirstOrDefault(i => i.IMangaSiteData.Name.Equals(name));
+                if (!iMangaSite.Equals(default(IMangaSite)))
+                    return iMangaSite;
+                return null;
+            }
+        }
         #endregion
     }
 

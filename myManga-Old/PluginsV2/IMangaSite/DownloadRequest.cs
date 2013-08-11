@@ -28,11 +28,5 @@ namespace IMangaSite
             get;
             set;
         }
-
-        public Exception Error
-        {
-            get;
-            set;
-        }
     }
 }

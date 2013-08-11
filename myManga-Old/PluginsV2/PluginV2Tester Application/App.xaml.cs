@@ -20,8 +20,8 @@ namespace PluginV2Tester_Application
         public App()
         {
             eDLLs = new EmbeddedDLLs("Resources.DLLs");
-            Singleton<PluginManager<IMangaSite.IMangaSite, IMangaSiteCollection>>.Instance.PluginAppDomain.AssemblyResolve += eDLLs.ResolveAssembly;
-            Singleton<PluginManager<IMangaSite.IMangaSite, IMangaSiteCollection>>.Instance.LoadPluginDirectory(Path.Combine(Environment.CurrentDirectory, "Plugins"));
+            Singleton<IMangaPluginManager>.Instance.PluginAppDomain.AssemblyResolve += eDLLs.ResolveAssembly;
+            Singleton<IMangaPluginManager>.Instance.LoadPluginDirectory(Path.Combine(Environment.CurrentDirectory, "Plugins"));
             InitializeComponent();
         }
     }

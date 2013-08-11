@@ -5,11 +5,11 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{464AFB21-FAA4-4E39-8799-690006360F72}</ProjectGuid>
+    <ProjectGuid>{A2AFEBF7-7843-44C0-BE65-1D9D693D7081}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>MangaReader</RootNamespace>
-    <AssemblyName>MangaReader.manga</AssemblyName>
+    <RootNamespace>IMangaSite</RootNamespace>
+    <AssemblyName>IMangaSite</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SccProjectName>SAK</SccProjectName>
@@ -44,17 +44,19 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="MangaReader.cs" />
+    <Compile Include="Attributes.cs" />
+    <Compile Include="BaseMangaSite.cs" />
+    <Compile Include="DownloadRequest.cs" />
+    <Compile Include="Enums.cs" />
+    <Compile Include="IMangaPluginManager.cs" />
+    <Compile Include="IMangaSite.cs" />
+    <Compile Include="IMangaSiteCollection.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\BakaBox\BakaBox.csproj">
       <Project>{CAD747BF-8D53-4115-957C-CC07B036466C}</Project>
       <Name>BakaBox</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\IMangaSite\IMangaSite.csproj">
-      <Project>{A2AFEBF7-7843-44C0-BE65-1D9D693D7081}</Project>
-      <Name>IMangaSite</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

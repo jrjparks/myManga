@@ -20,8 +20,8 @@ namespace BakaBox.DLL
         #region Fields
         public C PluginCollection { get; set; }
 
-        private SynchronizationContext SyncContext { get; set; }
-        private AppDomain pluginAppDomain { get; set; }
+        protected SynchronizationContext SyncContext { get; set; }
+        protected AppDomain pluginAppDomain { get; set; }
         public AppDomain PluginAppDomain
         {
             get
@@ -33,7 +33,7 @@ namespace BakaBox.DLL
             set { pluginAppDomain = value; }
         }
 
-        private String pluginAppDomainName { get; set; }
+        protected String pluginAppDomainName { get; set; }
         /// <summary>
         /// Changing the AppDomainName will unload the current AppDomain and Clear the current PluginCollection.
         /// </summary>

@@ -9,16 +9,65 @@
             <RowDefinition Height="*" />
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        <ListBox Grid.Row="1">
+        <ListView
+            Name="IMangaUpdates"
+            Grid.Row="0"
+            ItemsSource="{Binding Path=IMangaPluginManagerUpdates}">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn 
+                            Header="Id" 
+                            CellTemplate="{DynamicResource ResourceKey=IdCellTemplate}"
+                            Width="Auto"/>
+                    <GridViewColumn 
+                            Header="Progress" 
+                            CellTemplate="{DynamicResource ResourceKey=ProgressCellTemplate}"
+                            Width="Auto"/>
+                    <GridViewColumn 
+                            Header="Data" 
+                            CellTemplate="{DynamicResource ResourceKey=DataCellTemplate}"
+                            Width="Auto"/>
+                </GridView>
+            </ListView.View>
+            <ListView.Resources>
+                <DataTemplate x:Key="IdCellTemplate">
+                    <TextBlock
+                        Text="{Binding Id}"
+                        TextAlignment="Center"
+                        HorizontalAlignment="Center" 
+                        VerticalAlignment="Center"/>
+                </DataTemplate>
+                <DataTemplate x:Key="ProgressCellTemplate">
+                    <ProgressBar 
+                        Value="{Binding Progress}"
+                        Height="21px"
+                        Width="100px"/>
+                </DataTemplate>
+                <DataTemplate x:Key="DataCellTemplate">
+                    <TextBlock
+                        Text="{Binding Data}"
+                        ToolTip="{Binding Data}"
+                        TextAlignment="Center"
+                        HorizontalAlignment="Center" 
+                        VerticalAlignment="Center"/>
+                </DataTemplate>
+            </ListView.Resources>
+        </ListView>
+        <TextBox
+            Grid.Row="1" 
+            VerticalScrollBarVisibility="Auto"
+            Text="{Binding Path=SelectedItem.Data, ElementName=IMangaUpdates}"
+            TextWrapping="Wrap" />
+        <ListBox Grid.Row="2">
             <ListBox.Items>
                 <Button Content="Test Info Download" Click="Button_Click" />
-                <TextBlock/>
-                <Button Content="Test Chapter Download"/>
+                <Button Content="Test Info Download (RAND Count)" Click="Button_Click" />
             </ListBox.Items>
         </ListBox>
         <ListView
-            Grid.Row="2"
+            Grid.Row="3"
             ItemsSource="{Binding Path=PluginInfoModelCollection}">
             <ListView.View>
                 <GridView>

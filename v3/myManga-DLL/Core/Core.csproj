@@ -6,7 +6,7 @@
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{1C67209C-E3C8-4FF9-9CB1-B788ECB4B284}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Core</RootNamespace>
     <AssemblyName>Core</AssemblyName>
@@ -37,14 +37,27 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
   <ItemGroup />
   <ItemGroup>
     <Compile Include="DLL\DLL_Loader.cs" />
     <Compile Include="DLL\DLL_Manager.cs" />
+    <Compile Include="IO\Enum.cs" />
+    <Compile Include="IO\ObjectArchive.cs" />
     <Compile Include="IO\ObjectStorage.cs" />
+    <Compile Include="IO\PathSafety.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="Ionic.Zip">
+      <HintPath>..\Support DLL\Ionic.Zip.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Xaml" />
+    <Reference Include="System.XML" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="WindowsBase" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

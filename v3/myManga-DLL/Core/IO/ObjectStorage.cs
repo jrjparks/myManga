@@ -6,14 +6,14 @@ using System.Diagnostics;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Xml.Serialization;
-using System.IO.Compression;
+using Ionic.Zlib;
 
 namespace Core.IO
 {
     /// <summary>
     /// Save and Load Objects
     /// </summary>
-    [DebuggerStepThrough]
+    // [DebuggerStepThrough]
     public static class ObjectStorage
     {
         public static Boolean SaveObject<T>(this T Object, String FilePath, SaveType SaveType = SaveType.Binary) where T : class
@@ -28,11 +28,12 @@ namespace Core.IO
                     {
                         using (Stream tmpStream = Object.Serialize(SaveType))
                         {
-                            tmpStream.Position = 0;
+                            tmpStream.Seek(0, SeekOrigin.Begin);
                             tmpStream.CopyTo(FileIOStream);
                         }
                     }
-                    File.Move(FileIOPath, FilePath);
+                    File.Copy(FileIOPath, FilePath, true);
+                    File.Delete(FileIOPath);
                     GC.Collect();
                     return true;
                 }
@@ -49,9 +50,9 @@ namespace Core.IO
 
         public static T LoadObject<T>(this String FilePath, SaveType SaveType = SaveType.Binary) where T : class
         {
+            T Object = null;
             try
             {
-                T Object = null;
                 if (File.Exists(FilePath))
                     using (Stream FileStream = new FileInfo(FilePath).OpenRead())
                     {
@@ -62,7 +63,7 @@ namespace Core.IO
             {
                 throw new Exception(String.Format("Error loading data from {0}.", FilePath.ToString()), ex);
             }
-            return null;
+            return Object;
         }
 
         public static Stream Serialize<T>(this T Object, SaveType SaveType = SaveType.Binary) where T : class
@@ -71,34 +72,31 @@ namespace Core.IO
             {
                 try
                 {
-                    Stream ObjectStream = new MemoryStream();
-                    using (Stream tmpStream = new MemoryStream())
+                    MemoryStream ObjectStream = new MemoryStream();
+                    using (MemoryStream tmpStream = new MemoryStream())
                     {
                         switch (SaveType)
                         {
                             default:
-                            case ObjectStorage.SaveType.Binary:
-                                using (GZipStream gzipStream = new GZipStream(tmpStream, CompressionMode.Compress))
-                                {
-                                    BinaryFormatter ObjectFormatter = new BinaryFormatter();
-                                    ObjectFormatter.Serialize(gzipStream, Object);
-                                    gzipStream.Position = 0;
-                                    gzipStream.CopyTo(ObjectStream);
-                                }
+                            case SaveType.Binary:
+                                BinaryFormatter ObjectFormatter = new BinaryFormatter();
+                                ObjectFormatter.Serialize(tmpStream, Object);
+                                tmpStream.Seek(0, SeekOrigin.Begin);
+                                tmpStream.CopyTo(ObjectStream);
                                 break;
 
-                            case ObjectStorage.SaveType.XML:
+                            case SaveType.XML:
+                                XmlSerializer ObjectSerializer = new XmlSerializer(typeof(T));
                                 using (TextWriter ObjectXMLWriter = new StreamWriter(tmpStream, Encoding.UTF8))
                                 {
-                                    XmlSerializer ObjectSerializer = new XmlSerializer(typeof(T));
                                     ObjectSerializer.Serialize(ObjectXMLWriter, Object);
-                                    tmpStream.Position = 0;
+                                    tmpStream.Seek(0, SeekOrigin.Begin);
                                     tmpStream.CopyTo(ObjectStream);
                                 }
                                 break;
                         }
                     }
-                    ObjectStream.Position = 0;
+                    ObjectStream.Seek(0, SeekOrigin.Begin);
                     return ObjectStream;
                 }
                 catch (Exception ex)
@@ -119,15 +117,12 @@ namespace Core.IO
                     switch (SaveType)
                     {
                         default:
-                        case ObjectStorage.SaveType.Binary:
-                            using (GZipStream gzipStream = new GZipStream(ObjectStream, CompressionMode.Decompress))
-                            {
-                                BinaryFormatter ObjectFormatter = new BinaryFormatter();
-                                Object = (T)ObjectFormatter.Deserialize(gzipStream);
-                            }
+                        case SaveType.Binary:
+                            BinaryFormatter ObjectFormatter = new BinaryFormatter();
+                            Object = (T)ObjectFormatter.Deserialize(ObjectStream);
                             break;
 
-                        case ObjectStorage.SaveType.XML:
+                        case SaveType.XML:
                             XmlSerializer ObjectSerializer = new XmlSerializer(typeof(T));
                             Object = (T)ObjectSerializer.Deserialize(ObjectStream);
                             break;

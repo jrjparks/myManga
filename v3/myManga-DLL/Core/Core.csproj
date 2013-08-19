@@ -44,10 +44,12 @@
   <ItemGroup>
     <Compile Include="DLL\DLL_Loader.cs" />
     <Compile Include="DLL\DLL_Manager.cs" />
+    <Compile Include="DLL\EmbeddedDLL.cs" />
     <Compile Include="IO\Enum.cs" />
     <Compile Include="IO\ObjectArchive.cs" />
     <Compile Include="IO\ObjectStorage.cs" />
     <Compile Include="IO\PathSafety.cs" />
+    <Compile Include="IO\SerializableObject.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Ionic.Zip">

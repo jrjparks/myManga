@@ -9,13 +9,13 @@ namespace Core.IO
 {
     public static class ObjectArchive
     {
-        private const ReadOptions DefaultZipReadOptions = new ReadOptions() { Encoding = Encoding.UTF8 };
-
-        public static Boolean SaveArchive<T>(this T Object, String ArchiveFilePath, String FileName, SaveType SaveType = SaveType.Binary) where T : class
+        public static Boolean SaveToArchive<T>(this T Object, String ArchiveFilePath, String FileName, SaveType SaveType = SaveType.Binary) where T : class
         {
-            return Object.SaveArchive(ArchiveFilePath, FileName, DefaultZipReadOptions, SaveType);
+            ReadOptions ZipReadOptions = new ReadOptions();
+            ZipReadOptions.Encoding = Encoding.UTF8;
+            return Object.SaveToArchive(ArchiveFilePath, FileName, ZipReadOptions, SaveType);
         }
-        public static Boolean SaveArchive<T>(this T Object, String ArchiveFilePath, String FileName, ReadOptions ZipReadOption, SaveType SaveType = SaveType.Binary) where T : class
+        public static Boolean SaveToArchive<T>(this T Object, String ArchiveFilePath, String FileName, ReadOptions ZipReadOption, SaveType SaveType = SaveType.Binary) where T : class
         {
             if (Object != null)
             {
@@ -23,7 +23,7 @@ namespace Core.IO
                 String FileIOPath = Path.GetTempFileName();
                 try
                 {
-                    using (ZipFile zipFile = FileExists ? ZipFile.Read(ArchiveFilePath, ZipReadOption) : new ZipFile(FileIOPath, Encoding.UTF8))
+                    using (ZipFile zipFile = FileExists ? ZipFile.Read(ArchiveFilePath, ZipReadOption) : new ZipFile(Encoding.UTF8))
                     {
                         DateTime dt = DateTime.Now;
                         zipFile.Comment = String.Format("{0} - {1}", dt.ToLongDateString(), dt.ToLongTimeString());
@@ -33,7 +33,8 @@ namespace Core.IO
                         zipFile.UpdateEntry(FileName, Object.Serialize(SaveType));
 
                         zipFile.Save(FileIOPath);
-                        File.Move(FileIOPath, ArchiveFilePath);
+                        File.Copy(FileIOPath, ArchiveFilePath, true);
+                        File.Delete(FileIOPath);
                     }
                     return true;
                 }
@@ -48,12 +49,12 @@ namespace Core.IO
             return false;
         }
 
-        public static T LoadArchive<T>(this String ArchiveFilePath, String FileName, SaveType SaveType = SaveType.Binary) where T : class
+        public static T LoadFromArchive<T>(this String ArchiveFilePath, String FileName, SaveType SaveType = SaveType.Binary) where T : class
         {
             if (File.Exists(ArchiveFilePath))
             {
                 T Object = null;
-                using (Stream DataStream = ArchiveFilePath.LoadArchive(FileName))
+                using (Stream DataStream = ArchiveFilePath.LoadFromArchive(FileName))
                 {
                     Object = DataStream.Deserialize<T>(SaveType);
                 }
@@ -62,11 +63,13 @@ namespace Core.IO
             return null;
         }
 
-        public static Stream LoadArchive(this String ArchiveFilePath, String FileName)
+        public static Stream LoadFromArchive(this String ArchiveFilePath, String FileName)
         {
-            return ArchiveFilePath.LoadArchive(FileName, DefaultZipReadOptions);
+            ReadOptions ZipReadOptions = new ReadOptions();
+            ZipReadOptions.Encoding = Encoding.UTF8;
+            return ArchiveFilePath.LoadFromArchive(FileName, ZipReadOptions);
         }
-        public static Stream LoadArchive(this String ArchiveFilePath, String FileName, ReadOptions ZipReadOption)
+        public static Stream LoadFromArchive(this String ArchiveFilePath, String FileName, ReadOptions ZipReadOption)
         {
             if (File.Exists(ArchiveFilePath))
             {

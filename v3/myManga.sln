@@ -7,21 +7,24 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "myManga-Plugin", "myManga-P
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core", "myManga-DLL\Core\Core.csproj", "{1C67209C-E3C8-4FF9-9CB1-B788ECB4B284}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "myManga-App", "myManga-App\myManga-App\myManga-App.csproj", "{2F3FA04C-B46B-4A16-BCFC-14154125854E}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "myManga-Test", "myManga-Test", "{BE03E57D-1DB5-49E4-B5D4-B3ED9D6E241A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestApp", "myManga-Test\TestApp\TestApp.csproj", "{9D021522-BC7A-41E6-899C-B6151FEB504C}"
 EndProject
 Global
 	GlobalSection(TeamFoundationVersionControl) = preSolution
 		SccNumberOfProjects = 3
 		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
 		SccTeamFoundationServer = https://tfs.codeplex.com/tfs/tfs24
-		SccProjectUniqueName0 = myManga-DLL\\Core\\Core.csproj
-		SccProjectTopLevelParentUniqueName0 = myManga-App.sln
-		SccProjectName0 = myManga-DLL/Core
-		SccLocalPath0 = myManga-DLL\\Core
-		SccProjectUniqueName1 = myManga-App\\myManga-App\\myManga-App.csproj
-		SccProjectName1 = myManga-App/myManga-App
-		SccLocalPath1 = myManga-App\\myManga-App
-		SccLocalPath2 = .
+		SccLocalPath0 = .
+		SccProjectUniqueName1 = myManga-DLL\\Core\\Core.csproj
+		SccProjectTopLevelParentUniqueName1 = myManga.sln
+		SccProjectName1 = myManga-DLL/Core
+		SccLocalPath1 = myManga-DLL\\Core
+		SccProjectUniqueName2 = myManga-Test\\TestApp\\TestApp.csproj
+		SccProjectTopLevelParentUniqueName2 = myManga.sln
+		SccProjectName2 = myManga-Test/TestApp
+		SccLocalPath2 = myManga-Test\\TestApp
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
@@ -32,15 +35,16 @@ Global
 		{1C67209C-E3C8-4FF9-9CB1-B788ECB4B284}.Debug|x86.Build.0 = Debug|x86
 		{1C67209C-E3C8-4FF9-9CB1-B788ECB4B284}.Release|x86.ActiveCfg = Release|x86
 		{1C67209C-E3C8-4FF9-9CB1-B788ECB4B284}.Release|x86.Build.0 = Release|x86
-		{2F3FA04C-B46B-4A16-BCFC-14154125854E}.Debug|x86.ActiveCfg = Debug|x86
-		{2F3FA04C-B46B-4A16-BCFC-14154125854E}.Debug|x86.Build.0 = Debug|x86
-		{2F3FA04C-B46B-4A16-BCFC-14154125854E}.Release|x86.ActiveCfg = Release|x86
-		{2F3FA04C-B46B-4A16-BCFC-14154125854E}.Release|x86.Build.0 = Release|x86
+		{9D021522-BC7A-41E6-899C-B6151FEB504C}.Debug|x86.ActiveCfg = Debug|x86
+		{9D021522-BC7A-41E6-899C-B6151FEB504C}.Debug|x86.Build.0 = Debug|x86
+		{9D021522-BC7A-41E6-899C-B6151FEB504C}.Release|x86.ActiveCfg = Release|x86
+		{9D021522-BC7A-41E6-899C-B6151FEB504C}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{1C67209C-E3C8-4FF9-9CB1-B788ECB4B284} = {A3149E96-7930-4359-B03A-9BF285B95F72}
+		{9D021522-BC7A-41E6-899C-B6151FEB504C} = {BE03E57D-1DB5-49E4-B5D4-B3ED9D6E241A}
 	EndGlobalSection
 EndGlobal

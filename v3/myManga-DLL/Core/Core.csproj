@@ -50,11 +50,21 @@
     <Compile Include="IO\ObjectStorage.cs" />
     <Compile Include="IO\PathSafety.cs" />
     <Compile Include="IO\SerializableObject.cs" />
+    <Compile Include="Other\Parse.cs" />
+    <Compile Include="WPF Controls\BalancedWrapPanel\BalancedWrapPanel.cs" />
+    <Compile Include="WPF Controls\BalancedWrapPanel\LengthConverter.cs" />
+    <Compile Include="WPF Controls\BalancedWrapPanel\NumericExtensions.cs" />
+    <Compile Include="WPF Controls\BalancedWrapPanel\OrientedSize.cs" />
+    <Compile Include="WPF Controls\BalancedWrapPanel\TypeConverters.cs" />
+    <Compile Include="WPF Controls\BalancedWrapPanel\VirtualizingWrapPanel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Ionic.Zip">
       <HintPath>..\Support DLL\Ionic.Zip.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
     <Reference Include="System" />
     <Reference Include="System.Xaml" />
     <Reference Include="System.XML" />

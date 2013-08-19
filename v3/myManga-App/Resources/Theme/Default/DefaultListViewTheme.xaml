@@ -1,0 +1,262 @@
+﻿<ResourceDictionary 
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:core="clr-namespace:System.Windows.Controls;assembly=Core">
+
+    <!--NoSelect-->
+    <Style TargetType="{x:Type ListView}" x:Key="NoSelect">
+        <Style.Resources>
+            <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="Transparent"/>
+        </Style.Resources>
+        <Setter Property="ListViewItem.FocusVisualStyle" Value="{x:Null}"/>
+    </Style>
+    
+    <!--Balanced Wrap Panel ListView-->
+    <Style TargetType="{x:Type ListView}" x:Key="BalancedWrapListView">
+        <Setter Property="OverridesDefaultStyle" Value="True"/>
+        <Setter Property="SnapsToDevicePixels" Value="True"/>
+        <Setter Property="Background" Value="Black"/>
+        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="BorderBrush" Value="#555"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate>
+                    <Border
+                        Background="{TemplateBinding Background}"
+                        TextElement.Foreground="{TemplateBinding Foreground}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}">
+                        <ScrollViewer 
+                            HorizontalScrollBarVisibility="Disabled"
+                            HorizontalContentAlignment="Stretch" 
+                            Style="{StaticResource MetroScrollViewer}">
+                            <core:BalancedWrapPanel
+                                IsItemsHost="True" 
+                                ItemWidth="224" 
+                                ItemHeight="224"
+                                HorizontalAlignment="Stretch"
+                                AlignLastItems="True"/>
+                        </ScrollViewer>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    
+    <!--Library ListViewItem-->
+    <Style TargetType="{x:Type ListViewItem}" x:Key="LibraryListViewItem">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type ListViewItem}">
+                    <Border
+                        x:Name="_ItemBorder"
+                        Cursor="Hand"
+                        MinHeight="32"
+                        MaxHeight="200"
+                        MinWidth="32"
+                        MaxWidth="200"
+                            
+                        Grid.ZIndex="1"
+                                    
+                        BorderBrush="Black"
+                        BorderThickness="2"
+                        Background="Black"
+                                        
+                        TextElement.Foreground="White"
+                            
+                        Padding="0"
+                        Margin="5,18,21,2"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        
+                        RenderTransformOrigin="0.5,0.5"
+                        
+                        SnapsToDevicePixels="True">
+                        <!--
+                        <Border.RenderTransform>
+                            <ScaleTransform ScaleX="0" ScaleY="0"/>
+                        </Border.RenderTransform>
+                        -->
+                        <Grid>
+                            <Border 
+                                x:Name="_NewIconBorder"
+                                Grid.ZIndex="4" 
+                                Background="Black" 
+                                HorizontalAlignment="Right" 
+                                VerticalAlignment="Top" 
+                                Margin="0,-16,-16,0" 
+                                CornerRadius="99" 
+                                BorderBrush="Black" 
+                                BorderThickness="1"
+                                Visibility="Collapsed">
+                                <Image 
+                                    x:Name="_NewIconImg" 
+                                    Width="32" 
+                                    Height="32" 
+                                    Source="/myManga;component/Resources/Images/Metro/White/Circle/basecircle.png" />
+                            </Border>
+                            <Border 
+                                x:Name="_BookmarkIconBorder"
+                                Grid.ZIndex="4" 
+                                Background="Black" 
+                                HorizontalAlignment="Left" 
+                                VerticalAlignment="Top" 
+                                Margin="-16,-16,0,0" 
+                                CornerRadius="99" 
+                                BorderBrush="Black" 
+                                BorderThickness="1"
+                                Visibility="Collapsed">
+                                <Image 
+                                    x:Name="_BookmarkIconImg" 
+                                    Width="32" 
+                                    Height="32" 
+                                    Source="/myManga;component/Resources/Images/Metro/White/Circle/basecircle.png" />
+                            </Border>
+                            <Border 
+                                x:Name="_LicenseIconBorder"
+                                Grid.ZIndex="4" 
+                                Background="Black" 
+                                HorizontalAlignment="Center" 
+                                VerticalAlignment="Top" 
+                                Margin="0,-16,0,0" 
+                                CornerRadius="99" 
+                                BorderBrush="Black" 
+                                BorderThickness="1"
+                                Visibility="Collapsed">
+                                <Image 
+                                    x:Name="_LicenseIconImg" 
+                                    Width="32" 
+                                    Height="32" 
+                                    Source="/myManga;component/Resources/Images/Metro/White/Circle/basecircle.png" />
+                            </Border>
+                            <Image Grid.ZIndex="1" x:Name="_Cover" Source="{Binding Path=Cover, FallbackValue=/myManga;component/Resources/Images/Icons/FalbackMangaIcon.png}"/>
+                            <TextBlock Grid.ZIndex="2" VerticalAlignment="Top" TextAlignment="Center" Background="#80000000" Text="{Binding Path=Name}" TextTrimming="CharacterEllipsis" MaxWidth="{Binding ElementName=_Cover, Path=ActualWidth}" />
+                            <TextBlock Grid.ZIndex="2" VerticalAlignment="Bottom" TextAlignment="Center" Background="#80000000">
+                                <TextBlock.Text>
+                                    <MultiBinding StringFormat="{}V{0} C{1}.{2} P{3}">
+                                        <Binding Path="Volume" FallbackValue="0" TargetNullValue="0"/>
+                                        <Binding Path="Chapter" FallbackValue="0" TargetNullValue="0"/>
+                                        <Binding Path="SubChapter" FallbackValue="0" TargetNullValue="0"/>
+                                        <Binding Path="Page" FallbackValue="0" TargetNullValue="0"/>
+                                    </MultiBinding>
+                                </TextBlock.Text>
+                            </TextBlock>
+                            <Border  
+                                x:Name="ResumeBtn" 
+                                Visibility="Collapsed" 
+                                Grid.ZIndex="3" 
+                                HorizontalAlignment="Stretch" 
+                                VerticalAlignment="Stretch"
+                                Background="#50000000">
+                                <Button 
+                                    Style="{StaticResource GlowBtn}"
+                                    Command="{Binding Path=DataContext.ResumeManga, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl}}"
+                                    CommandParameter="{Binding}">
+                                    <Image Source="/myManga;component/Resources/Images/Metro/White/Circle/View.png" Stretch="None"/>
+                                </Button>
+                            </Border>
+                            <ProgressBar Value="{Binding Path=Progress}" Visibility="{Binding Path=ProgressVisibility}" VerticalAlignment="Bottom" Margin="0,0,0,-8" Grid.ZIndex="3"/>
+                        </Grid>
+                        <!--
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="SelectionStates">
+                                <VisualState x:Name="Unselected">
+                                    <Storyboard Storyboard.TargetName="_ItemBorder" SpeedRatio="3">
+                                        <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)" To="0.9"/>
+                                        <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)" To="0.9"/>
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="Selected">
+                                    <Storyboard Storyboard.TargetName="_ItemBorder" SpeedRatio="3">
+                                        <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)" To="1"/>
+                                        <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)" To="1"/>
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="SelectedUnfocused">
+                                    <Storyboard Storyboard.TargetName="_ItemBorder">
+                                        <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)" To="0.95"/>
+                                        <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)" To="0.95"/>
+                                    </Storyboard>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                        -->
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter TargetName="ResumeBtn" Property="Visibility" Value="Visible"/>
+                        </Trigger>
+                        <DataTrigger Binding="{Binding Path=ChapterStatus}" Value="True">
+                            <Setter TargetName="_NewIconImg" Property="Source" Value="/myManga;component/Resources/Images/Metro/White/Circle/New.png"/>
+                            <Setter TargetName="_NewIconBorder" Property="Visibility" Value="Visible"/>
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding Path=Licensed}" Value="True">
+                            <Setter TargetName="_LicenseIconImg" Property="Source" Value="/myManga;component/Resources/Images/Metro/White/Circle/Error.png"/>
+                            <Setter TargetName="_LicenseIconBorder" Property="Visibility" Value="Visible"/>
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding Path=KeepChapters}" Value="True">
+                            <Setter TargetName="_BookmarkIconImg" Property="Source" Value="/myManga;component/Resources/Images/Metro/White/Circle/heart.png"/>
+                            <Setter TargetName="_BookmarkIconBorder" Property="Visibility" Value="Visible"/>
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding Path=DrawShadow}" Value="True">
+                            <Setter TargetName="_ItemBorder" Property="Effect">
+                                <Setter.Value>
+                                    <DropShadowEffect Color="#000"/>
+                                </Setter.Value>
+                            </Setter>
+                        </DataTrigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!--Grouped Wrap Panel ListView-->
+    <Style TargetType="{x:Type ListView}" x:Key="GroupedBalancedWrapListView">
+        <Setter Property="OverridesDefaultStyle" Value="True"/>
+        <Setter Property="SnapsToDevicePixels" Value="True"/>
+        <Setter Property="Background" Value="Black"/>
+        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="BorderBrush" Value="#555"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="ItemContainerStyle" Value="{StaticResource ResourceKey=LibraryListViewItem}"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate>
+                    <Border
+                        Background="{TemplateBinding Background}"
+                        TextElement.Foreground="{TemplateBinding Foreground}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}">
+                        <ScrollViewer 
+                            HorizontalScrollBarVisibility="Disabled"
+                            HorizontalContentAlignment="Stretch" 
+                            Style="{StaticResource MetroScrollViewer}">
+                            <ItemsPresenter/>
+                        </ScrollViewer>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    
+    <Style TargetType="{x:Type GroupItem}" x:Key="LibraryGroupItem">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type GroupItem}">
+                    <Expander 
+                        x:Name="ItemsContaner"
+                        TextElement.Foreground="White"
+                        TextElement.FontFamily="Segoe UI"
+                        TextElement.FontSize="18"
+                        TextElement.FontWeight="Bold"
+                        Header="{Binding Path=Name}"
+                        Background="Black">
+                        <ItemsPresenter/>
+                    </Expander>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+</ResourceDictionary>

@@ -50,6 +50,7 @@
     <Compile Include="IO\ObjectStorage.cs" />
     <Compile Include="IO\PathSafety.cs" />
     <Compile Include="IO\SerializableObject.cs" />
+    <Compile Include="MVVM\DelegateCommand.cs" />
     <Compile Include="Other\Parse.cs" />
     <Compile Include="WPF Controls\BalancedWrapPanel\BalancedWrapPanel.cs" />
     <Compile Include="WPF Controls\BalancedWrapPanel\LengthConverter.cs" />
@@ -57,6 +58,8 @@
     <Compile Include="WPF Controls\BalancedWrapPanel\OrientedSize.cs" />
     <Compile Include="WPF Controls\BalancedWrapPanel\TypeConverters.cs" />
     <Compile Include="WPF Controls\BalancedWrapPanel\VirtualizingWrapPanel.cs" />
+    <Compile Include="WPF Controls\BrightnessControl\BrightnessControl.cs" />
+    <Compile Include="WPF Controls\BrightnessControl\MonitorBrightness.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Ionic.Zip">
@@ -66,6 +69,7 @@
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="System" />
+    <Reference Include="System.Management" />
     <Reference Include="System.Xaml" />
     <Reference Include="System.XML" />
     <Reference Include="System.Xml.Linq" />

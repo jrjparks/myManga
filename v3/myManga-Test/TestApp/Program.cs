@@ -20,9 +20,9 @@ namespace TestApp
                 binTest.SaveObject("Test.bin");
                 binTest.SaveToArchive("Test.bin.zip", "Test.bin");
                 Console.WriteLine("\tLoad...");
-                TestData binTest2 = "Test.bin".LoadObject<TestData>();
+                TestData binTest2 = new TestData().LoadObject("Test.bin");
                 Console.WriteLine(String.Format("BINARY: {0}->{1}", binTest2.TestString, binTest2.TestUInt32));
-                TestData binTest3 = "Test.bin.zip".LoadFromArchive<TestData>("Test.bin");
+                TestData binTest3 = new TestData().LoadFromArchive("Test.bin.zip", "Test.bin");
                 Console.WriteLine(String.Format("BINARY: {0}->{1}", binTest3.TestString, binTest3.TestUInt32));
             }
             catch (Exception ex)
@@ -41,9 +41,9 @@ namespace TestApp
                 xmlTest.SaveObject("Test.xml", SaveType.XML);
                 xmlTest.SaveToArchive("Test.xml.zip", "Test.xml", SaveType.XML);
                 Console.WriteLine("\tLoad...");
-                TestData xmlTest2 = "Test.xml".LoadObject<TestData>(SaveType.XML);
+                TestData xmlTest2 = new TestData().LoadObject("Test.xml", SaveType.XML);
                 Console.WriteLine(String.Format("xmlTest: {0}->{1}", xmlTest2.TestString, xmlTest2.TestUInt32));
-                TestData xmlTest3 = "Test.xml.zip".LoadFromArchive<TestData>("Test.xml", SaveType.XML);
+                TestData xmlTest3 = new TestData().LoadFromArchive("Test.xml.zip", "Test.xml", SaveType.XML);
                 Console.WriteLine(String.Format("xmlTest: {0}->{1}", xmlTest3.TestString, xmlTest3.TestUInt32));
             }
             catch (Exception ex)

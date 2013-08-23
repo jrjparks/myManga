@@ -55,10 +55,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>Resources\DLL\Microsoft.Windows.Shell.dll</HintPath>
     </Reference>
-    <Reference Include="MonitorControl, Version=1.0.0.0, Culture=neutral, PublicKeyToken=faec2c463a9cf11d, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>Resources\DLL\MonitorControl.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
@@ -80,6 +76,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Resources\Theme\Default\MarginConverter.cs" />
+    <Compile Include="ViewModels\MainViewModel.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -187,6 +184,9 @@
     <Content Include="Resources\DLL\Ionic.Zip.dll" />
     <Content Include="Resources\DLL\Microsoft.Windows.Shell.dll" />
     <Content Include="Resources\DLL\MonitorControl.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Views\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

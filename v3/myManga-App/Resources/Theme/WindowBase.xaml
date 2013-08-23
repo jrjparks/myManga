@@ -2,176 +2,76 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:shell="http://schemas.microsoft.com/winfx/2006/xaml/presentation/shell"
-    xmlns:brightness="clr-namespace:MonitorControl;assembly=MonitorControl">
+    xmlns:core="clr-namespace:System.Windows.Controls;assembly=Core">
 
     <!--Window Buttons-->
-    <Style TargetType="{x:Type Button}" x:Key="CloseBtn">
+    <Style TargetType="{x:Type Button}" x:Key="WindowButtonStyle">
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="Button">
-                    <Grid HorizontalAlignment="Center" VerticalAlignment="Center" Background="#00000000" Cursor="Hand">
+                <ControlTemplate TargetType="{x:Type ButtonBase}">
+                    <Grid>
                         <Grid.Resources>
-                            <SolidColorBrush x:Key="_FStroke" x:Name="FStroke" Color="White"/>
+
                         </Grid.Resources>
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
                                 <VisualState x:Name="Normal">
                                     <Storyboard SpeedRatio="3">
+                                        <ColorAnimation Storyboard.TargetName="Content" Storyboard.TargetProperty="(TextBlock.Foreground).Color" To="White"/>
                                         <DoubleAnimation Storyboard.TargetName="BtnBlur" Storyboard.TargetProperty="BlurRadius" To="0"/>
-                                        <ColorAnimation Storyboard.TargetName="FStroke" Storyboard.TargetProperty="Color" To="White"/>
                                     </Storyboard>
                                 </VisualState>
                                 <VisualState x:Name="MouseOver">
                                     <Storyboard SpeedRatio="3">
+                                        <ColorAnimation Storyboard.TargetName="Content" Storyboard.TargetProperty="(TextBlock.Foreground).Color" To="Gray"/>
                                         <DoubleAnimation Storyboard.TargetName="BtnBlur" Storyboard.TargetProperty="BlurRadius" To="8"/>
-                                        <ColorAnimation Storyboard.TargetName="FStroke" Storyboard.TargetProperty="Color" To="White"/>
                                     </Storyboard>
                                 </VisualState>
                                 <VisualState x:Name="Pressed">
                                     <Storyboard SpeedRatio="3">
+                                        <ColorAnimation Storyboard.TargetName="Content" Storyboard.TargetProperty="(TextBlock.Foreground).Color" To="LightGray"/>
                                         <DoubleAnimation Storyboard.TargetName="BtnBlur" Storyboard.TargetProperty="BlurRadius" To="25"/>
-                                        <ColorAnimation Storyboard.TargetName="FStroke" Storyboard.TargetProperty="Color" To="White"/>
                                     </Storyboard>
                                 </VisualState>
                                 <VisualState x:Name="Disabled">
                                     <Storyboard SpeedRatio="3">
+                                        <ColorAnimation Storyboard.TargetName="Content" Storyboard.TargetProperty="(TextBlock.Foreground).Color" To="DarkGray"/>
                                         <DoubleAnimation Storyboard.TargetName="BtnBlur" Storyboard.TargetProperty="BlurRadius" To="0"/>
-                                        <ColorAnimation Storyboard.TargetName="FStroke" Storyboard.TargetProperty="Color" To="#888"/>
                                     </Storyboard>
                                 </VisualState>
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
-                        <Path x:Name="Mark" Stroke="{StaticResource ResourceKey=_FStroke}" StrokeThickness="4">
-                            <Path.Data>
-                                <GeometryGroup>
-                                    <LineGeometry StartPoint="0,0" EndPoint="17,17"/>
-                                    <LineGeometry StartPoint="0,17" EndPoint="17,0"/>
-                                </GeometryGroup>
-                            </Path.Data>
-                            <Path.Effect>
-                                <DropShadowEffect x:Name="BtnBlur" BlurRadius="0" ShadowDepth="0" Color="Red"/>
-                            </Path.Effect>
-                        </Path>
-                        <Path Stroke="{StaticResource ResourceKey=_FStroke}" StrokeThickness="5">
-                            <Path.Data>
-                                <GeometryGroup>
-                                    <LineGeometry StartPoint="0,0" EndPoint="17,17"/>
-                                    <LineGeometry StartPoint="0,17" EndPoint="17,0"/>
-                                </GeometryGroup>
-                            </Path.Data>
-                        </Path>
+                        <Border
+                        x:Name="Chrome"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        Margin="0"
+                        Background="{TemplateBinding Background}"
+                        SnapsToDevicePixels="True">
+                            <ContentPresenter
+                                x:Name="Content"
+                                TextBlock.Foreground="White"
+                                ContentTemplate="{TemplateBinding ContentTemplate}"
+                                Content="{TemplateBinding Content}"
+                                ContentStringFormat="{TemplateBinding ContentStringFormat}"
+                                HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                Margin="{TemplateBinding Padding}"
+                                RecognizesAccessKey="True"
+                                SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                            <Border.Effect>
+                                <DropShadowEffect x:Name="BtnBlur" BlurRadius="0" ShadowDepth="0" Color="LightGray"/>
+                            </Border.Effect>
+                        </Border>
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
-    </Style>
-    <Style TargetType="{x:Type Button}" x:Key="RestBtn">
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="Button">
-                    <Grid HorizontalAlignment="Center" VerticalAlignment="Center" Background="#00000000" Cursor="Hand">
-                        <Grid.Resources>
-                            <SolidColorBrush x:Key="_FStroke" x:Name="FStroke" Color="White"/>
-                        </Grid.Resources>
-                        <VisualStateManager.VisualStateGroups>
-                            <VisualStateGroup x:Name="CommonStates">
-                                <VisualState x:Name="Normal">
-                                    <Storyboard SpeedRatio="3">
-                                        <DoubleAnimation Storyboard.TargetName="BtnBlur" Storyboard.TargetProperty="BlurRadius" To="0"/>
-                                        <ColorAnimation Storyboard.TargetName="FStroke" Storyboard.TargetProperty="Color" To="White"/>
-                                    </Storyboard>
-                                </VisualState>
-                                <VisualState x:Name="MouseOver">
-                                    <Storyboard SpeedRatio="3">
-                                        <DoubleAnimation Storyboard.TargetName="BtnBlur" Storyboard.TargetProperty="BlurRadius" To="8"/>
-                                        <ColorAnimation Storyboard.TargetName="FStroke" Storyboard.TargetProperty="Color" To="White"/>
-                                    </Storyboard>
-                                </VisualState>
-                                <VisualState x:Name="Pressed">
-                                    <Storyboard SpeedRatio="3">
-                                        <DoubleAnimation Storyboard.TargetName="BtnBlur" Storyboard.TargetProperty="BlurRadius" To="25"/>
-                                        <ColorAnimation Storyboard.TargetName="FStroke" Storyboard.TargetProperty="Color" To="White"/>
-                                    </Storyboard>
-                                </VisualState>
-                                <VisualState x:Name="Disabled">
-                                    <Storyboard SpeedRatio="3">
-                                        <DoubleAnimation Storyboard.TargetName="BtnBlur" Storyboard.TargetProperty="BlurRadius" To="0"/>
-                                        <ColorAnimation Storyboard.TargetName="FStroke" Storyboard.TargetProperty="Color" To="#888"/>
-                                    </Storyboard>
-                                </VisualState>
-                            </VisualStateGroup>
-                        </VisualStateManager.VisualStateGroups>
-                        <Path x:Name="Mark" Stroke="{StaticResource ResourceKey=_FStroke}" StrokeThickness="4">
-                            <Path.Data>
-                                <RectangleGeometry Rect="0,0,15,15"/>
-                            </Path.Data>
-                            <Path.Effect>
-                                <DropShadowEffect x:Name="BtnBlur" BlurRadius="0" ShadowDepth="0" Color="Yellow"/>
-                            </Path.Effect>
-                        </Path>
-                        <Path Stroke="{StaticResource ResourceKey=_FStroke}" StrokeThickness="5">
-                            <Path.Data>
-                                <RectangleGeometry Rect="0,0,15,15"/>
-                            </Path.Data>
-                        </Path>
-                    </Grid>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
-    <Style TargetType="{x:Type Button}" x:Key="MinBtn">
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="Button">
-                    <Grid HorizontalAlignment="Center" VerticalAlignment="Center" Background="#00000000" Cursor="Hand">
-                        <Grid.Resources>
-                            <SolidColorBrush x:Key="_FStroke" x:Name="FStroke" Color="White"/>
-                        </Grid.Resources>
-                        <VisualStateManager.VisualStateGroups>
-                            <VisualStateGroup x:Name="CommonStates">
-                                <VisualState x:Name="Normal">
-                                    <Storyboard SpeedRatio="3">
-                                        <DoubleAnimation Storyboard.TargetName="BtnBlur" Storyboard.TargetProperty="BlurRadius" To="0"/>
-                                        <ColorAnimation Storyboard.TargetName="FStroke" Storyboard.TargetProperty="Color" To="White"/>
-                                    </Storyboard>
-                                </VisualState>
-                                <VisualState x:Name="MouseOver">
-                                    <Storyboard SpeedRatio="3">
-                                        <DoubleAnimation Storyboard.TargetName="BtnBlur" Storyboard.TargetProperty="BlurRadius" To="8"/>
-                                        <ColorAnimation Storyboard.TargetName="FStroke" Storyboard.TargetProperty="Color" To="White"/>
-                                    </Storyboard>
-                                </VisualState>
-                                <VisualState x:Name="Pressed">
-                                    <Storyboard SpeedRatio="3">
-                                        <DoubleAnimation Storyboard.TargetName="BtnBlur" Storyboard.TargetProperty="BlurRadius" To="25"/>
-                                        <ColorAnimation Storyboard.TargetName="FStroke" Storyboard.TargetProperty="Color" To="White"/>
-                                    </Storyboard>
-                                </VisualState>
-                                <VisualState x:Name="Disabled">
-                                    <Storyboard SpeedRatio="3">
-                                        <DoubleAnimation Storyboard.TargetName="BtnBlur" Storyboard.TargetProperty="BlurRadius" To="0"/>
-                                        <ColorAnimation Storyboard.TargetName="FStroke" Storyboard.TargetProperty="Color" To="#888"/>
-                                    </Storyboard>
-                                </VisualState>
-                            </VisualStateGroup>
-                        </VisualStateManager.VisualStateGroups>
-                        <Path x:Name="Mark" Stroke="{StaticResource ResourceKey=_FStroke}" StrokeThickness="4">
-                            <Path.Data>
-                                <LineGeometry StartPoint="0,15" EndPoint="17,15"/>
-                            </Path.Data>
-                            <Path.Effect>
-                                <DropShadowEffect x:Name="BtnBlur" BlurRadius="0" ShadowDepth="0" Color="#00FF00"/>
-                            </Path.Effect>
-                        </Path>
-                        <Path Stroke="{StaticResource ResourceKey=_FStroke}" StrokeThickness="5">
-                            <Path.Data>
-                                <LineGeometry StartPoint="0,15" EndPoint="17,15"/>
-                            </Path.Data>
-                        </Path>
-                    </Grid>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="FontFamily" Value="Webdings"/>
+        <Setter Property="FontWeight" Value="Bold"/>
+        <Setter Property="FontSize" Value="24" />
+        <Setter Property="Margin" Value="0,2,3,0"/>
     </Style>
 
     <!--Window Chrome-->
@@ -221,7 +121,7 @@
                                             VerticalAlignment="Center" 
                                             Style="{StaticResource BlankBtn}"
                                             Grid.Row="1" Background="#00000000">
-                                            <Image Source="{TemplateBinding Icon}" MaxHeight="32" MaxWidth="32"/>
+                                            <Image Source="{TemplateBinding Icon}" MaxHeight="32" MaxWidth="32" IsHitTestVisible="False"/>
                                         </Button>
                                         <TextBlock 
                                                 Text="{TemplateBinding Title}"
@@ -229,43 +129,37 @@
                                                 VerticalAlignment="Center"/>
                                     </StackPanel>
                                     <StackPanel x:Name="CaptionButtons" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,1,5,0">
-                                        <brightness:BrightnessControl 
+                                        <core:BrightnessControl 
                                             Margin="5,0"
                                             shell:WindowChrome.IsHitTestVisibleInChrome="True"
                                             Focusable="False"/>
+                                        <!-- Minimize button content 0 -->
                                         <Button
                                             Command="{x:Static shell:SystemCommands.MinimizeWindowCommand}"
                                             CommandParameter="{Binding RelativeSource={RelativeSource TemplatedParent}}"
                                             shell:WindowChrome.IsHitTestVisibleInChrome="True"
-                    
+                                            
                                             Focusable="False"
-                                            Style="{StaticResource MinBtn}" 
-                                            HorizontalContentAlignment="Center" 
-                                            VerticalContentAlignment="Center"
-                                            Margin="5,0"/>
+                                            Style="{StaticResource WindowButtonStyle}"
+                                            Content="0"/>
+                                        <!-- Restore button content 1 -->
                                         <Button
                                             Command="{x:Static shell:SystemCommands.MaximizeWindowCommand}"
                                             CommandParameter="{Binding RelativeSource={RelativeSource TemplatedParent}}"
                                             shell:WindowChrome.IsHitTestVisibleInChrome="True"
-                    
+                                            
                                             Focusable="False"
-                                            Style="{StaticResource RestBtn}" 
-                                            HorizontalContentAlignment="Center" 
-                                            VerticalContentAlignment="Center"
-                                            Margin="2,0"/>
+                                            Style="{StaticResource WindowButtonStyle}"
+                                            Content="1"/>
+                                        <!-- Close button content r -->
                                         <Button
                                             Command="{x:Static shell:SystemCommands.CloseWindowCommand}"
                                             CommandParameter="{Binding RelativeSource={RelativeSource TemplatedParent}}"
                                             shell:WindowChrome.IsHitTestVisibleInChrome="True"
-                                    
-                                            Background="Red"
-                                            Foreground="White"
-                                    
+                                            
                                             Focusable="False"
-                                            Style="{StaticResource CloseBtn}" 
-                                            HorizontalContentAlignment="Center" 
-                                            VerticalContentAlignment="Center"
-                                            Margin="3,0"/>
+                                            Style="{StaticResource WindowButtonStyle}"
+                                            Content="r"/>
                                     </StackPanel>
                                 </Grid>
                             </Border>

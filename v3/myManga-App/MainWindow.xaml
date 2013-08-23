@@ -4,7 +4,8 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:shell="http://schemas.microsoft.com/winfx/2006/xaml/presentation/shell"
     xmlns:local="clr-namespace:myManga_App"
-    Title="myManga Beta v3"
+    Title="{DynamicResource AppTitle}"
+    ToolTip="{DynamicResource ProjectURL}"
     x:Name="myMangaMainWindow"
     Height="350"
     Width="525"
@@ -48,6 +49,9 @@
             <TabControl.Resources>
                 <Thickness x:Key="TabItemMargin">0</Thickness>
             </TabControl.Resources>
+            <TabItem Header="{DynamicResource LibraryTabHeader}">
+                
+            </TabItem>
         </TabControl>
         
         <StackPanel
@@ -61,11 +65,11 @@
             </StackPanel.Effect>
             <StackPanel HorizontalAlignment="Center">
                 <Grid Margin="5,0,0,-20" TextElement.FontSize="16" TextElement.FontWeight="Bold">
-                    <TextBlock Text="myManga.codeplex.com" HorizontalAlignment="Left" />
+                    <TextBlock Text="{DynamicResource ProjectURL}" HorizontalAlignment="Left" />
                     <TextBlock Text="{Binding Path=AboutViewModel.AssemblyVersion, StringFormat=v{0}}" HorizontalAlignment="Right" />
                 </Grid>
                 <TextBlock 
-                    Text="myManga Beta v3"
+                    Text="{DynamicResource AppTitle}"
                     FontSize="50"
                     Margin="0,0,0,0"/>
             </StackPanel>

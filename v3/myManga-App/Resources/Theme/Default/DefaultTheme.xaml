@@ -1,8 +1,7 @@
 ﻿<ResourceDictionary 
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:ui="clr-namespace:myManga.UI"
-    xmlns:brightness="clr-namespace:MonitorControl;assembly=MonitorControl"
+    xmlns:core="clr-namespace:System.Windows.Controls;assembly=Core"
     xmlns:sys="clr-namespace:System;assembly=mscorlib">
 
     <!-- SimpleStyles: ComboBox -->
@@ -613,7 +612,7 @@
             </Trigger>
         </Style.Triggers>
     </Style>
-    <Style TargetType="{x:Type brightness:BrightnessControl}">
+    <Style TargetType="{x:Type core:BrightnessControl}">
         <Setter Property="SnapsToDevicePixels" Value="True"/>
         <Setter Property="OverridesDefaultStyle" Value="True"/>
         <Style.Triggers>

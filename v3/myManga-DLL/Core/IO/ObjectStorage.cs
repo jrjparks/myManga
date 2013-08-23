@@ -48,9 +48,9 @@ namespace Core.IO
             return false;
         }
 
-        public static T LoadObject<T>(this String FilePath, SaveType SaveType = SaveType.Binary) where T : class
+        public static T LoadObject<T>(this T Object, String FilePath, SaveType SaveType = SaveType.Binary) where T : class
         {
-            T Object = null;
+            Object = null;
             try
             {
                 if (File.Exists(FilePath))

@@ -108,25 +108,9 @@
                                     </LinearGradientBrush>
                                 </Border.Background>
                                 <Grid>
-                                    <StackPanel x:Name="CaptionTitle" Orientation="Horizontal" Margin="8,0,0,0">
-                                        <Button
-                                            Command="{x:Static shell:SystemCommands.ShowSystemMenuCommand}"
-                                            CommandParameter="{Binding ElementName=ThisMainWindow}"
-                                            shell:WindowChrome.IsHitTestVisibleInChrome="True"
-                                            
-                                            Cursor="Arrow"
-                                            x:Name="_TitleText"
-                                            Margin="0,0,8,0" 
-                                            HorizontalAlignment="Left" 
-                                            VerticalAlignment="Center" 
-                                            Style="{StaticResource BlankBtn}"
-                                            Grid.Row="1" Background="#00000000">
-                                            <Image Source="{TemplateBinding Icon}" MaxHeight="32" MaxWidth="32" IsHitTestVisible="False"/>
-                                        </Button>
-                                        <TextBlock 
-                                                Text="{TemplateBinding Title}"
-                                                FontSize="16"
-                                                VerticalAlignment="Center"/>
+                                    <StackPanel x:Name="CaptionTitle" Orientation="Horizontal" Margin="4,4,0,0">
+                                        <Image Source="{TemplateBinding Icon}" MaxHeight="32" MaxWidth="32" Margin="0,0,8,0"/>
+                                        <TextBlock Text="{TemplateBinding Title}" FontSize="16" VerticalAlignment="Center"/>
                                     </StackPanel>
                                     <StackPanel x:Name="CaptionButtons" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,1,5,0">
                                         <core:BrightnessControl 
@@ -135,6 +119,7 @@
                                             Focusable="False"/>
                                         <!-- Minimize button content 0 -->
                                         <Button
+                                            x:Name="MinimizeButton"
                                             Command="{x:Static shell:SystemCommands.MinimizeWindowCommand}"
                                             CommandParameter="{Binding RelativeSource={RelativeSource TemplatedParent}}"
                                             shell:WindowChrome.IsHitTestVisibleInChrome="True"
@@ -142,17 +127,19 @@
                                             Focusable="False"
                                             Style="{StaticResource WindowButtonStyle}"
                                             Content="0"/>
-                                        <!-- Restore button content 1 -->
+                                        <!-- Restore button content 1 normal, 2 maximum. Changes from window trigger.-->
                                         <Button
+                                            x:Name="RestoreButton"
                                             Command="{x:Static shell:SystemCommands.MaximizeWindowCommand}"
                                             CommandParameter="{Binding RelativeSource={RelativeSource TemplatedParent}}"
                                             shell:WindowChrome.IsHitTestVisibleInChrome="True"
                                             
                                             Focusable="False"
                                             Style="{StaticResource WindowButtonStyle}"
-                                            Content="1"/>
+                                            Content="2"/>
                                         <!-- Close button content r -->
                                         <Button
+                                            x:Name="CloseButton"
                                             Command="{x:Static shell:SystemCommands.CloseWindowCommand}"
                                             CommandParameter="{Binding RelativeSource={RelativeSource TemplatedParent}}"
                                             shell:WindowChrome.IsHitTestVisibleInChrome="True"
@@ -177,8 +164,11 @@
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="WindowState" Value="Normal">
+                            <!-- Change Margins -->
                             <Setter TargetName="CaptionTitle" Property="Margin" Value="4,0,0,0"/>
                             <Setter TargetName="CaptionButtons" Property="Margin" Value="0"/>
+                            <!-- Change Restore Button -->
+                            <Setter TargetName="RestoreButton" Property="Content" Value="1"/>
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>

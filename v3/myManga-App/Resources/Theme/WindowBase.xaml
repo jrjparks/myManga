@@ -108,13 +108,15 @@
                                     </LinearGradientBrush>
                                 </Border.Background>
                                 <Grid>
-                                    <StackPanel x:Name="CaptionTitle" Orientation="Horizontal" Margin="4,4,0,0">
+                                    <StackPanel x:Name="CaptionTitle" Orientation="Horizontal" Margin="4,0,0,0">
                                         <Image Source="{TemplateBinding Icon}" MaxHeight="32" MaxWidth="32" Margin="0,0,8,0"/>
                                         <TextBlock Text="{TemplateBinding Title}" FontSize="16" VerticalAlignment="Center"/>
                                     </StackPanel>
-                                    <StackPanel x:Name="CaptionButtons" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,1,5,0">
+                                    <StackPanel x:Name="CaptionButtons" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0">
                                         <core:BrightnessControl 
                                             Margin="5,0"
+                                            VerticalAlignment="Center"
+                                            Width="100px"
                                             shell:WindowChrome.IsHitTestVisibleInChrome="True"
                                             Focusable="False"/>
                                         <!-- Minimize button content 0 -->
@@ -136,7 +138,7 @@
                                             
                                             Focusable="False"
                                             Style="{StaticResource WindowButtonStyle}"
-                                            Content="2"/>
+                                            Content="1"/>
                                         <!-- Close button content r -->
                                         <Button
                                             x:Name="CloseButton"
@@ -163,12 +165,12 @@
                         </Grid>
                     </Border>
                     <ControlTemplate.Triggers>
-                        <Trigger Property="WindowState" Value="Normal">
+                        <Trigger Property="WindowState" Value="Maximized">
                             <!-- Change Margins -->
-                            <Setter TargetName="CaptionTitle" Property="Margin" Value="4,0,0,0"/>
-                            <Setter TargetName="CaptionButtons" Property="Margin" Value="0"/>
+                            <Setter TargetName="CaptionTitle" Property="Margin" Value="4,4,0,0"/>
+                            <Setter TargetName="CaptionButtons" Property="Margin" Value="0,1,5,0"/>
                             <!-- Change Restore Button -->
-                            <Setter TargetName="RestoreButton" Property="Content" Value="1"/>
+                            <Setter TargetName="RestoreButton" Property="Content" Value="2"/>
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>

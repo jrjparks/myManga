@@ -6,5 +6,5 @@
     <!-- Application Information -->
     <system:String x:Key="AppTitle">myManga Beta v3</system:String>
     <system:String x:Key="ProjectURL">mymanga.codeplex.com</system:String>
-    <system:String x:Key="LibraryTabHeader">Library</system:String>
+    <system:String x:Key="HomeTabHeader">Home</system:String>
 </ResourceDictionary>

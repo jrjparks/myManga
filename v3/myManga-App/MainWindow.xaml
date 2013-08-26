@@ -5,7 +5,6 @@
     xmlns:shell="http://schemas.microsoft.com/winfx/2006/xaml/presentation/shell"
     xmlns:local="clr-namespace:myManga_App"
     Title="{DynamicResource AppTitle}"
-    ToolTip="{DynamicResource ProjectURL}"
     x:Name="myMangaMainWindow"
     Height="350"
     Width="525"
@@ -27,39 +26,38 @@
         <ResourceDictionary Source="/myManga-App;component/Resources/ViewModel-View-Link.xaml"/>
     </Window.Resources>
     <Grid>
-        <Grid.Triggers>
-            <EventTrigger RoutedEvent="Grid.Loaded">
-                <BeginStoryboard>
-                    <Storyboard>
-                        <DoubleAnimation 
-                            Storyboard.TargetName="watermark"
-                            Storyboard.TargetProperty="Opacity"
-                            BeginTime="0:0:10" From="1" To="0"/>
-                        <ObjectAnimationUsingKeyFrames 
-                            Storyboard.TargetName="watermark"
-                            Storyboard.TargetProperty="Visibility">
-                            <DiscreteObjectKeyFrame KeyTime="0:0:12" Value="{x:Static Visibility.Hidden}"/>
-                        </ObjectAnimationUsingKeyFrames>
-                    </Storyboard>
-                </BeginStoryboard>
-            </EventTrigger>
-        </Grid.Triggers>
-
         <TabControl Background="{x:Null}">
             <TabControl.Resources>
                 <Thickness x:Key="TabItemMargin">0</Thickness>
             </TabControl.Resources>
-            <TabItem Header="{DynamicResource LibraryTabHeader}">
-                
+            <TabItem Header="{StaticResource HomeTabHeader}">
+
             </TabItem>
         </TabControl>
-        
+
         <StackPanel
             x:Name="watermark"
             Grid.ZIndex="99"
             IsHitTestVisible="False"
             VerticalAlignment="Center"
             TextElement.Foreground="White">
+            <StackPanel.Triggers>
+                <EventTrigger RoutedEvent="Grid.Loaded">
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <DoubleAnimation 
+                            Storyboard.TargetName="watermark"
+                            Storyboard.TargetProperty="Opacity"
+                            BeginTime="0:0:2" Duration="0:0:4"  From="1" To="0"/>
+                            <ObjectAnimationUsingKeyFrames 
+                            Storyboard.TargetName="watermark"
+                            Storyboard.TargetProperty="Visibility">
+                                <DiscreteObjectKeyFrame KeyTime="0:0:6.5" Value="{x:Static Visibility.Hidden}"/>
+                            </ObjectAnimationUsingKeyFrames>
+                        </Storyboard>
+                    </BeginStoryboard>
+                </EventTrigger>
+            </StackPanel.Triggers>
             <StackPanel.Effect>
                 <DropShadowEffect/>
             </StackPanel.Effect>

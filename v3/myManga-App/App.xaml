@@ -8,16 +8,6 @@
                 <ResourceDictionary>
                     <Style TargetType="{x:Type Rectangle}"/>
                 </ResourceDictionary>
-                <ResourceDictionary Source="/myManga-App;component/Resources/Theme/Default/DefaultTheme.xaml"/>
-                <ResourceDictionary Source="/myManga-App;component/Resources/Theme/Default/DefaultProgressBarTheme.xaml"/>
-                <ResourceDictionary Source="/myManga-App;component/Resources/Theme/Default/DefaultButtonTheme.xaml"/>
-                <ResourceDictionary Source="/myManga-App;component/Resources/Theme/Default/DefaultToggleButtonTheme.xaml"/>
-                <ResourceDictionary Source="/myManga-App;component/Resources/Theme/Default/DefaultScrollbarTheme.xaml"/>
-                <ResourceDictionary Source="/myManga-App;component/Resources/Theme/Default/DefaultCheckBoxTheme.xaml"/>
-                <ResourceDictionary Source="/myManga-App;component/Resources/Theme/Default/DefaultHeaderedContentControlTheme.xaml"/>
-                <ResourceDictionary Source="/myManga-App;component/Resources/Theme/Default/DefaultListViewTheme.xaml"/>
-                <ResourceDictionary Source="/myManga-App;component/Resources/Theme/Default/DefaultListBoxTheme.xaml"/>
-                <ResourceDictionary Source="/myManga-App;component/Resources/Theme/Default/DefaultTabControlTheme.xaml"/>
                 <ResourceDictionary Source="/myManga-App;component/Resources/Theme/WindowBase.xaml"/>
 
                 <ResourceDictionary Source="/myManga-App;component/Resources/Localization/Dictionary_en-US.xaml"/>

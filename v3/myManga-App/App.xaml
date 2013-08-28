@@ -5,11 +5,7 @@
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary>
-                    <Style TargetType="{x:Type Rectangle}"/>
-                </ResourceDictionary>
                 <ResourceDictionary Source="/myManga-App;component/Resources/Theme/WindowBase.xaml"/>
-
                 <ResourceDictionary Source="/myManga-App;component/Resources/Localization/Dictionary_en-US.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>

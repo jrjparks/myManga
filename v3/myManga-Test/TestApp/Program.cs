@@ -1,5 +1,7 @@
 ﻿using System;
 using Core.IO;
+using myMangaSiteExtension.Objects;
+using myMangaSiteExtension;
 
 namespace TestApp
 {
@@ -45,6 +47,27 @@ namespace TestApp
                 Console.WriteLine(String.Format("xmlTest: {0}->{1}", xmlTest2.TestString, xmlTest2.TestUInt32));
                 TestData xmlTest3 = new TestData().LoadFromArchive("Test.xml.zip", "Test.xml", SaveType.XML);
                 Console.WriteLine(String.Format("xmlTest: {0}->{1}", xmlTest3.TestString, xmlTest3.TestUInt32));
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("XML Test failed...");
+                Console.WriteLine(ex.ToString());
+            }
+
+            try
+            {
+                MangaObject mangaObj = new MangaObject();
+                mangaObj.Name = "Hello World!";
+                mangaObj.AlternateNames.AddRange(new String[] { "Goodbye World!", "Hello World 2!" });
+                mangaObj.Authors.Add("Me");
+                mangaObj.Artists.Add("Me");
+                mangaObj.Chapters.Add(new ChapterObject() { Name="Chapter 1" });
+                mangaObj.Covers.Add("1.jpg");
+
+                Console.WriteLine("Testing XML...");
+                Console.WriteLine("\tSave...");
+                mangaObj.SaveObject("mangaObj.xml", SaveType.XML);
+                mangaObj.SaveToArchive("mangaObj.xml.zip", "mangaObj.xml", SaveType.XML);
             }
             catch (Exception ex)
             {

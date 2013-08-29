@@ -51,6 +51,7 @@
     <Compile Include="Data Types\ISiteExtensionCollection.cs" />
     <Compile Include="Enums\SupportedObjects.cs" />
     <Compile Include="Interfaces\ISiteExtension.cs" />
+    <Compile Include="Objects\ChapterObject.cs" />
     <Compile Include="Objects\MangaObject.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

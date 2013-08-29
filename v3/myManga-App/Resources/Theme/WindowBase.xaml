@@ -9,30 +9,34 @@
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type ButtonBase}">
                     <Grid>
+                        <Grid.Resources>
+                            <Duration x:Key="ColorDurationNormal">0:0:0.5</Duration>
+                            <Duration x:Key="ColorDurationFast">0:0:0.05</Duration>
+                        </Grid.Resources>
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
                                 <VisualState x:Name="Normal">
-                                    <Storyboard SpeedRatio="5">
-                                        <ColorAnimation Storyboard.TargetName="Chrome" Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)" To="{TemplateBinding Background}"/>
-                                        <ColorAnimation Storyboard.TargetName="Content" Storyboard.TargetProperty="(TextBlock.Foreground).Color" To="White"/>
+                                    <Storyboard>
+                                        <ColorAnimation Duration="{StaticResource ColorDurationNormal}" Storyboard.TargetName="Chrome" Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)" To="{TemplateBinding Background}"/>
+                                        <ColorAnimation Duration="{StaticResource ColorDurationNormal}" Storyboard.TargetName="Content" Storyboard.TargetProperty="(TextBlock.Foreground).Color" To="White"/>
                                     </Storyboard>
                                 </VisualState>
                                 <VisualState x:Name="MouseOver">
-                                    <Storyboard SpeedRatio="5">
-                                        <ColorAnimation Storyboard.TargetName="Chrome" Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)" To="LightGray"/>
-                                        <ColorAnimation Storyboard.TargetName="Content" Storyboard.TargetProperty="(TextBlock.Foreground).Color" To="#80326E"/>
+                                    <Storyboard>
+                                        <ColorAnimation Duration="{StaticResource ColorDurationFast}" Storyboard.TargetName="Chrome" Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)" To="LightGray"/>
+                                        <ColorAnimation Duration="{StaticResource ColorDurationFast}" Storyboard.TargetName="Content" Storyboard.TargetProperty="(TextBlock.Foreground).Color" To="#80326E"/>
                                     </Storyboard>
                                 </VisualState>
                                 <VisualState x:Name="Pressed">
-                                    <Storyboard SpeedRatio="10">
-                                        <ColorAnimation Storyboard.TargetName="Chrome" Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)" To="#80326E"/>
-                                        <ColorAnimation Storyboard.TargetName="Content" Storyboard.TargetProperty="(TextBlock.Foreground).Color" To="LightGray"/>
+                                    <Storyboard>
+                                        <ColorAnimation Duration="{StaticResource ColorDurationFast}" Storyboard.TargetName="Chrome" Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)" To="#80326E"/>
+                                        <ColorAnimation Duration="{StaticResource ColorDurationFast}" Storyboard.TargetName="Content" Storyboard.TargetProperty="(TextBlock.Foreground).Color" To="LightGray"/>
                                     </Storyboard>
                                 </VisualState>
                                 <VisualState x:Name="Disabled">
-                                    <Storyboard SpeedRatio="1">
-                                        <ColorAnimation Storyboard.TargetName="Chrome" Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)" To="{TemplateBinding Background}"/>
-                                        <ColorAnimation Storyboard.TargetName="Content" Storyboard.TargetProperty="(TextBlock.Foreground).Color" To="DarkGray"/>
+                                    <Storyboard>
+                                        <ColorAnimation Duration="{StaticResource ColorDurationNormal}" Storyboard.TargetName="Chrome" Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)" To="{TemplateBinding Background}"/>
+                                        <ColorAnimation Duration="{StaticResource ColorDurationNormal}" Storyboard.TargetName="Content" Storyboard.TargetProperty="(TextBlock.Foreground).Color" To="DarkGray"/>
                                     </Storyboard>
                                 </VisualState>
                             </VisualStateGroup>

@@ -2,25 +2,40 @@
     x:Class="myManga_App.MainWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:y="http://schemas.microsoft.com/netfx/2007/xaml/presentation"
     xmlns:shell="http://schemas.microsoft.com/winfx/2006/xaml/presentation/shell"
     xmlns:local="clr-namespace:myManga_App"
     Title="{DynamicResource AppTitle}"
     x:Name="myMangaMainWindow"
     Height="350"
     Width="525"
-    Style="{StaticResource DarkWindow}"
     Background="Black"
+    Foreground="White"
     TextElement.FontFamily="Segoe UI"
-    TextElement.Foreground="White" Icon="/myManga-App;component/Resources/Icon.ico">
+    TextElement.Foreground="White" 
+    Icon="/myManga-App;component/Resources/Icon.ico" 
+    Style="{DynamicResource myMangaWindow}" 
+    BorderThickness="1" 
+    BorderBrush="#FF80326E">
     <Window.CommandBindings>
-        <CommandBinding Command="{x:Static shell:SystemCommands.CloseWindowCommand}"
-                        Executed="_OnSystemCommandCloseWindow"/>
-        <CommandBinding Command="{x:Static shell:SystemCommands.MaximizeWindowCommand}"
-                    Executed="_OnSystemCommandMaximizeWindow"/>
-        <CommandBinding Command="{x:Static shell:SystemCommands.MinimizeWindowCommand}"
-                    Executed="_OnSystemCommandMinimizeWindow"/>
-        <CommandBinding Command="{x:Static shell:SystemCommands.ShowSystemMenuCommand}"
-                    Executed="_OnSystemCommandShowSystemMenu"/>
+        <CommandBinding
+            Command="{x:Static SystemCommands.CloseWindowCommand}"
+            Executed="_OnSystemCommandCloseWindow"/>
+        <CommandBinding 
+            Command="{x:Static SystemCommands.MaximizeWindowCommand}"
+            Executed="_OnSystemCommandMaximizeWindow"
+            CanExecute="_OnSystemCommandCanResizeWindow"/>
+        <CommandBinding 
+            Command="{x:Static SystemCommands.RestoreWindowCommand}"
+            Executed="_OnSystemCommandRestoreWindow"
+            CanExecute="_OnSystemCommandCanResizeWindow"/>
+        <CommandBinding
+            Command="{x:Static SystemCommands.MinimizeWindowCommand}"
+            Executed="_OnSystemCommandMinimizeWindow"
+            CanExecute="_OnSystemCommandCanMinimizeWindow"/>
+        <CommandBinding
+            Command="{x:Static SystemCommands.ShowSystemMenuCommand}"
+            Executed="_OnSystemCommandShowSystemMenu"/>
     </Window.CommandBindings>
     <Window.Resources>
         <ResourceDictionary Source="/myManga-App;component/Resources/ViewModel-View-Link.xaml"/>

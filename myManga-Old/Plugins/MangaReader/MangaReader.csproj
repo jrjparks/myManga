@@ -44,7 +44,7 @@
       <Private>False</Private>
     </Reference>
     <Reference Include="HtmlAgilityPack">
-      <HintPath>..\..\DLLs\HtmlAgilityPack.dll</HintPath>
+      <HintPath>..\..\CoreDLLs\HtmlAgilityPack.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="System" />
@@ -73,8 +73,8 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>copy /Y "$(TargetPath)" "$(SolutionDir)\Plugins\$(ConfigurationName)"
-copy /Y "$(TargetPath)" "$(SolutionDir)\myManga\bin\$(ConfigurationName)\Plugins\"</PostBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

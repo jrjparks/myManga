@@ -425,7 +425,8 @@ namespace myManga.ViewModels
                 Messenger.Instance.SendBroadcastMessage(this, "!^ResumeToast");
 
                 if (_LibraryItemLoader.IsQueueEmpty &&
-                    !(CurrentMangaItem is LibraryItemModel))
+                    !(CurrentMangaItem is LibraryItemModel) &&
+                    MangaItems != null && MangaItems.Count > 0)
                     CurrentMangaItem = MangaItems.First();
             }
         }

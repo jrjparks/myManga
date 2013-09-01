@@ -58,10 +58,11 @@ namespace myManga.ViewModels
             {
                 try
                 { Global_IMangaPluginCollection.Instance.LoadPlugins(Path.Combine(Environment.CurrentDirectory, "Plugins")); }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     MessageBox.Show(String.Format("Unable to load plugins.\nPlease check any new plugins and try again.\n{0}", ex.Message), "Err!", MessageBoxButton.OK, MessageBoxImage.Error);
-                    Application.Current.Shutdown(); // Do NOT shutdown Application in design mode. Shutting down the Application in Visual Studio is BAD!
+                    if (Application.Current != null)
+                        Application.Current.Shutdown(); // Do NOT shutdown Application in design mode. Shutting down the Application in Visual Studio is BAD!
                 }
             }
             else
@@ -288,7 +289,7 @@ namespace myManga.ViewModels
             toastNotification = new ToastNotification();
             toastNotification.PauseToasts();
             SendViewModelToastNotification(this, "Welcome to myManga\nCheckout myManga.codeplex.com for the latest updates.", ToastNotification.DisplayLength.Long);
-            
+
             SetupMangaManager();
 
             if (IsInDesignerMode)

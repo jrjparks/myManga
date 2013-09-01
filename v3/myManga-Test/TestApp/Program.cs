@@ -61,13 +61,23 @@ namespace TestApp
                 mangaObj.AlternateNames.AddRange(new String[] { "Goodbye World!", "Hello World 2!" });
                 mangaObj.Authors.Add("Me");
                 mangaObj.Artists.Add("Me");
-                mangaObj.Chapters.Add(new ChapterObject() { Name="Chapter 1" });
+                mangaObj.Chapters.Add(new ChapterObject(mangaObj) { Name = "Chapter 1" });
+                mangaObj.Chapters[0].Pages.Add(new PageObject(mangaObj.Chapters[0]) { PageNumber = 0 });
                 mangaObj.Covers.Add("1.jpg");
 
                 Console.WriteLine("Testing XML...");
                 Console.WriteLine("\tSave...");
                 mangaObj.SaveObject("mangaObj.xml", SaveType.XML);
                 mangaObj.SaveToArchive("mangaObj.xml.zip", "mangaObj.xml", SaveType.XML);
+
+                Console.WriteLine("Testing BINARY...");
+                Console.WriteLine("\tSave...");
+                mangaObj.SaveObject("mangaObj.bin");
+                mangaObj.SaveToArchive("mangaObj.bin.zip", "mangaObj.bin");
+
+                mangaObj = null;
+                mangaObj = new MangaObject().LoadObject("mangaObj.bin");
+                Console.WriteLine(mangaObj.Name);
             }
             catch (Exception ex)
             {

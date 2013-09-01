@@ -48,6 +48,7 @@
     <Compile Include="DLL\DLL_Loader.cs" />
     <Compile Include="DLL\DLL_Manager.cs" />
     <Compile Include="DLL\EmbeddedDLL.cs" />
+    <Compile Include="IO\KeyValuePair.cs" />
     <Compile Include="IO\Enum.cs" />
     <Compile Include="IO\ObjectArchive.cs" />
     <Compile Include="IO\ObjectStorage.cs" />

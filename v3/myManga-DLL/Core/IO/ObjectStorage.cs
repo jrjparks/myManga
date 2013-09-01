@@ -13,7 +13,7 @@ namespace Core.IO
     /// <summary>
     /// Save and Load Objects
     /// </summary>
-    // [DebuggerStepThrough]
+    [DebuggerStepThrough]
     public static class ObjectStorage
     {
         public static Boolean SaveObject<T>(this T Object, String FilePath, SaveType SaveType = SaveType.Binary) where T : class

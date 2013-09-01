@@ -48,15 +48,21 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Data Types\ISiteExtensionCollection.cs" />
+    <Compile Include="Attributes\ISiteExtension\ISiteExtensionAttribute.cs" />
+    <Compile Include="Collections\ChapterObjectCollection.cs" />
+    <Compile Include="Collections\GenericCollection.cs" />
+    <Compile Include="Collections\GenericEnumerator.cs" />
+    <Compile Include="Collections\PageObjectCollection.cs" />
+    <Compile Include="Collections\ISiteExtensionCollection.cs" />
     <Compile Include="Enums\SupportedObjects.cs" />
     <Compile Include="Interfaces\ISiteExtension.cs" />
     <Compile Include="Objects\ChapterObject.cs" />
     <Compile Include="Objects\MangaObject.cs" />
+    <Compile Include="Objects\PageObject.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Classes\" />
+    <Folder Include="Data Types\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\myManga-DLL\Core\Core.csproj">

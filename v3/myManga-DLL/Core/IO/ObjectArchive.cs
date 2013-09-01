@@ -4,9 +4,14 @@ using System.Linq;
 using System.Text;
 using System.IO;
 using Ionic.Zip;
+using System.Diagnostics;
 
 namespace Core.IO
 {
+    /// <summary>
+    /// Save and Load Objects from zip files
+    /// </summary>
+    [DebuggerStepThrough]
     public static class ObjectArchive
     {
         public static Boolean SaveToArchive<T>(this T Object, String ArchiveFilePath, String FileName, SaveType SaveType = SaveType.Binary) where T : class

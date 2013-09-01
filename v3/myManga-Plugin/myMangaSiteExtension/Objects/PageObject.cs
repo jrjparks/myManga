@@ -6,12 +6,11 @@ using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using System.Xml.Serialization;
 using Core.IO;
-using myMangaSiteExtension.Collections;
 
 namespace myMangaSiteExtension.Objects
 {
     [Serializable, XmlRoot, DebuggerStepThrough]
-    public class ChapterObject : SerializableObject, INotifyPropertyChanging, INotifyPropertyChanged
+    public class PageObject : SerializableObject, INotifyPropertyChanging, INotifyPropertyChanged
     {
         #region NotifyPropertyChange
         public event PropertyChangingEventHandler PropertyChanging;
@@ -32,18 +31,16 @@ namespace myMangaSiteExtension.Objects
         #region Protected
         [NonSerialized, XmlIgnore, EditorBrowsable(EditorBrowsableState.Never)]
         protected String name;
-
         [NonSerialized, XmlIgnore, EditorBrowsable(EditorBrowsableState.Never)]
-        protected List<Core.IO.KeyValuePair<String, String>> locations;
-
+        protected UInt32 page_number;
         [NonSerialized, XmlIgnore, EditorBrowsable(EditorBrowsableState.Never)]
-        protected PageObjectCollection pages;
+        protected List<String> remote_locations;
         #endregion
 
         #region Public
         [NonSerialized, XmlIgnore]
-        public readonly MangaObject ParentMangaObject;
-
+        public readonly ChapterObject ParentChapterObject;
+        
         [XmlAttribute]
         public String Name
         {
@@ -55,44 +52,32 @@ namespace myMangaSiteExtension.Objects
                 OnPropertyChanged();
             }
         }
-
-        [XmlArray, XmlArrayItem]
-        public List<Core.IO.KeyValuePair<String, String>> Locations
+        [XmlAttribute]
+        public UInt32 PageNumber
         {
-            get
-            {
-                if (locations == null)
-                    locations = new List<Core.IO.KeyValuePair<String, String>>();
-                return locations;
-            }
+            get { return page_number; }
             set
             {
                 OnPropertyChanging();
-                locations = value;
+                page_number = value;
+                OnPropertyChanged();
+            }
+        }
+        [XmlElement]
+        public List<String> RemoteLocations
+        {
+            get { return remote_locations; }
+            set
+            {
+                OnPropertyChanging();
+                remote_locations = value;
                 OnPropertyChanged();
             }
         }
 
-        [XmlArray, XmlArrayItem]
-        public PageObjectCollection Pages
-        {
-            get
-            {
-                if (pages == null)
-                    pages = new PageObjectCollection();
-                return pages;
-            }
-            set
-            {
-                OnPropertyChanging();
-                pages = value;
-                OnPropertyChanged();
-            }
-        }
-
-        public ChapterObject() : base() { }
-        public ChapterObject(MangaObject MangaObject) : this() { ParentMangaObject = MangaObject; }
-        public ChapterObject(SerializationInfo info, StreamingContext context) : base(info, context) { }
+        public PageObject() : base() { }
+        public PageObject(ChapterObject ChapterObject) : this() { ParentChapterObject = ChapterObject; }
+        public PageObject(SerializationInfo info, StreamingContext context) : base(info, context) { }
         #endregion
     }
 }

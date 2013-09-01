@@ -2,13 +2,12 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
+using System.Runtime.Serialization;
 using System.Windows;
 using System.Xml.Serialization;
 using Core.IO;
-using Core.MVVM;
+using myMangaSiteExtension.Collections;
 
 namespace myMangaSiteExtension.Objects
 {
@@ -54,7 +53,7 @@ namespace myMangaSiteExtension.Objects
         protected List<String> covers;
 
         [NonSerialized, XmlIgnore, EditorBrowsable(EditorBrowsableState.Never)]
-        protected List<ChapterObject> chapters;
+        protected ChapterObjectCollection chapters;
         #endregion
 
         #region Public
@@ -167,13 +166,13 @@ namespace myMangaSiteExtension.Objects
             }
         }
 
-        [XmlArray, XmlArrayItem("Chapter")]
-        public List<ChapterObject> Chapters
+        [XmlArray, XmlArrayItem]
+        public ChapterObjectCollection Chapters
         {
             get
             {
                 if (chapters == null)
-                    chapters = new List<ChapterObject>();
+                    chapters = new ChapterObjectCollection();
                 return chapters;
             }
             set
@@ -183,6 +182,10 @@ namespace myMangaSiteExtension.Objects
                 OnPropertyChanged();
             }
         }
+
+        public MangaObject() : base() { }
+        public MangaObject(SerializationInfo info, StreamingContext context)
+            : base(info, context) { }
         #endregion
     }
 }

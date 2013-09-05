@@ -5,7 +5,7 @@
     xmlns:p="http://schemas.microsoft.com/netfx/2007/xaml/presentation"
     xmlns:shell="http://schemas.microsoft.com/winfx/2006/xaml/presentation/shell"
     xmlns:local="clr-namespace:myManga_App"
-    xmlns:viewmodels="clr-namespace:myManga_App.ViewModels"
+    xmlns:ViewModels="clr-namespace:myManga_App.ViewModels"
     Title="{DynamicResource AppTitle}"
     x:Name="myMangaMainWindow"
     Height="350"
@@ -39,7 +39,7 @@
             Executed="_OnSystemCommandShowSystemMenu"/>
     </Window.CommandBindings>
     <Window.DataContext>
-        <viewmodels:MainViewModel/>
+        <ViewModels:MainViewModel/>
     </Window.DataContext>
     <Window.Resources>
         <ResourceDictionary Source="/myManga-App;component/Resources/ViewModel-View-Link.xaml"/>

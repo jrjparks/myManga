@@ -2,11 +2,12 @@
 using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.Serialization;
+using System.Windows;
 
 namespace Core.IO
 {
     [Serializable, DebuggerStepThrough]
-    public abstract class SerializableObject : ISerializable
+    public abstract class SerializableObject : DependencyObject, ISerializable
     {
         public SerializableObject() { }
 

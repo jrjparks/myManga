@@ -7,28 +7,13 @@ using System.Runtime.Serialization;
 using System.Xml.Serialization;
 using Core.IO;
 using myMangaSiteExtension.Collections;
+using System.Windows;
 
 namespace myMangaSiteExtension.Objects
 {
     [Serializable, XmlRoot, DebuggerStepThrough]
-    public class ChapterObject : SerializableObject, INotifyPropertyChanging, INotifyPropertyChanged
+    public class ChapterObject : SerializableObject
     {
-        #region NotifyPropertyChange
-        public event PropertyChangingEventHandler PropertyChanging;
-        protected void OnPropertyChanging([CallerMemberName] String caller = "")
-        {
-            if (PropertyChanging != null)
-                PropertyChanging(this, new PropertyChangingEventArgs(caller));
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-        protected void OnPropertyChanged([CallerMemberName] String caller = "")
-        {
-            if (PropertyChanged != null)
-                PropertyChanged(this, new PropertyChangedEventArgs(caller));
-        }
-        #endregion
-
         #region Protected
         [NonSerialized, XmlIgnore, EditorBrowsable(EditorBrowsableState.Never)]
         protected String name;
@@ -44,50 +29,27 @@ namespace myMangaSiteExtension.Objects
         [NonSerialized, XmlIgnore]
         public readonly MangaObject ParentMangaObject;
 
+        public static readonly DependencyProperty NameProperty = DependencyProperty.Register("Name", typeof(String), typeof(ChapterObject));
         [XmlAttribute]
         public String Name
         {
             get { return name; }
-            set
-            {
-                OnPropertyChanging();
-                name = value;
-                OnPropertyChanged();
-            }
+            set { name = value; }
         }
 
+        public static readonly DependencyProperty LocationsProperty = DependencyProperty.Register("Locations", typeof(List<Core.IO.KeyValuePair<String, String>>), typeof(ChapterObject));
         [XmlArray, XmlArrayItem]
         public List<Core.IO.KeyValuePair<String, String>> Locations
         {
-            get
-            {
-                if (locations == null)
-                    locations = new List<Core.IO.KeyValuePair<String, String>>();
-                return locations;
-            }
-            set
-            {
-                OnPropertyChanging();
-                locations = value;
-                OnPropertyChanged();
-            }
+            get { return locations ?? (locations = new List<Core.IO.KeyValuePair<string, string>>()); }
+            set { locations = value; }
         }
 
         [XmlArray, XmlArrayItem]
         public PageObjectCollection Pages
         {
-            get
-            {
-                if (pages == null)
-                    pages = new PageObjectCollection();
-                return pages;
-            }
-            set
-            {
-                OnPropertyChanging();
-                pages = value;
-                OnPropertyChanged();
-            }
+            get { return pages ?? (pages = new PageObjectCollection()); }
+            set { pages = value; }
         }
 
         public ChapterObject() : base() { }

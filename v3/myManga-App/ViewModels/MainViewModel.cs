@@ -12,33 +12,17 @@ using myMangaSiteExtension.Collections;
 
 namespace myManga_App.ViewModels
 {
-    public sealed class MainViewModel : INotifyPropertyChanged, INotifyPropertyChanging, IDisposable
+    public sealed class MainViewModel : DependencyObject, IDisposable
     {
-        #region NotifyPropertyChange
-        public event PropertyChangingEventHandler PropertyChanging;
-        protected void OnPropertyChanging([CallerMemberName] String caller = "")
-        {
-            if (PropertyChanging != null)
-                PropertyChanging(this, new PropertyChangingEventArgs(caller));
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-        protected void OnPropertyChanged([CallerMemberName] String caller = "")
-        {
-            if (PropertyChanged != null)
-                PropertyChanged(this, new PropertyChangedEventArgs(caller));
-        }
-        #endregion
+        private App app;
+        private App App { get { return app ?? (app = Application.Current as App); } }
 
         public MainViewModel()
         {
-            App app = (Application.Current as myManga_App.App);
-            app.SiteExtensions.LoadDLL(app.PLUGIN_DIRECTORY);
+            if (!DesignerProperties.GetIsInDesignMode(new DependencyObject()))
+                App.SiteExtensions.LoadDLL(App.PLUGIN_DIRECTORY);
         }
 
-        public void Dispose()
-        {
-
-        }
+        public void Dispose() { App.SiteExtensions.Unload(); }
     }
 }

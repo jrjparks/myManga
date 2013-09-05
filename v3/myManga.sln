@@ -1,6 +1,6 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2010
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "myManga-DLL", "myManga-DLL", "{A3149E96-7930-4359-B03A-9BF285B95F72}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "myManga-Plugin", "myManga-Plugin", "{563FE6FF-10F2-49F7-80DF-6E01CB6E45D8}"
@@ -78,8 +78,8 @@ Global
 		{E87091A9-4489-408A-91FB-4FC8080D0D9D}.Release|x86.Build.0 = Release|x86
 		{088E2638-3BED-4B11-A548-36E3539D86F2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{088E2638-3BED-4B11-A548-36E3539D86F2}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{088E2638-3BED-4B11-A548-36E3539D86F2}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{088E2638-3BED-4B11-A548-36E3539D86F2}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{088E2638-3BED-4B11-A548-36E3539D86F2}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
+		{088E2638-3BED-4B11-A548-36E3539D86F2}.Debug|Mixed Platforms.Build.0 = Debug|x86
 		{088E2638-3BED-4B11-A548-36E3539D86F2}.Debug|x86.ActiveCfg = Debug|Any CPU
 		{088E2638-3BED-4B11-A548-36E3539D86F2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{088E2638-3BED-4B11-A548-36E3539D86F2}.Release|Any CPU.Build.0 = Release|Any CPU

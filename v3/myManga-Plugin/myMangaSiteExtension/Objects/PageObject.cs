@@ -6,28 +6,13 @@ using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using System.Xml.Serialization;
 using Core.IO;
+using System.Windows;
 
 namespace myMangaSiteExtension.Objects
 {
     [Serializable, XmlRoot, DebuggerStepThrough]
-    public class PageObject : SerializableObject, INotifyPropertyChanging, INotifyPropertyChanged
+    public class PageObject : SerializableObject
     {
-        #region NotifyPropertyChange
-        public event PropertyChangingEventHandler PropertyChanging;
-        protected void OnPropertyChanging([CallerMemberName] String caller = "")
-        {
-            if (PropertyChanging != null)
-                PropertyChanging(this, new PropertyChangingEventArgs(caller));
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-        protected void OnPropertyChanged([CallerMemberName] String caller = "")
-        {
-            if (PropertyChanged != null)
-                PropertyChanged(this, new PropertyChangedEventArgs(caller));
-        }
-        #endregion
-
         #region Protected
         [NonSerialized, XmlIgnore, EditorBrowsable(EditorBrowsableState.Never)]
         protected String name;
@@ -40,39 +25,29 @@ namespace myMangaSiteExtension.Objects
         #region Public
         [NonSerialized, XmlIgnore]
         public readonly ChapterObject ParentChapterObject;
-        
+
+        public static readonly DependencyProperty NameProperty = DependencyProperty.Register("Name", typeof(String), typeof(PageObject));
         [XmlAttribute]
         public String Name
         {
             get { return name; }
-            set
-            {
-                OnPropertyChanging();
-                name = value;
-                OnPropertyChanged();
-            }
+            set { name = value; }
         }
+
+        public static readonly DependencyProperty PageNumberProperty = DependencyProperty.Register("PageNumber", typeof(UInt32), typeof(MangaObject));
         [XmlAttribute]
         public UInt32 PageNumber
         {
             get { return page_number; }
-            set
-            {
-                OnPropertyChanging();
-                page_number = value;
-                OnPropertyChanged();
-            }
+            set { page_number = value; }
         }
+
+        public static readonly DependencyProperty RemoteLocationsProperty = DependencyProperty.Register("RemoteLocations", typeof(List<String>), typeof(MangaObject));
         [XmlElement]
         public List<String> RemoteLocations
         {
             get { return remote_locations; }
-            set
-            {
-                OnPropertyChanging();
-                remote_locations = value;
-                OnPropertyChanged();
-            }
+            set { remote_locations = value; }
         }
 
         public PageObject() : base() { }

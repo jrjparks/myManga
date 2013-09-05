@@ -10,14 +10,14 @@ namespace myMangaSiteExtension.Attributes.ISiteExtension
     [DebuggerStepThrough, AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
     public sealed class ISiteExtensionAttribute : Attribute
     {
-        public String Name { get; protected set; }
-        public String Author { get; protected set; }
-        public String Version { get; protected set; }
+        public String Name { get; private set; }
+        public String Author { get; private set; }
+        public String Version { get; private set; }
 
-        public String URLFormat { get; protected set; }
+        public String URLFormat { get; private set; }
         // This is not a misspelling. https://en.wikipedia.org/wiki/HTTP_referer
-        public String RefererHeader { get; protected set; }
-        public SupportedObjects SupportedObjects { get; protected set; }
+        public String RefererHeader { get; private set; }
+        public SupportedObjects SupportedObjects { get; private set; }
         
         public ISiteExtensionAttribute(String Name, String Author = "", String Version = "", SupportedObjects SupportedObjects = myMangaSiteExtension.SupportedObjects.None)
         {

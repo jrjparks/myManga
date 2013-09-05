@@ -4,10 +4,11 @@ using System.Linq;
 using System.Text;
 using System.ComponentModel;
 using System.Management;
+using System.Windows;
 
 namespace Core.WPF_Controls.BrightnessControl
 {
-    public sealed class MonitorBrightness : IDisposable, INotifyPropertyChanged
+    public sealed class MonitorBrightness : DependencyObject, IDisposable
     {
         #region Instance
         private static MonitorBrightness _Instance;
@@ -39,43 +40,48 @@ namespace Core.WPF_Controls.BrightnessControl
             if (MonitorBrightnessChanged != null)
                 MonitorBrightnessChanged(Sender, NewBrightness);
         }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-        private void OnPropertyChanged(String Name)
-        {
-            if (PropertyChanged != null)
-                PropertyChanged(this, new PropertyChangedEventArgs(Name));
-        }
         #endregion
 
         #region Variables
 
         #region Public
+        public static readonly DependencyProperty BrightnessLevelsProperty = DependencyProperty.Register("BrightnessLevels", typeof(Byte[]), typeof(MonitorBrightness));
         /// <summary>
         /// Get a byte array of monitor brightness levels.
         /// </summary>
         public Byte[] BrightnessLevels
         {
-            get { return _BrightnessLevels; }
-            private set { _BrightnessLevels = value; OnPropertyChanged("BrightnessLevels"); }
+            get { return brightnessLevels ?? (brightnessLevels = GetBrightnessLevels()); }
+            private set { brightnessLevels = value; }
         }
 
+        public static readonly DependencyProperty BrightnessLevelCountProperty = DependencyProperty.Register("BrightnessLevelCount", typeof(Int32), typeof(MonitorBrightness));
+        /// <summary>
+        /// Get a byte array of monitor brightness levels.
+        /// </summary>
+        public Int32 BrightnessLevelCount
+        {
+            get { return BrightnessLevels.Count(); }
+        }
+
+        public static readonly DependencyProperty CurrentBrightnessProperty = DependencyProperty.Register("CurrentBrightness", typeof(Byte), typeof(MonitorBrightness));
         /// <summary>
         /// Get the byte value of the current monitor brightness.
         /// </summary>
         public Byte CurrentBrightness
         {
             get { return GetCurrentBrightness(); }
-            set { SetBrightness(value); OnPropertyChanged("CurrentBrightness"); }
+            set { SetBrightness(value); }
         }
 
+        public static readonly DependencyProperty WatchingMonitorBrightnessProperty = DependencyProperty.Register("WatchingMonitorBrightness", typeof(Boolean), typeof(MonitorBrightness));
         /// <summary>
         /// Get a boolean value of whether the brightness is being mointored.
         /// </summary>
         public Boolean WatchingMonitorBrightness
         {
-            get { return _WatchingMonitorBrightness; }
-            private set { _WatchingMonitorBrightness = value; OnPropertyChanged("WatchingMonitorBrightness"); }
+            get { return watchingMonitorBrightness; }
+            private set { watchingMonitorBrightness = value; }
         }
 
         /// <summary>
@@ -91,8 +97,8 @@ namespace Core.WPF_Controls.BrightnessControl
         private readonly WqlEventQuery MonitorEventQuery;
         private readonly Dictionary<String, SelectQuery> MonitorQuerys;
 
-        private Byte[] _BrightnessLevels { get; set; }
-        private Boolean _WatchingMonitorBrightness { get; set; }
+        private Byte[] brightnessLevels { get; set; }
+        private Boolean watchingMonitorBrightness { get; set; }
         #endregion
 
         #endregion

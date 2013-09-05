@@ -12,24 +12,8 @@ using myMangaSiteExtension.Collections;
 namespace myMangaSiteExtension.Objects
 {
     [Serializable, XmlRoot, DebuggerStepThrough]
-    public class MangaObject : SerializableObject, INotifyPropertyChanging, INotifyPropertyChanged
+    public class MangaObject : SerializableObject
     {
-        #region NotifyPropertyChange
-        public event PropertyChangingEventHandler PropertyChanging;
-        protected void OnPropertyChanging([CallerMemberName] String caller = "")
-        {
-            if (PropertyChanging != null)
-                PropertyChanging(this, new PropertyChangingEventArgs(caller));
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-        protected void OnPropertyChanged([CallerMemberName] String caller = "")
-        {
-            if (PropertyChanged != null)
-                PropertyChanged(this, new PropertyChangedEventArgs(caller));
-        }
-        #endregion
-
         #region Protected
         [NonSerialized, XmlIgnore, EditorBrowsable(EditorBrowsableState.Never)]
         protected String name;
@@ -57,130 +41,68 @@ namespace myMangaSiteExtension.Objects
         #endregion
 
         #region Public
+        public static readonly DependencyProperty NameProperty = DependencyProperty.Register("Name", typeof(String), typeof(MangaObject));
         [XmlAttribute]
         public String Name
         {
             get { return name; }
-            set
-            {
-                OnPropertyChanging();
-                name = value;
-                OnPropertyChanged();
-            }
+            set { name = value; }
         }
 
+        public static readonly DependencyProperty AlternateNamesProperty = DependencyProperty.Register("AlternateNames", typeof(List<String>), typeof(MangaObject));
         [XmlArray, XmlArrayItem("Name")]
         public List<String> AlternateNames
         {
-            get
-            {
-                if (alternate_names == null)
-                    alternate_names = new List<String>();
-                return alternate_names;
-            }
-            set
-            {
-                OnPropertyChanging();
-                alternate_names = value;
-                OnPropertyChanged();
-            }
+            get { return alternate_names ?? (alternate_names = new List<String>()); }
+            set { alternate_names = value; }
         }
 
+        public static readonly DependencyProperty AuthorsProperty = DependencyProperty.Register("Authors", typeof(List<String>), typeof(MangaObject));
         [XmlArray, XmlArrayItem("Name")]
         public List<String> Authors
         {
-            get
-            {
-                if (authors == null)
-                    authors = new List<String>();
-                return authors;
-            }
-            set
-            {
-                OnPropertyChanging();
-                authors = value;
-                OnPropertyChanged();
-            }
+            get { return authors ?? (authors = new List<String>()); }
+            set { authors = value; }
         }
 
+        public static readonly DependencyProperty ArtistsProperty = DependencyProperty.Register("Artists", typeof(List<String>), typeof(MangaObject));
         [XmlArray, XmlArrayItem("Name")]
         public List<String> Artists
         {
-            get
-            {
-                if (artists == null)
-                    artists = new List<String>();
-                return artists;
-            }
-            set
-            {
-                OnPropertyChanging();
-                artists = value;
-                OnPropertyChanged();
-            }
+            get { return artists ?? (artists = new List<String>()); }
+            set { artists = value; }
         }
 
+        public static readonly DependencyProperty GenresProperty = DependencyProperty.Register("Genres", typeof(List<String>), typeof(MangaObject));
         [XmlArray, XmlArrayItem("Name")]
         public List<String> Genres
         {
-            get
-            {
-                if (genres == null)
-                    genres = new List<String>();
-                return genres;
-            }
-            set
-            {
-                OnPropertyChanging();
-                genres = value;
-                OnPropertyChanged();
-            }
+            get { return genres ?? (genres = new List<String>()); }
+            set { genres = value; }
         }
 
+        public static readonly DependencyProperty PageFlowDirectionProperty = DependencyProperty.Register("PageFlowDirection", typeof(FlowDirection), typeof(MangaObject));
         [XmlAttribute]
         public FlowDirection PageFlowDirection
         {
             get { return pageFlowDirection; }
-            set
-            {
-                OnPropertyChanging();
-                pageFlowDirection = value;
-                OnPropertyChanged();
-            }
+            set { pageFlowDirection = value; }
         }
 
+        public static readonly DependencyProperty CoversProperty = DependencyProperty.Register("Covers", typeof(List<String>), typeof(MangaObject));
         [XmlArray, XmlArrayItem("Cover")]
         public List<String> Covers
         {
-            get
-            {
-                if (covers == null)
-                    covers = new List<String>();
-                return covers;
-            }
-            set
-            {
-                OnPropertyChanging();
-                covers = value;
-                OnPropertyChanged();
-            }
+            get { return covers ?? (covers = new List<String>()); }
+            set { covers = value; }
         }
 
+        public static readonly DependencyProperty ChaptersProperty = DependencyProperty.Register("Chapters", typeof(ChapterObjectCollection), typeof(MangaObject));
         [XmlArray, XmlArrayItem]
         public ChapterObjectCollection Chapters
         {
-            get
-            {
-                if (chapters == null)
-                    chapters = new ChapterObjectCollection();
-                return chapters;
-            }
-            set
-            {
-                OnPropertyChanging();
-                chapters = value;
-                OnPropertyChanged();
-            }
+            get { return chapters ?? (chapters = new ChapterObjectCollection()); }
+            set { chapters = new ChapterObjectCollection(); }
         }
 
         public MangaObject() : base() { }

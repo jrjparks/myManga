@@ -43,7 +43,6 @@
   <PropertyGroup>
     <StartupObject />
   </PropertyGroup>
-  <ItemGroup />
   <ItemGroup>
     <Compile Include="Attributes\AttributeExtensions.cs" />
     <Compile Include="DLL\DLL_Loader.cs" />

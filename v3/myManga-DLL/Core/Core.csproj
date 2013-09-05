@@ -45,6 +45,7 @@
   </PropertyGroup>
   <ItemGroup />
   <ItemGroup>
+    <Compile Include="Attributes\AttributeExtensions.cs" />
     <Compile Include="DLL\DLL_Loader.cs" />
     <Compile Include="DLL\DLL_Manager.cs" />
     <Compile Include="DLL\EmbeddedDLL.cs" />
@@ -56,7 +57,11 @@
     <Compile Include="IO\SerializableObject.cs" />
     <Compile Include="MVVM\DelegateCommand.cs" />
     <Compile Include="MVVM\NotifyPropertyChange.cs" />
+    <Compile Include="NET\AdvWebClient.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Other\Parse.cs" />
+    <Compile Include="Other\Singleton\Singleton.cs" />
     <Compile Include="WPF Controls\BalancedWrapPanel\BalancedWrapPanel.cs" />
     <Compile Include="WPF Controls\BalancedWrapPanel\LengthConverter.cs" />
     <Compile Include="WPF Controls\BalancedWrapPanel\NumericExtensions.cs" />

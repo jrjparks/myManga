@@ -15,18 +15,17 @@ namespace Core.IO
         /// <returns></returns>
         public static String SafeFolder(this String IOPath, Boolean Create = true)
         {
-            if (IOPath.Contains(":\\"))
+            foreach (Char InvalidChar in Path.GetInvalidPathChars())
+                IOPath = IOPath.Replace(InvalidChar.ToString(), String.Empty);
+            String[] Directories = (IOPath.Contains(":\\") ? IOPath.Substring(3) : IOPath).Split('\\');
+            IOPath = Path.GetPathRoot(IOPath);
+            foreach (String _Directory in Directories)
             {
-                foreach (Char InvalidChar in Path.GetInvalidPathChars())
-                    IOPath = IOPath.Replace(InvalidChar.ToString(), String.Empty);
-                String[] Directories = IOPath.Substring(3).Split('\\');
-                IOPath = Directory.GetDirectoryRoot(IOPath);
-                foreach (String _Directory in Directories)
-                    IOPath = Path.Combine(IOPath, _Directory.SafeFileName());
+                IOPath = Path.Combine(IOPath, _Directory.SafeFileName());
                 if (!File.Exists(IOPath) && !Directory.Exists(IOPath) && Create)
                     Directory.CreateDirectory(IOPath);
             }
-            return IOPath.SafeFileName();
+            return IOPath;
         }
 
         /// <summary>

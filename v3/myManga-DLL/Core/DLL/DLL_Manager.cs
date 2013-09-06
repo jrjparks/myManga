@@ -48,11 +48,11 @@ namespace Core.DLL
             DLLCollection = new C();
         }
 
-        public void LoadDLL(String DLLPath)
+        public void LoadDLL(String DLLPath, String Filter = "*.dll", SearchOption DirectorySearchOption = SearchOption.TopDirectoryOnly)
         {
             FileAttributes fileAttr = File.GetAttributes(DLLPath);
             if ((fileAttr & FileAttributes.Directory) == FileAttributes.Directory)
-                foreach (T Class in DLL_Loader<T>.LoadDirectory(DLLPath))
+                foreach (T Class in DLL_Loader<T>.LoadDirectory(DLLPath, Filter, DirectorySearchOption))
                     DLLCollection.Add(Class);
             else
                 foreach (T Class in DLL_Loader<T>.LoadDLL(DLLPath))

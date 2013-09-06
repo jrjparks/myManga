@@ -10,14 +10,34 @@ using System.Windows;
 
 namespace myManga_App.ViewModels
 {
-    public class HomeViewModel : DependencyObject, IDisposable
+    public class HomeViewModel : IDisposable, INotifyPropertyChanging, INotifyPropertyChanged
     {
-        public static readonly DependencyProperty MangaObjProperty = DependencyProperty.Register("MangaObj", typeof(MangaObject), typeof(HomeViewModel));
-        public MangaObject mangaObj;
+        #region NotifyPropertyChange
+        public event PropertyChangingEventHandler PropertyChanging;
+        protected void OnPropertyChanging([CallerMemberName] String caller = "")
+        {
+            if (PropertyChanging != null)
+                PropertyChanging(this, new PropertyChangingEventArgs(caller));
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        protected void OnPropertyChanged([CallerMemberName] String caller = "")
+        {
+            if (PropertyChanged != null)
+                PropertyChanged(this, new PropertyChangedEventArgs(caller));
+        }
+        #endregion
+
+        private MangaObject mangaObj;
         public MangaObject MangaObj
         {
-            get { return mangaObj ?? (mangaObj = new MangaObject()); }
-            set { mangaObj = value; }
+            get { return mangaObj ?? (mangaObj = new MangaObject() { Name="Test Manga"}); }
+            set
+            {
+                OnPropertyChanging();
+                mangaObj = value;
+                OnPropertyChanged();
+            }
         }
 
         public HomeViewModel() { }

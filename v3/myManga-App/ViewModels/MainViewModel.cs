@@ -1,26 +1,28 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.IO;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
 using System.Windows;
-using Core.DLL;
-using myMangaSiteExtension;
-using myMangaSiteExtension.Collections;
 
 namespace myManga_App.ViewModels
 {
     public sealed class MainViewModel : DependencyObject, IDisposable
     {
-        private App app;
-        private App App { get { return app ?? (app = Application.Current as App); } }
+        #region Content
+        private HomeViewModel homeViewModel;
+        public HomeViewModel HomeViewModel
+        {
+            get
+            {
+                return homeViewModel ?? (homeViewModel = new HomeViewModel());
+            }
+        }
+        #endregion
+
+        private App App = App.Current as App;
 
         public MainViewModel()
         {
-            if (!DesignerProperties.GetIsInDesignMode(new DependencyObject()))
-                App.SiteExtensions.LoadDLL(App.PLUGIN_DIRECTORY);
+            if (!DesignerProperties.GetIsInDesignMode(this))
+                App.SiteExtensions.LoadDLL(App.PLUGIN_DIRECTORY, "*.mymanga.dll");
         }
 
         public void Dispose() { App.SiteExtensions.Unload(); }

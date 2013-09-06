@@ -6,7 +6,9 @@
     xmlns:shell="http://schemas.microsoft.com/winfx/2006/xaml/presentation/shell"
     xmlns:local="clr-namespace:myManga_App"
     xmlns:ViewModels="clr-namespace:myManga_App.ViewModels"
+    xmlns:Properties="clr-namespace:myManga_App.Properties"
     Title="{DynamicResource AppTitle}"
+    WindowState="{Binding Source={x:Static Properties:Settings.Default}, Path=WindowState, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
     x:Name="myMangaMainWindow"
     Height="350"
     Width="525"
@@ -14,7 +16,7 @@
     Foreground="White"
     TextElement.FontFamily="Segoe UI"
     TextElement.Foreground="White" 
-    Icon="/myManga-App;component/Resources/Icon.ico" 
+    Icon="/myManga;component/Resources/Icon.ico" 
     Style="{DynamicResource myMangaWindow}" 
     BorderThickness="1" 
     BorderBrush="#FF80326E">
@@ -42,11 +44,13 @@
         <ViewModels:MainViewModel/>
     </Window.DataContext>
     <Window.Resources>
-        <ResourceDictionary Source="/myManga-App;component/Resources/ViewModel-View-Link.xaml"/>
+        <ResourceDictionary Source="/myManga;component/Resources/ViewModel-View-Link.xaml"/>
     </Window.Resources>
     <Grid>
+        <ContentPresenter Content="{Binding HomeViewModel}"/>
+        
         <StackPanel
-            x:Name="watermark"
+            x:Name="Watermark"
             Grid.ZIndex="99"
             IsHitTestVisible="False"
             VerticalAlignment="Center"
@@ -56,13 +60,18 @@
                     <BeginStoryboard>
                         <Storyboard>
                             <DoubleAnimation 
-                            Storyboard.TargetName="watermark"
-                            Storyboard.TargetProperty="Opacity"
-                            BeginTime="0:0:2" Duration="0:0:4"  From="1" To="0"/>
+                                Storyboard.TargetName="Watermark"
+                                Storyboard.TargetProperty="Opacity"
+                                BeginTime="0:0:2"
+                                Duration="0:0:4"
+                                From="1"
+                                To="0"/>
                             <ObjectAnimationUsingKeyFrames 
-                            Storyboard.TargetName="watermark"
-                            Storyboard.TargetProperty="Visibility">
-                                <DiscreteObjectKeyFrame KeyTime="0:0:6.5" Value="{x:Static Visibility.Hidden}"/>
+                                Storyboard.TargetName="Watermark"
+                                Storyboard.TargetProperty="Visibility">
+                                <DiscreteObjectKeyFrame
+                                    KeyTime="0:0:6.5"
+                                    Value="{x:Static Visibility.Hidden}"/>
                             </ObjectAnimationUsingKeyFrames>
                         </Storyboard>
                     </BeginStoryboard>

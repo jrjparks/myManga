@@ -11,6 +11,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using myManga_App.Properties;
 
 namespace myManga_App
 {
@@ -19,7 +20,7 @@ namespace myManga_App
     /// </summary>
     public partial class MainWindow : Window
     {
-        private const int SYSMENU_X=35, SYSMENU_Y=25;
+        private const int SYSMENU_X = 35, SYSMENU_Y = 25;
 
         public MainWindow()
         {

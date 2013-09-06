@@ -5,14 +5,13 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:vm="clr-namespace:myManga_App.ViewModels"
              mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300">
-    <UserControl.DataContext>
-        <vm:HomeViewModel/>
-    </UserControl.DataContext>
+             d:DesignHeight="300"
+             d:DesignWidth="300"
+             Background="SteelBlue">
     <Grid>
         <StackPanel>
-            <TextBox/>
-            <TextBlock/>
+            <TextBox Text="{Binding Path=MangaObj.Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+            <TextBlock Text="{Binding Path=MangaObj.Name, FallbackValue=Empty\ Name, UpdateSourceTrigger=PropertyChanged}"/>
         </StackPanel>
     </Grid>
 </UserControl>

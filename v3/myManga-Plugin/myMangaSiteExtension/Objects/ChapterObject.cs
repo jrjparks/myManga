@@ -60,10 +60,10 @@ namespace myMangaSiteExtension.Objects
             }
         }
 
-        [XmlArray, XmlArrayItem]
+        [XmlArray, XmlArrayItem("Location")]
         public List<Core.IO.KeyValuePair<String, String>> Locations
         {
-            get { return locations ?? (locations = new List<Core.IO.KeyValuePair<string, string>>()); }
+            get { return locations ?? (locations = new List<Core.IO.KeyValuePair<String, String>>()); }
             set
             {
                 OnPropertyChanging();

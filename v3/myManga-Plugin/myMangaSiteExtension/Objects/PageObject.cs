@@ -66,7 +66,7 @@ namespace myMangaSiteExtension.Objects
         [XmlElement]
         public List<String> RemoteLocations
         {
-            get { return remote_locations; }
+            get { return remote_locations ?? (remote_locations = new List<String>()); }
             set
             {
                 OnPropertyChanging();

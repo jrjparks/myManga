@@ -20,7 +20,8 @@ namespace Core.IO
         {
             if (Object != null)
             {
-                Path.GetDirectoryName(FilePath).SafeFolder();
+                if (FilePath.Contains('\\'))
+                    Path.GetDirectoryName(FilePath).SafeFolder();
                 String FileIOPath = Path.GetTempFileName();
                 try
                 {

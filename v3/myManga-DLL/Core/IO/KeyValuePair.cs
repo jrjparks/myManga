@@ -33,10 +33,12 @@ namespace Core.IO
         #region Protected
         [NonSerialized, XmlIgnore, EditorBrowsable(EditorBrowsableState.Never)]
         protected K key;
+        [NonSerialized, XmlIgnore, EditorBrowsable(EditorBrowsableState.Never)]
         protected V val;
         #endregion
 
         #region Public
+        [XmlAttribute]
         public K Key
         {
             get { return key; }
@@ -47,6 +49,8 @@ namespace Core.IO
                 OnPropertyChanged();
             }
         }
+
+        [XmlAttribute]
         public V Value
         {
             get { return val; }
@@ -59,6 +63,12 @@ namespace Core.IO
         }
 
         public KeyValuePair() : base() { }
+        public KeyValuePair(K Key = default(K), V Value = default(V))
+            : base()
+        {
+            this.Key = Key;
+            this.Value = Value;
+        }
         public KeyValuePair(SerializationInfo info, StreamingContext context)
             : base(info, context) { }
         #endregion

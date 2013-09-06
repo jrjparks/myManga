@@ -51,7 +51,7 @@ namespace myMangaSiteExtension.Objects
         protected FlowDirection pageFlowDirection;
 
         [NonSerialized, XmlIgnore, EditorBrowsable(EditorBrowsableState.Never)]
-        protected Dictionary<String, String> locations;
+        protected List<Core.IO.KeyValuePair<String, String>> locations;
         [NonSerialized, XmlIgnore, EditorBrowsable(EditorBrowsableState.Never)]
         protected List<String> covers;
 
@@ -128,6 +128,18 @@ namespace myMangaSiteExtension.Objects
             {
                 OnPropertyChanging();
                 pageFlowDirection = value;
+                OnPropertyChanged();
+            }
+        }
+
+        [XmlArray, XmlArrayItem("Location")]
+        public List<Core.IO.KeyValuePair<String, String>> Locations
+        {
+            get { return locations ?? (locations = new List<Core.IO.KeyValuePair<String, String>>()); }
+            set
+            {
+                OnPropertyChanging();
+                locations = value;
                 OnPropertyChanged();
             }
         }

@@ -24,6 +24,8 @@ namespace Core.IO
         {
             if (Object != null)
             {
+                if (ArchiveFilePath.Contains('\\'))
+                    Path.GetDirectoryName(ArchiveFilePath).SafeFolder();
                 Boolean FileExists = (File.Exists(ArchiveFilePath) && ZipFile.IsZipFile(ArchiveFilePath));
                 String FileIOPath = Path.GetTempFileName();
                 try

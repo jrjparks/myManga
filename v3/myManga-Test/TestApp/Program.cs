@@ -61,8 +61,11 @@ namespace TestApp
                 mangaObj.AlternateNames.AddRange(new String[] { "Goodbye World!", "Hello World 2!" });
                 mangaObj.Authors.Add("Me");
                 mangaObj.Artists.Add("Me");
+                mangaObj.Locations.Add(new Core.IO.KeyValuePair<String, String>(Key: "The Internet", Value: "https://google.com"));
                 mangaObj.Chapters.Add(new ChapterObject(mangaObj) { Name = "Chapter 1" });
-                mangaObj.Chapters[0].Pages.Add(new PageObject(mangaObj.Chapters[0]) { PageNumber = 0 });
+                mangaObj.Chapters[0].Locations.Add(new Core.IO.KeyValuePair<String, String>(Key: "The Internet", Value: "https://google.com"));
+                mangaObj.Chapters[0].Pages.Add(new PageObject(mangaObj.Chapters[0]) { PageNumber = 0, Name = "Google" });
+                mangaObj.Chapters[0].Pages[0].RemoteLocations.Add("https://youtube.com");
                 mangaObj.Covers.Add("1.jpg");
 
                 Console.WriteLine("Testing XML...");

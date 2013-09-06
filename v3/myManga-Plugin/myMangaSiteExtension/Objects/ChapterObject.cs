@@ -1,19 +1,37 @@
-﻿using System;
+﻿using Core.IO;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Runtime.Serialization;
+using System.Text;
+using System.Threading.Tasks;
 using System.Xml.Serialization;
 using Core.IO;
 using myMangaSiteExtension.Collections;
-using System.Windows;
 
 namespace myMangaSiteExtension.Objects
 {
     [Serializable, XmlRoot, DebuggerStepThrough]
-    public class ChapterObject : SerializableObject
+    public class ChapterObject : SerializableObject, INotifyPropertyChanging, INotifyPropertyChanged
     {
+        #region NotifyPropertyChange
+        public event PropertyChangingEventHandler PropertyChanging;
+        protected void OnPropertyChanging([CallerMemberName] String caller = "")
+        {
+            if (PropertyChanging != null)
+                PropertyChanging(this, new PropertyChangingEventArgs(caller));
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        protected void OnPropertyChanged([CallerMemberName] String caller = "")
+        {
+            if (PropertyChanged != null)
+                PropertyChanged(this, new PropertyChangedEventArgs(caller));
+        }
+        #endregion
+
         #region Protected
         [NonSerialized, XmlIgnore, EditorBrowsable(EditorBrowsableState.Never)]
         protected String name;
@@ -29,27 +47,40 @@ namespace myMangaSiteExtension.Objects
         [NonSerialized, XmlIgnore]
         public readonly MangaObject ParentMangaObject;
 
-        public static readonly DependencyProperty NameProperty = DependencyProperty.Register("Name", typeof(String), typeof(ChapterObject));
         [XmlAttribute]
         public String Name
         {
             get { return name; }
-            set { name = value; }
+            set
+            {
+                OnPropertyChanging();
+                name = value;
+                OnPropertyChanged();
+            }
         }
 
-        public static readonly DependencyProperty LocationsProperty = DependencyProperty.Register("Locations", typeof(List<Core.IO.KeyValuePair<String, String>>), typeof(ChapterObject));
         [XmlArray, XmlArrayItem]
         public List<Core.IO.KeyValuePair<String, String>> Locations
         {
             get { return locations ?? (locations = new List<Core.IO.KeyValuePair<string, string>>()); }
-            set { locations = value; }
+            set
+            {
+                OnPropertyChanging();
+                locations = value;
+                OnPropertyChanged();
+            }
         }
 
         [XmlArray, XmlArrayItem]
         public PageObjectCollection Pages
         {
             get { return pages ?? (pages = new PageObjectCollection()); }
-            set { pages = value; }
+            set
+            {
+                OnPropertyChanging();
+                pages = value;
+                OnPropertyChanged();
+            }
         }
 
         public ChapterObject() : base() { }

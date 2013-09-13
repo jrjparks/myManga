@@ -49,6 +49,34 @@ namespace Core.IO
             return false;
         }
 
+        public static Boolean SaveStream(this Stream Stream, String FilePath, SaveType SaveType = SaveType.Binary)
+        {
+            if (Stream != null)
+            {
+                long origPos = Stream.Position;
+                if (FilePath.Contains('\\'))
+                    Path.GetDirectoryName(FilePath).SafeFolder();
+                String FileIOPath = Path.GetTempFileName();
+                try
+                {
+                    Stream.Seek(0, SeekOrigin.Begin);
+                    using (Stream FileIOStream = new FileInfo(FileIOPath).OpenWrite())
+                    {
+                        Stream.CopyTo(FileIOStream);
+                    }
+                    Stream.Seek(origPos, SeekOrigin.Begin);
+                }
+                catch (Exception ex)
+                {
+                    if (File.Exists(FileIOPath))
+                        File.Delete(FileIOPath);
+                    GC.Collect();
+                    throw new Exception("Error saving stream.", ex);
+                }
+            }
+            return false;
+        }
+
         public static T LoadObject<T>(this T Object, String FilePath, SaveType SaveType = SaveType.Binary) where T : class
         {
             Object = null;

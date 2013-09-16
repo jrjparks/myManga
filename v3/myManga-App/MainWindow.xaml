@@ -12,14 +12,8 @@
     x:Name="myMangaMainWindow"
     Height="350"
     Width="525"
-    Background="Black"
-    Foreground="White"
-    TextElement.FontFamily="Segoe UI"
-    TextElement.Foreground="White" 
     Icon="/myManga;component/Resources/Icon.ico" 
-    Style="{DynamicResource myMangaWindow}" 
-    BorderThickness="1" 
-    BorderBrush="#FF80326E">
+    Style="{DynamicResource myMangaWindow}">
     <Window.CommandBindings>
         <CommandBinding
             Command="{x:Static SystemCommands.CloseWindowCommand}"
@@ -47,7 +41,7 @@
         <ResourceDictionary Source="/myManga;component/Resources/ViewModel-View-Link.xaml"/>
     </Window.Resources>
     <Grid>
-        <ContentPresenter Content="{Binding HomeViewModel}"/>
+        <ContentPresenter Content="{Binding HomeViewModel}" Margin="5,0,5,5"/>
         
         <StackPanel
             x:Name="Watermark"

@@ -17,8 +17,8 @@
                             <VisualStateGroup x:Name="CommonStates">
                                 <VisualState x:Name="Normal">
                                     <Storyboard>
-                                        <ColorAnimation Duration="{StaticResource ColorDurationNormal}" Storyboard.TargetName="Chrome" Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)" To="{TemplateBinding Background}"/>
-                                        <ColorAnimation Duration="{StaticResource ColorDurationNormal}" Storyboard.TargetName="Content" Storyboard.TargetProperty="(TextBlock.Foreground).Color" To="White"/>
+                                        <ColorAnimation Duration="{StaticResource ColorDurationNormal}" Storyboard.TargetName="Chrome" Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)" To="#FFEFEFF2"/>
+                                        <ColorAnimation Duration="{StaticResource ColorDurationNormal}" Storyboard.TargetName="Content" Storyboard.TargetProperty="(TextBlock.Foreground).Color" To="#FF1E1E1E"/>
                                     </Storyboard>
                                 </VisualState>
                                 <VisualState x:Name="MouseOver">
@@ -35,7 +35,7 @@
                                 </VisualState>
                                 <VisualState x:Name="Disabled">
                                     <Storyboard>
-                                        <ColorAnimation Duration="{StaticResource ColorDurationNormal}" Storyboard.TargetName="Chrome" Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)" To="{TemplateBinding Background}"/>
+                                        <ColorAnimation Duration="{StaticResource ColorDurationNormal}" Storyboard.TargetName="Chrome" Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)" To="#FFEFEFF2"/>
                                         <ColorAnimation Duration="{StaticResource ColorDurationNormal}" Storyboard.TargetName="Content" Storyboard.TargetProperty="(TextBlock.Foreground).Color" To="DarkGray"/>
                                     </Storyboard>
                                 </VisualState>
@@ -43,20 +43,20 @@
                         </VisualStateManager.VisualStateGroups>
                         <Border
                             x:Name="Chrome"
-                            BorderBrush="{TemplateBinding BorderBrush}"
-                            Margin="{TemplateBinding Margin}"
-                            Padding="{TemplateBinding Padding}"
-                            Background="{TemplateBinding Background}"
+                            BorderBrush="{x:Null}"
+                            Margin="0"
+                            Padding="0"
+                            Background="#FFEFEFF2"
                             SnapsToDevicePixels="True">
                             <ContentPresenter
                                 x:Name="Content"
-                                TextBlock.Foreground="White"
+                                TextBlock.Foreground="#FF1E1E1E"
                                 ContentTemplate="{TemplateBinding ContentTemplate}"
                                 Content="{TemplateBinding Content}"
                                 ContentStringFormat="{TemplateBinding ContentStringFormat}"
                                 HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                                 RecognizesAccessKey="True"
-                                SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+                                SnapsToDevicePixels="True"
                                 VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
                         </Border>
                     </Grid>
@@ -64,7 +64,6 @@
             </Setter.Value>
         </Setter>
         <Setter Property="Cursor" Value="Hand"/>
-        <Setter Property="Background" Value="Black"/>
         <Setter Property="FontFamily" Value="Marlett"/>
         <Setter Property="FontWeight" Value="Thin"/>
         <Setter Property="FontSize" Value="16"/>
@@ -74,14 +73,17 @@
 
     <!--Window Chrome-->
     <Style TargetType="{x:Type Window}" x:Key="myMangaWindow">
-        <Setter Property="Foreground" Value="White"/>
-        <Setter Property="Background" Value="Black"/>
+        <Setter Property="Foreground" Value="Black"/>
+        <Setter Property="Background" Value="#FFEFEFF2"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="BorderBrush" Value="#FF80326E"/>
         <Setter Property="MinWidth" Value="480"/>
         <Setter Property="MinHeight" Value="234"/>
         <Setter Property="WindowChrome.WindowChrome">
             <Setter.Value>
                 <WindowChrome                    
                     CornerRadius="0"
+                    ResizeBorderThickness="5"
                     GlassFrameThickness="1"
                     UseAeroCaptionButtons="False"
                     CaptionHeight="32"/>
@@ -104,6 +106,14 @@
                                     <RowDefinition Height="15"/>
                                 </Grid.RowDefinitions>
                                 <ContentPresenter Grid.Row="1" Grid.RowSpan="2"/>
+                                <TextBlock 
+                                    x:Name="Grip"
+                                    Text="o" 
+                                    Grid.Row="2"
+                                    FontFamily="Marlett"
+                                    HorizontalAlignment="Right" 
+                                    VerticalAlignment="Bottom" 
+                                    Foreground="{TemplateBinding BorderBrush}"/>
                                 <StackPanel x:Name="CaptionTitle" Orientation="Horizontal" VerticalAlignment="Center">
                                     <Image Source="{TemplateBinding Icon}" MaxHeight="28" MaxWidth="28" Margin="4,0,8,0" VerticalAlignment="Center"/>
                                     <TextBlock Text="{TemplateBinding Title}" Foreground="{TemplateBinding Foreground}" FontSize="16" VerticalAlignment="Center"/>

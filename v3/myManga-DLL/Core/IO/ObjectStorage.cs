@@ -49,7 +49,7 @@ namespace Core.IO
             return false;
         }
 
-        public static Boolean SaveStream(this Stream Stream, String FilePath, SaveType SaveType = SaveType.Binary)
+        public static Boolean SaveStream(this Stream Stream, String FilePath)
         {
             if (Stream != null)
             {
@@ -93,6 +93,24 @@ namespace Core.IO
                 throw new Exception(String.Format("Error loading data from {0}.", FilePath.ToString()), ex);
             }
             return Object;
+        }
+
+        public static Stream LoadStream(this Stream Stream, String FilePath)
+        {
+            Stream = new MemoryStream();
+            try
+            {
+                if (File.Exists(FilePath))
+                    using (Stream FileStream = new FileInfo(FilePath).OpenRead())
+                    {
+                        FileStream.CopyTo(Stream);
+                    }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(String.Format("Error loading stream from {0}.", FilePath.ToString()), ex);
+            }
+            return Stream;
         }
 
         public static Stream Serialize<T>(this T Object, SaveType SaveType = SaveType.Binary) where T : class

@@ -23,7 +23,7 @@
                     <ColumnDefinition Width="32px"/>
                     <ColumnDefinition Width="1*"/>
                 </Grid.ColumnDefinitions>
-                <Button Content="L" FontFamily="Webdings" FontSize="24"/>
+                <Button Content="" FontFamily="/myManga;component/Resources/Font/#FontAwesome" FontSize="16"/>
                 <TextBox Grid.Column="1" BorderBrush="{x:Null}" BorderThickness="0" Background="{x:Null}"></TextBox>
             </Grid>
             <ListBox

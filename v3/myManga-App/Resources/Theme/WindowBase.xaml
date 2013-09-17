@@ -7,7 +7,7 @@
     <Style TargetType="{x:Type Button}" x:Key="WindowButtonStyle">
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="{x:Type ButtonBase}">
+                <ControlTemplate TargetType="{x:Type Button}">
                     <Grid>
                         <Grid.Resources>
                             <Duration x:Key="ColorDurationNormal">0:0:0.5</Duration>
@@ -63,7 +63,6 @@
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
-        <Setter Property="Cursor" Value="Hand"/>
         <Setter Property="FontFamily" Value="Marlett"/>
         <Setter Property="FontWeight" Value="Thin"/>
         <Setter Property="FontSize" Value="16"/>

@@ -6,7 +6,12 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="/myManga;component/Resources/Theme/WindowBase.xaml"/>
+                <ResourceDictionary Source="/myManga;component/Resources/Theme/Buttons/Buttons.xaml"/>
+                <ResourceDictionary Source="/myManga;component/Resources/Theme/ListBoxes.xaml"/>
+                <ResourceDictionary Source="/myManga;component/Resources/Theme/ListViews.xaml"/>
+                <ResourceDictionary Source="/myManga;component/Resources/Theme/Spinner.xaml"/>
                 <ResourceDictionary Source="/myManga;component/Resources/Localization/Dictionary_en-US.xaml"/>
+                <ResourceDictionary Source="/myManga;component/Resources/Theme/FontAwesomeIcons.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

@@ -14,7 +14,7 @@
             </Setter.Value>
         </Setter>
     </Style>
-    
+
     <Style TargetType="{x:Type button:MetroButton}">
         <Setter Property="Template">
             <Setter.Value>
@@ -22,40 +22,41 @@
                     <ControlTemplate.Resources>
                         <Duration x:Key="ColorDurationNormal">0:0:0.5</Duration>
                         <Duration x:Key="ColorDurationFast">0:0:0.05</Duration>
+                        <FrameworkElement x:Key="ProxyElement" DataContext="{Binding Source={StaticResource ProxyElement}}"/>
                     </ControlTemplate.Resources>
                     <Grid>
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
                                 <VisualState x:Name="Normal">
                                     <Storyboard>
-                                        <ColorAnimation Duration="{StaticResource ColorDurationNormal}" Storyboard.TargetName="Chrome" Storyboard.TargetProperty="(Border.Background).Color" To="{TemplateBinding Background}"/>
-                                        <ColorAnimation Duration="{StaticResource ColorDurationNormal}" Storyboard.TargetName="Content" Storyboard.TargetProperty="(TextBlock.Foreground).Color" To="{TemplateBinding Foreground}"/>
+                                        <ColorAnimation Duration="{StaticResource ColorDurationNormal}" Storyboard.TargetName="Chrome" Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)" To="{Binding DataContext.Background, Source={StaticResource ProxyElement}}"/>
+                                        <ColorAnimation Duration="{StaticResource ColorDurationNormal}" Storyboard.TargetName="Content" Storyboard.TargetProperty="(TextBlock.Foreground).(SolidColorBrush.Color)" To="{Binding DataContext.Foreground, Source={StaticResource ProxyElement}}"/>
                                     </Storyboard>
                                 </VisualState>
                                 <VisualState x:Name="MouseOver">
                                     <Storyboard>
-                                        <ColorAnimation Duration="{StaticResource ColorDurationFast}" Storyboard.TargetName="Chrome" Storyboard.TargetProperty="(Border.Background).Color" To="{TemplateBinding SecondaryBrush}"/>
-                                        <ColorAnimation Duration="{StaticResource ColorDurationFast}" Storyboard.TargetName="Content" Storyboard.TargetProperty="(TextBlock.Foreground).Color" To="{TemplateBinding PrimaryBrush}"/>
+                                        <ColorAnimation Duration="{StaticResource ColorDurationFast}" Storyboard.TargetName="Chrome" Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)" To="{Binding DataContext.SecondaryBrush, Source={StaticResource ProxyElement}}"/>
+                                        <ColorAnimation Duration="{StaticResource ColorDurationFast}" Storyboard.TargetName="Content" Storyboard.TargetProperty="(TextBlock.Foreground).(SolidColorBrush.Color)" To="{Binding DataContext.PrimaryBrush, Source={StaticResource ProxyElement}}"/>
                                     </Storyboard>
                                 </VisualState>
                                 <VisualState x:Name="Pressed">
                                     <Storyboard>
-                                        <ColorAnimation Duration="{StaticResource ColorDurationFast}" Storyboard.TargetName="Chrome" Storyboard.TargetProperty="(Border.Background).Color" To="{TemplateBinding PrimaryBrush}"/>
-                                        <ColorAnimation Duration="{StaticResource ColorDurationFast}" Storyboard.TargetName="Content" Storyboard.TargetProperty="(TextBlock.Foreground).Color" To="{TemplateBinding SecondaryBrush}"/>
+                                        <ColorAnimation Duration="{StaticResource ColorDurationFast}" Storyboard.TargetName="Chrome" Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)" To="{Binding DataContext.PrimaryBrush, Source={StaticResource ProxyElement}}"/>
+                                        <ColorAnimation Duration="{StaticResource ColorDurationFast}" Storyboard.TargetName="Content" Storyboard.TargetProperty="(TextBlock.Foreground).(SolidColorBrush.Color)" To="{Binding DataContext.SecondaryBrush, Source={StaticResource ProxyElement}}"/>
                                     </Storyboard>
                                 </VisualState>
                                 <VisualState x:Name="Disabled">
                                     <Storyboard>
-                                        <ColorAnimation Duration="{StaticResource ColorDurationNormal}" Storyboard.TargetName="Chrome" Storyboard.TargetProperty="(Border.Background).Color" To="{TemplateBinding PrimaryDisabledBrush}"/>
-                                        <ColorAnimation Duration="{StaticResource ColorDurationNormal}" Storyboard.TargetName="Content" Storyboard.TargetProperty="(TextBlock.Foreground).Color" To="{TemplateBinding SecondaryDisabledBrush}"/>
+                                        <ColorAnimation Duration="{StaticResource ColorDurationNormal}" Storyboard.TargetName="Chrome" Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)" To="{Binding DataContext.PrimaryDisabledBrush, Source={StaticResource ProxyElement}}"/>
+                                        <ColorAnimation Duration="{StaticResource ColorDurationNormal}" Storyboard.TargetName="Content" Storyboard.TargetProperty="(TextBlock.Foreground).(SolidColorBrush.Color)" To="{Binding DataContext.SecondaryDisabledBrush, Source={StaticResource ProxyElement}}"/>
                                     </Storyboard>
                                 </VisualState>
                             </VisualStateGroup>
                             <VisualStateGroup x:Name="FocusStates">
                                 <VisualState x:Name="Focused">
                                     <Storyboard>
-                                        <ColorAnimation Duration="{StaticResource ColorDurationFast}" Storyboard.TargetName="Chrome" Storyboard.TargetProperty="(Border.Background).Color" To="{TemplateBinding SecondaryBrush}"/>
-                                        <ColorAnimation Duration="{StaticResource ColorDurationFast}" Storyboard.TargetName="Content" Storyboard.TargetProperty="(TextBlock.Foreground).Color" To="{TemplateBinding PrimaryBrush}" AutoReverse="True"/>
+                                        <ColorAnimation Duration="{StaticResource ColorDurationFast}" Storyboard.TargetName="Chrome" Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)" To="{Binding DataContext.SecondaryBrush, Source={StaticResource ProxyElement}}"/>
+                                        <ColorAnimation Duration="{StaticResource ColorDurationFast}" Storyboard.TargetName="Content" Storyboard.TargetProperty="(TextBlock.Foreground).(SolidColorBrush.Color)" To="{Binding DataContext.PrimaryBrush, Source={StaticResource ProxyElement}}" AutoReverse="True"/>
                                     </Storyboard>
                                 </VisualState>
                             </VisualStateGroup>
@@ -84,22 +85,22 @@
         </Setter>
         <Setter Property="FocusVisualStyle" Value="{DynamicResource ButtonFocusVisual}"/>
         <Setter Property="SnapsToDevicePixels" Value="True"/>
-        
+
         <Setter Property="MinHeight" Value="16"/>
         <Setter Property="MinWidth" Value="16"/>
         <Setter Property="Padding" Value="2"/>
-        
+
         <Setter Property="HorizontalAlignment" Value="Stretch"/>
         <Setter Property="VerticalAlignment" Value="Stretch"/>
         <Setter Property="HorizontalContentAlignment" Value="Center"/>
         <Setter Property="VerticalContentAlignment" Value="Center"/>
-        
+
         <Setter Property="Foreground" Value="#FF1E1E1E"/>
         <Setter Property="Background" Value="#FFEFEFF2"/>
-        
+
         <Setter Property="PrimaryBrush" Value="#80326E"/>
-        <Setter Property="SecondaryBrush" Value="LightGray"/>
+        <Setter Property="SecondaryBrush" Value="#FFD3D3D3"/>
         <Setter Property="PrimaryDisabledBrush" Value="#FFEFEFF2"/>
-        <Setter Property="SecondaryDisabledBrush" Value="DarkGray"/>
+        <Setter Property="SecondaryDisabledBrush" Value="#FFA9A9A9"/>
     </Style>
 </ResourceDictionary>

@@ -96,7 +96,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="IO\File System\SmartFileAccess.cs" />
-    <Compile Include="Resources\Theme\Buttons\MetroButton.cs" />
+    <Compile Include="Themes\Buttons\MetroButton.cs" />
     <Compile Include="ViewModels\HomeViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="Views\Home.xaml.cs">
@@ -118,27 +118,27 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Resources\Theme\Buttons\Buttons.xaml">
+    <Page Include="Themes\Buttons\MetroButton.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Resources\Theme\FontAwesomeIcons.xaml">
+    <Page Include="Themes\FontAwesomeIcons.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Resources\Theme\ListBoxes.xaml">
+    <Page Include="Themes\ListBoxes.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Resources\Theme\ListViews.xaml">
+    <Page Include="Themes\ListViews.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Resources\Theme\Spinner.xaml">
+    <Page Include="Themes\Spinner.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Resources\Theme\WindowBase.xaml">
+    <Page Include="Themes\WindowBase.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

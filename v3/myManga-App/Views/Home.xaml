@@ -42,6 +42,7 @@
             <StackPanel>
                 <button:MetroButton Content="Test1"/>
                 <Button Content="Test2"/>
+                <ProgressBar Style="{DynamicResource Spinner}"/>
             </StackPanel>
         </Grid>
     </Grid>

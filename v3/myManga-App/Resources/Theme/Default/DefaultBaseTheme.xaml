@@ -1,0 +1,17 @@
+﻿<ResourceDictionary 
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary>
+            <Style TargetType="{x:Type Rectangle}"/>
+        </ResourceDictionary>
+        <ResourceDictionary Source="/myManga;component/Resources/Theme/Default/DefaultTheme.xaml"/>
+        <ResourceDictionary Source="/myManga;component/Resources/Theme/Default/DefaultProgressBarTheme.xaml"/>
+        <ResourceDictionary Source="/myManga;component/Resources/Theme/Default/DefaultButtonTheme.xaml"/>
+        <ResourceDictionary Source="/myManga;component/Resources/Theme/Default/DefaultListViewTheme.xaml"/>
+        <ResourceDictionary Source="/myManga;component/Resources/Theme/Default/DefaultListBoxTheme.xaml"/>
+        <ResourceDictionary Source="/myManga;component/Resources/Theme/Default/DefaultTabControlTheme.xaml"/>
+        <ResourceDictionary Source="/myManga;component/Resources/Theme/Default/DefaultToggleButtonTheme.xaml"/>
+    </ResourceDictionary.MergedDictionaries>
+</ResourceDictionary>

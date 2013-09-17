@@ -1,0 +1,58 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:this="clr-namespace:myManga.Resources.Theme.Default"
+                    xmlns:baka="clr-namespace:BakaBox.Controls;assembly=BakaBox">
+
+    <ControlTemplate x:Key="DefaultProg" TargetType="{x:Type ProgressBar}">
+        <Grid Height="17" >
+            <Rectangle 
+	            Name="PART_Track"
+	            Margin="18,0,42,0"/>
+            <Rectangle Height="3" Fill="#579"/>
+            <StackPanel Orientation="Horizontal" Margin="18,0,0,0">
+                <Rectangle Name="PART_Indicator" Height="3" Grid.ZIndex="0">
+                    <Rectangle.Fill>
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                            <GradientStop Color="#79B" Offset="1"/>
+                            <GradientStop Color="#579"/>
+                        </LinearGradientBrush>
+                    </Rectangle.Fill>
+                </Rectangle>
+                <Canvas>
+                    <Path Data="M 0,10 H -18 L 0,17" Fill="#357" Grid.ZIndex="1"/>
+                    <Border
+                        x:Name="ValueText"
+                        Width="42" 
+                        Height="17"
+                        Background="#79B"
+	          		  	Grid.ZIndex="2">
+                        <TextBlock 
+		          			Text="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Value, StringFormat={}{0:F0}%}"
+		          			Foreground="White"
+		          			FontWeight="Bold"
+		          			FontSize="12"
+		          		 	HorizontalAlignment="Center"
+		          		  	VerticalAlignment="Center"/>
+                    </Border>
+                </Canvas>
+            </StackPanel>
+        </Grid>
+    </ControlTemplate>
+    
+    <Style
+        x:Key="{x:Type ProgressBar}"
+	    TargetType="{x:Type ProgressBar}">
+        <Setter Property="Foreground" Value="#79B"/>
+        <Setter Property="TextElement.Foreground" Value="White"/>
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Maximum" Value="100"/>
+        <Setter Property="IsHitTestVisible" Value="False"/>
+        <Setter Property="Padding" Value="0"/>
+        <Setter Property="Template" Value="{StaticResource DefaultProg}"/>
+        <Style.Triggers>
+            <Trigger Property="IsIndeterminate" Value="True">
+                <Setter Property="Template" Value="{StaticResource MetroInterProg}"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+</ResourceDictionary>

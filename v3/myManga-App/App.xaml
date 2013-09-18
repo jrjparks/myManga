@@ -9,7 +9,7 @@
                 <ResourceDictionary Source="/myManga;component/Themes/Buttons/MetroButton.xaml"/>
                 <ResourceDictionary Source="/myManga;component/Themes/ListBoxes.xaml"/>
                 <ResourceDictionary Source="/myManga;component/Themes/ListViews.xaml"/>
-                <ResourceDictionary Source="/myManga;component/Themes/Spinner.xaml"/>
+                <ResourceDictionary Source="/myManga;component/Themes/ProgressBars/Spinner.xaml"/>
                 <ResourceDictionary Source="/myManga;component/Resources/Localization/Dictionary_en-US.xaml"/>
                 <ResourceDictionary Source="/myManga;component/Themes/FontAwesomeIcons.xaml"/>
             </ResourceDictionary.MergedDictionaries>

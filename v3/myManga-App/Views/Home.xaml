@@ -5,7 +5,6 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
     xmlns:vm="clr-namespace:myManga_App.ViewModels"
-    xmlns:button="clr-namespace:myManga_App.Resources.Theme.Buttons"
     mc:Ignorable="d" 
     d:DesignHeight="400"
     d:DesignWidth="600">
@@ -20,29 +19,71 @@
                 <RowDefinition Height="32px"/>
                 <RowDefinition Height="1*"/>
             </Grid.RowDefinitions>
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="32px"/>
-                    <ColumnDefinition Width="1*"/>
-                </Grid.ColumnDefinitions>
-                <button:MetroButton
-                    Content="{DynamicResource icon-search}"
-                    FontFamily="{DynamicResource FontAwesome}" FontSize="16"/>
-                <TextBox Grid.Column="1" BorderBrush="{x:Null}" BorderThickness="0" Background="{x:Null}"></TextBox>
-            </Grid>
+            <Border 
+                BorderBrush="{DynamicResource icon-dark}" 
+                BorderThickness="1"
+                TextElement.FontSize="16">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="32px"/>
+                        <ColumnDefinition Width="1*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <Button
+                        Tag="{DynamicResource icon-search}"
+                        Style="{DynamicResource WithIcon}"/>
+                    <TextBox
+                        Grid.Column="1" 
+                        BorderBrush="{x:Null}" 
+                        BorderThickness="0" 
+                        Background="{x:Null}"
+                        VerticalContentAlignment="Center"/>
+                    <Button
+                        Grid.Column="2"
+                        Padding="2,0"
+                        Tag="{DynamicResource icon-remove}"
+                        Style="{DynamicResource WithIcon}"/>
+                </Grid>
+            </Border>
             <ListBox
                 Grid.Row="1"
                 Background="{x:Null}"
                 BorderBrush="{x:Null}"
                 BorderThickness="0">
-
+                <ListBox.Items>
+                    <ListBoxItem Content="Hello"/>
+                    <ListBoxItem Content="World"/>
+                    <ListBoxItem Content="123 ABC"/>
+                    <ListBoxItem Content="Hello"/>
+                    <ListBoxItem Content="World"/>
+                    <ListBoxItem Content="123 ABC"/>
+                    <ListBoxItem Content="Hello"/>
+                    <ListBoxItem Content="World"/>
+                    <ListBoxItem Content="123 ABC"/>
+                    <ListBoxItem Content="Hello"/>
+                    <ListBoxItem Content="World"/>
+                    <ListBoxItem Content="123 ABC"/>
+                    <ListBoxItem Content="Hello"/>
+                    <ListBoxItem Content="World"/>
+                    <ListBoxItem Content="123 ABC"/>
+                    <ListBoxItem Content="Hello"/>
+                    <ListBoxItem Content="World"/>
+                    <ListBoxItem Content="123 ABC"/>
+                    <ListBoxItem Content="Hello"/>
+                    <ListBoxItem Content="World"/>
+                    <ListBoxItem Content="123 ABC"/>
+                    <ListBoxItem Content="Hello"/>
+                    <ListBoxItem Content="World"/>
+                    <ListBoxItem Content="123 ABC"/>
+                </ListBox.Items>
             </ListBox>
         </Grid>
         <Grid Grid.Column="2">
-            <StackPanel>
-                <button:MetroButton Content="Test1"/>
-                <Button Content="Test2"/>
-                <ProgressBar Style="{DynamicResource Spinner}"/>
+            <StackPanel Orientation="Vertical" HorizontalAlignment="Left" VerticalAlignment="Top">
+                <Button Content="Download" Tag="{DynamicResource icon-cloud-download}" FontSize="20"/>
+                <Button Content="Bookmark" Tag="{DynamicResource icon-bookmark}" FontSize="20"/>
+                <Button Content="Home" FontSize="20" Tag="{DynamicResource icon-home}"/>
+                <ProgressBar Style="{DynamicResource Spinner}" Width="32" Height="Auto"/>
             </StackPanel>
         </Grid>
     </Grid>

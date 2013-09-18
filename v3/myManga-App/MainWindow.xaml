@@ -13,7 +13,8 @@
     Height="350"
     Width="525"
     Icon="/myManga;component/Resources/Icon.ico" 
-    Style="{DynamicResource myMangaWindow}">
+    Style="{DynamicResource myMangaWindow}"
+    SnapsToDevicePixels="True">
     <Window.CommandBindings>
         <CommandBinding
             Command="{x:Static SystemCommands.CloseWindowCommand}"

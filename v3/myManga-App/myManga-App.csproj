@@ -96,7 +96,6 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="IO\File System\SmartFileAccess.cs" />
-    <Compile Include="Themes\Buttons\MetroButton.cs" />
     <Compile Include="ViewModels\HomeViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="Views\Home.xaml.cs">
@@ -134,7 +133,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Themes\Spinner.xaml">
+    <Page Include="Themes\ProgressBars\Spinner.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -214,6 +213,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="IO\Network\" />
+    <Folder Include="Themes\Sliders\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

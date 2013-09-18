@@ -24,7 +24,7 @@
                         BorderThickness="0"
                         Margin="{TemplateBinding Margin}"
                         Padding="{TemplateBinding Padding}"
-                        Background="#FFEFEFF2"
+                        Background="{DynamicResource window-background}"
                         SnapsToDevicePixels="True">
                         <Border.Resources>
                             <Duration x:Key="ColorDurationNormal">0:0:0.5</Duration>
@@ -34,41 +34,41 @@
                             <VisualStateGroup x:Name="CommonStates">
                                 <VisualState x:Name="Normal">
                                     <Storyboard>
-                                        <ColorAnimation Duration="{StaticResource ColorDurationNormal}" Storyboard.TargetName="Chrome" Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)" To="#FFEFEFF2"/>
-                                        <ColorAnimation Duration="{StaticResource ColorDurationNormal}" Storyboard.TargetName="Content" Storyboard.TargetProperty="(TextBlock.Foreground).(SolidColorBrush.Color)" To="#FF1E1E1E"/>
+                                        <ColorAnimation Duration="{StaticResource ColorDurationNormal}" Storyboard.TargetName="Chrome" Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)" To="{DynamicResource window-background-color}"/>
+                                        <ColorAnimation Duration="{StaticResource ColorDurationNormal}" Storyboard.TargetName="Content" Storyboard.TargetProperty="(TextBlock.Foreground).(SolidColorBrush.Color)" To="{DynamicResource window-foreground-color}"/>
                                     </Storyboard>
                                 </VisualState>
                                 <VisualState x:Name="MouseOver">
                                     <Storyboard>
-                                        <ColorAnimation Duration="{StaticResource ColorDurationFast}" Storyboard.TargetName="Chrome" Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)" To="#FFD3D3D3"/>
-                                        <ColorAnimation Duration="{StaticResource ColorDurationFast}" Storyboard.TargetName="Content" Storyboard.TargetProperty="(TextBlock.Foreground).(SolidColorBrush.Color)" To="#FF80326E"/>
+                                        <ColorAnimation Duration="{StaticResource ColorDurationFast}" Storyboard.TargetName="Chrome" Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)" To="{DynamicResource window-theme-secondary-color}"/> 
+                                        <ColorAnimation Duration="{StaticResource ColorDurationFast}" Storyboard.TargetName="Content" Storyboard.TargetProperty="(TextBlock.Foreground).(SolidColorBrush.Color)" To="{DynamicResource window-theme-primary-color}"/>
                                     </Storyboard>
                                 </VisualState>
                                 <VisualState x:Name="Pressed">
                                     <Storyboard>
-                                        <ColorAnimation Duration="{StaticResource ColorDurationFast}" Storyboard.TargetName="Chrome" Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)" To="#FF80326E"/>
-                                        <ColorAnimation Duration="{StaticResource ColorDurationFast}" Storyboard.TargetName="Content" Storyboard.TargetProperty="(TextBlock.Foreground).(SolidColorBrush.Color)" To="#FFD3D3D3"/>
+                                        <ColorAnimation Duration="{StaticResource ColorDurationFast}" Storyboard.TargetName="Chrome" Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)" To="{DynamicResource window-theme-primary-color}"/>
+                                        <ColorAnimation Duration="{StaticResource ColorDurationFast}" Storyboard.TargetName="Content" Storyboard.TargetProperty="(TextBlock.Foreground).(SolidColorBrush.Color)" To="{DynamicResource window-theme-secondary-color}"/>
                                     </Storyboard>
                                 </VisualState>
                                 <VisualState x:Name="Disabled">
                                     <Storyboard>
-                                        <ColorAnimation Duration="{StaticResource ColorDurationNormal}" Storyboard.TargetName="Chrome" Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)" To="#FFEFEFF2"/>
-                                        <ColorAnimation Duration="{StaticResource ColorDurationNormal}" Storyboard.TargetName="Content" Storyboard.TargetProperty="(TextBlock.Foreground).(SolidColorBrush.Color)" To="#FFA9A9A9"/>
+                                        <ColorAnimation Duration="{StaticResource ColorDurationNormal}" Storyboard.TargetName="Chrome" Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)" To="{DynamicResource window-background-color}"/>
+                                        <ColorAnimation Duration="{StaticResource ColorDurationNormal}" Storyboard.TargetName="Content" Storyboard.TargetProperty="(TextBlock.Foreground).(SolidColorBrush.Color)" To="{DynamicResource window-foreground-disabled-color}"/>
                                     </Storyboard>
                                 </VisualState>
                             </VisualStateGroup>
                             <VisualStateGroup x:Name="FocusStates">
                                 <VisualState x:Name="Focused">
                                     <Storyboard>
-                                        <ColorAnimation Duration="{StaticResource ColorDurationFast}" Storyboard.TargetName="Chrome" Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)" To="#FFD3D3D3"/>
-                                        <ColorAnimation Duration="{StaticResource ColorDurationFast}" Storyboard.TargetName="Content" Storyboard.TargetProperty="(TextBlock.Foreground).(SolidColorBrush.Color)" To="#FF80326E" AutoReverse="True"/>
+                                        <ColorAnimation Duration="{StaticResource ColorDurationFast}" Storyboard.TargetName="Chrome" Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)" To="{DynamicResource window-theme-secondary-color}"/>
+                                        <ColorAnimation Duration="{StaticResource ColorDurationFast}" Storyboard.TargetName="Content" Storyboard.TargetProperty="(TextBlock.Foreground).(SolidColorBrush.Color)" To="{DynamicResource window-theme-primary-color}" AutoReverse="True"/>
                                     </Storyboard>
                                 </VisualState>
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
                         <ContentPresenter
                             x:Name="Content"
-                            TextBlock.Foreground="#FF1E1E1E"
+                            TextBlock.Foreground="{DynamicResource window-foreground}"
                             ContentTemplate="{TemplateBinding ContentTemplate}"
                             Content="{TemplateBinding Content}"
                             ContentStringFormat="{TemplateBinding ContentStringFormat}"
@@ -82,8 +82,8 @@
         <Setter Property="FocusVisualStyle" Value="{DynamicResource ButtonFocusVisual}"/>
         <Setter Property="SnapsToDevicePixels" Value="True"/>
 
-        <Setter Property="Foreground" Value="#FF1E1E1E"/>
-        <Setter Property="Background" Value="#FFEFEFF2"/>
+        <Setter Property="Foreground" Value="{DynamicResource window-foreground}"/>
+        <Setter Property="Background" Value="{DynamicResource window-background}"/>
         <Setter Property="BorderBrush" Value="{x:Null}"/>
         <Setter Property="BorderThickness" Value="0"/>
 

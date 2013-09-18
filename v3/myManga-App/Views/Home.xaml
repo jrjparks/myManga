@@ -84,19 +84,36 @@
                 <Button Content="Bookmark" Tag="{DynamicResource icon-bookmark}" FontSize="20"/>
                 <Button Content="Home" FontSize="20" Tag="{DynamicResource icon-home}"/>
                 <ProgressBar Style="{DynamicResource Spinner}" Width="32" Height="Auto"/>
-                <Border BorderBrush="#FF80326E" BorderThickness="3" Height="64">
-                    <Grid HorizontalAlignment="Right" VerticalAlignment="Top">
-                        <Rectangle Width="32" Height="32" VerticalAlignment="Top" HorizontalAlignment="Right">
+                <Border BorderBrush="{DynamicResource window-theme-primary}" BorderThickness="3" Height="64">
+                    <Grid x:Name="CornerTick" HorizontalAlignment="Right" VerticalAlignment="Top">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <Rectangle Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"/>
+                        <Rectangle Height="{Binding ActualWidth, Mode=OneWay, RelativeSource={RelativeSource Self}}" Grid.Row="1" Grid.Column="1"/>
+                        <Rectangle 
+                            Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}" 
+                            Grid.RowSpan="2" 
+                            Grid.ColumnSpan="2">
                             <Rectangle.Fill>
                                 <LinearGradientBrush EndPoint="0,1" StartPoint="1,0">
-                                    <GradientStop Color="#FF80326E" Offset="0"/>
-                                    <GradientStop Color="#FF80326E" Offset="0.5"/>
+                                    <GradientStop Color="{DynamicResource window-theme-primary-color}" Offset="0.5"/>
                                     <GradientStop Offset="0.5"/>
-                                    <GradientStop Offset="1"/>
                                 </LinearGradientBrush>
                             </Rectangle.Fill>
                         </Rectangle>
-                        <TextBlock Text="{DynamicResource icon-ok}" FontFamily="{DynamicResource FontAwesome}" FontSize="18" Foreground="White" HorizontalAlignment="Right" VerticalAlignment="Top"/>
+                        <TextBlock
+                            Text="{DynamicResource icon-ok}"
+                            FontFamily="{DynamicResource FontAwesome}" 
+                            FontSize="16" 
+                            Foreground="{DynamicResource window-background}" 
+                            Grid.Column="1"
+                            Margin="-2,0,0,-2"/>
                     </Grid>
                 </Border>
             </StackPanel>

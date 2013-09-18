@@ -84,6 +84,21 @@
                 <Button Content="Bookmark" Tag="{DynamicResource icon-bookmark}" FontSize="20"/>
                 <Button Content="Home" FontSize="20" Tag="{DynamicResource icon-home}"/>
                 <ProgressBar Style="{DynamicResource Spinner}" Width="32" Height="Auto"/>
+                <Border BorderBrush="#FF80326E" BorderThickness="3" Height="64">
+                    <Grid HorizontalAlignment="Right" VerticalAlignment="Top">
+                        <Rectangle Width="32" Height="32" VerticalAlignment="Top" HorizontalAlignment="Right">
+                            <Rectangle.Fill>
+                                <LinearGradientBrush EndPoint="0,1" StartPoint="1,0">
+                                    <GradientStop Color="#FF80326E" Offset="0"/>
+                                    <GradientStop Color="#FF80326E" Offset="0.5"/>
+                                    <GradientStop Offset="0.5"/>
+                                    <GradientStop Offset="1"/>
+                                </LinearGradientBrush>
+                            </Rectangle.Fill>
+                        </Rectangle>
+                        <TextBlock Text="{DynamicResource icon-ok}" FontFamily="{DynamicResource FontAwesome}" FontSize="18" Foreground="White" HorizontalAlignment="Right" VerticalAlignment="Top"/>
+                    </Grid>
+                </Border>
             </StackPanel>
         </Grid>
     </Grid>

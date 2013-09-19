@@ -6,10 +6,15 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="/myManga;component/Themes/WindowBase.xaml"/>
-                <ResourceDictionary Source="/myManga;component/Themes/Buttons/MetroButton.xaml"/>
-                <ResourceDictionary Source="/myManga;component/Themes/ListBoxes.xaml"/>
-                <ResourceDictionary Source="/myManga;component/Themes/ListViews.xaml"/>
-                <ResourceDictionary Source="/myManga;component/Themes/ProgressBars/Spinner.xaml"/>
+                <ResourceDictionary Source="/myManga;component/Themes/Button/MetroButton.xaml"/>
+
+                <ResourceDictionary Source="/myManga;component/Themes/ListBox/ListBoxes.xaml"/>
+                <ResourceDictionary Source="/myManga;component/Themes/ListBox/ListBoxItems.xaml"/>
+
+                <ResourceDictionary Source="/myManga;component/Themes/ListView/ListViews.xaml"/>
+
+                <ResourceDictionary Source="/myManga;component/Themes/ProgressBar/Spinner.xaml"/>
+
                 <ResourceDictionary Source="/myManga;component/Resources/Localization/Dictionary_en-US.xaml"/>
                 <ResourceDictionary Source="/myManga;component/Themes/FontAwesomeIcons.xaml"/>
             </ResourceDictionary.MergedDictionaries>

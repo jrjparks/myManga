@@ -1,7 +1,8 @@
 ﻿<ResourceDictionary 
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:core="clr-namespace:System.Windows.Controls;assembly=Core">
+    xmlns:core="clr-namespace:System.Windows.Controls;assembly=Core"
+    xmlns:button="clr-namespace:myManga_App.Resources.Theme.Buttons">
 
     <!--Window Buttons-->
     <Style TargetType="{x:Type Button}" x:Key="WindowButtonStyle">
@@ -58,7 +59,7 @@
                         </VisualStateManager.VisualStateGroups>
                         <ContentPresenter
                             x:Name="Content"
-                            TextBlock.Foreground="#FF1E1E1E"
+                            TextBlock.Foreground="{DynamicResource window-foreground}"
                             ContentTemplate="{TemplateBinding ContentTemplate}"
                             Content="{TemplateBinding Content}"
                             ContentStringFormat="{TemplateBinding ContentStringFormat}"
@@ -79,10 +80,10 @@
 
     <!--Window Chrome-->
     <Style TargetType="{x:Type Window}" x:Key="myMangaWindow">
-        <Setter Property="Foreground" Value="Black"/>
-        <Setter Property="Background" Value="#FFEFEFF2"/>
+        <Setter Property="Foreground" Value="{DynamicResource window-foreground}"/>
+        <Setter Property="Background" Value="{DynamicResource window-background}"/>
         <Setter Property="BorderThickness" Value="1"/>
-        <Setter Property="BorderBrush" Value="#FF80326E"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource window-theme-primary}"/>
         <Setter Property="MinWidth" Value="480"/>
         <Setter Property="MinHeight" Value="234"/>
         <Setter Property="SnapsToDevicePixels" Value="True"/>
@@ -173,6 +174,126 @@
                                         Focusable="False"
                                         Style="{StaticResource WindowButtonStyle}"
                                         Content="r"/>
+                                </StackPanel>
+                            </Grid>
+                        </AdornerDecorator>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="WindowState" Value="Maximized">
+                            <!-- Change Margins -->
+                            <Setter TargetName="LayoutRoot" Property="Margin" Value="7"/>
+                            <!-- Change Restore Button -->
+                            <Setter TargetName="MaximizeButton" Property="Visibility" Value="Collapsed"/>
+                            <Setter TargetName="RestoreButton" Property="Visibility" Value="Visible"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="{x:Type Window}" x:Key="myMangaWindowTriggers">
+        <Setter Property="Foreground" Value="{DynamicResource window-foreground}"/>
+        <Setter Property="Background" Value="{DynamicResource window-background}"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource window-theme-primary}"/>
+        <Setter Property="MinWidth" Value="480"/>
+        <Setter Property="MinHeight" Value="234"/>
+        <Setter Property="SnapsToDevicePixels" Value="True"/>
+        <Setter Property="WindowChrome.WindowChrome">
+            <Setter.Value>
+                <WindowChrome                    
+                    CornerRadius="0"
+                    ResizeBorderThickness="5"
+                    GlassFrameThickness="1"
+                    UseAeroCaptionButtons="False"
+                    CaptionHeight="32"/>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Window}">
+                    <Border
+                        x:Name="WindowBorder"
+                        Margin="{Binding Source={x:Static SystemParameters.WindowNonClientFrameThickness}}"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}">
+                        <AdornerDecorator>
+                            <Grid x:Name="LayoutRoot">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="32"/>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="15"/>
+                                </Grid.RowDefinitions>
+                                <ContentPresenter Grid.Row="1" Grid.RowSpan="2"/>
+                                <TextBlock 
+                                    x:Name="Grip"
+                                    Text="o" 
+                                    Grid.Row="2"
+                                    FontFamily="Marlett"
+                                    HorizontalAlignment="Right" 
+                                    VerticalAlignment="Bottom" 
+                                    Foreground="{TemplateBinding BorderBrush}"/>
+                                <StackPanel x:Name="CaptionTitle" Orientation="Horizontal" VerticalAlignment="Center">
+                                    <Image Source="{TemplateBinding Icon}" MaxHeight="28" MaxWidth="28" Margin="4,0,8,0" VerticalAlignment="Center"/>
+                                    <TextBlock Text="{TemplateBinding Title}" Foreground="{TemplateBinding Foreground}" FontSize="16" VerticalAlignment="Center"/>
+                                </StackPanel>
+                                <StackPanel 
+                                    x:Name="CaptionButtons" 
+                                    Orientation="Horizontal" 
+                                    HorizontalAlignment="Right" 
+                                    Margin="0"
+                                    TextElement.FontFamily="Marlett"
+                                    TextElement.FontWeight="Thin"
+                                    TextElement.FontSize="16">
+                                    <core:BrightnessControl 
+                                        Margin="5,0"
+                                        VerticalAlignment="Center"
+                                        Width="100px"
+                                        WindowChrome.IsHitTestVisibleInChrome="True"
+                                        Focusable="False"/>
+                                    <!-- Minimize button content 0 -->
+                                    <button:MetroButton
+                                        x:Name="MinimizeButton"
+                                        Command="{x:Static SystemCommands.MinimizeWindowCommand}"
+                                        CommandParameter="{Binding RelativeSource={RelativeSource TemplatedParent}}"
+                                        WindowChrome.IsHitTestVisibleInChrome="True"
+                                        
+                                        Focusable="False"
+                                        Content="0" 
+                                        Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"/>
+                                    <!-- Restore button content 1 normal, 2 maximum. Changes from window trigger.-->
+                                    <button:MetroButton
+                                        x:Name="MaximizeButton"
+                                        Command="{x:Static SystemCommands.MaximizeWindowCommand}"
+                                        CommandParameter="{Binding RelativeSource={RelativeSource TemplatedParent}}"
+                                        WindowChrome.IsHitTestVisibleInChrome="True"
+                                            
+                                        Focusable="False"
+                                        Content="1"
+                                        Visibility="Visible"
+                                        Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"/>
+                                    <button:MetroButton
+                                        x:Name="RestoreButton"
+                                        Command="{x:Static SystemCommands.RestoreWindowCommand}"
+                                        CommandParameter="{Binding RelativeSource={RelativeSource TemplatedParent}}"
+                                        WindowChrome.IsHitTestVisibleInChrome="True"
+                                            
+                                        Focusable="False"
+                                        Content="2"
+                                        Visibility="Collapsed"
+                                        Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"/>
+                                    <!-- Close button content r -->
+                                    <button:MetroButton
+                                        x:Name="CloseButton"
+                                        Command="{x:Static SystemCommands.CloseWindowCommand}"
+                                        CommandParameter="{Binding RelativeSource={RelativeSource TemplatedParent}}"
+                                        WindowChrome.IsHitTestVisibleInChrome="True"
+                                            
+                                        Focusable="False"
+                                        Content="r"
+                                        Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"/>
                                 </StackPanel>
                             </Grid>
                         </AdornerDecorator>

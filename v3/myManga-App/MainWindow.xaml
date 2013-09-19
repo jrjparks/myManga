@@ -12,8 +12,8 @@
     x:Name="myMangaMainWindow"
     Height="350"
     Width="525"
-    Icon="/myManga;component/Resources/Icon.ico" 
-    Style="{DynamicResource myMangaWindow}"
+    Icon="/myManga;component/Resources/Icon.ico"
+    Style="{DynamicResource myMangaWindowTriggers}"
     SnapsToDevicePixels="True">
     <Window.CommandBindings>
         <CommandBinding
@@ -49,7 +49,7 @@
             Grid.ZIndex="99"
             IsHitTestVisible="False"
             VerticalAlignment="Center"
-            TextElement.Foreground="White">
+            HorizontalAlignment="Center">
             <StackPanel.Triggers>
                 <EventTrigger RoutedEvent="Grid.Loaded">
                     <BeginStoryboard>
@@ -73,7 +73,7 @@
                 </EventTrigger>
             </StackPanel.Triggers>
             <StackPanel.Effect>
-                <DropShadowEffect/>
+                <DropShadowEffect Color="{DynamicResource window-theme-primary-color}"/>
             </StackPanel.Effect>
             <StackPanel HorizontalAlignment="Center">
                 <Grid Margin="5,0,0,-20" TextElement.FontSize="16" TextElement.FontWeight="Bold">

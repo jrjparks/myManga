@@ -5,6 +5,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
     xmlns:vm="clr-namespace:myManga_App.ViewModels"
+    xmlns:button="clr-namespace:myManga_App.Resources.Theme.Buttons"
     mc:Ignorable="d" 
     d:DesignHeight="400"
     d:DesignWidth="600">
@@ -25,31 +26,33 @@
                 TextElement.FontSize="16">
                 <Grid>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="32px"/>
+                        <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="1*"/>
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
-                    <Button
-                        Tag="{DynamicResource icon-search}"
-                        Style="{DynamicResource WithIcon}"/>
+                    <button:MetroButton
+                        Content="{DynamicResource icon-search}"
+                        FontFamily="{DynamicResource FontAwesome}"
+                        Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"/>
                     <TextBox
                         Grid.Column="1" 
                         BorderBrush="{x:Null}" 
                         BorderThickness="0" 
                         Background="{x:Null}"
                         VerticalContentAlignment="Center"/>
-                    <Button
+                    <button:MetroButton
                         Grid.Column="2"
-                        Padding="2,0"
-                        Tag="{DynamicResource icon-remove}"
-                        Style="{DynamicResource WithIcon}"/>
+                        Content="{DynamicResource icon-remove}"
+                        FontFamily="{DynamicResource FontAwesome}"
+                        Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"/>
                 </Grid>
             </Border>
             <ListBox
                 Grid.Row="1"
                 Background="{x:Null}"
                 BorderBrush="{x:Null}"
-                BorderThickness="0">
+                BorderThickness="0" 
+                ItemContainerStyle="{DynamicResource HomeListBoxItem}">
                 <ListBox.Items>
                     <ListBoxItem Content="Hello"/>
                     <ListBoxItem Content="World"/>
@@ -79,41 +82,74 @@
             </ListBox>
         </Grid>
         <Grid Grid.Column="2">
-            <StackPanel Orientation="Vertical" HorizontalAlignment="Left" VerticalAlignment="Top">
-                <Button Content="Download" Tag="{DynamicResource icon-cloud-download}" FontSize="20"/>
-                <Button Content="Bookmark" Tag="{DynamicResource icon-bookmark}" FontSize="20"/>
-                <Button Content="Home" FontSize="20" Tag="{DynamicResource icon-home}"/>
+            <StackPanel Orientation="Vertical" HorizontalAlignment="Left" VerticalAlignment="Top" TextElement.FontSize="20">
+                <button:MetroButton Content="Download" Tag="{DynamicResource icon-cloud-download}" Style="{DynamicResource MetroButtonWithIcon}"/>
+                <button:MetroButton Content="Bookmark" Tag="{DynamicResource icon-bookmark}" Style="{DynamicResource MetroButtonWithIcon}"/>
+                <button:MetroButton Content="Home" Tag="{DynamicResource icon-home}" Style="{DynamicResource MetroButtonWithIcon}"/>
+                <button:MetroButton Content="Hello"/>
                 <ProgressBar Style="{DynamicResource Spinner}" Width="32" Height="Auto"/>
-                <Border BorderBrush="{DynamicResource window-theme-primary}" BorderThickness="3" Height="64">
-                    <Grid x:Name="CornerTick" HorizontalAlignment="Right" VerticalAlignment="Top">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="*"/>
-                            <RowDefinition Height="*"/>
-                        </Grid.RowDefinitions>
-                        <Rectangle Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"/>
-                        <Rectangle Height="{Binding ActualWidth, Mode=OneWay, RelativeSource={RelativeSource Self}}" Grid.Row="1" Grid.Column="1"/>
-                        <Rectangle 
-                            Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}" 
-                            Grid.RowSpan="2" 
-                            Grid.ColumnSpan="2">
-                            <Rectangle.Fill>
-                                <LinearGradientBrush EndPoint="0,1" StartPoint="1,0">
-                                    <GradientStop Color="{DynamicResource window-theme-primary-color}" Offset="0.5"/>
-                                    <GradientStop Offset="0.5"/>
-                                </LinearGradientBrush>
-                            </Rectangle.Fill>
-                        </Rectangle>
-                        <TextBlock
-                            Text="{DynamicResource icon-ok}"
-                            FontFamily="{DynamicResource FontAwesome}" 
-                            FontSize="16" 
-                            Foreground="{DynamicResource window-background}" 
-                            Grid.Column="1"
-                            Margin="-2,0,0,-2"/>
+                <Border BorderBrush="{DynamicResource window-theme-primary}" BorderThickness="3" Height="96" Width="256">
+                    <Grid>
+                        <Grid x:Name="CornerTick" HorizontalAlignment="Right" VerticalAlignment="Top">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            <Rectangle Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"/>
+                            <Rectangle Height="{Binding ActualWidth, Mode=OneWay, RelativeSource={RelativeSource Self}}" Grid.Row="1" Grid.Column="1"/>
+                            <Rectangle 
+                                Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}" 
+                                Grid.RowSpan="2" 
+                                Grid.ColumnSpan="2">
+                                <Rectangle.Fill>
+                                    <LinearGradientBrush EndPoint="0,1" StartPoint="1,0">
+                                        <GradientStop Color="{DynamicResource window-theme-primary-color}" Offset="0.5"/>
+                                        <GradientStop Offset="0.5"/>
+                                    </LinearGradientBrush>
+                                </Rectangle.Fill>
+                            </Rectangle>
+                            <TextBlock
+                                Text="{DynamicResource icon-ok}"
+                                FontFamily="{DynamicResource FontAwesome}" 
+                                FontSize="14" 
+                                Foreground="{DynamicResource window-background}" 
+                                Grid.Column="1" Margin="0,0,-2,0"/>
+                        </Grid>
+                        <Grid x:Name="CornerTick2" HorizontalAlignment="Right" VerticalAlignment="Bottom">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            <Rectangle Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}" Grid.Row="1" />
+                            <Rectangle Height="{Binding ActualWidth, Mode=OneWay, RelativeSource={RelativeSource Self}}" Grid.Column="1"/>
+                            <Rectangle 
+                                Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}" 
+                                Grid.RowSpan="2" 
+                                Grid.ColumnSpan="2">
+                                <Rectangle.Fill>
+                                    <LinearGradientBrush EndPoint="0,0" StartPoint="1,1">
+                                        <GradientStop Color="{DynamicResource window-theme-primary-color}" Offset="0.5"/>
+                                        <GradientStop Offset="0.5"/>
+                                    </LinearGradientBrush>
+                                </Rectangle.Fill>
+                            </Rectangle>
+                            <TextBlock
+                                Text="{DynamicResource icon-star-empty}"
+                                FontFamily="{DynamicResource FontAwesome}" 
+                                FontSize="14" 
+                                Foreground="{DynamicResource window-background}" 
+                                Grid.Column="1"
+                                Grid.Row="1" 
+                                Margin="0,-1,-1,0"/>
+                        </Grid>
                     </Grid>
                 </Border>
             </StackPanel>

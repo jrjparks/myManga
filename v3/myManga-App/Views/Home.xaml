@@ -9,6 +9,9 @@
     mc:Ignorable="d" 
     d:DesignHeight="400"
     d:DesignWidth="600">
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+    </UserControl.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="1*" MaxWidth="300px"/>
@@ -52,32 +55,27 @@
                 Background="{x:Null}"
                 BorderBrush="{x:Null}"
                 BorderThickness="0" 
-                ItemContainerStyle="{DynamicResource HomeListBoxItem}">
+                ItemContainerStyle="{DynamicResource HomeListBoxItem}" 
+                Visibility="{Binding HasItems, Converter={StaticResource BooleanToVisibilityConverter}, RelativeSource={RelativeSource Self}}">
                 <ListBox.Items>
                     <ListBoxItem Content="Hello"/>
-                    <ListBoxItem Content="World"/>
-                    <ListBoxItem Content="123 ABC"/>
                     <ListBoxItem Content="Hello"/>
-                    <ListBoxItem Content="World"/>
-                    <ListBoxItem Content="123 ABC"/>
                     <ListBoxItem Content="Hello"/>
-                    <ListBoxItem Content="World"/>
-                    <ListBoxItem Content="123 ABC"/>
                     <ListBoxItem Content="Hello"/>
-                    <ListBoxItem Content="World"/>
-                    <ListBoxItem Content="123 ABC"/>
                     <ListBoxItem Content="Hello"/>
-                    <ListBoxItem Content="World"/>
-                    <ListBoxItem Content="123 ABC"/>
                     <ListBoxItem Content="Hello"/>
-                    <ListBoxItem Content="World"/>
-                    <ListBoxItem Content="123 ABC"/>
                     <ListBoxItem Content="Hello"/>
-                    <ListBoxItem Content="World"/>
-                    <ListBoxItem Content="123 ABC"/>
                     <ListBoxItem Content="Hello"/>
-                    <ListBoxItem Content="World"/>
-                    <ListBoxItem Content="123 ABC"/>
+                    <ListBoxItem Content="Hello"/>
+                    <ListBoxItem Content="Hello"/>
+                    <ListBoxItem Content="Hello"/>
+                    <ListBoxItem Content="Hello"/>
+                    <ListBoxItem Content="Hello"/>
+                    <ListBoxItem Content="Hello"/>
+                    <ListBoxItem Content="Hello"/>
+                    <ListBoxItem Content="Hello"/>
+                    <ListBoxItem Content="Hello"/>
+                    <ListBoxItem Content="Hello"/>
                 </ListBox.Items>
             </ListBox>
         </Grid>

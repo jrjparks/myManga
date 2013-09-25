@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata>
+    <id>SmartThreadPool.dll</id>
+    <version>2.2.3</version>
+    <title>SmartThreadPool.dll</title>
+    <authors>Ami Bar</authors>
+    <owners>Ami Bar</owners>
+    <licenseUrl>http://opensource.org/licenses/ms-pl.html</licenseUrl>
+    <projectUrl>https://github.com/amibar/SmartThreadPool</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Smart Thread Pool, implemented in .NET</description>
+    <releaseNotes>Added option to set MaxStackSize of threads.</releaseNotes>
+    <copyright>Copyright 2012</copyright>
+    <language />
+    <tags>SmartThreadPool Thread Pool .NET</tags>
+  </metadata>
+</package>

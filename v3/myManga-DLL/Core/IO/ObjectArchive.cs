@@ -23,40 +23,11 @@ namespace Core.IO
         public static Boolean SaveToArchive<T>(this T Object, String ArchiveFilePath, String FileName, ReadOptions ZipReadOption, SaveType SaveType = SaveType.Binary) where T : class
         {
             if (Object != null)
-            {
-                if (ArchiveFilePath.Contains('\\'))
-                    Path.GetDirectoryName(ArchiveFilePath).SafeFolder();
-                Boolean FileExists = (File.Exists(ArchiveFilePath) && ZipFile.IsZipFile(ArchiveFilePath));
-                String FileIOPath = Path.GetTempFileName();
-                try
-                {
-                    using (ZipFile zipFile = FileExists ? ZipFile.Read(ArchiveFilePath, ZipReadOption) : new ZipFile(Encoding.UTF8))
-                    {
-                        DateTime dt = DateTime.Now;
-                        zipFile.Comment = String.Format("{0} - {1}", dt.ToLongDateString(), dt.ToLongTimeString());
-                        zipFile.CompressionLevel = Ionic.Zlib.CompressionLevel.BestCompression;
-                        zipFile.CompressionMethod = CompressionMethod.Deflate;
-
-                        zipFile.UpdateEntry(FileName, Object.Serialize(SaveType));
-
-                        zipFile.Save(FileIOPath);
-                        File.Copy(FileIOPath, ArchiveFilePath, true);
-                        File.Delete(FileIOPath);
-                    }
-                    return true;
-                }
-                catch (Exception ex)
-                {
-                    if (File.Exists(FileIOPath))
-                        File.Delete(FileIOPath);
-                    GC.Collect();
-                    throw new Exception(String.Format("Error saving archive from {0} to {1}.", Object.ToString(), ArchiveFilePath), ex);
-                }
-            }
+                return Object.Serialize(SaveType).SaveStreamToArchive(ArchiveFilePath, FileName, ZipReadOption);
             return false;
         }
 
-        public static Boolean SaveToArchive(this Stream Stream, String ArchiveFilePath, String FileName, ReadOptions ZipReadOption, SaveType SaveType = SaveType.Binary)
+        public static Boolean SaveStreamToArchive(this Stream Stream, String ArchiveFilePath, String FileName, ReadOptions ZipReadOption)
         {
             if (Stream != null && Stream.CanRead && Stream.CanSeek)
             {

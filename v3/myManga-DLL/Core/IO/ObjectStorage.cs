@@ -19,33 +19,7 @@ namespace Core.IO
         public static Boolean SaveObject<T>(this T Object, String FilePath, SaveType SaveType = SaveType.Binary) where T : class
         {
             if (Object != null)
-            {
-                if (FilePath.Contains('\\'))
-                    Path.GetDirectoryName(FilePath).SafeFolder();
-                String FileIOPath = Path.GetTempFileName();
-                try
-                {
-                    using (Stream FileIOStream = new FileInfo(FileIOPath).OpenWrite())
-                    {
-                        using (Stream tmpStream = Object.Serialize(SaveType))
-                        {
-                            tmpStream.Seek(0, SeekOrigin.Begin);
-                            tmpStream.CopyTo(FileIOStream);
-                        }
-                    }
-                    File.Copy(FileIOPath, FilePath, true);
-                    File.Delete(FileIOPath);
-                    GC.Collect();
-                    return true;
-                }
-                catch (Exception ex)
-                {
-                    if (File.Exists(FileIOPath))
-                        File.Delete(FileIOPath);
-                    GC.Collect();
-                    throw new Exception(String.Format("Error saving data from {0}.", Object.ToString()), ex);
-                }
-            }
+                return Object.Serialize(SaveType).SaveStream(FilePath);
             return false;
         }
 
@@ -65,6 +39,9 @@ namespace Core.IO
                         Stream.CopyTo(FileIOStream);
                     }
                     Stream.Seek(origPos, SeekOrigin.Begin);
+                    File.Copy(FileIOPath, FilePath
+                        , true);
+                    File.Delete(FileIOPath);
                 }
                 catch (Exception ex)
                 {

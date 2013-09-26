@@ -4,7 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:p="http://schemas.microsoft.com/netfx/2007/xaml/presentation"
     xmlns:shell="http://schemas.microsoft.com/winfx/2006/xaml/presentation/shell"
-    xmlns:local="clr-namespace:myManga_App"
+    xmlns:button="clr-namespace:myManga_App.Resources.Theme.Buttons"
     xmlns:ViewModels="clr-namespace:myManga_App.ViewModels"
     xmlns:Properties="clr-namespace:myManga_App.Properties"
     Title="{DynamicResource AppTitle}"
@@ -13,8 +13,8 @@
     Height="350"
     Width="525"
     Icon="/myManga;component/Resources/Icon.ico"
-    Style="{DynamicResource myMangaWindowTriggers}"
-    SnapsToDevicePixels="True">
+    SnapsToDevicePixels="True"
+    Style="{DynamicResource myMangaWindow}">
     <Window.CommandBindings>
         <CommandBinding
             Command="{x:Static SystemCommands.CloseWindowCommand}"
@@ -39,11 +39,17 @@
         <ViewModels:MainViewModel/>
     </Window.DataContext>
     <Window.Resources>
-        <ResourceDictionary Source="/myManga;component/Resources/ViewModel-View-Link.xaml"/>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/myManga;component/Themes/WindowBase.xaml"/>
+                <ResourceDictionary Source="/myManga;component/Themes/CoreResourceDictionary.xaml"/>
+                <ResourceDictionary Source="/myManga;component/Resources/Localization/Dictionary_en-US.xaml"/>
+                <ResourceDictionary Source="/myManga;component/Resources/ViewModel-View-Link.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
     </Window.Resources>
     <Grid>
         <ContentPresenter Content="{Binding HomeViewModel}" Margin="5,0,5,5"/>
-        
         <StackPanel
             x:Name="Watermark"
             Grid.ZIndex="99"

@@ -125,6 +125,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Themes\CoreResourceDictionary.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Themes\FontAwesomeIcons.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

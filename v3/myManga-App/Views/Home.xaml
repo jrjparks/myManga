@@ -10,7 +10,19 @@
     d:DesignHeight="400"
     d:DesignWidth="600">
     <UserControl.Resources>
-        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/myManga;component/Resources/Localization/Dictionary_en-US.xaml"/>
+                <ResourceDictionary Source="/myManga;component/Themes/CoreResourceDictionary.xaml"/>
+                <ResourceDictionary Source="/myManga;component/Themes/Button/MetroButton.xaml"/>
+
+                <ResourceDictionary Source="/myManga;component/Themes/ListBox/ListBoxes.xaml"/>
+                <ResourceDictionary Source="/myManga;component/Themes/ListBox/ListBoxItems.xaml"/>
+
+                <ResourceDictionary Source="/myManga;component/Themes/ProgressBar/Spinner.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+            <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+        </ResourceDictionary>
     </UserControl.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
@@ -81,11 +93,20 @@
         </Grid>
         <Grid Grid.Column="2">
             <StackPanel Orientation="Vertical" HorizontalAlignment="Left" VerticalAlignment="Top" TextElement.FontSize="20">
-                <button:MetroButton Content="Download" Tag="{DynamicResource icon-cloud-download}" Style="{DynamicResource MetroButtonWithIcon}"/>
-                <button:MetroButton Content="Bookmark" Tag="{DynamicResource icon-bookmark}" Style="{DynamicResource MetroButtonWithIcon}"/>
-                <button:MetroButton Content="Home" Tag="{DynamicResource icon-home}" Style="{DynamicResource MetroButtonWithIcon}"/>
-                <button:MetroButton Content="Hello"/>
-                <ProgressBar Style="{DynamicResource Spinner}" Width="32" Height="Auto"/>
+                <button:MetroButton FontFamily="{DynamicResource FontAwesome}">
+                    <button:MetroButton.Content>
+                        <MultiBinding StringFormat="Start {0} Download" Mode="OneWay" FallbackValue="{StaticResource icon-cloud-download}">
+                            <MultiBinding.Bindings>
+                                <Binding Source="{StaticResource icon-cloud-download}" FallbackValue="{StaticResource icon-apple}"/>
+                            </MultiBinding.Bindings>
+                        </MultiBinding>
+                    </button:MetroButton.Content>
+                </button:MetroButton>
+                <button:MetroButton FontFamily="{DynamicResource FontAwesome}" Content="{DynamicResource icon-asterisk}"/>
+                <ProgressBar 
+                    Style="{DynamicResource Spinner}" 
+                    Width="32"
+                    Height="32"/>
                 <Border BorderBrush="{DynamicResource window-theme-primary}" BorderThickness="3" Height="96" Width="256">
                     <Grid>
                         <Grid x:Name="CornerTick" HorizontalAlignment="Right" VerticalAlignment="Top">

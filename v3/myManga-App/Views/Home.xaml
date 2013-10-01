@@ -8,7 +8,9 @@
     xmlns:button="clr-namespace:myManga_App.Resources.Theme.Buttons"
     mc:Ignorable="d" 
     d:DesignHeight="400"
-    d:DesignWidth="600">
+    d:DesignWidth="600" 
+    Foreground="{StaticResource text-dark}"
+    xmlns:mangaObjects="clr-namespace:myMangaSiteExtension.Objects;assembly=myMangaSiteExtension">
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -70,24 +72,7 @@
                 ItemContainerStyle="{DynamicResource HomeListBoxItem}" 
                 Visibility="{Binding HasItems, Converter={StaticResource BooleanToVisibilityConverter}, RelativeSource={RelativeSource Self}}">
                 <ListBox.Items>
-                    <ListBoxItem Content="Hello"/>
-                    <ListBoxItem Content="Hello"/>
-                    <ListBoxItem Content="Hello"/>
-                    <ListBoxItem Content="Hello"/>
-                    <ListBoxItem Content="Hello"/>
-                    <ListBoxItem Content="Hello"/>
-                    <ListBoxItem Content="Hello"/>
-                    <ListBoxItem Content="Hello"/>
-                    <ListBoxItem Content="Hello"/>
-                    <ListBoxItem Content="Hello"/>
-                    <ListBoxItem Content="Hello"/>
-                    <ListBoxItem Content="Hello"/>
-                    <ListBoxItem Content="Hello"/>
-                    <ListBoxItem Content="Hello"/>
-                    <ListBoxItem Content="Hello"/>
-                    <ListBoxItem Content="Hello"/>
-                    <ListBoxItem Content="Hello"/>
-                    <ListBoxItem Content="Hello"/>
+                    <mangaObjects:MangaObject Name="One Piece"/>
                 </ListBox.Items>
             </ListBox>
         </Grid>
@@ -95,11 +80,13 @@
             <StackPanel Orientation="Vertical" HorizontalAlignment="Left" VerticalAlignment="Top" TextElement.FontSize="20">
                 <button:MetroButton FontFamily="{DynamicResource FontAwesome}">
                     <button:MetroButton.Content>
-                        <MultiBinding StringFormat="Start {0} Download" Mode="OneWay" FallbackValue="{StaticResource icon-cloud-download}">
-                            <MultiBinding.Bindings>
-                                <Binding Source="{StaticResource icon-cloud-download}" FallbackValue="{StaticResource icon-apple}"/>
-                            </MultiBinding.Bindings>
-                        </MultiBinding>
+                        <TextBlock>
+                            <TextBlock.Text>
+                                <MultiBinding StringFormat="{}{0} Test" Mode="OneWay">
+                                    <Binding Source="{StaticResource icon-adn}"/>
+                                </MultiBinding>
+                            </TextBlock.Text>
+                        </TextBlock>
                     </button:MetroButton.Content>
                 </button:MetroButton>
                 <button:MetroButton FontFamily="{DynamicResource FontAwesome}" Content="{DynamicResource icon-asterisk}"/>
@@ -161,13 +148,20 @@
                                 </Rectangle.Fill>
                             </Rectangle>
                             <TextBlock
-                                Text="{DynamicResource icon-star-empty}"
                                 FontFamily="{DynamicResource FontAwesome}" 
                                 FontSize="14" 
                                 Foreground="{DynamicResource window-background}" 
                                 Grid.Column="1"
                                 Grid.Row="1" 
-                                Margin="0,-1,-1,0"/>
+                                Margin="0,-1,-1,0">
+                                <TextBlock.Text>
+                                    <MultiBinding StringFormat="{}{0}{1}{2}">
+                                        <Binding Source="{StaticResource icon-star-empty}"/>
+                                        <Binding Source="{StaticResource icon-star-half-empty}"/>
+                                        <Binding Source="{StaticResource icon-star}"/>
+                                    </MultiBinding>
+                                </TextBlock.Text>
+                            </TextBlock>
                         </Grid>
                     </Grid>
                 </Border>

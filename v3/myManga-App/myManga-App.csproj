@@ -99,7 +99,10 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="IO\File System\SmartFileAccess.cs" />
+    <Compile Include="IO\Network\SmartChapterDownload.cs" />
+    <Compile Include="IO\Network\SmartMangaDownload.cs" />
     <Compile Include="Themes\Button\MetroButton.cs" />
+    <Compile Include="Themes\Window\myMangaWindow.cs" />
     <Compile Include="ViewModels\HomeViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="Views\Home.xaml.cs">
@@ -157,6 +160,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Themes\Window\myMangaWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\Home.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -182,6 +189,10 @@
     </EmbeddedResource>
     <None Include="app.config" />
     <None Include="packages.config" />
+    <None Include="Properties\DataSources\myMangaSiteExtension.Collections.MangaObjectCollection.datasource" />
+    <None Include="Properties\DataSources\myMangaSiteExtension.Objects.ChapterObject.datasource" />
+    <None Include="Properties\DataSources\myMangaSiteExtension.Objects.MangaObject.datasource" />
+    <None Include="Properties\DataSources\myManga_App.ViewModels.HomeViewModel.datasource" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -225,7 +236,6 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="IO\Network\" />
     <Folder Include="Themes\Slider\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

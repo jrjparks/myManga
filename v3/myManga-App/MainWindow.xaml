@@ -1,10 +1,9 @@
-﻿<Window 
+﻿<window:myMangaWindow 
     x:Class="myManga_App.MainWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:p="http://schemas.microsoft.com/netfx/2007/xaml/presentation"
-    xmlns:shell="http://schemas.microsoft.com/winfx/2006/xaml/presentation/shell"
-    xmlns:button="clr-namespace:myManga_App.Resources.Theme.Buttons"
+    xmlns:window="clr-namespace:myManga_App.Themes.Window"
     xmlns:ViewModels="clr-namespace:myManga_App.ViewModels"
     xmlns:Properties="clr-namespace:myManga_App.Properties"
     Title="{DynamicResource AppTitle}"
@@ -13,35 +12,15 @@
     Height="350"
     Width="525"
     Icon="/myManga;component/Resources/Icon.ico"
-    SnapsToDevicePixels="True"
+    SnapsToDevicePixels="True" 
     Style="{DynamicResource myMangaWindow}">
-    <Window.CommandBindings>
-        <CommandBinding
-            Command="{x:Static SystemCommands.CloseWindowCommand}"
-            Executed="_OnSystemCommandCloseWindow"/>
-        <CommandBinding 
-            Command="{x:Static SystemCommands.MaximizeWindowCommand}"
-            Executed="_OnSystemCommandMaximizeWindow"
-            CanExecute="_OnSystemCommandCanResizeWindow"/>
-        <CommandBinding 
-            Command="{x:Static SystemCommands.RestoreWindowCommand}"
-            Executed="_OnSystemCommandRestoreWindow"
-            CanExecute="_OnSystemCommandCanResizeWindow"/>
-        <CommandBinding
-            Command="{x:Static SystemCommands.MinimizeWindowCommand}"
-            Executed="_OnSystemCommandMinimizeWindow"
-            CanExecute="_OnSystemCommandCanMinimizeWindow"/>
-        <CommandBinding
-            Command="{x:Static SystemCommands.ShowSystemMenuCommand}"
-            Executed="_OnSystemCommandShowSystemMenu"/>
-    </Window.CommandBindings>
     <Window.DataContext>
         <ViewModels:MainViewModel/>
     </Window.DataContext>
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="/myManga;component/Themes/WindowBase.xaml"/>
+                <ResourceDictionary Source="/myManga;component/Themes/Window/myMangaWindow.xaml"/>
                 <ResourceDictionary Source="/myManga;component/Themes/CoreResourceDictionary.xaml"/>
                 <ResourceDictionary Source="/myManga;component/Resources/Localization/Dictionary_en-US.xaml"/>
                 <ResourceDictionary Source="/myManga;component/Resources/ViewModel-View-Link.xaml"/>
@@ -93,4 +72,4 @@
             </StackPanel>
         </StackPanel>
     </Grid>
-</Window>
+</window:myMangaWindow>

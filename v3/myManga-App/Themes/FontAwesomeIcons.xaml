@@ -8,6 +8,10 @@
     <Brush x:Key="icon-dark">#333333</Brush>
     <Border x:Key="icon-border" BorderThickness="1px" BorderBrush="{DynamicResource icon-muted}"></Border>
 
+    <Style x:Key="FontAwesomeStyle">
+        <Setter Property="TextElement.FontFamily" Value="{StaticResource FontAwesome}"/>
+    </Style>
+
     <FontFamily x:Key="FontAwesome">/myManga;component/Resources/Font/#FontAwesome</FontFamily>
 
     <system:String x:Key="icon-glass">&#xf000;</system:String>

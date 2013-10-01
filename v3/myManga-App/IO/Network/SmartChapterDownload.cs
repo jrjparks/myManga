@@ -1,20 +1,21 @@
-﻿using System;
-using System.Collections;
+﻿using Amib.Threading;
+using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace myManga_App.IO.File_System
+namespace myManga_App.IO.Network
 {
-    public class SmartFileAccess
+    public class SmartChapterDownload
     {
+        protected readonly SmartThreadPool smartThreadPool;
         protected readonly SynchronizationContext synchronizationContext;
 
-        public SmartFileAccess()
+        public SmartChapterDownload()
         {
+            smartThreadPool = new SmartThreadPool();
             synchronizationContext = SynchronizationContext.Current;
         }
     }

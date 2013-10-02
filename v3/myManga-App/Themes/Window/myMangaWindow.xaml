@@ -66,9 +66,9 @@
                                     TextElement.FontWeight="Thin"
                                     TextElement.FontSize="16">
                                     <core:BrightnessControl 
-                                        Margin="5,5"
+                                        Margin="5,2"
                                         VerticalAlignment="Center"
-                                        Width="200"
+                                        Width="100"
                                         WindowChrome.IsHitTestVisibleInChrome="True"
                                         Focusable="False"/>
                                     <!-- Minimize button content 0 -->

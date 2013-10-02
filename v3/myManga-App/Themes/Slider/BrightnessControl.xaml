@@ -28,42 +28,38 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type Thumb}">
-                    <Ellipse x:Name="Thumb" StrokeThickness="1" Stroke="{DynamicResource window-foreground}">
-                        <Ellipse.Fill>
-                            <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
-                                <LinearGradientBrush.GradientStops>
-                                    <GradientStop Offset="0" Color="{DynamicResource window-theme-secondary-color}"/>
-                                    <GradientStop Offset="1" Color="{DynamicResource window-theme-secondary-color}"/>
-                                </LinearGradientBrush.GradientStops>
-                            </LinearGradientBrush>
-                        </Ellipse.Fill>
-                        <VisualStateManager.VisualStateGroups>
-                            <VisualStateGroup x:Name="CommonStates">
-                                <VisualState x:Name="Normal">
-                                    <Storyboard Storyboard.TargetName="Thumb">
-                                        <ColorAnimation Storyboard.TargetProperty="(Shape.Fill).(GradientBrush.GradientStops)[0].(GradientStop.Color)" To="{DynamicResource window-theme-secondary-color}"/>
-                                    </Storyboard>
-                                </VisualState>
-                                <VisualState x:Name="MouseOver">
-                                    <Storyboard Storyboard.TargetName="Thumb">
-                                        <ColorAnimation Storyboard.TargetProperty="(Shape.Fill).(GradientBrush.GradientStops)[0].(GradientStop.Color)" To="{DynamicResource window-theme-primary-color}"/>
-                                    </Storyboard>
-                                </VisualState>
-                                <VisualState x:Name="Pressed">
-                                    <Storyboard Storyboard.TargetName="Thumb">
-                                        <ColorAnimation Storyboard.TargetProperty="(Shape.Fill).(GradientBrush.GradientStops)[0].(GradientStop.Color)" To="{DynamicResource window-theme-primary-color}"/>
-                                        <ColorAnimation Storyboard.TargetProperty="(Shape.Fill).(GradientBrush.GradientStops)[1].(GradientStop.Color)" To="{DynamicResource window-theme-primary-color}"/>
-                                    </Storyboard>
-                                </VisualState>
-                                <VisualState x:Name="Disabled">
-                                    <Storyboard Storyboard.TargetName="Thumb">
-                                        <ColorAnimation Storyboard.TargetProperty="(Shape.Fill).(GradientBrush.GradientStops)[0].(GradientStop.Color)" To="{DynamicResource window-foreground-disabled-color}"/>
-                                        <ColorAnimation Storyboard.TargetProperty="(Shape.Fill).(GradientBrush.GradientStops)[1].(GradientStop.Color)" To="{DynamicResource window-foreground-disabled-color}"/>
-                                    </Storyboard>
-                                </VisualState>
-                            </VisualStateGroup>
-                        </VisualStateManager.VisualStateGroups>
-                    </Ellipse>
+                    <ControlTemplate.Resources>
+                        <Color x:Key="c1"/>
+                        <RadialGradientBrush x:Key="RadGradOut">
+                            <GradientStop Offset="0" Color="{DynamicResource window-theme-primary-color}"/>
+                            <GradientStop Offset="1" Color="{DynamicResource window-theme-secondary-color}"/>
+                        </RadialGradientBrush>
+                        <RadialGradientBrush x:Key="RadGradIn">
+                            <GradientStop Offset="0" Color="{DynamicResource window-theme-secondary-color}"/>
+                            <GradientStop Offset="1" Color="{DynamicResource window-theme-primary-color}"/>
+                        </RadialGradientBrush>
+                    </ControlTemplate.Resources>
+                    <Border 
+                        x:Name="Thumb">
+                        <Grid>
+                            <Ellipse x:Name="IconBackground" Margin="3" Stroke="Black" StrokeThickness="1" Fill="White"/>
+                            <Ellipse x:Name="IconCenter" Margin="6" Fill="Black"/>
+                            <Viewbox VerticalAlignment="Stretch" HorizontalAlignment="Stretch" RenderTransformOrigin="0.5, 0.5">
+                                <TextBlock
+                                    x:Name="Icon"
+                                    FontFamily="{DynamicResource FontAwesome}"
+                                    Text="{StaticResource icon-sun}"/>
+                            </Viewbox>
+                        </Grid>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                        </Trigger>
+                        <Trigger Property="IsDragging" Value="True">
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                        </Trigger>
+                    </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
@@ -99,7 +95,7 @@
                       Command="Slider.DecreaseLarge"/>
                 </Track.DecreaseRepeatButton>
                 <Track.Thumb>
-                    <Thumb Style="{StaticResource BrightnessControlThumb}" Height="{TemplateBinding ActualHeight}" Width="{TemplateBinding ActualHeight}"/>
+                    <Thumb Style="{StaticResource BrightnessControlThumb}"/>
                 </Track.Thumb>
                 <Track.IncreaseRepeatButton>
                     <RepeatButton Style="{StaticResource BrightnessControlRepeatButton}"
@@ -159,7 +155,7 @@
                       Command="Slider.DecreaseLarge"/>
                 </Track.DecreaseRepeatButton>
                 <Track.Thumb>
-                    <Thumb Style="{StaticResource BrightnessControlThumb}" Height="{TemplateBinding ActualWidth}" Width="{TemplateBinding ActualWidth}"/>
+                    <Thumb Style="{StaticResource BrightnessControlThumb}"/>
                 </Track.Thumb>
                 <Track.IncreaseRepeatButton>
                     <RepeatButton Style="{StaticResource BrightnessControlRepeatButton}"

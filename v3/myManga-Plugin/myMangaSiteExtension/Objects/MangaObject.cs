@@ -57,6 +57,9 @@ namespace myMangaSiteExtension.Objects
 
         [NonSerialized, XmlIgnore, EditorBrowsable(EditorBrowsableState.Never)]
         protected List<ChapterObject> chapters;
+
+        [NonSerialized, XmlIgnore, EditorBrowsable(EditorBrowsableState.Never)]
+        protected DateTime released = DateTime.MinValue;
         #endregion
 
         #region Public
@@ -164,6 +167,17 @@ namespace myMangaSiteExtension.Objects
             {
                 OnPropertyChanging();
                 chapters = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public DateTime Released
+        {
+            get { return released; }
+            set
+            {
+                OnPropertyChanging();
+                released = value;
                 OnPropertyChanged();
             }
         }

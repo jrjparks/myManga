@@ -76,7 +76,7 @@
                 Visibility="{Binding HasItems, Converter={StaticResource BooleanToVisibilityConverter}, RelativeSource={RelativeSource Self}}" 
                 ScrollViewer.HorizontalScrollBarVisibility="Disabled">
                 <ListBox.Items>
-                    <mangaObjects:MangaObject Name="One Piece">
+                    <mangaObjects:MangaObject Name="One Piece" Released="12/24/1997">
                         <mangaObjects:MangaObject.Genres>
                             <system:String>Genre 1</system:String>
                             <system:String>Genre 2</system:String>
@@ -95,7 +95,7 @@
                             <mangaObjects:ChapterObject Chapter="2"/>
                         </mangaObjects:MangaObject.Chapters>
                     </mangaObjects:MangaObject>
-                    <mangaObjects:MangaObject Name="Tower of God">
+                    <mangaObjects:MangaObject Name="Tower of God" Released="1/1/2010">
                         <mangaObjects:MangaObject.Genres>
                             <system:String>Genre 1</system:String>
                             <system:String>Genre 2</system:String>
@@ -151,7 +151,7 @@
                     </Border>
                     <StackPanel Grid.Row="1" Grid.Column="1">
                         <TextBlock Text="Released:" FontWeight="Bold" Foreground="{DynamicResource text-muted}"/>
-                        <TextBlock Text="{Binding Released, FallbackValue=1600}" FontWeight="Bold" Foreground="{DynamicResource text-muted}"/>
+                        <TextBlock Text="{Binding Released, StringFormat=d}" FontWeight="Bold" Foreground="{DynamicResource text-muted}"/>
                     </StackPanel>
                     <StackPanel Grid.Row="2" Grid.Column="1">
                         <TextBlock Text="Author:" FontWeight="Bold" Foreground="{DynamicResource text-muted}"/>

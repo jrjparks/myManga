@@ -36,12 +36,16 @@ namespace myMangaSiteExtension.Objects
         #region Protected
         [NonSerialized, XmlIgnore, EditorBrowsable(EditorBrowsableState.Never)]
         protected String name;
+        [NonSerialized, XmlIgnore, EditorBrowsable(EditorBrowsableState.Never)]
+        protected Int32 chapter;
+        [NonSerialized, XmlIgnore, EditorBrowsable(EditorBrowsableState.Never)]
+        protected Int32 subchapter;
 
         [NonSerialized, XmlIgnore, EditorBrowsable(EditorBrowsableState.Never)]
         protected List<Core.IO.KeyValuePair<String, String>> locations;
 
         [NonSerialized, XmlIgnore, EditorBrowsable(EditorBrowsableState.Never)]
-        protected PageObjectCollection pages;
+        protected List<PageObject> pages;
         #endregion
 
         #region Public
@@ -60,6 +64,30 @@ namespace myMangaSiteExtension.Objects
             }
         }
 
+        [XmlAttribute]
+        public Int32 Chapter
+        {
+            get { return chapter; }
+            set
+            {
+                OnPropertyChanging();
+                chapter = value;
+                OnPropertyChanged();
+            }
+        }
+
+        [XmlAttribute]
+        public Int32 SubChapter
+        {
+            get { return subchapter; }
+            set
+            {
+                OnPropertyChanging();
+                subchapter = value;
+                OnPropertyChanged();
+            }
+        }
+
         [XmlArray, XmlArrayItem("Location")]
         public List<Core.IO.KeyValuePair<String, String>> Locations
         {
@@ -73,9 +101,9 @@ namespace myMangaSiteExtension.Objects
         }
 
         [XmlArray, XmlArrayItem]
-        public PageObjectCollection Pages
+        public List<PageObject> Pages
         {
-            get { return pages ?? (pages = new PageObjectCollection()); }
+            get { return pages ?? (pages = new List<PageObject>()); }
             set
             {
                 OnPropertyChanging();

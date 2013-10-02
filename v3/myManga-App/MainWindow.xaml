@@ -9,8 +9,10 @@
     Title="{DynamicResource AppTitle}"
     WindowState="{Binding Source={x:Static Properties:Settings.Default}, Path=WindowState, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
     x:Name="myMangaMainWindow"
-    Height="350"
-    Width="525"
+    Height="480"
+    Width="640"
+    MinHeight="480"
+    MinWidth="640"
     Icon="/myManga;component/Resources/Icon.ico"
     SnapsToDevicePixels="True" 
     Style="{DynamicResource myMangaWindow}">
@@ -58,7 +60,7 @@
                 </EventTrigger>
             </StackPanel.Triggers>
             <StackPanel.Effect>
-                <DropShadowEffect Color="{DynamicResource window-theme-primary-color}"/>
+                <DropShadowEffect x:Name="DropShadow" Color="{DynamicResource window-theme-primary-color}"/>
             </StackPanel.Effect>
             <StackPanel HorizontalAlignment="Center">
                 <Grid Margin="5,0,0,-20" TextElement.FontSize="16" TextElement.FontWeight="Bold">

@@ -1,9 +1,12 @@
 ﻿<ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:converters="clr-namespace:myManga_App.Converters">
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="/myManga;component/Themes/CoreResourceDictionary.xaml"/>
     </ResourceDictionary.MergedDictionaries>
+
+    <converters:StringArrayToCSV x:Key="StringArrayToCSV"/>
 
     <Style TargetType="{x:Type ListBoxItem}">
         <Setter Property="BorderBrush" Value="{DynamicResource window-theme-primary}"/>
@@ -80,7 +83,7 @@
         </Setter>
     </Style>
 
-    <Style TargetType="{x:Type ListBoxItem}" BasedOn="{StaticResource {x:Type ListBoxItem}}" x:Key="HomeListBoxItem">
+    <Style TargetType="{x:Type ListBoxItem}" BasedOn="{StaticResource {x:Type ListBoxItem}}" x:Key="HomeMangaListBoxItem">
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type ListBoxItem}">
@@ -91,24 +94,23 @@
                         Padding="{TemplateBinding BorderThickness}"
                         Background="{TemplateBinding Background}"
                         TextElement.Foreground="{TemplateBinding Foreground}">
-                        <Grid>
-                            <Grid
-                                x:Name="Content"
-                                Margin="{TemplateBinding Padding}"
-                                SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
-                                HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                                TextBlock.TextAlignment="Left">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto"/>
-                                    <ColumnDefinition/>
-                                </Grid.ColumnDefinitions>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition/>
-                                    <RowDefinition/>
-                                    <RowDefinition/>
-                                </Grid.RowDefinitions>
-                                <Border 
+                        <Grid
+                            x:Name="Content"
+                            Margin="{TemplateBinding Padding}"
+                            SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                            TextBlock.TextAlignment="Left">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                            </Grid.RowDefinitions>
+                            <Border 
                                     BorderBrush="DarkGray"
                                     BorderThickness="1"
                                     Grid.Column="0" 
@@ -116,49 +118,65 @@
                                     Margin="6,2" 
                                     Width="48" 
                                     Height="72">
-                                    <Image/>
-                                </Border>
-                                <TextBlock Grid.Column="1" Grid.Row="0" VerticalAlignment="Center" Foreground="{StaticResource text-dark}" FontWeight="Bold" FontSize="14" TextTrimming="CharacterEllipsis" Text="{Binding Name}"/>
-                                <TextBlock Grid.Column="1" Grid.Row="1" VerticalAlignment="Center" Foreground="{StaticResource text-muted}" TextTrimming="CharacterEllipsis" Text="TestLocation"/>
-                                <TextBlock Grid.Column="1" Grid.Row="2" VerticalAlignment="Center" Foreground="{StaticResource text-muted}" TextTrimming="CharacterEllipsis" Text="TestGenre"/>
-                            </Grid>
-                            <Grid x:Name="TRCornerTick" HorizontalAlignment="Right" VerticalAlignment="Top" Visibility="Collapsed">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="*"/>
-                                </Grid.ColumnDefinitions>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="*"/>
-                                    <RowDefinition Height="*"/>
-                                </Grid.RowDefinitions>
-                                <Rectangle Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"/>
-                                <Rectangle Height="{Binding ActualWidth, Mode=OneWay, RelativeSource={RelativeSource Self}}" Grid.Row="1" Grid.Column="1"/>
-                                <Rectangle 
-                                Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}" 
-                                Grid.RowSpan="2" 
-                                Grid.ColumnSpan="2">
-                                    <Rectangle.Fill>
-                                        <LinearGradientBrush EndPoint="0,1" StartPoint="1,0">
-                                            <GradientStop Color="{DynamicResource window-theme-primary-color}" Offset="0.5"/>
-                                            <GradientStop Offset="0.5"/>
-                                        </LinearGradientBrush>
-                                    </Rectangle.Fill>
-                                </Rectangle>
-                                <TextBlock
-                                Text="{DynamicResource icon-ok}"
-                                FontFamily="{DynamicResource FontAwesome}" 
-                                FontSize="14" 
-                                Foreground="{DynamicResource window-background}" 
-                                Grid.Column="1"
-                                Margin="-1,0,0,-1"/>
-                            </Grid>
+                                <Image/>
+                            </Border>
+                            <TextBlock Grid.Column="1" Grid.Row="0" VerticalAlignment="Center" Foreground="{StaticResource text-dark}" FontWeight="Bold" FontSize="14" TextTrimming="CharacterEllipsis" Text="{Binding Name}"/>
+                            <TextBlock Grid.Column="1" Grid.Row="1" VerticalAlignment="Center" Foreground="{StaticResource text-muted}" TextTrimming="CharacterEllipsis" Text="TestLocation"/>
+                            <TextBlock Grid.Column="1" Grid.Row="2" VerticalAlignment="Center" Foreground="{StaticResource text-muted}" TextTrimming="CharacterEllipsis" Text="{Binding Genres, Converter={StaticResource StringArrayToCSV}}"/>
                         </Grid>
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsSelected" Value="True">
                             <Setter TargetName="ItemBorder" Property="BorderThickness" Value="{Binding Path=BorderThickness, RelativeSource={RelativeSource AncestorType={x:Type ListBoxItem}}}"/>
                             <Setter TargetName="ItemBorder" Property="Padding" Value="0"/>
-                            <Setter TargetName="TRCornerTick" Property="Visibility" Value="Visible"/>
+                        </Trigger>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="ItemBorder" Property="Background" Value="{DynamicResource window-theme-secondary}"/>
+                            <Setter TargetName="ItemBorder" Property="TextElement.Foreground" Value="{DynamicResource window-theme-primary}"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="{x:Type ListBoxItem}" BasedOn="{StaticResource {x:Type ListBoxItem}}" x:Key="HomeChapterListBoxItem">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type ListBoxItem}">
+                    <Border
+                        x:Name="ItemBorder"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="0"
+                        Padding="{TemplateBinding BorderThickness}"
+                        Background="{TemplateBinding Background}"
+                        TextElement.Foreground="{TemplateBinding Foreground}">
+                        <Grid
+                            x:Name="Content"
+                            Margin="{TemplateBinding Padding}"
+                            SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                            TextBlock.TextAlignment="Left">
+                            <Grid.RowDefinitions>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                            </Grid.RowDefinitions>
+                            <TextBlock Grid.Row="0" VerticalAlignment="Center" Foreground="{StaticResource text-dark}" FontWeight="Bold" FontSize="14" TextTrimming="CharacterEllipsis">
+                                <TextBlock.Text>
+                                    <MultiBinding StringFormat="Chapter {0}.{1}">
+                                        <Binding Path="Chapter"/>
+                                        <Binding Path="SubChapter" FallbackValue="0"/>
+                                    </MultiBinding>
+                                </TextBlock.Text>
+                            </TextBlock>
+                            <TextBlock Grid.Row="1" VerticalAlignment="Center" Foreground="{StaticResource text-muted}" TextTrimming="CharacterEllipsis" Text="What should go here?"/>
+                        </Grid>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter TargetName="ItemBorder" Property="BorderThickness" Value="{Binding Path=BorderThickness, RelativeSource={RelativeSource AncestorType={x:Type ListBoxItem}}}"/>
+                            <Setter TargetName="ItemBorder" Property="Padding" Value="0"/>
                         </Trigger>
                         <Trigger Property="IsMouseOver" Value="True">
                             <Setter TargetName="ItemBorder" Property="Background" Value="{DynamicResource window-theme-secondary}"/>

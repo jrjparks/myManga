@@ -71,11 +71,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Attributes\ISiteExtension\ISiteExtensionAttribute.cs" />
-    <Compile Include="Collections\ChapterObjectCollection.cs" />
     <Compile Include="Collections\GenericCollection.cs" />
     <Compile Include="Collections\GenericEnumerator.cs" />
-    <Compile Include="Collections\MangaObjectCollection.cs" />
-    <Compile Include="Collections\PageObjectCollection.cs" />
     <Compile Include="Collections\ISiteExtensionCollection.cs" />
     <Compile Include="Enums\SupportedObjects.cs" />
     <Compile Include="Interfaces\ISiteExtension.cs" />

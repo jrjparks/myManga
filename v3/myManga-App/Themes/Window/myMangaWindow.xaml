@@ -5,8 +5,9 @@
     xmlns:button="clr-namespace:myManga_App.Resources.Theme.Buttons"
     xmlns:window="clr-namespace:myManga_App.Themes.Window">
     <ResourceDictionary.MergedDictionaries>
-        <ResourceDictionary Source="/myManga;component/Themes/Button/MetroButton.xaml"/>
         <ResourceDictionary Source="/myManga;component/Themes/CoreResourceDictionary.xaml"/>
+        <ResourceDictionary Source="/myManga;component/Themes/Button/MetroButton.xaml"/>
+        <ResourceDictionary Source="/myManga;component/Themes/Slider/BrightnessControl.xaml"/>
     </ResourceDictionary.MergedDictionaries>
 
     <Style TargetType="{x:Type window:myMangaWindow}" x:Key="myMangaWindow">
@@ -65,9 +66,9 @@
                                     TextElement.FontWeight="Thin"
                                     TextElement.FontSize="16">
                                     <core:BrightnessControl 
-                                        Margin="5,0"
+                                        Margin="5,5"
                                         VerticalAlignment="Center"
-                                        Width="100px"
+                                        Width="200"
                                         WindowChrome.IsHitTestVisibleInChrome="True"
                                         Focusable="False"/>
                                     <!-- Minimize button content 0 -->

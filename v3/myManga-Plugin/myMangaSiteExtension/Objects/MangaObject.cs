@@ -56,7 +56,7 @@ namespace myMangaSiteExtension.Objects
         protected List<String> covers;
 
         [NonSerialized, XmlIgnore, EditorBrowsable(EditorBrowsableState.Never)]
-        protected ChapterObjectCollection chapters;
+        protected List<ChapterObject> chapters;
         #endregion
 
         #region Public
@@ -157,9 +157,9 @@ namespace myMangaSiteExtension.Objects
         }
 
         [XmlArray, XmlArrayItem]
-        public ChapterObjectCollection Chapters
+        public List<ChapterObject> Chapters
         {
-            get { return chapters ?? (chapters = new ChapterObjectCollection()); }
+            get { return chapters ?? (chapters = new List<ChapterObject>()); }
             set
             {
                 OnPropertyChanging();

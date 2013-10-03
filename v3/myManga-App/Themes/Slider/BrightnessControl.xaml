@@ -28,25 +28,15 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type Thumb}">
-                    <ControlTemplate.Resources>
-                        <Color x:Key="c1"/>
-                        <RadialGradientBrush x:Key="RadGradOut">
-                            <GradientStop Offset="0" Color="{DynamicResource window-theme-primary-color}"/>
-                            <GradientStop Offset="1" Color="{DynamicResource window-theme-secondary-color}"/>
-                        </RadialGradientBrush>
-                        <RadialGradientBrush x:Key="RadGradIn">
-                            <GradientStop Offset="0" Color="{DynamicResource window-theme-secondary-color}"/>
-                            <GradientStop Offset="1" Color="{DynamicResource window-theme-primary-color}"/>
-                        </RadialGradientBrush>
-                    </ControlTemplate.Resources>
                     <Border 
                         x:Name="Thumb">
                         <Grid>
-                            <Ellipse x:Name="IconBackground" Margin="3" Stroke="Black" StrokeThickness="1" Fill="White"/>
-                            <Ellipse x:Name="IconCenter" Margin="6" Fill="Black"/>
-                            <Viewbox VerticalAlignment="Stretch" HorizontalAlignment="Stretch" RenderTransformOrigin="0.5, 0.5">
+                            <Ellipse x:Name="IconBackground" Stroke="Black" StrokeThickness="1" Fill="{DynamicResource window-theme-secondary}"/>
+                            <Viewbox VerticalAlignment="Stretch" HorizontalAlignment="Stretch" RenderTransformOrigin="0.5, 0.5" Margin="0,1,0,0">
                                 <TextBlock
                                     x:Name="Icon"
+                                    FontSize="16"
+                                    Foreground="{DynamicResource text-dark}"
                                     FontFamily="{DynamicResource FontAwesome}"
                                     Text="{StaticResource icon-sun}"/>
                             </Viewbox>
@@ -54,10 +44,16 @@
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Icon" Property="TextElement.Foreground" Value="{DynamicResource window-theme-primary}"/>
+                            <Setter TargetName="IconBackground" Property="Fill" Value="{DynamicResource window-theme-secondary}"/>
                         </Trigger>
                         <Trigger Property="IsDragging" Value="True">
+                            <Setter TargetName="Icon" Property="TextElement.Foreground" Value="{DynamicResource window-theme-secondary}"/>
+                            <Setter TargetName="IconBackground" Property="Fill" Value="{DynamicResource window-theme-primary}"/>
                         </Trigger>
                         <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="Icon" Property="TextElement.Foreground" Value="{DynamicResource window-foreground-disabled}"/>
+                            <Setter TargetName="IconBackground" Property="Fill" Value="{DynamicResource window-foreground-disabled}"/>
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -85,8 +81,14 @@
                 Height="4"
                 Grid.Row="1"
                 BorderThickness="1"
-                BorderBrush="{DynamicResource window-theme-primary}"
-                Background="{DynamicResource window-theme-secondary}"/>
+                BorderBrush="{DynamicResource window-theme-primary}">
+                <Border.Background>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                        <GradientStop Offset="0" Color="{DynamicResource window-theme-primary-color}"/>
+                        <GradientStop Offset="1" Color="{DynamicResource window-theme-secondary-color}"/>
+                    </LinearGradientBrush>
+                </Border.Background>
+            </Border>
             <Track 
                 Grid.Row="1" 
                 x:Name="PART_Track">

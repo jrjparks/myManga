@@ -31,28 +31,28 @@
                     <Border 
                         x:Name="Thumb">
                         <Grid>
-                            <Ellipse x:Name="IconBackground" Stroke="Black" StrokeThickness="1" Fill="{DynamicResource window-theme-secondary}"/>
-                            <Viewbox VerticalAlignment="Stretch" HorizontalAlignment="Stretch" RenderTransformOrigin="0.5, 0.5" Margin="0,1,0,0">
-                                <TextBlock
+                            <Ellipse x:Name="IconBackground" Stroke="{DynamicResource icon-dark}" StrokeThickness="1" Fill="{DynamicResource window-theme-secondary}"/>
+                            <Viewbox VerticalAlignment="Stretch" HorizontalAlignment="Stretch" RenderTransformOrigin="0,0" Margin="1">
+                                <Path
                                     x:Name="Icon"
-                                    FontSize="16"
-                                    Foreground="{DynamicResource text-dark}"
-                                    FontFamily="{DynamicResource FontAwesome}"
-                                    Text="{StaticResource icon-sun}"/>
+                                    Fill="{DynamicResource text-dark}"
+                                    Height="48"
+                                    Width="48"
+                                    Data="M 42.00,27.00c-1.659,0.00-3.00-1.344-3.00-3.00s 1.341-3.00, 3.00-3.00s 3.00,1.344, 3.00,3.00S 43.659,27.00, 42.00,27.00 z M 34.605,13.395c-1.173-1.173-1.173-3.072,0.00-4.245s 3.072-1.173, 4.245,0.00c 1.17,1.173, 1.17,3.072,0.00,4.245 C 37.68,14.565, 35.778,14.565, 34.605,13.395z M 24.00,36.00c-6.627,0.00-12.00-5.373-12.00-12.00s 5.373-12.00, 12.00-12.00s 12.00,5.373, 12.00,12.00S 30.627,36.00, 24.00,36.00z M 24.00,18.00 C 20.688,18.00, 18.00,20.688, 18.00,24.00s 2.688,6.00, 6.00,6.00s 6.00-2.688, 6.00-6.00S 27.312,18.00, 24.00,18.00z M 24.00,9.00C 22.341,9.00, 21.00,7.656, 21.00,6.00s 1.341-3.00, 3.00-3.00s 3.00,1.344, 3.00,3.00S 25.659,9.00, 24.00,9.00z M 9.153,13.395c-1.173-1.173-1.173-3.072,0.00-4.245c 1.17-1.173, 3.069-1.173, 4.242,0.00s 1.173,3.072,0.00,4.245 C 12.222,14.565, 10.32,14.565, 9.153,13.395z M 6.00,27.00C 4.341,27.00, 3.00,25.656, 3.00,24.00s 1.341-3.00, 3.00-3.00s 3.00,1.344, 3.00,3.00S 7.659,27.00, 6.00,27.00z M 13.395,34.605 c 1.173,1.173, 1.173,3.069,0.00,4.242s-3.072,1.173-4.242,0.00c-1.173-1.173-1.173-3.069,0.00-4.242C 10.32,33.435, 12.222,33.435, 13.395,34.605z M 24.00,39.00c 1.659,0.00, 3.00,1.341, 3.00,3.00s-1.341,3.00-3.00,3.00s-3.00-1.341-3.00-3.00S 22.341,39.00, 24.00,39.00z M 38.85,34.605c 1.17,1.173, 1.17,3.069,0.00,4.242 c-1.173,1.173-3.072,1.173-4.245,0.00s-1.173-3.069,0.00-4.242S 37.68,33.435, 38.85,34.605z"/>
                             </Viewbox>
                         </Grid>
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="Icon" Property="TextElement.Foreground" Value="{DynamicResource window-theme-primary}"/>
+                            <Setter TargetName="Icon" Property="Fill" Value="{DynamicResource window-theme-primary}"/>
                             <Setter TargetName="IconBackground" Property="Fill" Value="{DynamicResource window-theme-secondary}"/>
                         </Trigger>
                         <Trigger Property="IsDragging" Value="True">
-                            <Setter TargetName="Icon" Property="TextElement.Foreground" Value="{DynamicResource window-theme-secondary}"/>
+                            <Setter TargetName="Icon" Property="Fill" Value="{DynamicResource window-theme-secondary}"/>
                             <Setter TargetName="IconBackground" Property="Fill" Value="{DynamicResource window-theme-primary}"/>
                         </Trigger>
                         <Trigger Property="IsEnabled" Value="False">
-                            <Setter TargetName="Icon" Property="TextElement.Foreground" Value="{DynamicResource window-foreground-disabled}"/>
+                            <Setter TargetName="Icon" Property="Fill" Value="{DynamicResource window-foreground-disabled}"/>
                             <Setter TargetName="IconBackground" Property="Fill" Value="{DynamicResource window-foreground-disabled}"/>
                         </Trigger>
                     </ControlTemplate.Triggers>

@@ -74,8 +74,10 @@
                 ItemContainerStyle="{DynamicResource HomeMangaListBoxItem}" 
                 SelectedIndex="0"
                 Visibility="{Binding HasItems, Converter={StaticResource BooleanToVisibilityConverter}, RelativeSource={RelativeSource Self}}" 
-                ScrollViewer.HorizontalScrollBarVisibility="Disabled">
-                <ListBox.Items>
+                ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                ItemsSource="{Binding MangaList}"
+                SelectedItem="{Binding MangaObj}">
+                <!--<ListBox.Items>
                     <mangaObjects:MangaObject Name="One Piece" Released="12/24/1997">
                         <mangaObjects:MangaObject.Genres>
                             <system:String>Genre 1</system:String>
@@ -112,7 +114,7 @@
                             <mangaObjects:ChapterObject Chapter="2"/>
                         </mangaObjects:MangaObject.Chapters>
                     </mangaObjects:MangaObject>
-                </ListBox.Items>
+                </ListBox.Items>-->
             </ListBox>
         </Grid>
         <Grid
@@ -161,6 +163,13 @@
                         <TextBlock Text="Genre:" FontWeight="Bold" Foreground="{DynamicResource text-muted}"/>
                         <TextBlock Text="{Binding Genres, Converter={StaticResource StringArrayToCSV}}" FontWeight="Bold" Foreground="{DynamicResource text-muted}"/>
                     </StackPanel>
+                </Grid>
+                <Grid Grid.Row="1"></Grid>
+                <Grid Grid.Row="2">
+                    <TextBlock 
+                        Text="{Binding Description}"
+                        TextWrapping="WrapWithOverflow"
+                        TextTrimming="WordEllipsis"/>
                 </Grid>
             </Grid>
             <ListBox 

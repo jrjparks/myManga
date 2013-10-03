@@ -40,6 +40,9 @@ namespace myMangaSiteExtension.Objects
         protected List<String> alternate_names;
 
         [NonSerialized, XmlIgnore, EditorBrowsable(EditorBrowsableState.Never)]
+        protected String description;
+
+        [NonSerialized, XmlIgnore, EditorBrowsable(EditorBrowsableState.Never)]
         protected List<String> authors;
         [NonSerialized, XmlIgnore, EditorBrowsable(EditorBrowsableState.Never)]
         protected List<String> artists;
@@ -83,6 +86,18 @@ namespace myMangaSiteExtension.Objects
             {
                 OnPropertyChanging();
                 alternate_names = value;
+                OnPropertyChanged();
+            }
+        }
+
+        [XmlAttribute]
+        public String Description
+        {
+            get { return description; }
+            set
+            {
+                OnPropertyChanging();
+                description = value;
                 OnPropertyChanged();
             }
         }

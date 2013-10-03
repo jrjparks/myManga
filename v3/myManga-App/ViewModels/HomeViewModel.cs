@@ -1,6 +1,7 @@
 ﻿using myMangaSiteExtension.Objects;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -28,10 +29,22 @@ namespace myManga_App.ViewModels
         }
         #endregion
 
+        private ObservableCollection<MangaObject> mangaList;
+        public ObservableCollection<MangaObject> MangaList
+        {
+            get { return mangaList ?? (mangaList = new ObservableCollection<MangaObject>()); }
+            set
+            {
+                OnPropertyChanging();
+                mangaList = value;
+                OnPropertyChanged();
+            }
+        }
+
         private MangaObject mangaObj;
         public MangaObject MangaObj
         {
-            get { return mangaObj ?? (mangaObj = new MangaObject() { Name="Test Manga"}); }
+            get { return mangaObj; }
             set
             {
                 OnPropertyChanging();
@@ -40,7 +53,26 @@ namespace myManga_App.ViewModels
             }
         }
 
-        public HomeViewModel() { }
+        public HomeViewModel()
+        {
+#if DEBUG
+            MangaList.Add(new MangaObject()
+            {
+                Name = "One Piece",
+                Released = DateTime.Parse("12/24/1997"),
+                Authors = { "Oda", "Eiichiro" },
+                Artists = { "Oda", "Eiichiro" },
+                Genres = { "G1", "G2", "G3" },
+                Description = "Seeking to be the greatest pirate in the world, young Monkey D. Luffy, endowed with stretching powers from the legendary \"Gomu Gomu\" Devil's fruit, travels towards the Grand Line in search of One Piece, the greatest treasure in the world.",
+                Chapters = { 
+                    new ChapterObject(){Name = "Chapter 1", Chapter = 1},
+                    new ChapterObject(){Name = "Chapter 2", Chapter = 2}
+                }
+            });
+            if (MangaList.Count > 0)
+                MangaObj = MangaList.First();
+#endif
+        }
 
         public void Dispose() { }
     }

@@ -74,6 +74,7 @@
     <Compile Include="Collections\GenericCollection.cs" />
     <Compile Include="Collections\GenericEnumerator.cs" />
     <Compile Include="Collections\ISiteExtensionCollection.cs" />
+    <Compile Include="Enums\MangaObjectType.cs" />
     <Compile Include="Enums\SupportedObjects.cs" />
     <Compile Include="Interfaces\ISiteExtension.cs" />
     <Compile Include="Objects\ChapterObject.cs" />

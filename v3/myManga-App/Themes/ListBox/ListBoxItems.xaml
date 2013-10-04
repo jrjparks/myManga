@@ -110,16 +110,13 @@
                                 <RowDefinition/>
                                 <RowDefinition/>
                             </Grid.RowDefinitions>
-                            <Border 
-                                    BorderBrush="DarkGray"
-                                    BorderThickness="1"
-                                    Grid.Column="0" 
-                                    Grid.RowSpan="3" 
-                                    Margin="6,2" 
-                                    Width="48" 
-                                    Height="72">
-                                <Image/>
-                            </Border>
+                            <Image
+                                Grid.Column="0" 
+                                Grid.RowSpan="3" 
+                                Margin="6,2" 
+                                Width="48" 
+                                Height="72"
+                                Source="{Binding SelectedCover}"/>
                             <TextBlock Grid.Column="1" Grid.Row="0" VerticalAlignment="Center" Foreground="{StaticResource text-dark}" FontWeight="Bold" FontSize="14" TextTrimming="CharacterEllipsis" Text="{Binding Name}"/>
                             <TextBlock Grid.Column="1" Grid.Row="1" VerticalAlignment="Center" Foreground="{StaticResource text-muted}" TextTrimming="CharacterEllipsis" Text="TestLocation"/>
                             <TextBlock Grid.Column="1" Grid.Row="2" VerticalAlignment="Center" Foreground="{StaticResource text-muted}" TextTrimming="CharacterEllipsis" Text="{Binding Genres, Converter={StaticResource StringArrayToCSV}}"/>

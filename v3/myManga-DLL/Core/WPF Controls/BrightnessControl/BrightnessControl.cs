@@ -37,7 +37,7 @@ namespace System.Windows.Controls
             }
             else
             {
-#if RELEASE
+#if !DEBUG
                 this.Visibility = System.Windows.Visibility.Hidden;
                 MonitorBrightness.Instance.Dispose();
 #endif

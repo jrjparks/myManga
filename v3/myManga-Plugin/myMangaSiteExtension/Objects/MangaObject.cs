@@ -11,6 +11,7 @@ using System.Xml.Serialization;
 using Core.IO;
 using Core.MVVM;
 using myMangaSiteExtension.Collections;
+using myMangaSiteExtension.Enums;
 
 namespace myMangaSiteExtension.Objects
 {
@@ -35,6 +36,9 @@ namespace myMangaSiteExtension.Objects
 
         #region Protected
         [NonSerialized, XmlIgnore, EditorBrowsable(EditorBrowsableState.Never)]
+        protected MangaObjectType mangaType;
+
+        [NonSerialized, XmlIgnore, EditorBrowsable(EditorBrowsableState.Never)]
         protected String name;
         [NonSerialized, XmlIgnore, EditorBrowsable(EditorBrowsableState.Never)]
         protected List<String> alternate_names;
@@ -57,6 +61,8 @@ namespace myMangaSiteExtension.Objects
         protected List<Core.IO.KeyValuePair<String, String>> locations;
         [NonSerialized, XmlIgnore, EditorBrowsable(EditorBrowsableState.Never)]
         protected List<String> covers;
+        [NonSerialized, XmlIgnore, EditorBrowsable(EditorBrowsableState.Never)]
+        protected Int32 preferredcover;
 
         [NonSerialized, XmlIgnore, EditorBrowsable(EditorBrowsableState.Never)]
         protected List<ChapterObject> chapters;
@@ -66,6 +72,18 @@ namespace myMangaSiteExtension.Objects
         #endregion
 
         #region Public
+        [XmlAttribute]
+        public MangaObjectType MangaType
+        {
+            get { return mangaType; }
+            set
+            {
+                OnPropertyChanging();
+                mangaType = value;
+                OnPropertyChanged();
+            }
+        }
+
         [XmlAttribute]
         public String Name
         {
@@ -172,6 +190,24 @@ namespace myMangaSiteExtension.Objects
                 covers = value;
                 OnPropertyChanged();
             }
+        }
+
+        [XmlAttribute]
+        public Int32 PreferredCover
+        {
+            get { return preferredcover; }
+            set
+            {
+                OnPropertyChanging();
+                preferredcover = value;
+                OnPropertyChanged();
+            }
+        }
+
+        [XmlIgnore]
+        public String SelectedCover
+        {
+            get { return Covers.Count > PreferredCover ? Covers[PreferredCover] : Covers.FirstOrDefault(); }
         }
 
         [XmlArray, XmlArrayItem]

@@ -137,30 +137,38 @@
                         <RowDefinition/>
                         <RowDefinition/>
                         <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="200"/>
                         <ColumnDefinition />
                     </Grid.ColumnDefinitions>
                     <TextBlock Grid.ColumnSpan="2" Text="{Binding Name}" TextTrimming="WordEllipsis" FontWeight="Bold" FontSize="24"/>
-                    <Border 
+                    <Grid 
                         Grid.Row="1" 
-                        Grid.RowSpan="4"
-                        Margin="0,0,3,0"
-                        BorderThickness="1"
-                        BorderBrush="DarkGray">
-                        <Image/>
-                    </Border>
+                        Grid.RowSpan="6"
+                        Margin="0,0,3,0">
+                        <Image Source="{Binding SelectedCover}"/>
+                    </Grid>
                     <StackPanel Grid.Row="1" Grid.Column="1">
                         <TextBlock Text="Released:" FontWeight="Bold" Foreground="{DynamicResource text-muted}"/>
-                        <TextBlock Text="{Binding Released, StringFormat=d}" FontWeight="Bold" Foreground="{DynamicResource text-muted}"/>
+                        <TextBlock Text="{Binding Released, StringFormat=yyyy}" FontWeight="Bold" Foreground="{DynamicResource text-muted}"/>
                     </StackPanel>
                     <StackPanel Grid.Row="2" Grid.Column="1">
-                        <TextBlock Text="Author:" FontWeight="Bold" Foreground="{DynamicResource text-muted}"/>
-                        <TextBlock Text="{Binding Authors, Converter={StaticResource StringArrayToCSV}}" FontWeight="Bold" Foreground="{DynamicResource text-muted}"/>
+                        <TextBlock Text="Type:" FontWeight="Bold" Foreground="{DynamicResource text-muted}"/>
+                        <TextBlock Text="{Binding MangaType, StringFormat={}{0}}" FontWeight="Bold" Foreground="{DynamicResource text-muted}"/>
                     </StackPanel>
                     <StackPanel Grid.Row="3" Grid.Column="1">
-                        <TextBlock Text="Genre:" FontWeight="Bold" Foreground="{DynamicResource text-muted}"/>
+                        <TextBlock Text="Authors:" FontWeight="Bold" Foreground="{DynamicResource text-muted}"/>
+                        <TextBlock Text="{Binding Authors, Converter={StaticResource StringArrayToCSV}}" FontWeight="Bold" Foreground="{DynamicResource text-muted}"/>
+                    </StackPanel>
+                    <StackPanel Grid.Row="4" Grid.Column="1">
+                        <TextBlock Text="Artists:" FontWeight="Bold" Foreground="{DynamicResource text-muted}"/>
+                        <TextBlock Text="{Binding Authors, Converter={StaticResource StringArrayToCSV}}" FontWeight="Bold" Foreground="{DynamicResource text-muted}"/>
+                    </StackPanel>
+                    <StackPanel Grid.Row="5" Grid.Column="1">
+                        <TextBlock Text="Genres:" FontWeight="Bold" Foreground="{DynamicResource text-muted}"/>
                         <TextBlock Text="{Binding Genres, Converter={StaticResource StringArrayToCSV}}" FontWeight="Bold" Foreground="{DynamicResource text-muted}"/>
                     </StackPanel>
                 </Grid>

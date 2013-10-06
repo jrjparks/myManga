@@ -1,15 +1,12 @@
-﻿using myMangaSiteExtension.Objects;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
 using myMangaSiteExtension;
 using myMangaSiteExtension.Attributes.ISiteExtension;
+using myMangaSiteExtension.Objects;
 
 namespace myManga_App.ViewModels
 {
@@ -55,12 +52,15 @@ namespace myManga_App.ViewModels
             }
         }
 
+        private App App = App.Current as App;
+
         public HomeViewModel()
         {
 #if DEBUG
-            foreach (ISiteExtension ise in (App.Current as App).SiteExtensions.DLLCollection)
+            foreach (ISiteExtension ise in App.SiteExtensions.DLLCollection)
             {
-                Attribute attr = Attribute.GetCustomAttribute(ise.GetType(), typeof(ISiteExtensionAttribute), true);
+                ISiteExtensionAttribute isea = ise.GetType().GetCustomAttribute<ISiteExtensionAttribute>(false);
+                String Name = isea.Name;
             }
 
             // Test Data

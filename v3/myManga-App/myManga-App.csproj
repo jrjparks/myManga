@@ -103,6 +103,7 @@
     <Compile Include="IO\Network\SmartChapterDownloader.cs" />
     <Compile Include="IO\Network\SmartDownloader.cs" />
     <Compile Include="IO\Network\SmartMangaDownloader.cs" />
+    <Compile Include="IO\Network\SmartSearch.cs" />
     <Compile Include="Themes\Button\MetroButton.cs" />
     <Compile Include="Themes\Window\myMangaWindow.cs" />
     <Compile Include="ViewModels\HomeViewModel.cs" />

@@ -51,7 +51,6 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Attributes\AttributesHelper.cs" />
     <Compile Include="Attributes\ISiteExtension\ISiteExtensionAttribute.cs" />
     <Compile Include="Collections\GenericCollection.cs" />
     <Compile Include="Collections\GenericEnumerator.cs" />
@@ -62,6 +61,7 @@
     <Compile Include="Objects\ChapterObject.cs" />
     <Compile Include="Objects\MangaObject.cs" />
     <Compile Include="Objects\PageObject.cs" />
+    <Compile Include="Objects\SearchResultObject.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

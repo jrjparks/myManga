@@ -70,6 +70,8 @@ namespace myMangaSiteExtension.Objects
 
         [NonSerialized, XmlIgnore, EditorBrowsable(EditorBrowsableState.Never)]
         protected DateTime released = DateTime.MinValue;
+        [NonSerialized, XmlIgnore, EditorBrowsable(EditorBrowsableState.Never)]
+        protected Double rating;
         #endregion
 
         #region Public
@@ -230,6 +232,17 @@ namespace myMangaSiteExtension.Objects
             {
                 OnPropertyChanging();
                 released = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public Double Rating
+        {
+            get { return rating; }
+            set
+            {
+                OnPropertyChanging();
+                rating = value;
                 OnPropertyChanged();
             }
         }

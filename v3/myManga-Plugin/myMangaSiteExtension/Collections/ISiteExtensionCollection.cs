@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Reflection;
 using myMangaSiteExtension.Attributes.ISiteExtension;
 
@@ -18,8 +16,7 @@ namespace myMangaSiteExtension.Collections
         {
             foreach (ISiteExtension siteExtensionItem in innerList)
             {
-                MemberInfo siteExtensionInfo = siteExtensionItem.GetType();
-                ISiteExtensionAttribute siteExtensionAttribute = siteExtensionInfo.GetCustomAttribute<ISiteExtensionAttribute>(true);
+                ISiteExtensionAttribute siteExtensionAttribute = siteExtensionItem.GetType().GetCustomAttribute<ISiteExtensionAttribute>(true);
                 if (siteExtensionAttribute.Name.Equals(name))
                     return innerList.IndexOf(siteExtensionItem);
             }

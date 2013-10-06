@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.IO;
+using Core.IO;
 using myMangaSiteExtension.Objects;
 
 namespace myMangaSiteExtension
@@ -10,13 +10,13 @@ namespace myMangaSiteExtension
     {
         String GetMangaURI();
         String GetChapterURI();
+        String GetSearchUri(String searchTerm);
 
-        MangaObject ParseMangaObject(String HTML);
-        ChapterObject ParseChapterObject(String HTML);
-        PageObject ParsePageObject(String HTML);
+        MangaObject ParseMangaObject(String content);
+        ChapterObject ParseChapterObject(String content);
+        PageObject ParsePageObject(String content);
 
-        Object ParseCoverImage();
-        Object GetSearchUri();
-        Object ParseSearch();
+        Stream ParseCoverImage(String content);
+        Dictionary<String, SearchResultObject> ParseSearch(String content);
     }
 }

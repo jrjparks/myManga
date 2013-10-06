@@ -18,10 +18,12 @@ namespace myMangaSiteExtension.Attributes.ISiteExtension
         // This is not a misspelling. https://en.wikipedia.org/wiki/HTTP_referer
         public String RefererHeader { get; private set; }
         public SupportedObjects SupportedObjects { get; private set; }
-        
-        public ISiteExtensionAttribute(String Name, String Author = "", String Version = "", SupportedObjects SupportedObjects = myMangaSiteExtension.SupportedObjects.None)
+
+        public ISiteExtensionAttribute(String Name, String RefererHeader, String URLFormat, String Author = "", String Version = "", SupportedObjects SupportedObjects = myMangaSiteExtension.SupportedObjects.None)
         {
             this.Name = Name;
+            this.URLFormat = URLFormat;
+            this.RefererHeader = RefererHeader;
             this.Author = Author;
             this.Version = Version;
             this.SupportedObjects = SupportedObjects;

@@ -6,6 +6,11 @@ using System.Threading;
 
 namespace Core.DLL
 {
+    /// <summary>
+    /// Class loads and manages DLLs
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <typeparam name="C"></typeparam>
     [DebuggerStepThrough]
     public class DLL_Manager<T, C> where C : ICollection<T>, new()
     {

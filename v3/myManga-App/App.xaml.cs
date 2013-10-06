@@ -32,7 +32,6 @@ namespace myManga_App
             SiteExtensions.DLLAppDomain.AssemblyResolve += emdll.ResolveAssembly;
 
             Settings.Default.PropertyChanged += Default_PropertyChanged;
-            SiteExtensions.LoadDLL(PLUGIN_DIRECTORY);
 
             InitializeComponent();
         }

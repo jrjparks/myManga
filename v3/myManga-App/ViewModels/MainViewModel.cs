@@ -25,7 +25,7 @@ namespace myManga_App.ViewModels
         public MainViewModel()
         {
             if (!DesignerProperties.GetIsInDesignMode(this))
-                App.SiteExtensions.LoadDLL(App.PLUGIN_DIRECTORY, "*.mymanga.dll");
+                App.SiteExtensions.LoadDLL(App.PLUGIN_DIRECTORY, Filter: "*.mymanga.dll");
             ServicePointManager.DefaultConnectionLimit = Singleton<SmartMangaDownloader>.Instance.Concurrency + Singleton<SmartChapterDownloader>.Instance.Concurrency;
         }
 

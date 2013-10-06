@@ -8,6 +8,8 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using myMangaSiteExtension;
+using myMangaSiteExtension.Attributes.ISiteExtension;
 
 namespace myManga_App.ViewModels
 {
@@ -56,6 +58,11 @@ namespace myManga_App.ViewModels
         public HomeViewModel()
         {
 #if DEBUG
+            foreach (ISiteExtension ise in (App.Current as App).SiteExtensions.DLLCollection)
+            {
+                Attribute attr = Attribute.GetCustomAttribute(ise.GetType(), typeof(ISiteExtensionAttribute), true);
+            }
+
             // Test Data
             MangaList.Add(new MangaObject()
             {

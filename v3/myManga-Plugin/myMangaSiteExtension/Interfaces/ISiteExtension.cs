@@ -8,11 +8,15 @@ namespace myMangaSiteExtension
 {
     public interface ISiteExtension
     {
+        String GetMangaURI();
+        String GetChapterURI();
+
         MangaObject ParseMangaObject(String HTML);
         ChapterObject ParseChapterObject(String HTML);
         PageObject ParsePageObject(String HTML);
 
-        Object CoverImage();
-        Object Search();
+        Object ParseCoverImage();
+        Object GetSearchUri();
+        Object ParseSearch();
     }
 }

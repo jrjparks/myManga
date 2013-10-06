@@ -8,14 +8,20 @@ using System.Threading.Tasks;
 
 namespace myManga_App.IO.Network
 {
-    public class SmartChapterDownload
+    public class SmartDownloader
     {
         protected readonly SmartThreadPool smartThreadPool;
         protected readonly SynchronizationContext synchronizationContext;
-
-        public SmartChapterDownload()
+        public Int32 Concurrency
         {
-            smartThreadPool = new SmartThreadPool();
+            get { return smartThreadPool.Concurrency; }
+        }
+
+        public SmartDownloader() : this(null) { }
+
+        public SmartDownloader(STPStartInfo stpThredPool)
+        {
+            smartThreadPool = new SmartThreadPool(stpThredPool ?? new STPStartInfo() { MaxWorkerThreads = 5 });
             synchronizationContext = SynchronizationContext.Current;
         }
     }

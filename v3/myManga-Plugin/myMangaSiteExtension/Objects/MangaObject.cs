@@ -59,6 +59,7 @@ namespace myMangaSiteExtension.Objects
 
         [NonSerialized, XmlIgnore, EditorBrowsable(EditorBrowsableState.Never)]
         protected List<Core.IO.KeyValuePair<String, String>> locations;
+
         [NonSerialized, XmlIgnore, EditorBrowsable(EditorBrowsableState.Never)]
         protected List<String> covers;
         [NonSerialized, XmlIgnore, EditorBrowsable(EditorBrowsableState.Never)]

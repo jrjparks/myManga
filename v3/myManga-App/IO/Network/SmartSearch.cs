@@ -13,12 +13,8 @@ namespace myManga_App.IO.Network
 {
     public class SmartSearch : SmartDownloader
     {
-        private App App = App.Current as App;
-
-        public SmartSearch()
-        {
-
-        }
+        public SmartSearch() : base() { }
+        public SmartSearch(STPStartInfo stpThredPool) : base(stpThredPool) { }
 
         public IWorkItemResult SearchManga(String search)
         {

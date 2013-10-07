@@ -10,23 +10,35 @@ namespace myMangaSiteExtension.Attributes.ISiteExtension
     [DebuggerStepThrough, AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
     public sealed class ISiteExtensionAttribute : Attribute
     {
-        public String Name { get; private set; }
-        public String Author { get; private set; }
-        public String Version { get; private set; }
+        /// <summary>
+        /// Name of the supported site.
+        /// </summary>
+        public String Name;
+        /// <summary>
+        /// Author fo the ISiteExtension. (Your name)
+        /// </summary>
+        public String Author = "";
+        /// <summary>
+        /// Version of the ISiteExtension
+        /// </summary>
+        public String Version = "0.0.0";
 
-        public String URLFormat { get; private set; }
+        public String URLFormat;
         // This is not a misspelling. https://en.wikipedia.org/wiki/HTTP_referer
-        public String RefererHeader { get; private set; }
-        public SupportedObjects SupportedObjects { get; private set; }
+        public String RefererHeader;
+        public SupportedObjects SupportedObjects = SupportedObjects.None;
 
-        public ISiteExtensionAttribute(String Name, String RefererHeader, String URLFormat, String Author = "", String Version = "", SupportedObjects SupportedObjects = myMangaSiteExtension.SupportedObjects.None)
+        /// <summary>
+        /// ISiteExtension attribute.
+        /// </summary>
+        /// <param name="Name">Name of the site</param>
+        /// <param name="URLFormat">Format of the sites url</param>
+        /// <param name="RefererHeader">Referer header to use when connecting to the site</param>
+        public ISiteExtensionAttribute(String Name, String URLFormat, String RefererHeader)
         {
             this.Name = Name;
             this.URLFormat = URLFormat;
             this.RefererHeader = RefererHeader;
-            this.Author = Author;
-            this.Version = Version;
-            this.SupportedObjects = SupportedObjects;
         }
 
         public override string ToString()

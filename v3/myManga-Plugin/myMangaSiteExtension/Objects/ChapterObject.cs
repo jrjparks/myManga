@@ -3,14 +3,9 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Serialization;
-using Core.IO;
-using myMangaSiteExtension.Collections;
 using System.Runtime.Serialization;
+using System.Xml.Serialization;
 
 namespace myMangaSiteExtension.Objects
 {
@@ -42,7 +37,7 @@ namespace myMangaSiteExtension.Objects
         protected Int32 subchapter;
 
         [NonSerialized, XmlIgnore, EditorBrowsable(EditorBrowsableState.Never)]
-        protected List<Core.IO.KeyValuePair<String, String>> locations;
+        protected List<LocationObject> locations;
 
         [NonSerialized, XmlIgnore, EditorBrowsable(EditorBrowsableState.Never)]
         protected List<PageObject> pages;
@@ -52,9 +47,6 @@ namespace myMangaSiteExtension.Objects
         #endregion
 
         #region Public
-        [NonSerialized, XmlIgnore]
-        public readonly MangaObject ParentMangaObject;
-
         [XmlAttribute]
         public String Name
         {
@@ -92,9 +84,9 @@ namespace myMangaSiteExtension.Objects
         }
 
         [XmlArray, XmlArrayItem("Location")]
-        public List<Core.IO.KeyValuePair<String, String>> Locations
+        public List<LocationObject> Locations
         {
-            get { return locations ?? (locations = new List<Core.IO.KeyValuePair<String, String>>()); }
+            get { return locations ?? (locations = new List<LocationObject>(); }
             set
             {
                 OnPropertyChanging();
@@ -127,7 +119,6 @@ namespace myMangaSiteExtension.Objects
         }
 
         public ChapterObject() : base() { }
-        public ChapterObject(MangaObject MangaObject) : this() { ParentMangaObject = MangaObject; }
         public ChapterObject(SerializationInfo info, StreamingContext context) : base(info, context) { }
         #endregion
     }

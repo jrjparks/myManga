@@ -58,7 +58,7 @@ namespace myMangaSiteExtension.Objects
         protected FlowDirection pageFlowDirection;
 
         [NonSerialized, XmlIgnore, EditorBrowsable(EditorBrowsableState.Never)]
-        protected List<Core.IO.KeyValuePair<String, String>> locations;
+        protected List<LocationObject> locations;
 
         [NonSerialized, XmlIgnore, EditorBrowsable(EditorBrowsableState.Never)]
         protected List<String> covers;
@@ -172,9 +172,9 @@ namespace myMangaSiteExtension.Objects
         }
 
         [XmlArray, XmlArrayItem("Location")]
-        public List<Core.IO.KeyValuePair<String, String>> Locations
+        public List<LocationObject> Locations
         {
-            get { return locations ?? (locations = new List<Core.IO.KeyValuePair<String, String>>()); }
+            get { return locations ?? (locations = new List<LocationObject>()); }
             set
             {
                 OnPropertyChanging();
@@ -248,8 +248,7 @@ namespace myMangaSiteExtension.Objects
         }
 
         public MangaObject() : base() { }
-        public MangaObject(SerializationInfo info, StreamingContext context)
-            : base(info, context) { }
+        public MangaObject(SerializationInfo info, StreamingContext context) : base(info, context) { }
         #endregion
     }
 }

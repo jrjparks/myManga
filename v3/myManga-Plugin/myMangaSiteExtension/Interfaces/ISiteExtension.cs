@@ -17,6 +17,6 @@ namespace myMangaSiteExtension
         PageObject ParsePageObject(String content);
 
         Stream ParseCoverImage(String content);
-        Dictionary<String, SearchResultObject> ParseSearch(String content);
+        List<SearchResultObject> ParseSearch(String content);
     }
 }

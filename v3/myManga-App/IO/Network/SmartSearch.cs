@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
+using System.Linq;
 using System.Reflection;
 using Amib.Threading;
 using myMangaSiteExtension;
@@ -16,36 +17,36 @@ namespace myManga_App.IO.Network
         public SmartSearch() : base() { }
         public SmartSearch(STPStartInfo stpThredPool) : base(stpThredPool) { }
 
-        public IWorkItemResult SearchManga(String search)
+        public IWorkItemsGroup SearchManga(String search, Boolean Start = true)
         {
-            return smartThreadPool.QueueWorkItem<String, ISiteExtensionCollection>(Search, search, App.SiteExtensions.DLLCollection);
+            IWorkItemsGroup searchWorkGroup = smartThreadPool.CreateWorkItemsGroup(2, new WIGStartInfo() { StartSuspended = !Start });
+            searchWorkGroup.Name = String.Format("%s:SearchWorkGroup", search);
+            foreach (ISiteExtension SiteExtension in App.SiteExtensions.DLLCollection)
+                searchWorkGroup.QueueWorkItem<String, ISiteExtension, List<SearchResultObject>>(Search, search, SiteExtension);
+            return searchWorkGroup;
         }
 
-        protected void Search(String search, ISiteExtensionCollection collection)
+        protected List<SearchResultObject> Search(String search, ISiteExtension SiteExtension)
         {
-            Dictionary<String, List<String>> SearchResults = new Dictionary<String, List<String>>();
-            foreach (ISiteExtension ise in collection)
+            List<SearchResultObject> SearchResults = new List<SearchResultObject>();
+            ISiteExtensionAttribute isea = SiteExtension.GetType().GetCustomAttribute<ISiteExtensionAttribute>(false);
+            if (isea.SupportedObjects.HasFlag(SupportedObjects.Search))
             {
-                ISiteExtensionAttribute isea = ise.GetType().GetCustomAttribute<ISiteExtensionAttribute>(false);
-                if (isea.SupportedObjects.HasFlag(SupportedObjects.Search))
+                String SearchURL = SiteExtension.GetSearchUri(searchTerm: search);
+
+                HttpWebRequest request = WebRequest.Create(SearchURL) as HttpWebRequest;
+                request.Referer = isea.RefererHeader ?? request.Host;
+                request.AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip;
+                using (HttpWebResponse response = request.GetResponse() as HttpWebResponse)
                 {
-                    String SearchURL = ise.GetSearchUri(searchTerm: search);
-
-                    HttpWebRequest request = WebRequest.Create(SearchURL) as HttpWebRequest;
-                    request.Referer = isea.RefererHeader ?? request.Host;
-                    request.AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip;
-                    using (HttpWebResponse response = request.GetResponse() as HttpWebResponse)
+                    using (StreamReader streamReader = new StreamReader(response.GetResponseStream()))
                     {
-                        using (StreamReader streamReader = new StreamReader(response.GetResponseStream()))
-                        {
-                            foreach (KeyValuePair<String, SearchResultObject> SearchResult in ise.ParseSearch(streamReader.ReadToEnd()))
-                            {
-
-                            }
-                        }
+                        SearchResults = SiteExtension.ParseSearch(streamReader.ReadToEnd());
                     }
                 }
             }
+            SearchResults.TrimExcess();
+            return SearchResults;
         }
     }
 }

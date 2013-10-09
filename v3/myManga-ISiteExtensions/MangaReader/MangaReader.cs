@@ -67,8 +67,15 @@ namespace AFTV_Network
         {
             HtmlDocument ChapterObjectDocument = new HtmlDocument();
             ChapterObjectDocument.LoadHtml(content);
+
             return new ChapterObject()
             {
+                Pages = (from HtmlNode PageNode in ChapterObjectDocument.GetElementbyId("pageMenu").SelectNodes(".//option")
+                         select new PageObject()
+                         {
+                             Url = PageNode.Attributes["value"].Value,
+                             PageNumber = UInt32.Parse(PageNode.NextSibling.InnerText)
+                         }).ToList()
             };
         }
 
@@ -78,11 +85,13 @@ namespace AFTV_Network
             PageObjectDocument.LoadHtml(content);
 
             HtmlNode NaviNode = PageObjectDocument.GetElementbyId("navi");
+            HtmlNode PageNode = PageObjectDocument.GetElementbyId("pageMenu").SelectSingleNode(".//option[@selected]");
 
             return new PageObject()
             {
                 Name = PageObjectDocument.GetElementbyId("mangainfo").SelectSingleNode(".//h1").InnerText,
-                PageNumber = UInt32.Parse(PageObjectDocument.GetElementbyId("pageMenu").SelectSingleNode(".//option[@selected]").InnerText),
+                PageNumber = UInt32.Parse(PageNode.NextSibling.InnerText),
+                Url = PageNode.Attributes["value"].Value,
                 NextUrl = String.Format("{0}/{1}", ISEA.RootUrl, NaviNode.SelectSingleNode(".//span[contains(@class,'next')]/a").Attributes["href"].Value),
                 PrevUrl = String.Format("{0}/{1}", ISEA.RootUrl, NaviNode.SelectSingleNode(".//span[contains(@class,'next')]/a").Attributes["href"].Value),
                 ImgUrl = PageObjectDocument.GetElementbyId("img").Attributes["src"].Value

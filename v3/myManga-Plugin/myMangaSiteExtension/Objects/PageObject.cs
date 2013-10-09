@@ -44,9 +44,6 @@ namespace myMangaSiteExtension.Objects
         #endregion
 
         #region Public
-        [NonSerialized, XmlIgnore]
-        public readonly ChapterObject ParentChapterObject;
-
         [XmlAttribute]
         public String Name
         {
@@ -120,7 +117,6 @@ namespace myMangaSiteExtension.Objects
         }
 
         public PageObject() : base() { }
-        public PageObject(ChapterObject ChapterObject) : this() { ParentChapterObject = ChapterObject; }
         public PageObject(SerializationInfo info, StreamingContext context) : base(info, context) { }
         #endregion
     }

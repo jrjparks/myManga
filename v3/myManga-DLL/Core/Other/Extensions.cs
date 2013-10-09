@@ -34,7 +34,7 @@ namespace Core.Other
                 String[] styles = Node.Attributes["style"].Value.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
                 foreach (String style in styles)
                     if (style.Contains(':'))
-                        Style.Add(style.Slice(0, style.IndexOf(':')), style.Substring(style.IndexOf(':') + 1));
+                        Style.Add(style.Slice(0, style.IndexOf(':')).ToLower(), style.Substring(style.IndexOf(':') + 1));
             }
             return Style;
         }

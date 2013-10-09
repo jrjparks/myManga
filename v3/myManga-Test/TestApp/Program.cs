@@ -9,10 +9,14 @@ using myMangaSiteExtension.Objects;
 
 namespace TestApp
 {
-    class Program
+    static class Program
     {
+        static Dictionary<String, ISiteExtension> Extentions = new Dictionary<String, ISiteExtension>();
+
         static void Main(string[] args)
         {
+            Extentions.Add("MangaReader", new AFTV_Network.MangaReader());
+            Extentions.Add("MangaPanda", new AFTV_Network.MangaPanda());
             LoadManga();
         }
 
@@ -58,7 +62,7 @@ namespace TestApp
 
         static void LoadManga()
         {
-            MangaObject mObj = LoadMangaObject("http://www.mangapanda.com/103/one-piece.html");
+            MangaObject mObj = LoadMangaObject("http://www.mangareader.net/103/one-piece.html");
             Console.WriteLine("Returned MangaObject:");
             Console.WriteLine("\tName:{0}", mObj.Name);
             Console.WriteLine("\tReleased:{0}", mObj.Released.ToString("yyyy"));
@@ -68,13 +72,37 @@ namespace TestApp
             Console.WriteLine("\tGenres:{0}", String.Join(", ", mObj.Genres));
             Console.WriteLine("\tLocations:{0}", String.Join(", ", mObj.Locations));
             Console.WriteLine("\tNumber of Chapters:{0}", mObj.Chapters.Count);
+
+            Console.WriteLine();
+            Console.Write("Test Chapter Load...(press enter)");
+            Console.ReadLine();
+
+            ChapterObject cObj = mObj.Chapters[0];
+            cObj.Pages = LoadChapterObject(cObj, 0).Pages;
+            Console.WriteLine("Returned ChapterObject:");
+            Console.WriteLine("\tName:{0}", mObj.Chapters[0].Name);
+            Console.WriteLine("\tChapter:{0}", mObj.Chapters[0].Chapter);
+            Console.WriteLine("\tReleased:{0}", mObj.Chapters[0].Released.ToString("d"));
+            Console.WriteLine("\tNumber of Pages:{0}", mObj.Chapters[0].Pages.Count);
+
+            Console.WriteLine();
+            Console.Write("Test Page Load...(press enter)");
+            Console.ReadLine();
+            mObj.Chapters[0].LoadPageObjects(0);
+            Console.WriteLine("Returned ChapterObject:");
+            foreach (PageObject pageObject in cObj.Pages)
+            {
+                Console.WriteLine("\t[{0}]:", pageObject.PageNumber);
+                Console.WriteLine("\t\tUrl: {0}", pageObject.Url);
+                Console.WriteLine("\tImage: {0}", pageObject.ImgUrl);
+            }
             Console.ReadLine();
         }
 
         static MangaObject LoadMangaObject(String Link)
         {
             MangaObject MangaObj = null;
-            ISiteExtension ise = new AFTV_Network.MangaPanda();
+            ISiteExtension ise = Extentions["MangaReader"];
             ISiteExtensionDescriptionAttribute isea = ise.GetType().GetCustomAttribute<ISiteExtensionDescriptionAttribute>(false);
 
             HttpWebRequest request = WebRequest.Create(Link) as HttpWebRequest;
@@ -93,7 +121,7 @@ namespace TestApp
         static ChapterObject LoadChapterObject(String Link)
         {
             ChapterObject ChapterObj = null;
-            ISiteExtension ise = new AFTV_Network.MangaReader();
+            ISiteExtension ise = Extentions["MangaReader"];
             ISiteExtensionDescriptionAttribute isea = ise.GetType().GetCustomAttribute<ISiteExtensionDescriptionAttribute>(false);
 
             HttpWebRequest request = WebRequest.Create(Link) as HttpWebRequest;
@@ -107,6 +135,47 @@ namespace TestApp
                 }
             }
             return ChapterObj;
+        }
+
+        static ChapterObject LoadChapterObject(ChapterObject chapterObject, Int32 LocationId = 0)
+        {
+            ChapterObject ChapterObj = null;
+            ISiteExtension ise = Extentions[chapterObject.Locations[LocationId].SiteExtensionName];
+            ISiteExtensionDescriptionAttribute isea = ise.GetType().GetCustomAttribute<ISiteExtensionDescriptionAttribute>(false);
+
+            HttpWebRequest request = WebRequest.Create(chapterObject.Locations[LocationId].Url) as HttpWebRequest;
+            request.Referer = isea.RefererHeader ?? request.Host;
+            request.AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip;
+            using (HttpWebResponse response = request.GetResponse() as HttpWebResponse)
+            {
+                using (StreamReader streamReader = new StreamReader(response.GetResponseStream()))
+                {
+                    ChapterObj = ise.ParseChapterObject(streamReader.ReadToEnd());
+                }
+            }
+            return ChapterObj;
+        }
+
+        public static void LoadPageObjects(this ChapterObject chapterObject, Int32 LocationId = 0)
+        {
+            ChapterObject ChapterObj = chapterObject;
+            ISiteExtension ise = Extentions[chapterObject.Locations[LocationId].SiteExtensionName];
+            ISiteExtensionDescriptionAttribute isea = ise.GetType().GetCustomAttribute<ISiteExtensionDescriptionAttribute>(false);
+
+            List<PageObject> ParsedPages = new List<PageObject>();
+            foreach (PageObject pageObject in chapterObject.Pages)
+            {
+                HttpWebRequest request = WebRequest.Create(chapterObject.Locations[LocationId].Url) as HttpWebRequest;
+                request.Referer = isea.RefererHeader ?? request.Host;
+                request.AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip;
+                using (HttpWebResponse response = request.GetResponse() as HttpWebResponse)
+                {
+                    using (StreamReader streamReader = new StreamReader(response.GetResponseStream()))
+                    {
+                        ParsedPages.Add(ise.ParsePageObject(streamReader.ReadToEnd()));
+                    }
+                }
+            }
         }
     }
 }

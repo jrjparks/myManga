@@ -59,7 +59,7 @@ namespace myManga_App.ViewModels
 #if DEBUG
             foreach (ISiteExtension ise in App.SiteExtensions.DLLCollection)
             {
-                ISiteExtensionAttribute isea = ise.GetType().GetCustomAttribute<ISiteExtensionAttribute>(false);
+                ISiteExtensionDescriptionAttribute isea = ise.GetType().GetCustomAttribute<ISiteExtensionDescriptionAttribute>(false);
                 String Name = isea.Name;
             }
 

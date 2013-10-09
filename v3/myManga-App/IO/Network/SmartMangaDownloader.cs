@@ -24,10 +24,10 @@ namespace myManga_App.IO.Network
         private void DownloadMangaObject(MangaObject mangaObject)
         {
             ISiteExtensionCollection isec = (App.Current as App).SiteExtensions.DLLCollection;
-            foreach (KeyValuePair<String, String> kvp in mangaObject.Locations)
+            foreach (LocationObject location in mangaObject.Locations)
             {
-                ISiteExtension ise = isec[kvp.Key];
-                HttpWebRequest request = WebRequest.Create(kvp.Value) as HttpWebRequest;
+                ISiteExtension ise = isec[location.SiteExtensionName];
+                HttpWebRequest request = WebRequest.Create(location.Url) as HttpWebRequest;
                 request.Referer = "";// ?? request.Host;
                 request.AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip;
                 using (HttpWebResponse response = request.GetResponse() as HttpWebResponse)

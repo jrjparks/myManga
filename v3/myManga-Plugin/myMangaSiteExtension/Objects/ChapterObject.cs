@@ -32,6 +32,8 @@ namespace myMangaSiteExtension.Objects
         [NonSerialized, XmlIgnore, EditorBrowsable(EditorBrowsableState.Never)]
         protected String name;
         [NonSerialized, XmlIgnore, EditorBrowsable(EditorBrowsableState.Never)]
+        protected Int32 volume;
+        [NonSerialized, XmlIgnore, EditorBrowsable(EditorBrowsableState.Never)]
         protected Int32 chapter;
         [NonSerialized, XmlIgnore, EditorBrowsable(EditorBrowsableState.Never)]
         protected Int32 subchapter;
@@ -55,6 +57,18 @@ namespace myMangaSiteExtension.Objects
             {
                 OnPropertyChanging();
                 name = value;
+                OnPropertyChanged();
+            }
+        }
+
+        [XmlAttribute]
+        public Int32 Volume
+        {
+            get { return volume; }
+            set
+            {
+                OnPropertyChanging();
+                volume = value;
                 OnPropertyChanged();
             }
         }
@@ -86,7 +100,7 @@ namespace myMangaSiteExtension.Objects
         [XmlArray, XmlArrayItem("Location")]
         public List<LocationObject> Locations
         {
-            get { return locations ?? (locations = new List<LocationObject>(); }
+            get { return locations ?? (locations = new List<LocationObject>()); }
             set
             {
                 OnPropertyChanging();

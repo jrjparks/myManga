@@ -59,6 +59,7 @@
     <Compile Include="NET\AdvWebClient.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Other\Extensions.cs" />
     <Compile Include="Other\Parse.cs" />
     <Compile Include="Other\Singleton\Singleton.cs" />
     <Compile Include="WPF Controls\BalancedWrapPanel\BalancedWrapPanel.cs" />

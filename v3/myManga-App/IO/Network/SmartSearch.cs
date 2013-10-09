@@ -2,12 +2,10 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
-using System.Linq;
 using System.Reflection;
 using Amib.Threading;
 using myMangaSiteExtension;
 using myMangaSiteExtension.Attributes.ISiteExtension;
-using myMangaSiteExtension.Collections;
 using myMangaSiteExtension.Objects;
 
 namespace myManga_App.IO.Network
@@ -29,7 +27,7 @@ namespace myManga_App.IO.Network
         protected List<SearchResultObject> Search(String search, ISiteExtension SiteExtension)
         {
             List<SearchResultObject> SearchResults = new List<SearchResultObject>();
-            ISiteExtensionAttribute isea = SiteExtension.GetType().GetCustomAttribute<ISiteExtensionAttribute>(false);
+            ISiteExtensionDescriptionAttribute isea = SiteExtension.GetType().GetCustomAttribute<ISiteExtensionDescriptionAttribute>(false);
             if (isea.SupportedObjects.HasFlag(SupportedObjects.Search))
             {
                 String SearchURL = SiteExtension.GetSearchUri(searchTerm: search);

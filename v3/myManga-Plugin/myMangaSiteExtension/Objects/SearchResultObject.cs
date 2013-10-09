@@ -32,6 +32,8 @@ namespace myMangaSiteExtension.Objects
         [NonSerialized, XmlIgnore, EditorBrowsable(EditorBrowsableState.Never)]
         protected String name;
         [NonSerialized, XmlIgnore, EditorBrowsable(EditorBrowsableState.Never)]
+        protected Int32 id;
+        [NonSerialized, XmlIgnore, EditorBrowsable(EditorBrowsableState.Never)]
         protected String url;
         [NonSerialized, XmlIgnore, EditorBrowsable(EditorBrowsableState.Never)]
         protected String coverurl;
@@ -54,6 +56,18 @@ namespace myMangaSiteExtension.Objects
             {
                 OnPropertyChanging();
                 name = value;
+                OnPropertyChanged();
+            }
+        }
+
+        [XmlAttribute]
+        public Int32 Id
+        {
+            get { return id; }
+            set
+            {
+                OnPropertyChanging();
+                id = value;
                 OnPropertyChanged();
             }
         }

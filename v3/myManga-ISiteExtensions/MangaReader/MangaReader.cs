@@ -77,8 +77,15 @@ namespace AFTV_Network
             HtmlDocument PageObjectDocument = new HtmlDocument();
             PageObjectDocument.LoadHtml(content);
 
+            HtmlNode NaviNode = PageObjectDocument.GetElementbyId("navi");
+
             return new PageObject()
             {
+                Name = PageObjectDocument.GetElementbyId("mangainfo").SelectSingleNode(".//h1").InnerText,
+                PageNumber = UInt32.Parse(PageObjectDocument.GetElementbyId("pageMenu").SelectSingleNode(".//option[@selected]").InnerText),
+                NextUrl = String.Format("{0}/{1}", ISEA.RootUrl, NaviNode.SelectSingleNode(".//span[contains(@class,'next')]/a").Attributes["href"].Value),
+                PrevUrl = String.Format("{0}/{1}", ISEA.RootUrl, NaviNode.SelectSingleNode(".//span[contains(@class,'next')]/a").Attributes["href"].Value),
+                ImgUrl = PageObjectDocument.GetElementbyId("img").Attributes["src"].Value
             };
         }
 

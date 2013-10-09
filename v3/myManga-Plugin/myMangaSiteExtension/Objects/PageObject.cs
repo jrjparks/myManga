@@ -34,7 +34,13 @@ namespace myMangaSiteExtension.Objects
         [NonSerialized, XmlIgnore, EditorBrowsable(EditorBrowsableState.Never)]
         protected UInt32 page_number;
         [NonSerialized, XmlIgnore, EditorBrowsable(EditorBrowsableState.Never)]
-        protected List<String> remote_locations;
+        protected String url;
+        [NonSerialized, XmlIgnore, EditorBrowsable(EditorBrowsableState.Never)]
+        protected String nexturl;
+        [NonSerialized, XmlIgnore, EditorBrowsable(EditorBrowsableState.Never)]
+        protected String prevurl;
+        [NonSerialized, XmlIgnore, EditorBrowsable(EditorBrowsableState.Never)]
+        protected String imgurl;
         #endregion
 
         #region Public
@@ -52,6 +58,7 @@ namespace myMangaSiteExtension.Objects
                 OnPropertyChanged();
             }
         }
+
         [XmlAttribute]
         public UInt32 PageNumber
         {
@@ -63,14 +70,51 @@ namespace myMangaSiteExtension.Objects
                 OnPropertyChanged();
             }
         }
+
         [XmlElement]
-        public List<String> RemoteLocations
+        public String Url
         {
-            get { return remote_locations ?? (remote_locations = new List<String>()); }
+            get { return url; }
             set
             {
                 OnPropertyChanging();
-                remote_locations = value;
+                url = value;
+                OnPropertyChanged();
+            }
+        }
+
+        [XmlElement]
+        public String NextUrl
+        {
+            get { return nexturl; }
+            set
+            {
+                OnPropertyChanging();
+                nexturl = value;
+                OnPropertyChanged();
+            }
+        }
+
+        [XmlElement]
+        public String PrevUrl
+        {
+            get { return prevurl; }
+            set
+            {
+                OnPropertyChanging();
+                prevurl = value;
+                OnPropertyChanged();
+            }
+        }
+
+        [XmlElement]
+        public String ImgUrl
+        {
+            get { return imgurl; }
+            set
+            {
+                OnPropertyChanging();
+                imgurl = value;
                 OnPropertyChanged();
             }
         }

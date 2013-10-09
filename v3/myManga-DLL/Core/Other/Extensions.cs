@@ -15,6 +15,8 @@ namespace Core.Other
         /// </summary>
         public static String Slice(this String source, Int32 start, Int32 end)
         {
+            if (start < 0) // Keep this for negative end support
+                start = source.Length + start;
             if (end < 0) // Keep this for negative end support
                 end = source.Length + end;
             Int32 len = end - start;               // Calculate length

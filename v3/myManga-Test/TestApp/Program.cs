@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Reflection;
+using myMangaSiteExtension;
 using myMangaSiteExtension.Attributes.ISiteExtension;
 using myMangaSiteExtension.Objects;
 
@@ -12,17 +13,7 @@ namespace TestApp
     {
         static void Main(string[] args)
         {
-            MangaObject mObj = LoadMangaObject("http://www.mangareader.net/103/one-piece.html");
-            Console.WriteLine("Returned MangaObject:");
-            Console.WriteLine("\tName:{0}", mObj.Name);
-            Console.WriteLine("\tReleased:{0}", mObj.Released.ToString("yyyy"));
-            Console.WriteLine("\tAlternate Names:{0}", String.Join(", ", mObj.AlternateNames));
-            Console.WriteLine("\tAuthors:{0}", String.Join(", ", mObj.Authors));
-            Console.WriteLine("\tArtists:{0}", String.Join(", ", mObj.Artists));
-            Console.WriteLine("\tGenres:{0}", String.Join(", ", mObj.Genres));
-            Console.WriteLine("\tLocations:{0}", String.Join(", ", mObj.Locations));
-            Console.WriteLine("\tNumber of Chapters:{0}", mObj.Chapters.Count);
-            Console.ReadLine();
+            LoadManga();
         }
 
         static void Search()
@@ -31,7 +22,7 @@ namespace TestApp
             String SearchTerm = Console.ReadLine();
             while (SearchTerm != null && SearchTerm != String.Empty)
             {
-                MangaReader.MangaReader ise = new MangaReader.MangaReader();
+                ISiteExtension ise = new AFTV_Network.MangaPanda();
                 ISiteExtensionDescriptionAttribute isea = ise.GetType().GetCustomAttribute<ISiteExtensionDescriptionAttribute>(false);
                 List<SearchResultObject> SearchResults = new List<SearchResultObject>();
 
@@ -65,10 +56,25 @@ namespace TestApp
             }
         }
 
+        static void LoadManga()
+        {
+            MangaObject mObj = LoadMangaObject("http://www.mangapanda.com/103/one-piece.html");
+            Console.WriteLine("Returned MangaObject:");
+            Console.WriteLine("\tName:{0}", mObj.Name);
+            Console.WriteLine("\tReleased:{0}", mObj.Released.ToString("yyyy"));
+            Console.WriteLine("\tAlternate Names:{0}", String.Join(", ", mObj.AlternateNames));
+            Console.WriteLine("\tAuthors:{0}", String.Join(", ", mObj.Authors));
+            Console.WriteLine("\tArtists:{0}", String.Join(", ", mObj.Artists));
+            Console.WriteLine("\tGenres:{0}", String.Join(", ", mObj.Genres));
+            Console.WriteLine("\tLocations:{0}", String.Join(", ", mObj.Locations));
+            Console.WriteLine("\tNumber of Chapters:{0}", mObj.Chapters.Count);
+            Console.ReadLine();
+        }
+
         static MangaObject LoadMangaObject(String Link)
         {
             MangaObject MangaObj = null;
-            MangaReader.MangaReader ise = new MangaReader.MangaReader();
+            ISiteExtension ise = new AFTV_Network.MangaPanda();
             ISiteExtensionDescriptionAttribute isea = ise.GetType().GetCustomAttribute<ISiteExtensionDescriptionAttribute>(false);
 
             HttpWebRequest request = WebRequest.Create(Link) as HttpWebRequest;
@@ -87,7 +93,7 @@ namespace TestApp
         static ChapterObject LoadChapterObject(String Link)
         {
             ChapterObject ChapterObj = null;
-            MangaReader.MangaReader ise = new MangaReader.MangaReader();
+            ISiteExtension ise = new AFTV_Network.MangaReader();
             ISiteExtensionDescriptionAttribute isea = ise.GetType().GetCustomAttribute<ISiteExtensionDescriptionAttribute>(false);
 
             HttpWebRequest request = WebRequest.Create(Link) as HttpWebRequest;

@@ -26,6 +26,7 @@ namespace myMangaSiteExtension.Attributes.ISiteExtension
         public String URLFormat;
         // This is not a misspelling. https://en.wikipedia.org/wiki/HTTP_referer
         public String RefererHeader;
+        public String RootUrl;
         public SupportedObjects SupportedObjects = SupportedObjects.None;
 
         /// <summary>

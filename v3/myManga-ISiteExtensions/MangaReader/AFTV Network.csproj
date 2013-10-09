@@ -7,8 +7,8 @@
     <ProjectGuid>{E7AF89E1-1359-4F5B-B2EB-A4613BE7C6DF}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>MangaReader</RootNamespace>
-    <AssemblyName>MangaReader.mymanga</AssemblyName>
+    <RootNamespace>AFTV_Network</RootNamespace>
+    <AssemblyName>AFTVNetwork.mymanga</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SccProjectName>SAK</SccProjectName>
@@ -46,6 +46,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="MangaPanda.cs" />
     <Compile Include="MangaReader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

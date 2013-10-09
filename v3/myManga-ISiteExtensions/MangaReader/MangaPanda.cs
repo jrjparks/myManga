@@ -10,8 +10,8 @@ using myMangaSiteExtension.Objects;
 
 namespace AFTV_Network
 {
-    [ISiteExtensionDescription("MangaReader", "mangareader.net", "http://www.mangareader.net/", RootUrl = "http://www.mangareader.net", Author = "James Parks", Version = "0.0.1", SupportedObjects = SupportedObjects.All)]
-    public class MangaReader : ISiteExtension
+    [ISiteExtensionDescription("MangaPanda", "mangapanda.net", "http://www.mangapanda.com/", RootUrl = "http://www.mangapanda.com", Author = "James Parks", Version = "0.0.1", SupportedObjects = SupportedObjects.All)]
+    public class MangaPanda : ISiteExtension
     {
         ISiteExtensionDescriptionAttribute isea;
         private ISiteExtensionDescriptionAttribute ISEA { get { return isea ?? (isea = this.GetType().GetCustomAttribute<ISiteExtensionDescriptionAttribute>(false)); } }
@@ -39,16 +39,16 @@ namespace AFTV_Network
 
             ChapterObject[] Chapters = (from HtmlNode ChapterNode in ChapterListing.SelectNodes(".//tr[not(contains(@class,'table_head'))]")
                                         select new ChapterObject()
-                                            {
-                                                Name = ChapterNode.SelectSingleNode(".//td[1]").LastChild.InnerText.Substring(3).Trim(),
-                                                Chapter = Int32.Parse(ChapterNode.SelectSingleNode(".//td[1]/a").InnerText.Substring(ChapterNode.SelectSingleNode(".//td[1]/a").InnerText.LastIndexOf(' ') + 1)),
-                                                Locations = { 
+                                        {
+                                            Name = ChapterNode.SelectSingleNode(".//td[1]").LastChild.InnerText.Substring(3).Trim(),
+                                            Chapter = Int32.Parse(ChapterNode.SelectSingleNode(".//td[1]/a").InnerText.Substring(ChapterNode.SelectSingleNode(".//td[1]/a").InnerText.LastIndexOf(' ') + 1)),
+                                            Locations = { 
                                                     new LocationObject() { 
                                                         SiteExtensionName = ISEA.Name, 
                                                         Url = String.Format("{0}{1}", ISEA.RootUrl, ChapterNode.SelectSingleNode(".//td[1]/a").Attributes["href"].Value) } 
                                                 },
-                                                Released = DateTime.Parse(ChapterNode.SelectSingleNode(".//td[2]").InnerText)
-                                            }).ToArray();
+                                            Released = DateTime.Parse(ChapterNode.SelectSingleNode(".//td[2]").InnerText)
+                                        }).ToArray();
 
             return new MangaObject()
             {

@@ -17,7 +17,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "myMangaSiteExtension", "myM
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "myManga-ISiteExtensions", "myManga-ISiteExtensions", "{A5464BE9-8F0C-49F8-AFCD-EC17E9B575E1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MangaReader", "myManga-ISiteExtensions\MangaReader\MangaReader.csproj", "{E7AF89E1-1359-4F5B-B2EB-A4613BE7C6DF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AFTV Network", "myManga-ISiteExtensions\MangaReader\AFTV Network.csproj", "{E7AF89E1-1359-4F5B-B2EB-A4613BE7C6DF}"
 EndProject
 Global
 	GlobalSection(TeamFoundationVersionControl) = preSolution
@@ -40,7 +40,7 @@ Global
 		SccProjectTopLevelParentUniqueName4 = myManga.sln
 		SccProjectName4 = myManga-Plugin/myMangaSiteExtension
 		SccLocalPath4 = myManga-Plugin\\myMangaSiteExtension
-		SccProjectUniqueName5 = myManga-ISiteExtensions\\MangaReader\\MangaReader.csproj
+		SccProjectUniqueName5 = myManga-ISiteExtensions\\MangaReader\\AFTV\u0020Network.csproj
 		SccProjectTopLevelParentUniqueName5 = myManga.sln
 		SccProjectName5 = myManga-ISiteExtensions/MangaReader
 		SccLocalPath5 = myManga-ISiteExtensions\\MangaReader

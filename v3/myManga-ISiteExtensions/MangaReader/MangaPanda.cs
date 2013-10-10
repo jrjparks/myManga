@@ -69,6 +69,12 @@ namespace AFTV_Network
             ChapterObjectDocument.LoadHtml(content);
             return new ChapterObject()
             {
+                Pages = (from HtmlNode PageNode in ChapterObjectDocument.GetElementbyId("pageMenu").SelectNodes(".//option")
+                         select new PageObject()
+                         {
+                             Url = String.Format("{0}{1}", isea.RootUrl, PageNode.Attributes["value"].Value),
+                             PageNumber = UInt32.Parse(PageNode.NextSibling.InnerText)
+                         }).ToList()
             };
         }
 
@@ -77,8 +83,21 @@ namespace AFTV_Network
             HtmlDocument PageObjectDocument = new HtmlDocument();
             PageObjectDocument.LoadHtml(content);
 
+            HtmlNode NaviNode = PageObjectDocument.GetElementbyId("navi"),
+                PageNode = PageObjectDocument.GetElementbyId("pageMenu").SelectSingleNode(".//option[@selected]"),
+                PrevNode = NaviNode.SelectSingleNode(".//span[contains(@class,'prev')]/a"),
+                NextNode = NaviNode.SelectSingleNode(".//span[contains(@class,'next')]/a");
+
+            Uri ImageLink = new Uri(PageObjectDocument.GetElementbyId("img").Attributes["src"].Value);
+
             return new PageObject()
             {
+                Name = ImageLink.Segments.Last(),
+                PageNumber = UInt32.Parse(PageNode.NextSibling.InnerText),
+                Url = String.Format("{0}{1}", isea.RootUrl, PageNode.Attributes["value"].Value),
+                NextUrl = (!NextNode.Attributes["href"].Value.Equals(String.Empty)) ? String.Format("{0}{1}", ISEA.RootUrl, NextNode.Attributes["href"].Value) : null,
+                PrevUrl = (!PrevNode.Attributes["href"].Value.Equals(String.Empty)) ? String.Format("{0}{1}", ISEA.RootUrl, PrevNode.Attributes["href"].Value) : null,
+                ImgUrl = ImageLink.ToString()
             };
         }
 

@@ -100,7 +100,6 @@ namespace AFTV_Network
 
         public List<SearchResultObject> ParseSearch(String content)
         {
-            ISiteExtensionDescriptionAttribute isea = this.GetType().GetCustomAttribute<ISiteExtensionDescriptionAttribute>(false);
             List<SearchResultObject> SearchResults = new List<SearchResultObject>();
 
             HtmlDocument SearchResultDocument = new HtmlDocument();
@@ -118,7 +117,7 @@ namespace AFTV_Network
                     {
                         CoverUrl = CoverUrl,
                         Name = Name,
-                        Url = String.Format("{0}{1}", isea.RootUrl, Link),
+                        Url = String.Format("{0}{1}", ISEA.RootUrl, Link),
                         Id = Id,
                         Rating = -1,
                         Artists = null,

@@ -17,7 +17,7 @@ namespace MangaHere
         RootUrl = "http://www.mangahere.com",
         Author = "James Parks",
         Version = "0.0.1",
-        SupportedObjects = SupportedObjects.None,
+        SupportedObjects = SupportedObjects.All,
         Language = "English")]
     public class MangaHere : ISiteExtension
     {
@@ -26,7 +26,7 @@ namespace MangaHere
 
         public string GetSearchUri(string searchTerm)
         {
-            throw new NotImplementedException();
+            return String.Format("{0}/search.php?name={1}", ISEA.RootUrl, searchTerm);
         }
 
         public MangaObject ParseMangaObject(string content)
@@ -46,7 +46,23 @@ namespace MangaHere
 
         public List<SearchResultObject> ParseSearch(string content)
         {
-            throw new NotImplementedException();
+            List<SearchResultObject> SearchResults = new List<SearchResultObject>();
+
+            HtmlDocument SearchResultDocument = new HtmlDocument();
+            SearchResultDocument.LoadHtml(content);
+
+            HtmlNodeCollection HtmlSearchResults = SearchResultDocument.DocumentNode.SelectNodes(".//div[contains(@class,'result_search')]/dl");
+            if (HtmlSearchResults != null)
+                foreach (HtmlNode SearchResultNode in HtmlSearchResults)
+                {
+                    SearchResults.Add(new SearchResultObject()
+                    {
+                        Name = SearchResultNode.SelectSingleNode(".//dt/a[1]").Attributes["rel"].Value,
+                        Url = SearchResultNode.SelectSingleNode(".//dt/a[1]").Attributes["href"].Value,
+                    });
+                }
+
+            return SearchResults;
         }
     }
 }

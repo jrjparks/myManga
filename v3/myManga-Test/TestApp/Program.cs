@@ -19,8 +19,9 @@ namespace TestApp
         {
             Extentions.Add("MangaReader", new AFTV_Network.MangaReader());
             Extentions.Add("MangaPanda", new AFTV_Network.MangaPanda());
-            LoadManga();
-            //Search();
+            Extentions.Add("MangaHere", new MangaHere.MangaHere());
+            //LoadManga();
+            Search();
         }
 
         static void Search()

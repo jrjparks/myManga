@@ -10,7 +10,15 @@ using myMangaSiteExtension.Objects;
 
 namespace AFTV_Network
 {
-    [ISiteExtensionDescription("MangaPanda", "mangapanda.net", "http://www.mangapanda.com/", RootUrl = "http://www.mangapanda.com", Author = "James Parks", Version = "0.0.1", SupportedObjects = SupportedObjects.All)]
+    [ISiteExtensionDescription(
+        "MangaReader",
+        "mangareader.net",
+        "http://www.mangareader.net/",
+        RootUrl = "http://www.mangareader.net",
+        Author = "James Parks",
+        Version = "0.0.1",
+        SupportedObjects = SupportedObjects.All,
+        Language = "English")]
     public class MangaPanda : ISiteExtension
     {
         ISiteExtensionDescriptionAttribute isea;

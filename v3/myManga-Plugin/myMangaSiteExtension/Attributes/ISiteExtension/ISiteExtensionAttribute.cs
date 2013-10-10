@@ -29,6 +29,8 @@ namespace myMangaSiteExtension.Attributes.ISiteExtension
         public String RootUrl;
         public SupportedObjects SupportedObjects = SupportedObjects.None;
 
+        public String Language;
+
         /// <summary>
         /// ISiteExtension attribute.
         /// </summary>

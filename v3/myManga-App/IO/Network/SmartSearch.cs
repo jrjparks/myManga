@@ -5,7 +5,8 @@ using System.Net;
 using System.Reflection;
 using Amib.Threading;
 using myMangaSiteExtension;
-using myMangaSiteExtension.Attributes.ISiteExtension;
+using myMangaSiteExtension.Attributes;
+using myMangaSiteExtension.Interfaces;
 using myMangaSiteExtension.Objects;
 
 namespace myManga_App.IO.Network

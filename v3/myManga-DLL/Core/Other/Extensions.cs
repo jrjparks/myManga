@@ -39,4 +39,26 @@ namespace Core.Other
             return Style;
         }
     }
+
+    public static class Arrays<T>
+    {
+        public static T[] Concat(params T[][] arrays)
+        {
+            T[] array = new T[0];
+            foreach (T[] a in arrays)
+                array.Concat(a);
+            return array;
+        }
+    }
+
+    public static class Lists<T>
+    {
+        public static List<T> Concat(params List<T>[] lists)
+        {
+            List<T> list = new List<T>();
+            foreach (List<T> l in lists)
+                list.AddRange(l);
+            return list;
+        }
+    }
 }

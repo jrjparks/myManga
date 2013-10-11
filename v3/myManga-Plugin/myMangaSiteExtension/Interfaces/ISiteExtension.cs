@@ -4,7 +4,7 @@ using System.IO;
 using Core.IO;
 using myMangaSiteExtension.Objects;
 
-namespace myMangaSiteExtension
+namespace myMangaSiteExtension.Interfaces
 {
     public interface ISiteExtension
     {

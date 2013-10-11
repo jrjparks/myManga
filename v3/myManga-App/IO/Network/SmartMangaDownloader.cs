@@ -1,13 +1,9 @@
-﻿using Amib.Threading;
-using Core.IO;
-using myMangaSiteExtension;
-using myMangaSiteExtension.Collections;
-using myMangaSiteExtension.Objects;
-using System;
+﻿using System.IO;
 using System.Net;
-using System.IO;
-using myMangaSiteExtension.Attributes;
-using myMangaSiteExtension.Attributes.ISiteExtension;
+using Amib.Threading;
+using myMangaSiteExtension.Collections;
+using myMangaSiteExtension.Interfaces;
+using myMangaSiteExtension.Objects;
 
 namespace myManga_App.IO.Network
 {
@@ -26,7 +22,7 @@ namespace myManga_App.IO.Network
             ISiteExtensionCollection isec = (App.Current as App).SiteExtensions.DLLCollection;
             foreach (LocationObject location in mangaObject.Locations)
             {
-                ISiteExtension ise = isec[location.SiteExtensionName];
+                ISiteExtension ise = isec[location.ExtensionName];
                 HttpWebRequest request = WebRequest.Create(location.Url) as HttpWebRequest;
                 request.Referer = "";// ?? request.Host;
                 request.AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip;

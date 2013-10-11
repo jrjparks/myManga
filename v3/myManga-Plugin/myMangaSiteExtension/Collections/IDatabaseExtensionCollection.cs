@@ -5,9 +5,9 @@ using myMangaSiteExtension.Interfaces;
 
 namespace myMangaSiteExtension.Collections
 {
-    public class ISiteExtensionCollection : GenericCollection<ISiteExtension>
+    public class IDatabaseExtensionCollection : GenericCollection<IDatabaseExtension>
     {
-        public virtual ISiteExtension this[String name]
+        public virtual IDatabaseExtension this[String name]
         {
             get { return innerList[IndexOf(name)]; }
             set { innerList[IndexOf(name)] = value; }
@@ -15,9 +15,9 @@ namespace myMangaSiteExtension.Collections
 
         public virtual Int32 IndexOf(String name)
         {
-            foreach (ISiteExtension siteExtensionItem in innerList)
+            foreach (IDatabaseExtension siteExtensionItem in innerList)
             {
-                ISiteExtensionDescriptionAttribute siteExtensionAttribute = siteExtensionItem.GetType().GetCustomAttribute<ISiteExtensionDescriptionAttribute>(true);
+                IDatabaseExtensionAttribute siteExtensionAttribute = siteExtensionItem.GetType().GetCustomAttribute<IDatabaseExtensionAttribute>(true);
                 if (siteExtensionAttribute.Name.Equals(name))
                     return innerList.IndexOf(siteExtensionItem);
             }

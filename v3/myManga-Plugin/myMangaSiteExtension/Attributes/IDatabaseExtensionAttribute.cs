@@ -5,10 +5,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace myMangaSiteExtension.Attributes.ISiteExtension
+namespace myMangaSiteExtension.Attributes
 {
     [DebuggerStepThrough, AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
-    public sealed class ISiteExtensionDescriptionAttribute : Attribute
+    public class IDatabaseExtensionAttribute : Attribute
     {
         /// <summary>
         /// Name of the supported site.
@@ -37,7 +37,7 @@ namespace myMangaSiteExtension.Attributes.ISiteExtension
         /// <param name="Name">Name of the site</param>
         /// <param name="URLFormat">Format of the sites url</param>
         /// <param name="RefererHeader">Referer header to use when connecting to the site</param>
-        public ISiteExtensionDescriptionAttribute(String Name, String URLFormat, String RefererHeader)
+        public IDatabaseExtensionAttribute(String Name, String URLFormat, String RefererHeader)
         {
             this.Name = Name;
             this.URLFormat = URLFormat;

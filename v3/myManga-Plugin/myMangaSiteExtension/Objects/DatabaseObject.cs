@@ -10,7 +10,7 @@ using Core.IO;
 namespace myMangaSiteExtension.Objects
 {
     [Serializable, XmlRoot, DebuggerStepThrough]
-    public class SearchResultObject : SerializableObject, INotifyPropertyChanging, INotifyPropertyChanged
+    public class DatabaseObject : SerializableObject, INotifyPropertyChanging, INotifyPropertyChanged
     {
         #region NotifyPropertyChange
         public event PropertyChangingEventHandler PropertyChanging;
@@ -32,21 +32,22 @@ namespace myMangaSiteExtension.Objects
         [NonSerialized, XmlIgnore, EditorBrowsable(EditorBrowsableState.Never)]
         protected String name;
         [NonSerialized, XmlIgnore, EditorBrowsable(EditorBrowsableState.Never)]
-        protected Int32 id;
-        [NonSerialized, XmlIgnore, EditorBrowsable(EditorBrowsableState.Never)]
-        protected String extensionname;
-        [NonSerialized, XmlIgnore, EditorBrowsable(EditorBrowsableState.Never)]
-        protected String url;
-        [NonSerialized, XmlIgnore, EditorBrowsable(EditorBrowsableState.Never)]
-        protected String coverurl;
+        protected List<String> alternate_names;
 
         [NonSerialized, XmlIgnore, EditorBrowsable(EditorBrowsableState.Never)]
-        protected List<String> authors;
-        [NonSerialized, XmlIgnore, EditorBrowsable(EditorBrowsableState.Never)]
-        protected List<String> artists;
+        protected String description;
 
         [NonSerialized, XmlIgnore, EditorBrowsable(EditorBrowsableState.Never)]
-        protected Double rating;
+        protected List<String> staff;
+
+        [NonSerialized, XmlIgnore, EditorBrowsable(EditorBrowsableState.Never)]
+        protected List<String> genres;
+
+        [NonSerialized, XmlIgnore, EditorBrowsable(EditorBrowsableState.Never)]
+        protected List<String> covers;
+
+        [NonSerialized, XmlIgnore, EditorBrowsable(EditorBrowsableState.Never)]
+        protected List<LocationObject> locations;
         #endregion
 
         #region Public
@@ -62,92 +63,77 @@ namespace myMangaSiteExtension.Objects
             }
         }
 
-        [XmlAttribute]
-        public Int32 Id
+        [XmlArray, XmlArrayItem("Name")]
+        public List<String> AlternateNames
         {
-            get { return id; }
+            get { return alternate_names ?? (alternate_names = new List<String>()); }
             set
             {
                 OnPropertyChanging();
-                id = value;
+                alternate_names = value;
                 OnPropertyChanged();
             }
         }
 
         [XmlAttribute]
-        public String ExtensionName
+        public String Description
         {
-            get { return extensionname; }
+            get { return description; }
             set
             {
                 OnPropertyChanging();
-                extensionname = value;
-                OnPropertyChanged();
-            }
-        }
-
-        [XmlAttribute]
-        public String Url
-        {
-            get { return url; }
-            set
-            {
-                OnPropertyChanging();
-                url = value;
-                OnPropertyChanged();
-            }
-        }
-
-        [XmlAttribute]
-        public String CoverUrl
-        {
-            get { return coverurl; }
-            set
-            {
-                OnPropertyChanging();
-                coverurl = value;
+                description = value;
                 OnPropertyChanged();
             }
         }
 
         [XmlArray, XmlArrayItem("Name")]
-        public List<String> Authors
+        public List<String> Staff
         {
-            get { return authors ?? (authors = new List<String>()); }
+            get { return staff ?? (staff = new List<String>()); }
             set
             {
                 OnPropertyChanging();
-                authors = value;
+                staff = value;
                 OnPropertyChanged();
             }
         }
 
         [XmlArray, XmlArrayItem("Name")]
-        public List<String> Artists
+        public List<String> Genres
         {
-            get { return artists ?? (artists = new List<String>()); }
+            get { return genres ?? (genres = new List<String>()); }
             set
             {
                 OnPropertyChanging();
-                artists = value;
+                genres = value;
                 OnPropertyChanged();
             }
         }
 
-        public Double Rating
+        [XmlArray, XmlArrayItem("Cover")]
+        public List<String> Covers
         {
-            get { return rating; }
+            get { return covers ?? (covers = new List<String>()); }
             set
             {
                 OnPropertyChanging();
-                rating = value;
+                covers = value;
                 OnPropertyChanged();
             }
         }
 
-        public SearchResultObject() : base() { }
-        public SearchResultObject(SerializationInfo info, StreamingContext context)
-            : base(info, context) { }
+        [XmlArray, XmlArrayItem("Location")]
+        public List<LocationObject> Locations
+        {
+            get { return locations ?? (locations = new List<LocationObject>()); }
+            set
+            {
+                OnPropertyChanging();
+                locations = value;
+                OnPropertyChanged();
+            }
+        }
         #endregion
     }
 }

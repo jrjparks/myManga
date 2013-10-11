@@ -30,20 +30,22 @@ namespace myMangaSiteExtension.Objects
 
         #region Protected
         [NonSerialized, XmlIgnore, EditorBrowsable(EditorBrowsableState.Never)]
-        protected String siteextensionname;
+        protected String extensionname;
         [NonSerialized, XmlIgnore, EditorBrowsable(EditorBrowsableState.Never)]
         protected String url;
+        [NonSerialized, XmlIgnore, EditorBrowsable(EditorBrowsableState.Never)]
+        protected Boolean enabled = true;
         #endregion
 
         #region Public
         [XmlAttribute]
-        public String SiteExtensionName
+        public String ExtensionName
         {
-            get { return siteextensionname; }
+            get { return extensionname; }
             set
             {
                 OnPropertyChanging();
-                siteextensionname = value;
+                extensionname = value;
                 OnPropertyChanged();
             }
         }
@@ -60,11 +62,23 @@ namespace myMangaSiteExtension.Objects
             }
         }
 
+        [XmlAttribute]
+        public Boolean Enabled
+        {
+            get { return enabled; }
+            set
+            {
+                OnPropertyChanging();
+                enabled = value;
+                OnPropertyChanged();
+            }
+        }
+
         public LocationObject() : base() { }
         public LocationObject(SerializationInfo info, StreamingContext context) : base(info, context) { }
         public override string ToString()
         {
-            return String.Format("{0}: {1}", SiteExtensionName, Url);
+            return String.Format("{0}[{2}]: {1}", ExtensionName, Url, Enabled ? "Enabled" : "Disabled");
         }
         #endregion
     }

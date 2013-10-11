@@ -59,14 +59,18 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Attributes\ISiteExtension\ISiteExtensionAttribute.cs" />
+    <Compile Include="Attributes\IDatabaseExtensionAttribute.cs" />
+    <Compile Include="Attributes\ISiteExtensionAttribute.cs" />
     <Compile Include="Collections\GenericCollection.cs" />
     <Compile Include="Collections\GenericEnumerator.cs" />
+    <Compile Include="Collections\IDatabaseExtensionCollection.cs" />
     <Compile Include="Collections\ISiteExtensionCollection.cs" />
     <Compile Include="Enums\MangaObjectType.cs" />
     <Compile Include="Enums\SupportedObjects.cs" />
+    <Compile Include="Interfaces\IDatabaseExtension.cs" />
     <Compile Include="Interfaces\ISiteExtension.cs" />
     <Compile Include="Objects\ChapterObject.cs" />
+    <Compile Include="Objects\DatabaseObject.cs" />
     <Compile Include="Objects\LocationObject.cs" />
     <Compile Include="Objects\MangaObject.cs" />
     <Compile Include="Objects\PageObject.cs" />
@@ -81,6 +85,9 @@
       <Project>{1c67209c-e3c8-4ff9-9cb1-b788ecb4b284}</Project>
       <Name>Core</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Attributes\ISiteExtension\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

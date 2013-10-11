@@ -5,7 +5,8 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using myMangaSiteExtension;
-using myMangaSiteExtension.Attributes.ISiteExtension;
+using myMangaSiteExtension.Attributes;
+using myMangaSiteExtension.Interfaces;
 using myMangaSiteExtension.Objects;
 
 namespace myManga_App.ViewModels

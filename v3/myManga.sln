@@ -21,9 +21,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AFTV Network", "myManga-ISi
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MangaHere", "myManga-ISiteExtensions\MangaHere\MangaHere.csproj", "{93CBCB8C-01CF-4DCD-A675-056CF0BE047F}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "myManga-IDatabaseExtension", "myManga-IDatabaseExtension", "{601D4E6B-2166-403C-922C-97F83ED5F945}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AnimeNewsNetwork", "myManga-IDatabaseExtension\AnimeNewsNetwork\AnimeNewsNetwork.csproj", "{58E9513E-D3CC-42E7-9EB7-7FCF222F6670}"
+EndProject
 Global
 	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 7
+		SccNumberOfProjects = 8
 		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
 		SccTeamFoundationServer = https://tfs.codeplex.com/tfs/tfs24
 		SccLocalPath0 = .
@@ -50,6 +54,10 @@ Global
 		SccProjectTopLevelParentUniqueName6 = myManga.sln
 		SccProjectName6 = myManga-ISiteExtensions/MangaHere
 		SccLocalPath6 = myManga-ISiteExtensions\\MangaHere
+		SccProjectUniqueName7 = myManga-IDatabaseExtension\\AnimeNewsNetwork\\AnimeNewsNetwork.csproj
+		SccProjectTopLevelParentUniqueName7 = myManga.sln
+		SccProjectName7 = myManga-IDatabaseExtension/AnimeNewsNetwork
+		SccLocalPath7 = myManga-IDatabaseExtension\\AnimeNewsNetwork
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -124,6 +132,16 @@ Global
 		{93CBCB8C-01CF-4DCD-A675-056CF0BE047F}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{93CBCB8C-01CF-4DCD-A675-056CF0BE047F}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{93CBCB8C-01CF-4DCD-A675-056CF0BE047F}.Release|x86.ActiveCfg = Release|Any CPU
+		{58E9513E-D3CC-42E7-9EB7-7FCF222F6670}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{58E9513E-D3CC-42E7-9EB7-7FCF222F6670}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{58E9513E-D3CC-42E7-9EB7-7FCF222F6670}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{58E9513E-D3CC-42E7-9EB7-7FCF222F6670}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{58E9513E-D3CC-42E7-9EB7-7FCF222F6670}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{58E9513E-D3CC-42E7-9EB7-7FCF222F6670}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{58E9513E-D3CC-42E7-9EB7-7FCF222F6670}.Release|Any CPU.Build.0 = Release|Any CPU
+		{58E9513E-D3CC-42E7-9EB7-7FCF222F6670}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{58E9513E-D3CC-42E7-9EB7-7FCF222F6670}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{58E9513E-D3CC-42E7-9EB7-7FCF222F6670}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -134,5 +152,6 @@ Global
 		{9D021522-BC7A-41E6-899C-B6151FEB504C} = {BE03E57D-1DB5-49E4-B5D4-B3ED9D6E241A}
 		{E7AF89E1-1359-4F5B-B2EB-A4613BE7C6DF} = {A5464BE9-8F0C-49F8-AFCD-EC17E9B575E1}
 		{93CBCB8C-01CF-4DCD-A675-056CF0BE047F} = {A5464BE9-8F0C-49F8-AFCD-EC17E9B575E1}
+		{58E9513E-D3CC-42E7-9EB7-7FCF222F6670} = {601D4E6B-2166-403C-922C-97F83ED5F945}
 	EndGlobalSection
 EndGlobal

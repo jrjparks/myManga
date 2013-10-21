@@ -10,6 +10,7 @@ using myMangaSiteExtension.Objects;
 using Core.IO;
 using Core.Other;
 using myMangaSiteExtension.Interfaces;
+using myMangaSiteExtension.Utilities;
 
 namespace TestApp
 {
@@ -24,7 +25,6 @@ namespace TestApp
             SiteExtentions.Add("MangaPanda", new AFTV_Network.MangaPanda());
             SiteExtentions.Add("MangaHere", new MangaHere.MangaHere());
             DatabaseExtentions.Add("AnimeNewsNetwork", new AnimeNewsNetwork.AnimeNewsNetwork());
-            //LoadManga();
             Search();
         }
 
@@ -32,92 +32,93 @@ namespace TestApp
         {
             Console.Write("Search Term: ");
             String SearchTerm = Console.ReadLine();
+            List<MangaObject> SearchResults = new List<MangaObject>();
             while (SearchTerm != null && SearchTerm != String.Empty)
             {
-                Dictionary<String, List<SearchResultObject>> RawSearchResults = new Dictionary<String, List<SearchResultObject>>();
-                foreach (ISiteExtension ise in SiteExtentions.Values)
+                if (SearchResults.Count > 0 && SearchTerm.StartsWith("`"))
                 {
-                    ISiteExtensionDescriptionAttribute isea = ise.GetType().GetCustomAttribute<ISiteExtensionDescriptionAttribute>(false);
-                    String SearchURL = ise.GetSearchUri(searchTerm: SearchTerm);
-
-                    HttpWebRequest request = WebRequest.Create(SearchURL) as HttpWebRequest;
-                    request.Referer = isea.RefererHeader ?? request.Host;
-                    request.AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip;
-                    using (HttpWebResponse response = request.GetResponse() as HttpWebResponse)
+                    Int32 srIndex = Int32.Parse(SearchTerm.Substring(1));
+                    MangaObject mObj = SearchResults[srIndex];
+                    mObj.LoadMangaObject();
+                    mObj.SaveToArchive(String.Format("{0}.mca", mObj.Name).SafeFileName(), "MangaObject", SaveType.XML);
+                }
+                else
+                {
+                    Dictionary<String, List<SearchResultObject>> RawSearchResults = new Dictionary<String, List<SearchResultObject>>();
+                    foreach (ISiteExtension ise in SiteExtentions.Values)
                     {
-                        using (StreamReader streamReader = new StreamReader(response.GetResponseStream()))
+                        ISiteExtensionDescriptionAttribute isea = ise.GetType().GetCustomAttribute<ISiteExtensionDescriptionAttribute>(false);
+                        String SearchURL = ise.GetSearchUri(searchTerm: SearchTerm);
+
+                        HttpWebRequest request = WebRequest.Create(SearchURL) as HttpWebRequest;
+                        request.Referer = isea.RefererHeader ?? request.Host;
+                        request.AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip;
+                        using (HttpWebResponse response = request.GetResponse() as HttpWebResponse)
                         {
-                            foreach (SearchResultObject searchResultObject in ise.ParseSearch(streamReader.ReadToEnd()))
+                            using (StreamReader streamReader = new StreamReader(response.GetResponseStream()))
                             {
-                                String keyName = new String(searchResultObject.Name.ToLower().Where(Char.IsLetterOrDigit).ToArray());
-                                if (!RawSearchResults.ContainsKey(keyName))
-                                    RawSearchResults[keyName] = new List<SearchResultObject>();
-                                RawSearchResults[keyName].Add(searchResultObject);
+                                foreach (SearchResultObject searchResultObject in ise.ParseSearch(streamReader.ReadToEnd()))
+                                {
+                                    String keyName = new String(searchResultObject.Name.ToLower().Where(Char.IsLetterOrDigit).ToArray());
+                                    if (!RawSearchResults.ContainsKey(keyName))
+                                        RawSearchResults[keyName] = new List<SearchResultObject>();
+                                    RawSearchResults[keyName].Add(searchResultObject);
+                                }
                             }
                         }
                     }
-                }
 
-                Dictionary<String, List<DatabaseObject>> RawDatabaseSearchResults = new Dictionary<String, List<DatabaseObject>>();
-                foreach (IDatabaseExtension ide in DatabaseExtentions.Values)
-                {
-                    IDatabaseExtensionAttribute idea = ide.GetType().GetCustomAttribute<IDatabaseExtensionAttribute>(false);
-                    String SearchURL = ide.GetSearchUri(searchTerm: SearchTerm);
-
-                    HttpWebRequest request = WebRequest.Create(SearchURL) as HttpWebRequest;
-                    request.Referer = idea.RefererHeader ?? request.Host;
-                    request.AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip;
-                    using (HttpWebResponse response = request.GetResponse() as HttpWebResponse)
+                    Dictionary<String, List<DatabaseObject>> RawDatabaseSearchResults = new Dictionary<String, List<DatabaseObject>>();
+                    foreach (IDatabaseExtension ide in DatabaseExtentions.Values)
                     {
-                        using (StreamReader streamReader = new StreamReader(response.GetResponseStream()))
+                        IDatabaseExtensionAttribute idea = ide.GetType().GetCustomAttribute<IDatabaseExtensionAttribute>(false);
+                        String SearchURL = ide.GetSearchUri(searchTerm: SearchTerm);
+
+                        HttpWebRequest request = WebRequest.Create(SearchURL) as HttpWebRequest;
+                        request.Referer = idea.RefererHeader ?? request.Host;
+                        request.AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip;
+                        using (HttpWebResponse response = request.GetResponse() as HttpWebResponse)
                         {
-                            foreach (DatabaseObject searchResultObject in ide.ParseSearch(streamReader.ReadToEnd()))
+                            using (StreamReader streamReader = new StreamReader(response.GetResponseStream()))
                             {
-                                String keyName = new String(searchResultObject.Name.ToLower().Where(Char.IsLetterOrDigit).ToArray());
-                                if (!RawDatabaseSearchResults.ContainsKey(keyName))
-                                    RawDatabaseSearchResults[keyName] = new List<DatabaseObject>();
-                                RawDatabaseSearchResults[keyName].Add(searchResultObject);
+                                foreach (DatabaseObject searchResultObject in ide.ParseSearch(streamReader.ReadToEnd()))
+                                {
+                                    String keyName = new String(searchResultObject.Name.ToLower().Where(Char.IsLetterOrDigit).ToArray());
+                                    if (!RawDatabaseSearchResults.ContainsKey(keyName))
+                                        RawDatabaseSearchResults[keyName] = new List<DatabaseObject>();
+                                    RawDatabaseSearchResults[keyName].Add(searchResultObject);
+                                }
                             }
                         }
                     }
-                }
 
-                List<MangaObject> SearchResults = new List<MangaObject>();
-                foreach (String key in RawSearchResults.Keys)
-                {
-                    List<SearchResultObject> SearchResultObjects = RawSearchResults[key];
-                    if (RawDatabaseSearchResults.ContainsKey(key))
+                    SearchResults.Clear();
+                    foreach (String key in RawSearchResults.Keys)
                     {
-                        List<DatabaseObject> DatabaseObjects = RawDatabaseSearchResults[key];
-                        SearchResults.Add(new MangaObject()
+                        List<SearchResultObject> SearchResultObjects = RawSearchResults[key];
+                        MangaObject mangaObject = MangaObjectExtensions.Merge(from SearchResultObject searchResultObject in SearchResultObjects select searchResultObject.ConvertToMangaObject());
+                        if (RawDatabaseSearchResults.ContainsKey(key))
                         {
-                            Name = DatabaseObjects.First().Name,
-                            AlternateNames = DatabaseObjects.First().AlternateNames,
-                            Locations = (from SearchResultObject sro in SearchResultObjects select new LocationObject() { Url = sro.Url, ExtensionName = sro.ExtensionName }).ToList(),
-                            Description = DatabaseObjects.First().Description,
-                            Genres = DatabaseObjects.First().Genres,
-                            Covers = (from SearchResultObject searchResultObject in SearchResultObjects select searchResultObject.CoverUrl).Concat(Lists<String>.Concat((from DatabaseObject databaseObject in DatabaseObjects select databaseObject.Covers).ToArray())).ToList()
-                        });
+                            List<DatabaseObject> DatabaseObjects = RawDatabaseSearchResults[key];
+                            mangaObject.AttachDatabase(DatabaseObjectExtensions.Merge(DatabaseObjects));
+                        }
+                        SearchResults.Add(mangaObject);
                     }
-                    else
-                        SearchResults.Add(new MangaObject()
-                        {
-                            Name = SearchResultObjects.First().Name,
-                            Locations = (from SearchResultObject sro in SearchResultObjects select new LocationObject() { Url = sro.Url }).ToList(),
-                            Covers = (from SearchResultObject searchResultObject in SearchResultObjects select searchResultObject.CoverUrl).ToList()
-                        });
-                }
 
-                Console.WriteLine(String.Format("Search Term:{0}\n\tResults Found: {1}", SearchTerm, RawSearchResults.Count));
-                foreach (MangaObject SearchResult in SearchResults)
-                {
-                    Console.WriteLine(String.Format("Name: {0}", SearchResult.Name));
-                    Console.WriteLine(String.Format("\tUrl: {0}", String.Join("\n\t     ", (from LocationObject location in SearchResult.Locations select location.Url).ToArray())));
-                    Console.WriteLine(String.Format("\tCover Url: {0}", String.Join("\n\t           ", SearchResult.Covers)));
-                    Console.WriteLine(String.Format("\tDescription: {0}", String.Join("\n\t           ", SearchResult.Description)));
+                    Console.WriteLine(String.Format("Search Term:{0}\n\tResults Found: {1}", SearchTerm, RawSearchResults.Count));
+                    int i = 0;
+                    foreach (MangaObject SearchResult in SearchResults)
+                    {
+                        Console.WriteLine(String.Format("[{0}]Name: {1}", i, SearchResult.Name));
+                        Console.WriteLine(String.Format("\tUrl: {0}", String.Join("\n\t     ", (from LocationObject location in SearchResult.Locations select location.Url).ToArray())));
+                        Console.WriteLine(String.Format("\tDatabase: {0}", String.Join("\n\t          ", (from LocationObject location in SearchResult.DatabaseLocations select location.Url).ToArray())));
+                        Console.WriteLine(String.Format("\tCover Url: {0}", String.Join("\n\t           ", SearchResult.Covers)));
+                        Console.WriteLine(String.Format("\tDescription: {0}", String.Join("\n\t           ", SearchResult.Description)));
+                        ++i;
+                    }
                 }
-
                 Console.WriteLine();
+                Console.WriteLine("`(index) to download info.");
                 Console.WriteLine("Empty Search Term Exits Application.");
                 Console.Write("Search Term: ");
                 SearchTerm = Console.ReadLine();
@@ -126,7 +127,7 @@ namespace TestApp
 
         static void LoadManga()
         {
-            MangaObject mObj = LoadMangaObject("http://www.mangahere.com/manga/fairy_tail/");
+            MangaObject mObj = LoadMangaObject("http://www.mangahere.com/manga/fairy_tail/", SiteExtentions["MangaHere"]);
             Console.WriteLine("Returned MangaObject:");
             Console.WriteLine("\tName:{0}", mObj.Name);
             Console.WriteLine("\tReleased:{0}", mObj.Released.ToString("yyyy"));
@@ -173,10 +174,9 @@ namespace TestApp
             Console.ReadLine();
         }
 
-        static MangaObject LoadMangaObject(String Link)
+        static MangaObject LoadMangaObject(String Link, ISiteExtension ise)
         {
             MangaObject MangaObj = null;
-            ISiteExtension ise = SiteExtentions["MangaHere"];
             ISiteExtensionDescriptionAttribute isea = ise.GetType().GetCustomAttribute<ISiteExtensionDescriptionAttribute>(false);
 
             HttpWebRequest request = WebRequest.Create(Link) as HttpWebRequest;
@@ -187,10 +187,34 @@ namespace TestApp
                 using (StreamReader streamReader = new StreamReader(response.GetResponseStream()))
                 {
                     MangaObj = ise.ParseMangaObject(streamReader.ReadToEnd());
-                    MangaObj.Locations.Add(new LocationObject() { ExtensionName = "MangaHere", Url = Link });
+                    MangaObj.Locations.Add(new LocationObject() { ExtensionName = isea.Name, Url = Link });
                 }
             }
             return MangaObj;
+        }
+
+        static void LoadMangaObject(this MangaObject MangaObj)
+        {
+            foreach (LocationObject LocationObj in MangaObj.Locations.FindAll(l => l.Enabled))
+            {
+                ISiteExtension ise = SiteExtentions[LocationObj.ExtensionName];
+                ISiteExtensionDescriptionAttribute isea = ise.GetType().GetCustomAttribute<ISiteExtensionDescriptionAttribute>(false);
+
+                HttpWebRequest request = WebRequest.Create(LocationObj.Url) as HttpWebRequest;
+                request.Referer = isea.RefererHeader ?? request.Host;
+                request.AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip;
+                using (HttpWebResponse response = request.GetResponse() as HttpWebResponse)
+                {
+                    Console.Write("Loading Manga from {0}...", isea.Name);
+                    using (StreamReader streamReader = new StreamReader(response.GetResponseStream()))
+                    {
+                        Console.WriteLine("Done!");
+                        Console.Write("Parsing Manga from {0}...", isea.Name);
+                        MangaObj.Merge(ise.ParseMangaObject(streamReader.ReadToEnd()));
+                        Console.WriteLine("Done!");
+                    }
+                }
+            }
         }
 
         static ChapterObject LoadChapterObject(String Link)

@@ -61,6 +61,9 @@ namespace myMangaSiteExtension.Objects
         protected List<LocationObject> locations;
 
         [NonSerialized, XmlIgnore, EditorBrowsable(EditorBrowsableState.Never)]
+        protected List<LocationObject> databaseLocations;
+
+        [NonSerialized, XmlIgnore, EditorBrowsable(EditorBrowsableState.Never)]
         protected List<String> covers;
         [NonSerialized, XmlIgnore, EditorBrowsable(EditorBrowsableState.Never)]
         protected Int32 preferredcover;
@@ -179,6 +182,18 @@ namespace myMangaSiteExtension.Objects
             {
                 OnPropertyChanging();
                 locations = value;
+                OnPropertyChanged();
+            }
+        }
+
+        [XmlArray, XmlArrayItem("Location")]
+        public List<LocationObject> DatabaseLocations
+        {
+            get { return databaseLocations ?? (databaseLocations = new List<LocationObject>()); }
+            set
+            {
+                OnPropertyChanging();
+                databaseLocations = value;
                 OnPropertyChanged();
             }
         }

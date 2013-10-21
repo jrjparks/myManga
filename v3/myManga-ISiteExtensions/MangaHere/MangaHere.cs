@@ -31,6 +31,8 @@ namespace MangaHere
 
         public MangaObject ParseMangaObject(string content)
         {
+            if (content.ToLower().Contains("The series One Piece has been licensed, it is not available in MangaHere.".ToLower()))
+                return default(MangaObject);
             HtmlDocument MangaObjectDocument = new HtmlDocument();
             MangaObjectDocument.LoadHtml(content);
 
@@ -130,7 +132,8 @@ namespace MangaHere
             SearchResultDocument.LoadHtml(content);
 
             HtmlNodeCollection HtmlSearchResults = SearchResultDocument.DocumentNode.SelectNodes(".//div[contains(@class,'result_search')]/dl");
-            if (HtmlSearchResults != null)
+            if (HtmlSearchResults != null && !HtmlSearchResults[0].InnerText.ToLower().Equals("No Manga Series".ToLower()))
+            {
                 foreach (HtmlNode SearchResultNode in HtmlSearchResults)
                 {
                     SearchResults.Add(new SearchResultObject()
@@ -140,6 +143,7 @@ namespace MangaHere
                         ExtensionName = ISEA.Name
                     });
                 }
+            }
 
             return SearchResults;
         }

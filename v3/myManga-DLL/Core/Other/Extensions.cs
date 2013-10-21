@@ -42,7 +42,8 @@ namespace Core.Other
 
     public static class Arrays<T>
     {
-        public static T[] Concat(params T[][] arrays)
+        public static T[] Concat(params T[][] arrays) { return Concat(arrays.AsEnumerable()); }
+        public static T[] Concat(IEnumerable<T[]> arrays)
         {
             T[] array = new T[0];
             foreach (T[] a in arrays)
@@ -53,7 +54,8 @@ namespace Core.Other
 
     public static class Lists<T>
     {
-        public static List<T> Concat(params List<T>[] lists)
+        public static List<T> Concat(params List<T>[] lists) { return Concat(lists.AsEnumerable()); }
+        public static List<T> Concat(IEnumerable<List<T>> lists)
         {
             List<T> list = new List<T>();
             foreach (List<T> l in lists)

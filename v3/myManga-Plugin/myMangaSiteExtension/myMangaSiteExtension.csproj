@@ -76,6 +76,10 @@
     <Compile Include="Objects\PageObject.cs" />
     <Compile Include="Objects\SearchResultObject.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Utilities\ChapterObjectExtentions.cs" />
+    <Compile Include="Utilities\DatabaseObjectExtensions.cs" />
+    <Compile Include="Utilities\MangaObjectExtensions.cs" />
+    <Compile Include="Utilities\SearchResultObjectExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -86,9 +90,7 @@
       <Name>Core</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Attributes\ISiteExtension\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

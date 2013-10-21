@@ -40,6 +40,7 @@ namespace TestApp
                     Int32 srIndex = Int32.Parse(SearchTerm.Substring(1));
                     MangaObject mObj = SearchResults[srIndex];
                     mObj.LoadMangaObject();
+                    mObj.SortChapters();
                     mObj.SaveToArchive(String.Format("{0}.mca", mObj.Name).SafeFileName(), "MangaObject", SaveType.XML);
                 }
                 else

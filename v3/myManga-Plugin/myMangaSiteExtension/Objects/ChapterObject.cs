@@ -32,11 +32,11 @@ namespace myMangaSiteExtension.Objects
         [NonSerialized, XmlIgnore, EditorBrowsable(EditorBrowsableState.Never)]
         protected String name;
         [NonSerialized, XmlIgnore, EditorBrowsable(EditorBrowsableState.Never)]
-        protected Int32 volume;
+        protected Int32 volume = -1;
         [NonSerialized, XmlIgnore, EditorBrowsable(EditorBrowsableState.Never)]
-        protected Int32 chapter;
+        protected Int32 chapter = -1;
         [NonSerialized, XmlIgnore, EditorBrowsable(EditorBrowsableState.Never)]
-        protected Int32 subchapter;
+        protected Int32 subchapter = -1;
 
         [NonSerialized, XmlIgnore, EditorBrowsable(EditorBrowsableState.Never)]
         protected List<LocationObject> locations;
@@ -72,6 +72,8 @@ namespace myMangaSiteExtension.Objects
                 OnPropertyChanged();
             }
         }
+        [XmlIgnore]
+        public bool VolumeSpecified { get { return this.Volume >= 0; } }
 
         [XmlAttribute]
         public Int32 Chapter
@@ -84,6 +86,8 @@ namespace myMangaSiteExtension.Objects
                 OnPropertyChanged();
             }
         }
+        [XmlIgnore]
+        public bool ChapterSpecified { get { return this.Chapter >= 0; } }
 
         [XmlAttribute]
         public Int32 SubChapter
@@ -96,6 +100,8 @@ namespace myMangaSiteExtension.Objects
                 OnPropertyChanged();
             }
         }
+        [XmlIgnore]
+        public bool SubChapterSpecified { get { return this.SubChapter >= 0; } }
 
         [XmlArray, XmlArrayItem("Location")]
         public List<LocationObject> Locations

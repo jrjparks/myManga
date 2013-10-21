@@ -159,5 +159,10 @@ namespace myMangaSiteExtension.Utilities
                 if (Cover != null && !value.Covers.Any(o => o == Cover))
                     value.Covers.Add(Cover);
         }
+
+        public static void SortChapters(this MangaObject value)
+        {
+            value.Chapters = value.Chapters.OrderBy(c => c.Volume).ThenBy(c => c.Chapter).ThenBy(c => c.SubChapter).ToList();
+        }
     }
 }

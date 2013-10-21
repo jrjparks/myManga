@@ -5,12 +5,21 @@ using System.Reflection;
 using Core.Other;
 using HtmlAgilityPack;
 using myMangaSiteExtension;
-using myMangaSiteExtension.Attributes.ISiteExtension;
+using myMangaSiteExtension.Attributes;
+using myMangaSiteExtension.Interfaces;
 using myMangaSiteExtension.Objects;
 
 namespace AFTV_Network
 {
-    [ISiteExtensionDescription("MangaReader", "mangareader.net", "http://www.mangareader.net/", RootUrl = "http://www.mangareader.net", Author = "James Parks", Version = "0.0.1", SupportedObjects = SupportedObjects.All)]
+    [ISiteExtensionDescription(
+        "MangaReader",
+        "mangareader.net",
+        "http://www.mangareader.net/",
+        RootUrl = "http://www.mangareader.net",
+        Author = "James Parks",
+        Version = "0.0.1",
+        SupportedObjects = SupportedObjects.All,
+        Language = "English")]
     public class MangaReader : ISiteExtension
     {
         ISiteExtensionDescriptionAttribute isea;
@@ -44,7 +53,7 @@ namespace AFTV_Network
                                                 Chapter = Int32.Parse(ChapterNode.SelectSingleNode(".//td[1]/a").InnerText.Substring(ChapterNode.SelectSingleNode(".//td[1]/a").InnerText.LastIndexOf(' ') + 1)),
                                                 Locations = { 
                                                     new LocationObject() { 
-                                                        SiteExtensionName = ISEA.Name, 
+                                                        ExtensionName = ISEA.Name, 
                                                         Url = String.Format("{0}{1}", ISEA.RootUrl, ChapterNode.SelectSingleNode(".//td[1]/a").Attributes["href"].Value) } 
                                                 },
                                                 Released = DateTime.Parse(ChapterNode.SelectSingleNode(".//td[2]").InnerText)
@@ -116,6 +125,7 @@ namespace AFTV_Network
                     SearchResults.Add(new SearchResultObject()
                     {
                         CoverUrl = CoverUrl,
+                        ExtensionName = ISEA.Name,
                         Name = Name,
                         Url = String.Format("{0}{1}", ISEA.RootUrl, Link),
                         Id = Id,

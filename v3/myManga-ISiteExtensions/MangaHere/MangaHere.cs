@@ -31,8 +31,8 @@ namespace MangaHere
 
         public MangaObject ParseMangaObject(string content)
         {
-            if (content.ToLower().Contains("The series One Piece has been licensed, it is not available in MangaHere.".ToLower()))
-                return default(MangaObject);
+            if (content.ToLower().Contains("has been licensed, it is not available in MangaHere.".ToLower()))
+                return null;
             HtmlDocument MangaObjectDocument = new HtmlDocument();
             MangaObjectDocument.LoadHtml(content);
 

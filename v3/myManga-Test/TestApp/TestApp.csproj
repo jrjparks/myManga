@@ -79,13 +79,13 @@
       <Project>{58e9513e-d3cc-42e7-9eb7-7fcf222f6670}</Project>
       <Name>AnimeNewsNetwork</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\myManga-ISiteExtensions\AFTV Network\AFTV Network.csproj">
+      <Project>{e7af89e1-1359-4f5b-b2eb-a4613be7c6df}</Project>
+      <Name>AFTV Network</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\myManga-ISiteExtensions\MangaHere\MangaHere.csproj">
       <Project>{93cbcb8c-01cf-4dcd-a675-056cf0be047f}</Project>
       <Name>MangaHere</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\myManga-ISiteExtensions\MangaReader\AFTV Network.csproj">
-      <Project>{e7af89e1-1359-4f5b-b2eb-a4613be7c6df}</Project>
-      <Name>AFTV Network</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\myManga-Plugin\myMangaSiteExtension\myMangaSiteExtension.csproj">
       <Project>{088e2638-3bed-4b11-a548-36e3539d86f2}</Project>

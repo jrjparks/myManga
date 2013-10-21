@@ -74,7 +74,7 @@ namespace myMangaSiteExtension.Objects
         [NonSerialized, XmlIgnore, EditorBrowsable(EditorBrowsableState.Never)]
         protected DateTime released = DateTime.MinValue;
         [NonSerialized, XmlIgnore, EditorBrowsable(EditorBrowsableState.Never)]
-        protected Double rating;
+        protected Double rating = -1;
         #endregion
 
         #region Public
@@ -261,6 +261,8 @@ namespace myMangaSiteExtension.Objects
                 OnPropertyChanged();
             }
         }
+        [XmlIgnore]
+        public bool RatingSpecified { get { return this.Rating >= 0; } }
 
         public MangaObject() : base() { }
         public MangaObject(SerializationInfo info, StreamingContext context) : base(info, context) { }

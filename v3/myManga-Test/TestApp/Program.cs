@@ -50,22 +50,31 @@ namespace TestApp
                     {
                         ISiteExtensionDescriptionAttribute isea = ise.GetType().GetCustomAttribute<ISiteExtensionDescriptionAttribute>(false);
                         String SearchURL = ise.GetSearchUri(searchTerm: SearchTerm);
+                        Console.Write("Searching {0}...", isea.Name);
 
                         HttpWebRequest request = WebRequest.Create(SearchURL) as HttpWebRequest;
                         request.Referer = isea.RefererHeader ?? request.Host;
                         request.AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip;
-                        using (HttpWebResponse response = request.GetResponse() as HttpWebResponse)
+                        try
                         {
-                            using (StreamReader streamReader = new StreamReader(response.GetResponseStream()))
+                            using (HttpWebResponse response = request.GetResponse() as HttpWebResponse)
                             {
-                                foreach (SearchResultObject searchResultObject in ise.ParseSearch(streamReader.ReadToEnd()))
+                                using (StreamReader streamReader = new StreamReader(response.GetResponseStream()))
                                 {
-                                    String keyName = new String(searchResultObject.Name.ToLower().Where(Char.IsLetterOrDigit).ToArray());
-                                    if (!RawSearchResults.ContainsKey(keyName))
-                                        RawSearchResults[keyName] = new List<SearchResultObject>();
-                                    RawSearchResults[keyName].Add(searchResultObject);
+                                    foreach (SearchResultObject searchResultObject in ise.ParseSearch(streamReader.ReadToEnd()))
+                                    {
+                                        String keyName = new String(searchResultObject.Name.ToLower().Where(Char.IsLetterOrDigit).ToArray());
+                                        if (!RawSearchResults.ContainsKey(keyName))
+                                            RawSearchResults[keyName] = new List<SearchResultObject>();
+                                        RawSearchResults[keyName].Add(searchResultObject);
+                                    }
                                 }
                             }
+                            Console.WriteLine("Done!");
+                        }
+                        catch
+                        {
+                            Console.WriteLine("Timeout!");
                         }
                     }
 
@@ -74,22 +83,31 @@ namespace TestApp
                     {
                         IDatabaseExtensionAttribute idea = ide.GetType().GetCustomAttribute<IDatabaseExtensionAttribute>(false);
                         String SearchURL = ide.GetSearchUri(searchTerm: SearchTerm);
+                        Console.Write("Searching {0}...", idea.Name);
 
                         HttpWebRequest request = WebRequest.Create(SearchURL) as HttpWebRequest;
                         request.Referer = idea.RefererHeader ?? request.Host;
                         request.AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip;
-                        using (HttpWebResponse response = request.GetResponse() as HttpWebResponse)
+                        try
                         {
-                            using (StreamReader streamReader = new StreamReader(response.GetResponseStream()))
+                            using (HttpWebResponse response = request.GetResponse() as HttpWebResponse)
                             {
-                                foreach (DatabaseObject searchResultObject in ide.ParseSearch(streamReader.ReadToEnd()))
+                                using (StreamReader streamReader = new StreamReader(response.GetResponseStream()))
                                 {
-                                    String keyName = new String(searchResultObject.Name.ToLower().Where(Char.IsLetterOrDigit).ToArray());
-                                    if (!RawDatabaseSearchResults.ContainsKey(keyName))
-                                        RawDatabaseSearchResults[keyName] = new List<DatabaseObject>();
-                                    RawDatabaseSearchResults[keyName].Add(searchResultObject);
+                                    foreach (DatabaseObject searchResultObject in ide.ParseSearch(streamReader.ReadToEnd()))
+                                    {
+                                        String keyName = new String(searchResultObject.Name.ToLower().Where(Char.IsLetterOrDigit).ToArray());
+                                        if (!RawDatabaseSearchResults.ContainsKey(keyName))
+                                            RawDatabaseSearchResults[keyName] = new List<DatabaseObject>();
+                                        RawDatabaseSearchResults[keyName].Add(searchResultObject);
+                                    }
                                 }
                             }
+                            Console.WriteLine("Done!");
+                        }
+                        catch
+                        {
+                            Console.WriteLine("Timeout!");
                         }
                     }
 
@@ -211,7 +229,10 @@ namespace TestApp
                     {
                         Console.WriteLine("Done!");
                         Console.Write("Parsing Manga from {0}...", isea.Name);
-                        MangaObj.Merge(ise.ParseMangaObject(streamReader.ReadToEnd()));
+                        MangaObject dmObj = ise.ParseMangaObject(streamReader.ReadToEnd());
+                        LocationObj.Enabled = dmObj != null;
+                        if (LocationObj.Enabled)
+                            MangaObj.Merge(dmObj);
                         Console.WriteLine("Done!");
                     }
                 }

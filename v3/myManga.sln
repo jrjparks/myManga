@@ -17,13 +17,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "myMangaSiteExtension", "myM
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "myManga-ISiteExtensions", "myManga-ISiteExtensions", "{A5464BE9-8F0C-49F8-AFCD-EC17E9B575E1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AFTV Network", "myManga-ISiteExtensions\MangaReader\AFTV Network.csproj", "{E7AF89E1-1359-4F5B-B2EB-A4613BE7C6DF}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MangaHere", "myManga-ISiteExtensions\MangaHere\MangaHere.csproj", "{93CBCB8C-01CF-4DCD-A675-056CF0BE047F}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "myManga-IDatabaseExtension", "myManga-IDatabaseExtension", "{601D4E6B-2166-403C-922C-97F83ED5F945}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AnimeNewsNetwork", "myManga-IDatabaseExtension\AnimeNewsNetwork\AnimeNewsNetwork.csproj", "{58E9513E-D3CC-42E7-9EB7-7FCF222F6670}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AFTV Network", "myManga-ISiteExtensions\AFTV Network\AFTV Network.csproj", "{E7AF89E1-1359-4F5B-B2EB-A4613BE7C6DF}"
 EndProject
 Global
 	GlobalSection(TeamFoundationVersionControl) = preSolution
@@ -46,18 +46,18 @@ Global
 		SccProjectTopLevelParentUniqueName4 = myManga.sln
 		SccProjectName4 = myManga-Plugin/myMangaSiteExtension
 		SccLocalPath4 = myManga-Plugin\\myMangaSiteExtension
-		SccProjectUniqueName5 = myManga-ISiteExtensions\\MangaReader\\AFTV\u0020Network.csproj
+		SccProjectUniqueName5 = myManga-ISiteExtensions\\MangaHere\\MangaHere.csproj
 		SccProjectTopLevelParentUniqueName5 = myManga.sln
-		SccProjectName5 = myManga-ISiteExtensions/MangaReader
-		SccLocalPath5 = myManga-ISiteExtensions\\MangaReader
-		SccProjectUniqueName6 = myManga-ISiteExtensions\\MangaHere\\MangaHere.csproj
+		SccProjectName5 = myManga-ISiteExtensions/MangaHere
+		SccLocalPath5 = myManga-ISiteExtensions\\MangaHere
+		SccProjectUniqueName6 = myManga-IDatabaseExtension\\AnimeNewsNetwork\\AnimeNewsNetwork.csproj
 		SccProjectTopLevelParentUniqueName6 = myManga.sln
-		SccProjectName6 = myManga-ISiteExtensions/MangaHere
-		SccLocalPath6 = myManga-ISiteExtensions\\MangaHere
-		SccProjectUniqueName7 = myManga-IDatabaseExtension\\AnimeNewsNetwork\\AnimeNewsNetwork.csproj
+		SccProjectName6 = myManga-IDatabaseExtension/AnimeNewsNetwork
+		SccLocalPath6 = myManga-IDatabaseExtension\\AnimeNewsNetwork
+		SccProjectUniqueName7 = myManga-ISiteExtensions\\AFTV\u0020Network\\AFTV\u0020Network.csproj
 		SccProjectTopLevelParentUniqueName7 = myManga.sln
-		SccProjectName7 = myManga-IDatabaseExtension/AnimeNewsNetwork
-		SccLocalPath7 = myManga-IDatabaseExtension\\AnimeNewsNetwork
+		SccProjectName7 = myManga-ISiteExtensions/AFTV\u0020Network
+		SccLocalPath7 = myManga-ISiteExtensions\\AFTV\u0020Network
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -112,16 +112,6 @@ Global
 		{088E2638-3BED-4B11-A548-36E3539D86F2}.Release|Mixed Platforms.Build.0 = Release|x86
 		{088E2638-3BED-4B11-A548-36E3539D86F2}.Release|x86.ActiveCfg = Release|x86
 		{088E2638-3BED-4B11-A548-36E3539D86F2}.Release|x86.Build.0 = Release|x86
-		{E7AF89E1-1359-4F5B-B2EB-A4613BE7C6DF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E7AF89E1-1359-4F5B-B2EB-A4613BE7C6DF}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E7AF89E1-1359-4F5B-B2EB-A4613BE7C6DF}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{E7AF89E1-1359-4F5B-B2EB-A4613BE7C6DF}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{E7AF89E1-1359-4F5B-B2EB-A4613BE7C6DF}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{E7AF89E1-1359-4F5B-B2EB-A4613BE7C6DF}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E7AF89E1-1359-4F5B-B2EB-A4613BE7C6DF}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E7AF89E1-1359-4F5B-B2EB-A4613BE7C6DF}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{E7AF89E1-1359-4F5B-B2EB-A4613BE7C6DF}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{E7AF89E1-1359-4F5B-B2EB-A4613BE7C6DF}.Release|x86.ActiveCfg = Release|Any CPU
 		{93CBCB8C-01CF-4DCD-A675-056CF0BE047F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{93CBCB8C-01CF-4DCD-A675-056CF0BE047F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{93CBCB8C-01CF-4DCD-A675-056CF0BE047F}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
@@ -142,6 +132,18 @@ Global
 		{58E9513E-D3CC-42E7-9EB7-7FCF222F6670}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{58E9513E-D3CC-42E7-9EB7-7FCF222F6670}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{58E9513E-D3CC-42E7-9EB7-7FCF222F6670}.Release|x86.ActiveCfg = Release|Any CPU
+		{E7AF89E1-1359-4F5B-B2EB-A4613BE7C6DF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E7AF89E1-1359-4F5B-B2EB-A4613BE7C6DF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E7AF89E1-1359-4F5B-B2EB-A4613BE7C6DF}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
+		{E7AF89E1-1359-4F5B-B2EB-A4613BE7C6DF}.Debug|Mixed Platforms.Build.0 = Debug|x86
+		{E7AF89E1-1359-4F5B-B2EB-A4613BE7C6DF}.Debug|x86.ActiveCfg = Debug|x86
+		{E7AF89E1-1359-4F5B-B2EB-A4613BE7C6DF}.Debug|x86.Build.0 = Debug|x86
+		{E7AF89E1-1359-4F5B-B2EB-A4613BE7C6DF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E7AF89E1-1359-4F5B-B2EB-A4613BE7C6DF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E7AF89E1-1359-4F5B-B2EB-A4613BE7C6DF}.Release|Mixed Platforms.ActiveCfg = Release|x86
+		{E7AF89E1-1359-4F5B-B2EB-A4613BE7C6DF}.Release|Mixed Platforms.Build.0 = Release|x86
+		{E7AF89E1-1359-4F5B-B2EB-A4613BE7C6DF}.Release|x86.ActiveCfg = Release|x86
+		{E7AF89E1-1359-4F5B-B2EB-A4613BE7C6DF}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -150,8 +152,8 @@ Global
 		{1C67209C-E3C8-4FF9-9CB1-B788ECB4B284} = {A3149E96-7930-4359-B03A-9BF285B95F72}
 		{088E2638-3BED-4B11-A548-36E3539D86F2} = {563FE6FF-10F2-49F7-80DF-6E01CB6E45D8}
 		{9D021522-BC7A-41E6-899C-B6151FEB504C} = {BE03E57D-1DB5-49E4-B5D4-B3ED9D6E241A}
-		{E7AF89E1-1359-4F5B-B2EB-A4613BE7C6DF} = {A5464BE9-8F0C-49F8-AFCD-EC17E9B575E1}
 		{93CBCB8C-01CF-4DCD-A675-056CF0BE047F} = {A5464BE9-8F0C-49F8-AFCD-EC17E9B575E1}
+		{E7AF89E1-1359-4F5B-B2EB-A4613BE7C6DF} = {A5464BE9-8F0C-49F8-AFCD-EC17E9B575E1}
 		{58E9513E-D3CC-42E7-9EB7-7FCF222F6670} = {601D4E6B-2166-403C-922C-97F83ED5F945}
 	EndGlobalSection
 EndGlobal

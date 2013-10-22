@@ -22,8 +22,8 @@ namespace AFTV_Network
         Language = "English")]
     public class MangaReader : ISiteExtension
     {
-        ISiteExtensionDescriptionAttribute isea;
-        private ISiteExtensionDescriptionAttribute ISEA { get { return isea ?? (isea = this.GetType().GetCustomAttribute<ISiteExtensionDescriptionAttribute>(false)); } }
+        protected ISiteExtensionDescriptionAttribute isea;
+        protected virtual ISiteExtensionDescriptionAttribute ISEA { get { return isea ?? (isea = GetType().GetCustomAttribute<ISiteExtensionDescriptionAttribute>(false)); } }
 
         public String GetSearchUri(String searchTerm)
         {
@@ -76,13 +76,12 @@ namespace AFTV_Network
         {
             HtmlDocument ChapterObjectDocument = new HtmlDocument();
             ChapterObjectDocument.LoadHtml(content);
-
             return new ChapterObject()
             {
                 Pages = (from HtmlNode PageNode in ChapterObjectDocument.GetElementbyId("pageMenu").SelectNodes(".//option")
                          select new PageObject()
                          {
-                             Url = PageNode.Attributes["value"].Value,
+                             Url = String.Format("{0}{1}", ISEA.RootUrl, PageNode.Attributes["value"].Value),
                              PageNumber = UInt32.Parse(PageNode.NextSibling.InnerText)
                          }).ToList()
             };
@@ -93,17 +92,20 @@ namespace AFTV_Network
             HtmlDocument PageObjectDocument = new HtmlDocument();
             PageObjectDocument.LoadHtml(content);
 
-            HtmlNode NaviNode = PageObjectDocument.GetElementbyId("navi");
-            HtmlNode PageNode = PageObjectDocument.GetElementbyId("pageMenu").SelectSingleNode(".//option[@selected]");
+            HtmlNode PageNode = PageObjectDocument.GetElementbyId("pageMenu").SelectSingleNode(".//option[@selected]"),
+                PrevNode = PageNode.SelectSingleNode(".//preceding-sibling::option"),
+                NextNode = PageNode.SelectSingleNode(".//following-sibling::option");
+
+            Uri ImageLink = new Uri(PageObjectDocument.GetElementbyId("img").Attributes["src"].Value);
 
             return new PageObject()
             {
-                Name = PageObjectDocument.GetElementbyId("mangainfo").SelectSingleNode(".//h1").InnerText,
+                Name = ImageLink.Segments.Last(),
                 PageNumber = UInt32.Parse(PageNode.NextSibling.InnerText),
-                Url = PageNode.Attributes["value"].Value,
-                NextUrl = String.Format("{0}/{1}", ISEA.RootUrl, NaviNode.SelectSingleNode(".//span[contains(@class,'next')]/a").Attributes["href"].Value),
-                PrevUrl = String.Format("{0}/{1}", ISEA.RootUrl, NaviNode.SelectSingleNode(".//span[contains(@class,'next')]/a").Attributes["href"].Value),
-                ImgUrl = PageObjectDocument.GetElementbyId("img").Attributes["src"].Value
+                Url = String.Format("{0}{1}", isea.RootUrl, PageNode.Attributes["value"].Value),
+                NextUrl = (NextNode != null) ? String.Format("{0}{1}", ISEA.RootUrl, NextNode.Attributes["value"].Value) : null,
+                PrevUrl = (PrevNode != null) ? String.Format("{0}{1}", ISEA.RootUrl, PrevNode.Attributes["value"].Value) : null,
+                ImgUrl = ImageLink.ToString()
             };
         }
 

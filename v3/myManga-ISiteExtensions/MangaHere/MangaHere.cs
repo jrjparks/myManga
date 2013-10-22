@@ -48,7 +48,8 @@ namespace MangaHere
             HtmlNodeCollection RawChapterList = MangaDetails.SelectNodes(".//div[contains(@class,'detail_list')]/ul[1]/li");
             foreach (HtmlNode ChapterNode in RawChapterList)
             {
-                String[] volChapSub = { ChapterNode.SelectSingleNode(".//span[1]/span").InnerText.Substring(4).Trim() };
+                String volNode = ChapterNode.SelectSingleNode(".//span[1]/span").InnerText;
+                String[] volChapSub = { (volNode != null && volNode.Length > 0) ? volNode.Substring(4).Trim() : "-1" };
                 HtmlNode ChapterTitle = ChapterNode.SelectSingleNode(".//span[1]/a");
                 String ChapterNumber = ChapterTitle.InnerText.Substring(ChapterTitle.InnerText.LastIndexOf(' ') + 1).Trim();
                 volChapSub = volChapSub.Concat(ChapterNumber.Split(new char[] { '.' }, StringSplitOptions.RemoveEmptyEntries)).ToArray();

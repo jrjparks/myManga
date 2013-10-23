@@ -5,6 +5,8 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Windows.Data;
+using System.Windows.Input;
 using Core.IO;
 using myMangaSiteExtension;
 using myMangaSiteExtension.Attributes;
@@ -31,7 +33,8 @@ namespace myManga_App.ViewModels
         }
         #endregion
 
-        private ObservableCollection<MangaObject> mangaList;
+        #region MangaList
+        protected ObservableCollection<MangaObject> mangaList;
         public ObservableCollection<MangaObject> MangaList
         {
             get { return mangaList ?? (mangaList = new ObservableCollection<MangaObject>()); }
@@ -43,7 +46,7 @@ namespace myManga_App.ViewModels
             }
         }
 
-        private MangaObject mangaObj;
+        protected MangaObject mangaObj;
         public MangaObject MangaObj
         {
             get { return mangaObj; }
@@ -55,15 +58,42 @@ namespace myManga_App.ViewModels
             }
         }
 
-        private App App = App.Current as App;
+        protected String searchFilter;
+        public String SearchFilter
+        {
+            get { return searchFilter; }
+            set
+            {
+                OnPropertyChanging();
+                searchFilter = value;
+                mangaListView.Refresh();
+                MangaObj = MangaList.FirstOrDefault();
+                OnPropertyChanged();
+            }
+        }
+
+        protected ICollectionView mangaListView;
+        #endregion
+
+        protected App App = App.Current as App;
 
         public HomeViewModel()
         {
-            foreach (String MangaArchiveFilePath in Directory.GetFiles(App.MANGA_ARCHIVE_DIRECTORY, "*.ma", SearchOption.AllDirectories))
-                MangaList.Add(MangaArchiveFilePath.LoadFromArchive<MangaObject>("MangaObject", SaveType.XML));
-            MangaObj = MangaList.FirstOrDefault();
+            ConfigureSearchFilter();
+            if (!DesignerProperties.GetIsInDesignMode(new System.Windows.DependencyObject()))
+            {
+                foreach (String MangaArchiveFilePath in Directory.GetFiles(App.MANGA_ARCHIVE_DIRECTORY, "*.ma", SearchOption.AllDirectories))
+                    MangaList.Add(MangaArchiveFilePath.LoadFromArchive<MangaObject>("MangaObject", SaveType.XML));
+                MangaObj = MangaList.FirstOrDefault();
+            }
 #if DEBUG
 #endif
+        }
+
+        protected void ConfigureSearchFilter()
+        {
+            mangaListView = CollectionViewSource.GetDefaultView(MangaList);
+            mangaListView.Filter = mangaObject => String.IsNullOrWhiteSpace(SearchFilter) ? true : (mangaObject as MangaObject).Name.ToLower().Contains(SearchFilter.ToLower());
         }
 
         public void Dispose() { }

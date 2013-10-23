@@ -44,22 +44,18 @@
                 TextElement.FontSize="16">
                 <Grid>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="1*"/>
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
-                    <button:MetroButton
-                        Content="{DynamicResource icon-search}"
-                        FontFamily="{DynamicResource FontAwesome}"
-                        Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"/>
                     <TextBox
-                        Grid.Column="1" 
+                        Grid.Column="0" 
                         BorderBrush="{x:Null}" 
                         BorderThickness="0" 
                         Background="{x:Null}"
-                        VerticalContentAlignment="Center"/>
+                        VerticalContentAlignment="Center"
+                        Text="{Binding SearchFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
                     <button:MetroButton
-                        Grid.Column="2"
+                        Grid.Column="1"
                         Content="{DynamicResource icon-remove}"
                         FontFamily="{DynamicResource FontAwesome}"
                         Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"/>
@@ -75,47 +71,8 @@
                 SelectedIndex="0"
                 Visibility="{Binding HasItems, Converter={StaticResource BooleanToVisibilityConverter}, RelativeSource={RelativeSource Self}}" 
                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                ItemsSource="{Binding MangaList}"
-                SelectedItem="{Binding MangaObj}">
-                <!--<ListBox.Items>
-                    <mangaObjects:MangaObject Name="One Piece" Released="12/24/1997">
-                        <mangaObjects:MangaObject.Genres>
-                            <system:String>Genre 1</system:String>
-                            <system:String>Genre 2</system:String>
-                            <system:String>Genre 3</system:String>
-                        </mangaObjects:MangaObject.Genres>
-                        <mangaObjects:MangaObject.Authors>
-                            <system:String>Oda</system:String>
-                            <system:String>Eiichiro</system:String>
-                        </mangaObjects:MangaObject.Authors>
-                        <mangaObjects:MangaObject.Artists>
-                            <system:String>Oda</system:String>
-                            <system:String>Eiichiro</system:String>
-                        </mangaObjects:MangaObject.Artists>
-                        <mangaObjects:MangaObject.Chapters>
-                            <mangaObjects:ChapterObject Chapter="1"/>
-                            <mangaObjects:ChapterObject Chapter="2"/>
-                        </mangaObjects:MangaObject.Chapters>
-                    </mangaObjects:MangaObject>
-                    <mangaObjects:MangaObject Name="Tower of God" Released="1/1/2010">
-                        <mangaObjects:MangaObject.Genres>
-                            <system:String>Genre 1</system:String>
-                            <system:String>Genre 2</system:String>
-                            <system:String>Genre 3</system:String>
-                        </mangaObjects:MangaObject.Genres>
-                        <mangaObjects:MangaObject.Authors>
-                            <system:String>SIU</system:String>
-                        </mangaObjects:MangaObject.Authors>
-                        <mangaObjects:MangaObject.Artists>
-                            <system:String>SIU</system:String>
-                        </mangaObjects:MangaObject.Artists>
-                        <mangaObjects:MangaObject.Chapters>
-                            <mangaObjects:ChapterObject Chapter="1"/>
-                            <mangaObjects:ChapterObject Chapter="2"/>
-                        </mangaObjects:MangaObject.Chapters>
-                    </mangaObjects:MangaObject>
-                </ListBox.Items>-->
-            </ListBox>
+                SelectedItem="{Binding MangaObj}" 
+                ItemsSource="{Binding MangaList}"/>
         </Grid>
         <Grid
             Grid.Column="2" 

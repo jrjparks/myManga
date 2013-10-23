@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using myMangaSiteExtension.Objects;
 
@@ -14,19 +15,28 @@ namespace myMangaSiteExtension.Utilities
         {
             if (list.Count() > 0)
             {
+                // Name
+                Regex nameRgx = new Regex(@"^vol(ume)?[\d\s]+.+?ch(apter)?[\d\s]+");
+                if (String.IsNullOrWhiteSpace(chapterObject.Name) || nameRgx.IsMatch(chapterObject.Name.ToLower()))
+                {
+                    ChapterObject FoD_Obj = list.FirstOrDefault(cO => !String.IsNullOrWhiteSpace(cO.Name) && !nameRgx.IsMatch(cO.Name.ToLower()));
+                    if (FoD_Obj != null)
+                        chapterObject.Name = FoD_Obj.Name;
+                }
+
                 // Volume
                 foreach (Int32 Volume in (from ChapterObject obj in list where obj != null select obj.Volume))
-                    if (chapterObject.Volume < 0 && Volume >= 0)
+                    if (chapterObject.Volume <= 0 && Volume >= 0)
                         chapterObject.Volume = Volume;
 
                 // Chapter
                 foreach (Int32 Chapter in (from ChapterObject obj in list where obj != null select obj.Chapter))
-                    if (chapterObject.Chapter < 0 && Chapter >= 0)
+                    if (chapterObject.Chapter <= 0 && Chapter >= 0)
                         chapterObject.Chapter = Chapter;
 
                 // SubChapter
                 foreach (Int32 SubChapter in (from ChapterObject obj in list where obj != null select obj.SubChapter))
-                    if (chapterObject.SubChapter < 0 && SubChapter >= 0)
+                    if (chapterObject.SubChapter <= 0 && SubChapter >= 0)
                         chapterObject.SubChapter = SubChapter;
 
                 // Locations
@@ -35,23 +45,6 @@ namespace myMangaSiteExtension.Utilities
                         if (!chapterObject.Locations.Any(o => o.ExtensionName == Location.ExtensionName))
                             chapterObject.Locations.Add(Location);
             }
-        }
-        public static ChapterObject Merge(IEnumerable<ChapterObject> list)
-        {
-            if (list == null || list.Count() == 0)
-                return null;
-            ChapterObject chapterObject = list.First();
-            if (list.Count() > 1)
-            {
-                // Locations
-                foreach (List<LocationObject> Locations in (from ChapterObject obj in list
-                                                            where (obj != null && obj.Volume == chapterObject.Volume && obj.Chapter == chapterObject.Chapter && obj.SubChapter == chapterObject.SubChapter)
-                                                            select obj.Locations))
-                    foreach (LocationObject Location in Locations)
-                        if (!chapterObject.Locations.Any(o => o.ExtensionName == Location.ExtensionName))
-                            chapterObject.Locations.Add(Location);
-            }
-            return chapterObject;
         }
     }
 }

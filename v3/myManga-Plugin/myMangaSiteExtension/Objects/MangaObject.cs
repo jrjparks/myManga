@@ -74,7 +74,7 @@ namespace myMangaSiteExtension.Objects
         [NonSerialized, XmlIgnore, EditorBrowsable(EditorBrowsableState.Never)]
         protected DateTime released = DateTime.MinValue;
         [NonSerialized, XmlIgnore, EditorBrowsable(EditorBrowsableState.Never)]
-        protected Double rating = -1;
+        protected Double rating;
         #endregion
 
         #region Public

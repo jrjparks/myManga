@@ -6,7 +6,8 @@
         <ResourceDictionary Source="/myManga;component/Themes/CoreResourceDictionary.xaml"/>
     </ResourceDictionary.MergedDictionaries>
 
-    <converters:StringArrayToCSV x:Key="StringArrayToCSV"/>
+    <converters:StringListToCSV x:Key="StringListToCSV"/>
+    <converters:LocationListToCSV x:Key="LocationListToCSV"/>
 
     <Style TargetType="{x:Type ListBoxItem}">
         <Setter Property="BorderBrush" Value="{DynamicResource window-theme-primary}"/>
@@ -118,8 +119,8 @@
                                 Height="72"
                                 Source="{Binding SelectedCover}"/>
                             <TextBlock Grid.Column="1" Grid.Row="0" VerticalAlignment="Center" Foreground="{StaticResource text-dark}" FontWeight="Bold" FontSize="14" TextTrimming="CharacterEllipsis" Text="{Binding Name}"/>
-                            <TextBlock Grid.Column="1" Grid.Row="1" VerticalAlignment="Center" Foreground="{StaticResource text-muted}" TextTrimming="CharacterEllipsis" Text="TestLocation"/>
-                            <TextBlock Grid.Column="1" Grid.Row="2" VerticalAlignment="Center" Foreground="{StaticResource text-muted}" TextTrimming="CharacterEllipsis" Text="{Binding Genres, Converter={StaticResource StringArrayToCSV}}"/>
+                            <TextBlock Grid.Column="1" Grid.Row="1" VerticalAlignment="Center" Foreground="{StaticResource text-muted}" TextTrimming="CharacterEllipsis" Text="{Binding Locations, Converter={StaticResource LocationListToCSV}, Mode=OneWay}"/>
+                            <TextBlock Grid.Column="1" Grid.Row="2" VerticalAlignment="Center" Foreground="{StaticResource text-muted}" TextTrimming="CharacterEllipsis" Text="{Binding Genres, Converter={StaticResource StringListToCSV}, Mode=OneWay}"/>
                         </Grid>
                     </Border>
                     <ControlTemplate.Triggers>
@@ -159,15 +160,8 @@
                                 <RowDefinition/>
                                 <RowDefinition/>
                             </Grid.RowDefinitions>
-                            <TextBlock Grid.Row="0" VerticalAlignment="Center" Foreground="{StaticResource text-dark}" FontWeight="Bold" FontSize="14" TextTrimming="CharacterEllipsis">
-                                <TextBlock.Text>
-                                    <MultiBinding StringFormat="Chapter {0}.{1}">
-                                        <Binding Path="Chapter"/>
-                                        <Binding Path="SubChapter" FallbackValue="0"/>
-                                    </MultiBinding>
-                                </TextBlock.Text>
-                            </TextBlock>
-                            <TextBlock Grid.Row="1" VerticalAlignment="Center" Foreground="{StaticResource text-muted}" TextTrimming="CharacterEllipsis" Text="What should go here?"/>
+                            <TextBlock Grid.Row="0" VerticalAlignment="Center" Foreground="{StaticResource text-dark}" FontWeight="Bold" FontSize="14" TextTrimming="CharacterEllipsis" Text="{Binding Name}"/>
+                            <TextBlock Grid.Row="1" VerticalAlignment="Center" Foreground="{StaticResource text-muted}" TextTrimming="CharacterEllipsis" Text="{Binding VCsCString}"/>
                         </Grid>
                     </Border>
                     <ControlTemplate.Triggers>

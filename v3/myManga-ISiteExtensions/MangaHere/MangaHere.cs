@@ -38,7 +38,9 @@ namespace MangaHere
 
             HtmlNode TitleNode = MangaObjectDocument.DocumentNode.SelectSingleNode("//h1[contains(@class,'title')]"),
                 MangaDetails = MangaObjectDocument.DocumentNode.SelectSingleNode("//div[contains(@class,'manga_detail')]"),
-                MangaProperties = MangaDetails.SelectSingleNode(".//div[1]");
+                MangaProperties = MangaDetails.SelectSingleNode(".//div[1]"),
+                MangaDesciption = MangaObjectDocument.GetElementbyId("show");
+            String Desciption = MangaDesciption != null ? MangaDesciption.FirstChild.InnerText : String.Empty;
 
             String[] AlternateNames = MangaProperties.SelectSingleNode(".//ul/li[3]").LastChild.InnerText.Split(new String[] { "; " }, StringSplitOptions.RemoveEmptyEntries),
                 Authors = (from HtmlNode GenreNode in MangaProperties.SelectSingleNode(".//ul/li[5]").SelectNodes(".//a") select GenreNode.InnerText).ToArray(),
@@ -49,7 +51,7 @@ namespace MangaHere
             foreach (HtmlNode ChapterNode in RawChapterList)
             {
                 String volNode = ChapterNode.SelectSingleNode(".//span[1]/span").InnerText;
-                String[] volChapSub = { (volNode != null && volNode.Length > 0) ? volNode.Substring(4).Trim() : "-1" };
+                String[] volChapSub = { (volNode != null && volNode.Length > 0) ? volNode.Substring(4).Trim() : "0" };
                 HtmlNode ChapterTitle = ChapterNode.SelectSingleNode(".//span[1]/a");
                 String ChapterNumber = ChapterTitle.InnerText.Substring(ChapterTitle.InnerText.LastIndexOf(' ') + 1).Trim();
                 volChapSub = volChapSub.Concat(ChapterNumber.Split(new char[] { '.' }, StringSplitOptions.RemoveEmptyEntries)).ToArray();
@@ -68,6 +70,8 @@ namespace MangaHere
                 };
                 if (volChapSub.Length == 3)
                     Chapter.SubChapter = Int32.Parse(volChapSub[2]);
+                if (Chapter.SubChapter <= 3)
+                    Chapter.SubChapter = 0;
                 Chapters.Add(Chapter);
             }
             Chapters.Reverse();
@@ -75,6 +79,7 @@ namespace MangaHere
             return new MangaObject()
             {
                 Name = System.Threading.Thread.CurrentThread.CurrentCulture.TextInfo.ToTitleCase(TitleNode.LastChild.InnerText.ToLower()),
+                Description = Desciption,
                 AlternateNames = AlternateNames.ToList(),
                 Covers = { MangaProperties.SelectSingleNode(".//img[1]/@src").Attributes["src"].Value },
                 Authors = Authors.ToList(),

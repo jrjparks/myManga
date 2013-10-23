@@ -63,18 +63,13 @@ namespace Core.IO
             return false;
         }
 
-        public static T LoadFromArchive<T>(this T Object, String ArchiveFilePath, String FileName, SaveType SaveType = SaveType.Binary) where T : class
+        public static T LoadFromArchive<T>(this String ArchiveFilePath, String FileName, SaveType SaveType = SaveType.Binary) where T : class
         {
+            T archObj = null;
             if (File.Exists(ArchiveFilePath))
-            {
-                Object = null;
                 using (Stream DataStream = ArchiveFilePath.LoadFromArchive(FileName))
-                {
-                    Object = DataStream.Deserialize<T>(SaveType);
-                }
-                return Object;
-            }
-            return null;
+                    archObj = DataStream.Deserialize<T>(SaveType);
+            return archObj;
         }
 
         public static Stream LoadFromArchive(this String ArchiveFilePath, String FileName)

@@ -41,7 +41,7 @@ namespace TestApp
                     MangaObject mObj = SearchResults[srIndex];
                     mObj.LoadMangaObject();
                     mObj.SortChapters();
-                    mObj.SaveToArchive(String.Format("{0}.mca", mObj.Name).SafeFileName(), "MangaObject", SaveType.XML);
+                    mObj.SaveToArchive(String.Format("{0}.ma", mObj.Name).SafeFileName(), "MangaObject", SaveType.XML);
                 }
                 else
                 {
@@ -115,7 +115,8 @@ namespace TestApp
                     foreach (String key in RawSearchResults.Keys)
                     {
                         List<SearchResultObject> SearchResultObjects = RawSearchResults[key];
-                        MangaObject mangaObject = MangaObjectExtensions.Merge(from SearchResultObject searchResultObject in SearchResultObjects select searchResultObject.ConvertToMangaObject());
+                        MangaObject mangaObject = new MangaObject();
+                        mangaObject.Merge(from SearchResultObject searchResultObject in SearchResultObjects select searchResultObject.ConvertToMangaObject());
                         if (RawDatabaseSearchResults.ContainsKey(key))
                         {
                             List<DatabaseObject> DatabaseObjects = RawDatabaseSearchResults[key];

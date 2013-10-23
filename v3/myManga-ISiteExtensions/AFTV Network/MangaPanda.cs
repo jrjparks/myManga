@@ -2,10 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Text.RegularExpressions;
+using System.Windows;
 using Core.Other;
 using HtmlAgilityPack;
 using myMangaSiteExtension;
 using myMangaSiteExtension.Attributes;
+using myMangaSiteExtension.Enums;
 using myMangaSiteExtension.Interfaces;
 using myMangaSiteExtension.Objects;
 
@@ -35,12 +38,43 @@ namespace AFTV_Network
             HtmlDocument MangaObjectDocument = new HtmlDocument();
             MangaObjectDocument.LoadHtml(content);
 
-            String MangaCover = MangaObjectDocument.GetElementbyId("mangaimg").SelectSingleNode(".//img").Attributes["src"].Value;
-            HtmlNode MangaProperties = MangaObjectDocument.GetElementbyId("mangaproperties").SelectSingleNode(".//table");
-            HtmlNode ChapterListing = MangaObjectDocument.GetElementbyId("listing");
+            String MangaCoverPrime = MangaObjectDocument.GetElementbyId("mangaimg").SelectSingleNode(".//img").Attributes["src"].Value;
+            Regex MangaCoverRegex = new Regex(@"(\d+)\.jpg");
+            Int32 MangaCoverInt = Int32.Parse(MangaCoverRegex.Match(MangaCoverPrime).Groups[1].Value);
+            List<String> MangaCovers = new List<String>(MangaCoverInt + 1);
+            for (Int32 mcI = 0; mcI <= MangaCoverInt; ++mcI)
+                MangaCovers.Add(MangaCoverRegex.Replace(MangaCoverPrime, String.Format("{0}.jpg", mcI)));
+            MangaCovers.TrimExcess();
+
+            HtmlNode MangaProperties = MangaObjectDocument.GetElementbyId("mangaproperties").SelectSingleNode(".//table"),
+                ChapterListing = MangaObjectDocument.GetElementbyId("listing"),
+                MangaDesciption = MangaObjectDocument.GetElementbyId("readmangasum").SelectSingleNode(".//p");
 
             String Name = MangaProperties.SelectSingleNode(".//tr[1]/td[2]/h2").InnerText,
-                Release = String.Format("01/01/{0}", MangaProperties.SelectSingleNode(".//tr[3]/td[2]").InnerText);
+                ReadDirection = MangaProperties.SelectSingleNode(".//tr[7]/td[2]").InnerText,
+                ReleaseYear = MangaProperties.SelectSingleNode(".//tr[3]/td[2]").InnerText,
+                Release = String.Format("01/01/{0}", String.IsNullOrWhiteSpace(ReleaseYear) ? "0001" : ReleaseYear),
+                Desciption = MangaDesciption != null ? MangaDesciption.InnerText : String.Empty;
+            MangaObjectType MangaType = MangaObjectType.Unknown;
+            FlowDirection PageFlowDirection = FlowDirection.RightToLeft;
+            switch (ReadDirection.ToLower())
+            {
+                default:
+                    MangaType = MangaObjectType.Unknown;
+                    PageFlowDirection = FlowDirection.RightToLeft;
+                    break;
+
+                case "right to left":
+                    MangaType = MangaObjectType.Manga;
+                    PageFlowDirection = FlowDirection.RightToLeft;
+                    break;
+
+                case "left to right":
+                    MangaType = MangaObjectType.Manhwa;
+                    PageFlowDirection = FlowDirection.LeftToRight;
+                    break;
+            }
+
             String[] AlternateNames = MangaProperties.SelectSingleNode(".//tr[2]/td[2]").InnerText.Split(new String[] { ", " }, StringSplitOptions.RemoveEmptyEntries),
                 Authors = MangaProperties.SelectSingleNode(".//tr[5]/td[2]").InnerText.Split(new String[] { ", " }, StringSplitOptions.RemoveEmptyEntries),
                 Artists = MangaProperties.SelectSingleNode(".//tr[6]/td[2]").InnerText.Split(new String[] { ", " }, StringSplitOptions.RemoveEmptyEntries),
@@ -62,8 +96,11 @@ namespace AFTV_Network
             return new MangaObject()
             {
                 Name = Name,
+                MangaType = MangaType,
+                PageFlowDirection = PageFlowDirection,
+                Description = Desciption,
                 AlternateNames = AlternateNames.ToList(),
-                Covers = { MangaCover },
+                Covers = MangaCovers,
                 Authors = Authors.ToList(),
                 Artists = Artists.ToList(),
                 Genres = Genres.ToList(),
@@ -126,7 +163,7 @@ namespace AFTV_Network
                     Int32 Id; if (!Int32.TryParse(Link.Slice(1, Link.IndexOf('/', 1)), out Id)) Id = -1;
                     SearchResults.Add(new SearchResultObject()
                     {
-                        CoverUrl = CoverUrl,
+                        CoverUrl = new Regex(@"r(\d+)\.jpg").Replace(CoverUrl, "l$1.jpg"),
                         Name = Name,
                         Url = String.Format("{0}{1}", ISEA.RootUrl, Link),
                         ExtensionName = ISEA.Name,

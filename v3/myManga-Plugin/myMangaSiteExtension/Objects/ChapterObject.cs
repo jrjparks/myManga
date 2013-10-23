@@ -1,11 +1,13 @@
 ﻿using Core.IO;
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using System.Xml.Serialization;
+using System.Text;
 
 namespace myMangaSiteExtension.Objects
 {
@@ -32,11 +34,11 @@ namespace myMangaSiteExtension.Objects
         [NonSerialized, XmlIgnore, EditorBrowsable(EditorBrowsableState.Never)]
         protected String name;
         [NonSerialized, XmlIgnore, EditorBrowsable(EditorBrowsableState.Never)]
-        protected Int32 volume = -1;
+        protected Int32 volume;
         [NonSerialized, XmlIgnore, EditorBrowsable(EditorBrowsableState.Never)]
-        protected Int32 chapter = -1;
+        protected Int32 chapter;
         [NonSerialized, XmlIgnore, EditorBrowsable(EditorBrowsableState.Never)]
-        protected Int32 subchapter = -1;
+        protected Int32 subchapter;
 
         [NonSerialized, XmlIgnore, EditorBrowsable(EditorBrowsableState.Never)]
         protected List<LocationObject> locations;
@@ -46,6 +48,8 @@ namespace myMangaSiteExtension.Objects
 
         [NonSerialized, XmlIgnore, EditorBrowsable(EditorBrowsableState.Never)]
         protected DateTime released = DateTime.MinValue;
+        [NonSerialized, XmlIgnore, EditorBrowsable(EditorBrowsableState.Never)]
+        protected Boolean read = false;
         #endregion
 
         #region Public
@@ -72,8 +76,6 @@ namespace myMangaSiteExtension.Objects
                 OnPropertyChanged();
             }
         }
-        [XmlIgnore]
-        public bool VolumeSpecified { get { return this.Volume >= 0; } }
 
         [XmlAttribute]
         public Int32 Chapter
@@ -86,8 +88,6 @@ namespace myMangaSiteExtension.Objects
                 OnPropertyChanged();
             }
         }
-        [XmlIgnore]
-        public bool ChapterSpecified { get { return this.Chapter >= 0; } }
 
         [XmlAttribute]
         public Int32 SubChapter
@@ -100,8 +100,9 @@ namespace myMangaSiteExtension.Objects
                 OnPropertyChanged();
             }
         }
+
         [XmlIgnore]
-        public bool SubChapterSpecified { get { return this.SubChapter >= 0; } }
+        public String VCsCString { get { return String.Format("Vol {0} Chap {1}.{2}", Volume, Chapter, SubChapter); } }
 
         [XmlArray, XmlArrayItem("Location")]
         public List<LocationObject> Locations
@@ -127,6 +128,7 @@ namespace myMangaSiteExtension.Objects
             }
         }
 
+        [XmlAttribute]
         public DateTime Released
         {
             get { return released; }
@@ -134,6 +136,18 @@ namespace myMangaSiteExtension.Objects
             {
                 OnPropertyChanging();
                 released = value;
+                OnPropertyChanged();
+            }
+        }
+
+        [XmlAttribute]
+        public Boolean Read
+        {
+            get { return read; }
+            set
+            {
+                OnPropertyChanging();
+                read = value;
                 OnPropertyChanged();
             }
         }

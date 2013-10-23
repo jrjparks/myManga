@@ -26,11 +26,13 @@ namespace myManga_App
             get { return Singleton<DLL_Manager<IDatabaseExtension, IDatabaseExtensionCollection>>.Instance; }
         }
 
-        public readonly String PLUGIN_DIRECTORY;
+        public readonly String PLUGIN_DIRECTORY, MANGA_ARCHIVE_DIRECTORY, MANGA_CHAPTER_ARCHIVE_DIRECTORY;
 
         public App()
         {
             PLUGIN_DIRECTORY = Path.Combine(Environment.CurrentDirectory, "Plugins").SafeFolder();
+            MANGA_ARCHIVE_DIRECTORY = Path.Combine(Environment.CurrentDirectory, "Manga Archives").SafeFolder();
+            MANGA_CHAPTER_ARCHIVE_DIRECTORY = Path.Combine(Environment.CurrentDirectory, "Manga Chapter Archives").SafeFolder();
             emdll = new EmbeddedDLL("Resources.DLL");
 
             AppDomain.CurrentDomain.AssemblyResolve += emdll.ResolveAssembly;

@@ -161,15 +161,15 @@
                     </StackPanel>
                     <StackPanel Grid.Row="3" Grid.Column="1">
                         <TextBlock Text="Authors:" FontWeight="Bold" Foreground="{DynamicResource text-muted}"/>
-                        <TextBlock Text="{Binding Authors, Converter={StaticResource StringArrayToCSV}}" FontWeight="Bold" Foreground="{DynamicResource text-muted}"/>
+                        <TextBlock Text="{Binding Authors, Converter={StaticResource StringListToCSV}}" FontWeight="Bold" Foreground="{DynamicResource text-muted}"/>
                     </StackPanel>
                     <StackPanel Grid.Row="4" Grid.Column="1">
                         <TextBlock Text="Artists:" FontWeight="Bold" Foreground="{DynamicResource text-muted}"/>
-                        <TextBlock Text="{Binding Authors, Converter={StaticResource StringArrayToCSV}}" FontWeight="Bold" Foreground="{DynamicResource text-muted}"/>
+                        <TextBlock Text="{Binding Authors, Converter={StaticResource StringListToCSV}}" FontWeight="Bold" Foreground="{DynamicResource text-muted}"/>
                     </StackPanel>
                     <StackPanel Grid.Row="5" Grid.Column="1">
                         <TextBlock Text="Genres:" FontWeight="Bold" Foreground="{DynamicResource text-muted}"/>
-                        <TextBlock Text="{Binding Genres, Converter={StaticResource StringArrayToCSV}}" FontWeight="Bold" Foreground="{DynamicResource text-muted}"/>
+                        <TextBlock Text="{Binding Genres, Converter={StaticResource StringListToCSV}}" FontWeight="Bold" Foreground="{DynamicResource text-muted}"/>
                     </StackPanel>
                 </Grid>
                 <Grid Grid.Row="1"></Grid>
@@ -177,7 +177,8 @@
                     <TextBlock 
                         Text="{Binding Description}"
                         TextWrapping="WrapWithOverflow"
-                        TextTrimming="WordEllipsis"/>
+                        TextTrimming="WordEllipsis"
+                        FontSize="16"/>
                 </Grid>
             </Grid>
             <ListBox 

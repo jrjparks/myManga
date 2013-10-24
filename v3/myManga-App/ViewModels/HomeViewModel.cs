@@ -75,7 +75,7 @@ namespace myManga_App.ViewModels
 
         protected ICollectionView mangaListView;
 
-        private DelegateCommand clearSearchCommand;
+        protected DelegateCommand clearSearchCommand;
         public ICommand ClearSearchCommand
         {
             get { return clearSearchCommand ?? (clearSearchCommand = new DelegateCommand(ClearSearch, CanClearSearch)); }
@@ -84,6 +84,33 @@ namespace myManga_App.ViewModels
         { SearchFilter = String.Empty; }
         protected Boolean CanClearSearch()
         { return !String.IsNullOrWhiteSpace(SearchFilter); }
+        #endregion
+
+        #region SearchSites
+        protected Amib.Threading.IWorkItemsGroup SearchWorkGroup;
+
+        protected DelegateCommand searchSitesCommand;
+        public ICommand SearchSiteCommend
+        {
+            get { return searchSitesCommand ?? (searchSitesCommand = new DelegateCommand(SearchSites, CanSearchSite)); }
+        }
+        protected void SearchSites()
+        {
+            if (SearchWorkGroup != null && !SearchWorkGroup.IsIdle)
+                SearchWorkGroup.Cancel(true);
+            SearchWorkGroup = Core.Other.Singleton.Singleton<myManga_App.IO.Network.SmartSearch>.Instance.SearchManga(SearchFilter);
+            SearchWorkGroup.OnIdle += SearchWorkGroup_OnIdle;
+        }
+
+        void SearchWorkGroup_OnIdle(Amib.Threading.IWorkItemsGroup workItemsGroup)
+        {
+            SearchWorkGroup.OnIdle -= SearchWorkGroup_OnIdle;
+            Object[] States = { };
+            SearchWorkGroup.GetStates().CopyTo(States, 0);
+            SearchWorkGroup.Cancel();
+        }
+        protected Boolean CanSearchSite()
+        { return !String.IsNullOrWhiteSpace(SearchFilter) && (SearchFilter.Length > 3); }
         #endregion
 
         protected App App = App.Current as App;
@@ -95,7 +122,7 @@ namespace myManga_App.ViewModels
             {
                 foreach (String MangaArchiveFilePath in Directory.GetFiles(App.MANGA_ARCHIVE_DIRECTORY, "*.ma", SearchOption.AllDirectories))
                     MangaList.Add(MangaArchiveFilePath.LoadFromArchive<MangaObject>("MangaObject", SaveType.XML));
-                
+
                 MangaObj = MangaList.FirstOrDefault();
             }
 #if DEBUG

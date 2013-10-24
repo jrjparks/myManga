@@ -173,6 +173,9 @@
                             <Setter TargetName="ItemBorder" Property="Background" Value="{DynamicResource window-theme-secondary}"/>
                             <Setter TargetName="ItemBorder" Property="TextElement.Foreground" Value="{DynamicResource window-theme-primary}"/>
                         </Trigger>
+                        <DataTrigger Binding="{Binding Read}" Value="True">
+
+                        </DataTrigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>

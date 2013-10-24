@@ -8,6 +8,7 @@ using System.Runtime.CompilerServices;
 using System.Windows.Data;
 using System.Windows.Input;
 using Core.IO;
+using Core.MVVM;
 using myMangaSiteExtension;
 using myMangaSiteExtension.Attributes;
 using myMangaSiteExtension.Interfaces;
@@ -73,6 +74,16 @@ namespace myManga_App.ViewModels
         }
 
         protected ICollectionView mangaListView;
+
+        private DelegateCommand clearSearchCommand;
+        public ICommand ClearSearchCommand
+        {
+            get { return clearSearchCommand ?? (clearSearchCommand = new DelegateCommand(ClearSearch, CanClearSearch)); }
+        }
+        protected void ClearSearch()
+        { SearchFilter = String.Empty; }
+        protected Boolean CanClearSearch()
+        { return !String.IsNullOrWhiteSpace(SearchFilter); }
         #endregion
 
         protected App App = App.Current as App;
@@ -84,6 +95,7 @@ namespace myManga_App.ViewModels
             {
                 foreach (String MangaArchiveFilePath in Directory.GetFiles(App.MANGA_ARCHIVE_DIRECTORY, "*.ma", SearchOption.AllDirectories))
                     MangaList.Add(MangaArchiveFilePath.LoadFromArchive<MangaObject>("MangaObject", SaveType.XML));
+                
                 MangaObj = MangaList.FirstOrDefault();
             }
 #if DEBUG

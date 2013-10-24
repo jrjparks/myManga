@@ -40,10 +40,15 @@ namespace Core.Other
         }
     }
 
-    public static class Arrays<T>
+    public static class Arrays
     {
-        public static T[] Concat(params T[][] arrays) { return Concat(arrays.AsEnumerable()); }
-        public static T[] Concat(IEnumerable<T[]> arrays)
+        public static void Concat<T>(this T[] array, params T[][] arrays)
+        { Arrays.Concat(array, arrays); }
+        public static void Concat<T>(this T[] array, IEnumerable<T[]> arrays)
+        { foreach (T[] a in arrays) array.Concat(a); }
+
+        public static T[] Concat<T>(params T[][] arrays) { return Concat(arrays.AsEnumerable()); }
+        public static T[] Concat<T>(IEnumerable<T[]> arrays)
         {
             T[] array = new T[0];
             foreach (T[] a in arrays)
@@ -52,10 +57,16 @@ namespace Core.Other
         }
     }
 
-    public static class Lists<T>
+    public static class Lists
     {
-        public static List<T> Concat(params List<T>[] lists) { return Concat(lists.AsEnumerable()); }
-        public static List<T> Concat(IEnumerable<List<T>> lists)
+        public static void Concat<T>(this List<T> list, params List<T>[] lists)
+        { Lists.Concat(list, lists.AsEnumerable()); }
+        public static void Concat<T>(this List<T> list, IEnumerable<List<T>> lists)
+        { foreach (List<T> l in lists) list.AddRange(l); }
+
+        public static List<T> Concat<T>(params List<T>[] lists)
+        { return Concat(lists.AsEnumerable()); }
+        public static List<T> Concat<T>(IEnumerable<List<T>> lists)
         {
             List<T> list = new List<T>();
             foreach (List<T> l in lists)

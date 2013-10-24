@@ -57,6 +57,7 @@
                     <button:MetroButton
                         Grid.Column="1"
                         Content="{DynamicResource icon-remove}"
+                        Command="{Binding ClearSearchCommand}"
                         FontFamily="{DynamicResource FontAwesome}"
                         Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"/>
                 </Grid>

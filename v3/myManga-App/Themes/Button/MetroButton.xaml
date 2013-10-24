@@ -65,8 +65,8 @@
                             <Setter TargetName="Content" Property="TextElement.Foreground" Value="{Binding Path=SecondaryBrush, RelativeSource={RelativeSource AncestorType={x:Type button:MetroButton}}}"/>
                         </Trigger>
                         <Trigger Property="IsEnabled" Value="False">
-                            <Setter TargetName="Chrome" Property="Background" Value="{Binding Path=PrimaryDisabledBrush, RelativeSource={RelativeSource AncestorType={x:Type button:MetroButton}}}"/>
-                            <Setter TargetName="Content" Property="TextElement.Foreground" Value="{Binding Path=SecondaryDisabledBrush, RelativeSource={RelativeSource AncestorType={x:Type button:MetroButton}}}"/>
+                            <Setter TargetName="Chrome" Property="Background" Value="{Binding Path=SecondaryDisabledBrush, RelativeSource={RelativeSource AncestorType={x:Type button:MetroButton}}}"/>
+                            <Setter TargetName="Content" Property="TextElement.Foreground" Value="{Binding Path=PrimaryDisabledBrush, RelativeSource={RelativeSource AncestorType={x:Type button:MetroButton}}}"/>
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>

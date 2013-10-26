@@ -79,12 +79,15 @@
     <Reference Include="HtmlAgilityPack, Version=1.4.6.0, Culture=neutral, PublicKeyToken=bd319b19eaf3b43a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\HtmlAgilityPack.1.4.6\lib\Net45\HtmlAgilityPack.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Ionic.Zip, Version=1.9.1.8, Culture=neutral, PublicKeyToken=edbe51ad942a3f5c, processorArchitecture=MSIL">
       <HintPath>..\packages\DotNetZip.1.9.1.8\lib\net20\Ionic.Zip.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="SmartThreadPool">
       <HintPath>..\packages\SmartThreadPool.dll.2.2.3\lib\SmartThreadPool.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -113,6 +116,7 @@
     <Compile Include="IO\Network\SmartDownloader.cs" />
     <Compile Include="IO\Network\SmartMangaDownloader.cs" />
     <Compile Include="IO\Network\SmartSearch.cs" />
+    <Compile Include="IO\SmartGroupObject.cs" />
     <Compile Include="Themes\Button\MetroButton.cs" />
     <Compile Include="Themes\Window\myMangaWindow.cs" />
     <Compile Include="ViewModels\HomeViewModel.cs" />
@@ -225,10 +229,10 @@
   <ItemGroup>
     <Resource Include="Resources\Icon.ico" />
     <Resource Include="License.txt" />
-    <Content Include="Resources\DLL\fastJSON.dll" />
-    <Content Include="Resources\DLL\HtmlAgilityPack.dll" />
-    <Content Include="Resources\DLL\Ionic.Zip.dll" />
-    <Content Include="Resources\DLL\Microsoft.Windows.Shell.dll" />
+    <EmbeddedResource Include="Resources\DLL\fastJSON.dll" />
+    <EmbeddedResource Include="Resources\DLL\HtmlAgilityPack.dll" />
+    <EmbeddedResource Include="Resources\DLL\Ionic.Zip.dll" />
+    <EmbeddedResource Include="Resources\DLL\Microsoft.Windows.Shell.dll" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.5">

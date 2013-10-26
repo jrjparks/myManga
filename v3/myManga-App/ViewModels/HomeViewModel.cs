@@ -1,18 +1,23 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Text.RegularExpressions;
 using System.Windows.Data;
 using System.Windows.Input;
+using Amib.Threading;
 using Core.IO;
 using Core.MVVM;
+using myManga_App.IO;
 using myMangaSiteExtension;
 using myMangaSiteExtension.Attributes;
 using myMangaSiteExtension.Interfaces;
 using myMangaSiteExtension.Objects;
+using myMangaSiteExtension.Utilities;
 
 namespace myManga_App.ViewModels
 {
@@ -87,7 +92,7 @@ namespace myManga_App.ViewModels
         #endregion
 
         #region SearchSites
-        protected Amib.Threading.IWorkItemsGroup SearchWorkGroup;
+        protected SmartGroupObject<List<SearchResultObject>> SearchWorkGroup;
 
         protected DelegateCommand searchSitesCommand;
         public ICommand SearchSiteCommend
@@ -96,21 +101,36 @@ namespace myManga_App.ViewModels
         }
         protected void SearchSites()
         {
-            if (SearchWorkGroup != null && !SearchWorkGroup.IsIdle)
-                SearchWorkGroup.Cancel(true);
+            if (SearchWorkGroup != null && !SearchWorkGroup.WorkItemsGroup.IsIdle)
+            {
+                SearchWorkGroup.WorkItemsGroup.OnIdle -= SearchWorkGroup_OnIdle;
+                SearchWorkGroup.WorkItemsGroup.Cancel(true);
+            }
             SearchWorkGroup = Core.Other.Singleton.Singleton<myManga_App.IO.Network.SmartSearch>.Instance.SearchManga(SearchFilter);
-            SearchWorkGroup.OnIdle += SearchWorkGroup_OnIdle;
+            SearchWorkGroup.WorkItemsGroup.OnIdle += SearchWorkGroup_OnIdle;
         }
 
         void SearchWorkGroup_OnIdle(Amib.Threading.IWorkItemsGroup workItemsGroup)
         {
-            SearchWorkGroup.OnIdle -= SearchWorkGroup_OnIdle;
-            Object[] States = { };
-            SearchWorkGroup.GetStates().CopyTo(States, 0);
-            SearchWorkGroup.Cancel();
+            SearchWorkGroup.WorkItemsGroup.OnIdle -= SearchWorkGroup_OnIdle;
+            SearchWorkGroup.WorkItemsGroup.Cancel();
+            Regex safeAlphaNumeric = new Regex("[^a-z0-9]", RegexOptions.IgnoreCase);
+            Dictionary<String, MangaObject> MangaObjectSearchResults = new Dictionary<String, MangaObject>();
+            foreach (IWorkItemResult<List<SearchResultObject>> SearchResults in SearchWorkGroup.WorkItemResults)
+            {
+                foreach (SearchResultObject SearchResult in SearchResults.Result)
+                {
+                    String key = safeAlphaNumeric.Replace(SearchResult.Name.ToLower(), String.Empty);
+                    if (MangaObjectSearchResults.ContainsKey(key))
+                        MangaObjectSearchResults[key].Merge(SearchResult.ConvertToMangaObject());
+                    else
+                        MangaObjectSearchResults.Add(key, SearchResult.ConvertToMangaObject());
+                }
+            }
+            SearchWorkGroup = null;
         }
         protected Boolean CanSearchSite()
-        { return !String.IsNullOrWhiteSpace(SearchFilter) && (SearchFilter.Length > 3); }
+        { return !String.IsNullOrWhiteSpace(SearchFilter) && (SearchFilter.Length >= 3); }
         #endregion
 
         protected App App = App.Current as App;

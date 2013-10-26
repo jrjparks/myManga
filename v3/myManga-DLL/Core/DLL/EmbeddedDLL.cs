@@ -48,11 +48,16 @@ namespace Core.DLL
             if (!DLLs.ContainsKey(resourceName))
                 using (Stream stream = ExecutingAssembly.GetManifestResourceStream(resourceName))
                 {
-                    Byte[] assemblyData = new Byte[stream.Length];
-                    stream.Read(assemblyData, 0, assemblyData.Length);
-                    DLLs.Add(resourceName, Assembly.Load(assemblyData));
+                    if (stream != null)
+                    {
+                        Byte[] assemblyData = new Byte[stream.Length];
+                        stream.Read(assemblyData, 0, assemblyData.Length);
+                        DLLs.Add(resourceName, Assembly.Load(assemblyData));
+                    }
                 }
-            return DLLs[resourceName];
+            if (DLLs.ContainsKey(resourceName))
+                return DLLs[resourceName];
+            return null;
         }
     }
 }

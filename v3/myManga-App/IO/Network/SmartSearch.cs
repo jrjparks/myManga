@@ -16,13 +16,14 @@ namespace myManga_App.IO.Network
         public SmartSearch() : base() { }
         public SmartSearch(STPStartInfo stpThredPool) : base(stpThredPool) { }
 
-        public IWorkItemsGroup SearchManga(String search, Boolean Start = true)
+        public SmartGroupObject<List<SearchResultObject>> SearchManga(String search, Boolean Start = true)
         {
-            IWorkItemsGroup searchWorkGroup = smartThreadPool.CreateWorkItemsGroup(2, new WIGStartInfo() { StartSuspended = !Start });
-            searchWorkGroup.Name = String.Format("%s:SearchWorkGroup", search);
+            SmartGroupObject<List<SearchResultObject>> searchWorkers = new SmartGroupObject<List<SearchResultObject>>(smartThreadPool.CreateWorkItemsGroup(2, new WIGStartInfo() { StartSuspended = !Start }));
+            searchWorkers.WorkItemsGroup.Name = String.Format("{0}:SearchWorkGroup", search);
             foreach (ISiteExtension SiteExtension in App.SiteExtensions.DLLCollection)
-                searchWorkGroup.QueueWorkItem<String, ISiteExtension, List<SearchResultObject>>(Search, search, SiteExtension);
-            return searchWorkGroup;
+                searchWorkers.WorkItemResults.Add(searchWorkers.WorkItemsGroup.QueueWorkItem<String, ISiteExtension, List<SearchResultObject>>(Search, search, SiteExtension));
+            searchWorkers.WorkItemResults.TrimExcess();
+            return searchWorkers;
         }
 
         protected List<SearchResultObject> Search(String search, ISiteExtension SiteExtension)
@@ -40,7 +41,8 @@ namespace myManga_App.IO.Network
                 {
                     using (StreamReader streamReader = new StreamReader(response.GetResponseStream()))
                     {
-                        SearchResults = SiteExtension.ParseSearch(streamReader.ReadToEnd());
+                        String content = streamReader.ReadToEnd();
+                        SearchResults = SiteExtension.ParseSearch(content);
                     }
                 }
             }

@@ -1,6 +1,10 @@
-﻿using System.IO;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.IO;
 using System.Net;
 using System.Reflection;
+using System.Windows.Documents;
 using Amib.Threading;
 using myMangaSiteExtension.Attributes;
 using myMangaSiteExtension.Collections;
@@ -15,12 +19,21 @@ namespace myManga_App.IO.Network
         public SmartMangaDownloader() : base() { }
         public SmartMangaDownloader(STPStartInfo stpThredPool) : base(stpThredPool) { }
 
-        public IWorkItemResult<MangaObject> DownloadManga(MangaObject mangaObject)
+        public IWorkItemResult<MangaObject> DownloadMangaObject(MangaObject MangaObject)
         {
-            return smartThreadPool.QueueWorkItem<MangaObject, MangaObject>(DownloadMangaObject, mangaObject);
+            return smartThreadPool.QueueWorkItem<MangaObject, MangaObject>(DownloadMangaObjectWorker, MangaObject);
         }
 
-        private MangaObject DownloadMangaObject(MangaObject mangaObject)
+        public SmartGroupObject<MangaObject> DownloadMangaObjects(IEnumerable<MangaObject> MangaObjects, Boolean Start = true)
+        {
+            SmartGroupObject<MangaObject> downloadMangaObjectWorkers = new SmartGroupObject<MangaObject>(smartThreadPool.CreateWorkItemsGroup(2, new WIGStartInfo() { StartSuspended = !Start }));
+            downloadMangaObjectWorkers.WorkItemsGroup.Name = String.Format("{0}:DownloadMangaObjectsGroup", Guid.NewGuid());
+            foreach (MangaObject MangaObj in MangaObjects)
+                downloadMangaObjectWorkers.WorkItemResults.Add(downloadMangaObjectWorkers.WorkItemsGroup.QueueWorkItem<MangaObject, MangaObject>(DownloadMangaObjectWorker, MangaObj));
+            return downloadMangaObjectWorkers;
+        }
+
+        private MangaObject DownloadMangaObjectWorker(MangaObject mangaObject)
         {
             ISiteExtensionCollection isec = (App.Current as App).SiteExtensions.DLLCollection;
             foreach (LocationObject location in mangaObject.Locations.FindAll(l => l.Enabled))

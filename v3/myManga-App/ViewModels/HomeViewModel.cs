@@ -7,11 +7,14 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
+using System.Threading;
+using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
 using Amib.Threading;
 using Core.IO;
 using Core.MVVM;
+using Core.Other.Singleton;
 using myManga_App.IO;
 using myMangaSiteExtension;
 using myMangaSiteExtension.Attributes;
@@ -92,45 +95,47 @@ namespace myManga_App.ViewModels
         #endregion
 
         #region SearchSites
-        protected SmartGroupObject<List<SearchResultObject>> SearchWorkGroup;
-
         protected DelegateCommand searchSitesCommand;
         public ICommand SearchSiteCommend
         {
             get { return searchSitesCommand ?? (searchSitesCommand = new DelegateCommand(SearchSites, CanSearchSite)); }
         }
+
+        protected Boolean CanSearchSite()
+        { return !String.IsNullOrWhiteSpace(SearchFilter) && (SearchFilter.Trim().Length >= 3); }
+
         protected void SearchSites()
         {
-            if (SearchWorkGroup != null && !SearchWorkGroup.WorkItemsGroup.IsIdle)
-            {
-                SearchWorkGroup.WorkItemsGroup.OnIdle -= SearchWorkGroup_OnIdle;
-                SearchWorkGroup.WorkItemsGroup.Cancel(true);
-            }
-            SearchWorkGroup = Core.Other.Singleton.Singleton<myManga_App.IO.Network.SmartSearch>.Instance.SearchManga(SearchFilter);
-            SearchWorkGroup.WorkItemsGroup.OnIdle += SearchWorkGroup_OnIdle;
+            IsSearching = true;
+            Singleton<myManga_App.IO.Network.SmartSearch>.Instance.SearchManga(SearchFilter.Trim());
+
         }
 
-        void SearchWorkGroup_OnIdle(Amib.Threading.IWorkItemsGroup workItemsGroup)
+        private delegate void Instance_SearchCompleteInvoke(object sender, List<MangaObject> e);
+        private void Instance_SearchComplete(object sender, List<MangaObject> e)
         {
-            SearchWorkGroup.WorkItemsGroup.OnIdle -= SearchWorkGroup_OnIdle;
-            SearchWorkGroup.WorkItemsGroup.Cancel();
-            Regex safeAlphaNumeric = new Regex("[^a-z0-9]", RegexOptions.IgnoreCase);
-            Dictionary<String, MangaObject> MangaObjectSearchResults = new Dictionary<String, MangaObject>();
-            foreach (IWorkItemResult<List<SearchResultObject>> SearchResults in SearchWorkGroup.WorkItemResults)
+            if (App.Dispatcher.Thread == Thread.CurrentThread)
             {
-                foreach (SearchResultObject SearchResult in SearchResults.Result)
-                {
-                    String key = safeAlphaNumeric.Replace(SearchResult.Name.ToLower(), String.Empty);
-                    if (MangaObjectSearchResults.ContainsKey(key))
-                        MangaObjectSearchResults[key].Merge(SearchResult.ConvertToMangaObject());
-                    else
-                        MangaObjectSearchResults.Add(key, SearchResult.ConvertToMangaObject());
-                }
+                foreach (MangaObject MangaObj in e)
+                    if (!MangaList.Any(mo => mo.Name == MangaObj.Name))
+                        MangaList.Add(MangaObj);
+                IsSearching = false;
             }
-            SearchWorkGroup = null;
+            else
+                App.Dispatcher.BeginInvoke(new Instance_SearchCompleteInvoke(Instance_SearchComplete), new Object[] { sender, e });
         }
-        protected Boolean CanSearchSite()
-        { return !String.IsNullOrWhiteSpace(SearchFilter) && (SearchFilter.Length >= 3); }
+
+        protected Boolean isSearching;
+        public Boolean IsSearching
+        {
+            get { return isSearching; }
+            set
+            {
+                OnPropertyChanging();
+                isSearching = value;
+                OnPropertyChanged();
+            }
+        }
         #endregion
 
         protected App App = App.Current as App;
@@ -138,6 +143,7 @@ namespace myManga_App.ViewModels
         public HomeViewModel()
         {
             ConfigureSearchFilter();
+            Singleton<myManga_App.IO.Network.SmartSearch>.Instance.SearchComplete += Instance_SearchComplete;
             if (!DesignerProperties.GetIsInDesignMode(new System.Windows.DependencyObject()))
             {
                 foreach (String MangaArchiveFilePath in Directory.GetFiles(App.MANGA_ARCHIVE_DIRECTORY, "*.ma", SearchOption.AllDirectories))
@@ -153,6 +159,8 @@ namespace myManga_App.ViewModels
         {
             mangaListView = CollectionViewSource.GetDefaultView(MangaList);
             mangaListView.Filter = mangaObject => String.IsNullOrWhiteSpace(SearchFilter) ? true : (mangaObject as MangaObject).Name.ToLower().Contains(SearchFilter.ToLower());
+            if (mangaListView.CanSort)
+                mangaListView.SortDescriptions.Add(new SortDescription("Name", ListSortDirection.Ascending));
         }
 
         public void Dispose() { }

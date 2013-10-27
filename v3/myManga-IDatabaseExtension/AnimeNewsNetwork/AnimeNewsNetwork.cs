@@ -8,6 +8,7 @@ using myMangaSiteExtension.Interfaces;
 using myMangaSiteExtension.Attributes;
 using myMangaSiteExtension.Objects;
 using HtmlAgilityPack;
+using myMangaSiteExtension;
 
 namespace AnimeNewsNetwork
 {
@@ -18,6 +19,7 @@ namespace AnimeNewsNetwork
         RootUrl = "http://cdn.animenewsnetwork.com",
         Author = "James Parks",
         Version = "0.0.1",
+        SupportedObjects = SupportedObjects.All,
         Language = "English")]
     public class AnimeNewsNetwork : IDatabaseExtension
     {
@@ -40,11 +42,14 @@ namespace AnimeNewsNetwork
             HtmlNodeCollection AlternateNameNodes = DatabaseObjectDocument.DocumentNode.SelectNodes("//info[contains(@type,'Alternative title')]"),
                 GenreNodes = DatabaseObjectDocument.DocumentNode.SelectNodes("//info[contains(@type,'Genres')]"),
                 StaffNodes = DatabaseObjectDocument.DocumentNode.SelectNodes("//staff/person");
+            List<String> Covers = new List<String>();
+            if (CoverNode != null)
+                Covers.Add(CoverNode.Attributes["src"].Value);
 
             return new DatabaseObject()
             {
                 Name = NameNode.InnerText,
-                Covers = { CoverNode.Attributes["src"].Value },
+                Covers = Covers,
                 AlternateNames = (AlternateNameNodes != null) ? (from HtmlNode InfoNode in AlternateNameNodes select InfoNode.InnerText).ToList() : new List<String>(),
                 Genres = (GenreNodes != null) ? (from HtmlNode InfoNode in GenreNodes select InfoNode.InnerText).ToList() : new List<String>(),
                 Locations = { new LocationObject() { 

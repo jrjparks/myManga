@@ -83,6 +83,14 @@
                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                 SelectedItem="{Binding MangaObj}"
                 ItemsSource="{Binding MangaList}"/>
+            <ProgressBar 
+                Grid.Row="1" 
+                HorizontalAlignment="Center" 
+                VerticalAlignment="Center" 
+                Width="64" Height="64" 
+                Style="{DynamicResource Spinner}" 
+                Visibility="{Binding IsSearching, Converter={StaticResource BooleanToVisibilityConverter}}"
+                />
         </Grid>
         <Grid
             Grid.Column="2" 

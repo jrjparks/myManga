@@ -32,10 +32,7 @@ namespace myManga_App.IO.Network
         public SmartSearch() : base() { }
         public SmartSearch(STPStartInfo stpThredPool) : base(stpThredPool) { }
 
-        // public IWorkItemResult<List<MangaObject>> SearchManga(String search, Boolean Start = true)
-        // { return smartThreadPool.QueueWorkItem<String, List<MangaObject>>(SearchWorker, search); }
-
-        public IWorkItemResult SearchManga(String search, Boolean Start = true)
+        public IWorkItemResult SearchManga(String search)
         { return smartThreadPool.QueueWorkItem(new WorkItemCallback(SearchWorker), search, new PostExecuteWorkItemCallback(SearchWorkerCallback)); }
 
         public void SearchWorkerCallback(IWorkItemResult wir)
@@ -113,23 +110,6 @@ namespace myManga_App.IO.Network
             MangaObjectResults.ForEach(mo => mo.Genres.ForEach(g => Thread.CurrentThread.CurrentCulture.TextInfo.ToTitleCase(g.ToLower())));
             MangaObjectResults.TrimExcess();
             return MangaObjectResults;
-        }
-
-        protected String DownloadHtmlContent(String url, String referer = null)
-        {
-            String content = null;
-
-            HttpWebRequest request = WebRequest.Create(url) as HttpWebRequest;
-            request.Referer = referer ?? request.Host;
-            request.AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip;
-            using (HttpWebResponse response = request.GetResponse() as HttpWebResponse)
-            {
-                using (StreamReader streamReader = new StreamReader(response.GetResponseStream()))
-                {
-                    content = streamReader.ReadToEnd();
-                }
-            }
-            return content;
         }
     }
 }

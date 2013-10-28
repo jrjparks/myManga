@@ -116,10 +116,10 @@ namespace myManga_App.ViewModels
         {
             if (App.Dispatcher.Thread == Thread.CurrentThread)
             {
+                IsSearching = false;
                 foreach (MangaObject MangaObj in e)
                     if (!MangaList.Any(mo => mo.Name == MangaObj.Name))
                         MangaList.Add(MangaObj);
-                IsSearching = false;
             }
             else
                 App.Dispatcher.BeginInvoke(new Instance_SearchCompleteInvoke(Instance_SearchComplete), new Object[] { sender, e });

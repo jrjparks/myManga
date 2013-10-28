@@ -3,9 +3,11 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
+using System.Linq;
 using System.Reflection;
 using System.Windows.Documents;
 using Amib.Threading;
+using myMangaSiteExtension;
 using myMangaSiteExtension.Attributes;
 using myMangaSiteExtension.Collections;
 using myMangaSiteExtension.Interfaces;
@@ -16,43 +18,51 @@ namespace myManga_App.IO.Network
 {
     public class SmartMangaDownloader : SmartDownloader
     {
+        public event EventHandler<MangaObject> MangaObjectComplete;
+        protected void OnMangaObjectComplete(MangaObject e)
+        {
+            if (MangaObjectComplete != null)
+            {
+                if (synchronizationContext == null)
+                    MangaObjectComplete(this, e);
+                else
+                    foreach (EventHandler<MangaObject> del in MangaObjectComplete.GetInvocationList())
+                        synchronizationContext.Post((s) => del(this, s as MangaObject), e);
+            }
+        }
+
         public SmartMangaDownloader() : base() { }
         public SmartMangaDownloader(STPStartInfo stpThredPool) : base(stpThredPool) { }
 
-        public IWorkItemResult<MangaObject> DownloadMangaObject(MangaObject MangaObject)
-        {
-            return smartThreadPool.QueueWorkItem<MangaObject, MangaObject>(DownloadMangaObjectWorker, MangaObject);
-        }
+        public IWorkItemResult DownloadMangaObject(MangaObject mangaObject)
+        { return smartThreadPool.QueueWorkItem(new WorkItemCallback(MangaObjectWorker), mangaObject, new PostExecuteWorkItemCallback(MangaObjectWorkerCallback)); }
 
-        public SmartGroupObject<MangaObject> DownloadMangaObjects(IEnumerable<MangaObject> MangaObjects, Boolean Start = true)
-        {
-            SmartGroupObject<MangaObject> downloadMangaObjectWorkers = new SmartGroupObject<MangaObject>(smartThreadPool.CreateWorkItemsGroup(2, new WIGStartInfo() { StartSuspended = !Start }));
-            downloadMangaObjectWorkers.WorkItemsGroup.Name = String.Format("{0}:DownloadMangaObjectsGroup", Guid.NewGuid());
-            foreach (MangaObject MangaObj in MangaObjects)
-                downloadMangaObjectWorkers.WorkItemResults.Add(downloadMangaObjectWorkers.WorkItemsGroup.QueueWorkItem<MangaObject, MangaObject>(DownloadMangaObjectWorker, MangaObj));
-            return downloadMangaObjectWorkers;
-        }
+        public ICollection<IWorkItemResult> DownloadMangaObject(ICollection<MangaObject> mangaObjects)
+        { return (from mangaObject in mangaObjects select smartThreadPool.QueueWorkItem(new WorkItemCallback(MangaObjectWorker), mangaObject, new PostExecuteWorkItemCallback(MangaObjectWorkerCallback))).ToList(); }
 
-        private MangaObject DownloadMangaObjectWorker(MangaObject mangaObject)
+        protected void MangaObjectWorkerCallback(IWorkItemResult wir)
+        { OnMangaObjectComplete(wir.Result as MangaObject); }
+
+        protected object MangaObjectWorker(object state)
+        { return MangaObjectWorker(state as MangaObject); }
+        protected MangaObject MangaObjectWorker(MangaObject mangaObject)
         {
-            ISiteExtensionCollection isec = (App.Current as App).SiteExtensions.DLLCollection;
-            foreach (LocationObject location in mangaObject.Locations.FindAll(l => l.Enabled))
+            IWorkItemsGroup MangaObjectWig = smartThreadPool.CreateWorkItemsGroup(2);
+
+            Dictionary<ISiteExtension, IWorkItemResult<String>> MangaObjectWorkItems = new Dictionary<ISiteExtension, IWorkItemResult<String>>();
+            foreach (LocationObject LocationObj in mangaObject.Locations.FindAll(l => l.Enabled))
             {
-                ISiteExtension ise = isec[location.ExtensionName];
+                ISiteExtension ise = App.SiteExtensions.DLLCollection[LocationObj.ExtensionName];
                 ISiteExtensionDescriptionAttribute isea = ise.GetType().GetCustomAttribute<ISiteExtensionDescriptionAttribute>(false);
-                HttpWebRequest request = WebRequest.Create(location.Url) as HttpWebRequest;
-                request.Referer = isea.RefererHeader ?? request.Host;
-                request.AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip;
-                using (HttpWebResponse response = request.GetResponse() as HttpWebResponse)
-                {
-                    using (StreamReader streamReader = new StreamReader(response.GetResponseStream()))
-                    {
-                        MangaObject remoteMangaObject = ise.ParseMangaObject(streamReader.ReadToEnd());
-                        location.Enabled = remoteMangaObject != null;
-                        if (location.Enabled)
-                            mangaObject.Merge(remoteMangaObject);
-                    }
-                }
+                if (isea.SupportedObjects.HasFlag(SupportedObjects.Search))
+                    MangaObjectWorkItems.Add(ise, MangaObjectWig.QueueWorkItem<String, String, String>(DownloadHtmlContent, LocationObj.Url, isea.RefererHeader));
+            }
+            MangaObjectWig.WaitForIdle();
+            foreach (KeyValuePair<ISiteExtension, IWorkItemResult<String>> val in MangaObjectWorkItems)
+            {
+                MangaObject dmObj = val.Key.ParseMangaObject(val.Value.Result);
+                if (dmObj != null)
+                    mangaObject.Merge(dmObj);
             }
             return mangaObject;
         }

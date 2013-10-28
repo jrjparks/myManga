@@ -27,6 +27,9 @@
             <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
         </ResourceDictionary>
     </UserControl.Resources>
+    <!--<UserControl.DataContext>
+        <vm:HomeViewModel/>
+    </UserControl.DataContext>-->
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition MinWidth="100" MaxWidth="300"/>
@@ -97,6 +100,8 @@
             </ProgressBar>
         </Grid>
         <Grid
+            x:Name="MangaObjectDescription"
+            Visibility="Visible"
             Grid.Column="2" 
             DataContext="{Binding SelectedItem, ElementName=MangaList}">
             <Grid.ColumnDefinitions>
@@ -140,19 +145,19 @@
                     </StackPanel>
                     <StackPanel Grid.Row="3" Grid.Column="1">
                         <TextBlock Text="Authors:" FontWeight="Bold" Foreground="{DynamicResource text-muted}"/>
-                        <TextBlock Text="{Binding Authors, Converter={StaticResource StringListToCSV}}" FontWeight="Bold" Foreground="{DynamicResource text-muted}"/>
+                        <TextBlock Text="{Binding Authors, Converter={StaticResource StringListToCSV}}" FontWeight="Bold" Foreground="{DynamicResource text-muted}" TextWrapping="WrapWithOverflow"/>
                     </StackPanel>
                     <StackPanel Grid.Row="4" Grid.Column="1">
                         <TextBlock Text="Artists:" FontWeight="Bold" Foreground="{DynamicResource text-muted}"/>
-                        <TextBlock Text="{Binding Authors, Converter={StaticResource StringListToCSV}}" FontWeight="Bold" Foreground="{DynamicResource text-muted}"/>
+                        <TextBlock Text="{Binding Authors, Converter={StaticResource StringListToCSV}}" FontWeight="Bold" Foreground="{DynamicResource text-muted}" TextWrapping="WrapWithOverflow"/>
                     </StackPanel>
                     <StackPanel Grid.Row="5" Grid.Column="1">
                         <TextBlock Text="Genres:" FontWeight="Bold" Foreground="{DynamicResource text-muted}"/>
-                        <TextBlock Text="{Binding Genres, Converter={StaticResource StringListToCSV}}" FontWeight="Bold" Foreground="{DynamicResource text-muted}"/>
+                        <TextBlock Text="{Binding Genres, Converter={StaticResource StringListToCSV}}" FontWeight="Bold" Foreground="{DynamicResource text-muted}" TextWrapping="WrapWithOverflow"/>
                     </StackPanel>
                     <StackPanel Grid.Row="6" Grid.Column="1">
                         <TextBlock Text="Sites:" FontWeight="Bold" Foreground="{DynamicResource text-muted}"/>
-                        <TextBlock Text="{Binding Locations, Converter={StaticResource LocationListToCSV}}" FontWeight="Bold" Foreground="{DynamicResource text-muted}"/>
+                        <TextBlock Text="{Binding Locations, Converter={StaticResource LocationListToCSV}}" FontWeight="Bold" Foreground="{DynamicResource text-muted}" TextWrapping="WrapWithOverflow"/>
                     </StackPanel>
                 </Grid>
                 <Grid Grid.Row="1"></Grid>

@@ -79,8 +79,6 @@ namespace MangaHere
                 };
                 if (volChapSub.Length == 3)
                     Chapter.SubChapter = Int32.Parse(volChapSub[2]);
-                if (Chapter.SubChapter <= 3)
-                    Chapter.SubChapter = 0;
                 Chapters.Add(Chapter);
             }
             Chapters.Reverse();

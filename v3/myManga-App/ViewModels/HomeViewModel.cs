@@ -148,7 +148,6 @@ namespace myManga_App.ViewModels
             {
                 foreach (String MangaArchiveFilePath in Directory.GetFiles(App.MANGA_ARCHIVE_DIRECTORY, "*.ma", SearchOption.AllDirectories))
                     MangaList.Add(MangaArchiveFilePath.LoadFromArchive<MangaObject>("MangaObject", SaveType.XML));
-
                 MangaObj = MangaList.FirstOrDefault();
             }
 #if DEBUG

@@ -46,14 +46,13 @@ namespace AFTV_Network
                 MangaCovers.Add(MangaCoverRegex.Replace(MangaCoverPrime, String.Format("{0}.jpg", mcI)));
             MangaCovers.TrimExcess();
 
-            //String MangaCover = MangaObjectDocument.GetElementbyId("mangaimg").SelectSingleNode(".//img").Attributes["src"].Value;
             HtmlNode MangaProperties = MangaObjectDocument.GetElementbyId("mangaproperties").SelectSingleNode(".//table"),
                 ChapterListing = MangaObjectDocument.GetElementbyId("listing"),
                 MangaDesciption = MangaObjectDocument.GetElementbyId("readmangasum").SelectSingleNode(".//p");
 
             String Name = MangaProperties.SelectSingleNode(".//tr[1]/td[2]/h2").InnerText,
                 ReadDirection = MangaProperties.SelectSingleNode(".//tr[7]/td[2]").InnerText,
-                ReleaseYear = MangaProperties.SelectSingleNode(".//tr[3]/td[2]").InnerText,
+                ReleaseYear = Regex.Match(MangaProperties.SelectSingleNode(".//tr[3]/td[2]").InnerText, @"\d+").Value,
                 Release = String.Format("01/01/{0}", String.IsNullOrWhiteSpace(ReleaseYear) ? "0001" : ReleaseYear),
                 Desciption = MangaDesciption != null ? MangaDesciption.InnerText : String.Empty;
             MangaObjectType MangaType = MangaObjectType.Unknown;

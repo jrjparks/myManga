@@ -52,7 +52,7 @@ namespace AFTV_Network
 
             String Name = MangaProperties.SelectSingleNode(".//tr[1]/td[2]/h2").InnerText,
                 ReadDirection = MangaProperties.SelectSingleNode(".//tr[7]/td[2]").InnerText,
-                ReleaseYear = MangaProperties.SelectSingleNode(".//tr[3]/td[2]").InnerText,
+                ReleaseYear = Regex.Match(MangaProperties.SelectSingleNode(".//tr[3]/td[2]").InnerText, @"\d+").Value,
                 Release = String.Format("01/01/{0}", String.IsNullOrWhiteSpace(ReleaseYear) ? "0001" : ReleaseYear),
                 Desciption = MangaDesciption != null ? MangaDesciption.InnerText : String.Empty;
             MangaObjectType MangaType = MangaObjectType.Unknown;

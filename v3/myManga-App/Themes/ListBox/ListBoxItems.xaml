@@ -110,17 +110,19 @@
                                 <RowDefinition/>
                                 <RowDefinition/>
                                 <RowDefinition/>
+                                <RowDefinition/>
                             </Grid.RowDefinitions>
                             <Image
                                 Grid.Column="0" 
-                                Grid.RowSpan="3" 
+                                Grid.RowSpan="4" 
                                 Margin="6,2" 
                                 Width="48" 
                                 Height="72"
                                 Source="{Binding SelectedCover}"/>
-                            <TextBlock Grid.Column="1" Grid.Row="0" VerticalAlignment="Center" Foreground="{StaticResource text-dark}" FontWeight="Bold" FontSize="14" TextTrimming="CharacterEllipsis" Text="{Binding Name}"/>
-                            <TextBlock Grid.Column="1" Grid.Row="1" VerticalAlignment="Center" Foreground="{StaticResource text-muted}" TextTrimming="CharacterEllipsis" Text="{Binding Locations, Converter={StaticResource LocationListToCSV}, Mode=OneWay}"/>
-                            <TextBlock Grid.Column="1" Grid.Row="2" VerticalAlignment="Center" Foreground="{StaticResource text-muted}" TextTrimming="CharacterEllipsis" Text="{Binding Genres, Converter={StaticResource StringListToCSV}, Mode=OneWay}"/>
+                            <TextBlock Grid.Column="1" Grid.Row="0" VerticalAlignment="Center" Foreground="{StaticResource text-dark}" FontWeight="Bold" FontSize="14" TextTrimming="CharacterEllipsis" Text="{Binding Name, FallbackValue=No-Name}"/>
+                            <TextBlock Grid.Column="1" Grid.Row="1" VerticalAlignment="Center" Foreground="{StaticResource text-muted}" TextTrimming="CharacterEllipsis" Text="{Binding Locations, Converter={StaticResource LocationListToCSV}, Mode=OneWay, FallbackValue=No-Location}"/>
+                            <TextBlock Grid.Column="1" Grid.Row="2" VerticalAlignment="Center" Foreground="{StaticResource text-muted}" TextTrimming="CharacterEllipsis" Text="{Binding DatabaseLocations, Converter={StaticResource LocationListToCSV}, Mode=OneWay, FallbackValue=No-Database}"/>
+                            <TextBlock Grid.Column="1" Grid.Row="3" VerticalAlignment="Center" Foreground="{StaticResource text-muted}" TextTrimming="CharacterEllipsis" Text="{Binding Genres, Converter={StaticResource StringListToCSV}, Mode=OneWay, FallbackValue=No-Genre}"/>
                         </Grid>
                     </Border>
                     <ControlTemplate.Triggers>

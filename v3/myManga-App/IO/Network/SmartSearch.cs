@@ -44,69 +44,81 @@ namespace myManga_App.IO.Network
         {
             IWorkItemsGroup SearchWig = smartThreadPool.CreateWorkItemsGroup(2);
             Dictionary<String, MangaObject> MangaObjectSearchResults = new Dictionary<String, MangaObject>();
-            Regex safeAlphaNumeric = new Regex("[^a-z0-9]", RegexOptions.IgnoreCase);
-            Dictionary<ISiteExtension, IWorkItemResult<String>> MangaSearchWorkItems = new Dictionary<ISiteExtension, IWorkItemResult<String>>(App.SiteExtensions.DLLCollection.Count);
-            foreach (ISiteExtension SiteExtension in App.SiteExtensions.DLLCollection)
+            try
             {
-                ISiteExtensionDescriptionAttribute isea = SiteExtension.GetType().GetCustomAttribute<ISiteExtensionDescriptionAttribute>(false);
-                if (isea.SupportedObjects.HasFlag(SupportedObjects.Search))
-                    MangaSearchWorkItems.Add(SiteExtension, SearchWig.QueueWorkItem<String, String, String>(DownloadHtmlContent, SiteExtension.GetSearchUri(searchTerm: search), isea.RefererHeader));
-            }
-            // Wait for the searches to complete
-            SearchWig.WaitForIdle();
-            foreach (KeyValuePair<ISiteExtension, IWorkItemResult<String>> val in MangaSearchWorkItems)
-            {
-                List<SearchResultObject> SearchResults = val.Key.ParseSearch(val.Value.Result);
-                foreach (SearchResultObject SearchResult in SearchResults)
+                Regex safeAlphaNumeric = new Regex("[^a-z0-9]", RegexOptions.IgnoreCase);
+                Dictionary<ISiteExtension, IWorkItemResult<String>> MangaSearchWorkItems = new Dictionary<ISiteExtension, IWorkItemResult<String>>(App.SiteExtensions.DLLCollection.Count);
+                foreach (ISiteExtension SiteExtension in App.SiteExtensions.DLLCollection)
                 {
-                    String key = safeAlphaNumeric.Replace(SearchResult.Name.ToLower(), String.Empty);
-                    if (MangaObjectSearchResults.ContainsKey(key))
-                        MangaObjectSearchResults[key].Merge(SearchResult.ConvertToMangaObject());
-                    else
-                        MangaObjectSearchResults.Add(key, SearchResult.ConvertToMangaObject());
-                }
-            }
-            SearchWig.Concurrency = 4;
-            Dictionary<KeyValuePair<String, ISiteExtension>, IWorkItemResult<String>> MangaObjectWorkItems = new Dictionary<KeyValuePair<String, ISiteExtension>, IWorkItemResult<String>>();
-            foreach (KeyValuePair<String, MangaObject> MangaObject in MangaObjectSearchResults)
-            {
-                foreach (LocationObject LocationObj in MangaObject.Value.Locations.FindAll(l => l.Enabled))
-                {
-                    ISiteExtension ise = App.SiteExtensions.DLLCollection[LocationObj.ExtensionName];
-                    ISiteExtensionDescriptionAttribute isea = ise.GetType().GetCustomAttribute<ISiteExtensionDescriptionAttribute>(false);
+                    ISiteExtensionDescriptionAttribute isea = SiteExtension.GetType().GetCustomAttribute<ISiteExtensionDescriptionAttribute>(false);
                     if (isea.SupportedObjects.HasFlag(SupportedObjects.Search))
-                        MangaObjectWorkItems.Add(new KeyValuePair<String, ISiteExtension>(MangaObject.Key, ise), SearchWig.QueueWorkItem<String, String, String>(DownloadHtmlContent, LocationObj.Url, isea.RefererHeader));
+                        MangaSearchWorkItems.Add(SiteExtension, SearchWig.QueueWorkItem<String, String, String>(DownloadHtmlContent, SiteExtension.GetSearchUri(searchTerm: search), isea.RefererHeader));
                 }
-            }
-            // Wait for the mangaobjects to load
-            SearchWig.WaitForIdle();
-            foreach (KeyValuePair<KeyValuePair<String, ISiteExtension>, IWorkItemResult<String>> val in MangaObjectWorkItems)
-            {
-                MangaObject dmObj = val.Key.Value.ParseMangaObject(val.Value.Result);
-                if (dmObj != null)
-                    MangaObjectSearchResults[val.Key.Key].Merge(dmObj);
-            }
-            Dictionary<IDatabaseExtension, IWorkItemResult<String>> DatabaseSearchWorkItems = new Dictionary<IDatabaseExtension, IWorkItemResult<String>>(App.DatabaseExtensions.DLLCollection.Count);
-            foreach (IDatabaseExtension DatabaseExtension in App.DatabaseExtensions.DLLCollection)
-            {
-                IDatabaseExtensionAttribute idea = DatabaseExtension.GetType().GetCustomAttribute<IDatabaseExtensionAttribute>(false);
-                if (idea.SupportedObjects.HasFlag(SupportedObjects.Search))
-                    DatabaseSearchWorkItems.Add(DatabaseExtension, SearchWig.QueueWorkItem<String, String, String>(DownloadHtmlContent, DatabaseExtension.GetSearchUri(searchTerm: search), idea.RefererHeader));
-            }
-            // Wait for the database searches to complete
-            SearchWig.WaitForIdle();
-            foreach (KeyValuePair<IDatabaseExtension, IWorkItemResult<String>> val in DatabaseSearchWorkItems)
-            {
-                List<DatabaseObject> DatabaseResults = val.Key.ParseSearch(val.Value.Result);
-                foreach (DatabaseObject DatabaseResult in DatabaseResults)
+                // Wait for the searches to complete
+                SearchWig.WaitForIdle();
+                foreach (KeyValuePair<ISiteExtension, IWorkItemResult<String>> val in MangaSearchWorkItems)
                 {
-                    String key = safeAlphaNumeric.Replace(DatabaseResult.Name.ToLower(), String.Empty);
-                    if (MangaObjectSearchResults.ContainsKey(key))
-                        MangaObjectSearchResults[key].AttachDatabase(DatabaseResult, true);
+                    List<SearchResultObject> SearchResults = val.Key.ParseSearch(val.Value.Result);
+                    foreach (SearchResultObject SearchResult in SearchResults)
+                    {
+                        String key = safeAlphaNumeric.Replace(SearchResult.Name.ToLower(), String.Empty);
+                        if (MangaObjectSearchResults.ContainsKey(key))
+                            MangaObjectSearchResults[key].Merge(SearchResult.ConvertToMangaObject());
+                        else
+                            MangaObjectSearchResults.Add(key, SearchResult.ConvertToMangaObject());
+                    }
                 }
+                SearchWig.Concurrency = 4;
+                Dictionary<KeyValuePair<String, ISiteExtension>, IWorkItemResult<String>> MangaObjectWorkItems = new Dictionary<KeyValuePair<String, ISiteExtension>, IWorkItemResult<String>>();
+                foreach (KeyValuePair<String, MangaObject> MangaObject in MangaObjectSearchResults)
+                {
+                    foreach (LocationObject LocationObj in MangaObject.Value.Locations.FindAll(l => l.Enabled))
+                    {
+                        ISiteExtension ise = App.SiteExtensions.DLLCollection[LocationObj.ExtensionName];
+                        ISiteExtensionDescriptionAttribute isea = ise.GetType().GetCustomAttribute<ISiteExtensionDescriptionAttribute>(false);
+                        if (isea.SupportedObjects.HasFlag(SupportedObjects.Search))
+                            MangaObjectWorkItems.Add(new KeyValuePair<String, ISiteExtension>(MangaObject.Key, ise), SearchWig.QueueWorkItem<String, String, String>(DownloadHtmlContent, LocationObj.Url, isea.RefererHeader));
+                    }
+                }
+                // Wait for the mangaobjects to load
+                SearchWig.WaitForIdle();
+                foreach (KeyValuePair<KeyValuePair<String, ISiteExtension>, IWorkItemResult<String>> val in MangaObjectWorkItems)
+                {
+                    MangaObject dmObj = val.Key.Value.ParseMangaObject(val.Value.Result);
+                    if (dmObj != null)
+                        MangaObjectSearchResults[val.Key.Key].Merge(dmObj);
+                }
+                Dictionary<IDatabaseExtension, IWorkItemResult<String>> DatabaseSearchWorkItems = new Dictionary<IDatabaseExtension, IWorkItemResult<String>>(App.DatabaseExtensions.DLLCollection.Count);
+                foreach (IDatabaseExtension DatabaseExtension in App.DatabaseExtensions.DLLCollection)
+                {
+                    IDatabaseExtensionAttribute idea = DatabaseExtension.GetType().GetCustomAttribute<IDatabaseExtensionAttribute>(false);
+                    if (idea.SupportedObjects.HasFlag(SupportedObjects.Search))
+                        DatabaseSearchWorkItems.Add(DatabaseExtension, SearchWig.QueueWorkItem<String, String, String>(DownloadHtmlContent, DatabaseExtension.GetSearchUri(searchTerm: search), idea.RefererHeader));
+                }
+                // Wait for the database searches to complete
+                SearchWig.WaitForIdle();
+                foreach (KeyValuePair<IDatabaseExtension, IWorkItemResult<String>> val in DatabaseSearchWorkItems)
+                {
+                    List<DatabaseObject> DatabaseResults = val.Key.ParseSearch(val.Value.Result);
+                    foreach (DatabaseObject DatabaseResult in DatabaseResults)
+                    {
+                        String key = safeAlphaNumeric.Replace(DatabaseResult.Name.ToLower(), String.Empty);
+                        if (MangaObjectSearchResults.ContainsKey(key))
+                            MangaObjectSearchResults[key].AttachDatabase(DatabaseResult, true);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Windows.MessageBox.Show(ex.Message, "SmartSearch had a headache");
+            }
+            finally
+            {
+                SearchWig.Cancel(true);
             }
             List<MangaObject> MangaObjectResults = new List<MangaObject>(MangaObjectSearchResults.Values);
             MangaObjectResults.RemoveAll(mo => mo.Locations.FindAll(lo => !lo.Enabled).Count == mo.Locations.Count);
+            MangaObjectResults.ForEach(mo => mo.SortChapters());
             MangaObjectResults.ForEach(mo => mo.Genres.ForEach(g => Thread.CurrentThread.CurrentCulture.TextInfo.ToTitleCase(g.ToLower())));
             MangaObjectResults.TrimExcess();
             return MangaObjectResults;

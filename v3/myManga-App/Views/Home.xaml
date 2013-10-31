@@ -53,7 +53,7 @@
                     </Grid.ColumnDefinitions>
                     <button:MetroButton
                         Grid.Column="0"
-                        Content="{DynamicResource icon-search}"
+                        Content="{DynamicResource fa-search}"
                         Command="{Binding SearchSiteCommend}"
                         FontFamily="{DynamicResource FontAwesome}"
                         ToolTip="Search Sites"
@@ -67,7 +67,7 @@
                         Text="{Binding SearchFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
                     <button:MetroButton
                         Grid.Column="2"
-                        Content="{DynamicResource icon-remove}"
+                        Content="{DynamicResource fa-times}"
                         Command="{Binding ClearSearchCommand}"
                         FontFamily="{DynamicResource FontAwesome}"
                         ToolTip="Clear Search"
@@ -123,6 +123,7 @@
                         <RowDefinition/>
                         <RowDefinition/>
                         <RowDefinition/>
+                        <RowDefinition/>
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="200"/>
@@ -131,33 +132,38 @@
                     <TextBlock Grid.ColumnSpan="2" Text="{Binding Name}" TextTrimming="WordEllipsis" FontWeight="Bold" FontSize="24"/>
                     <Grid 
                         Grid.Row="1" 
-                        Grid.RowSpan="6"
+                        Grid.RowSpan="7"
                         Margin="0,0,3,0">
                         <Image Source="{Binding SelectedCover}"/>
                     </Grid>
                     <StackPanel Grid.Row="1" Grid.Column="1">
+                        <TextBlock Text="Alternate Titles:" FontWeight="Bold" Foreground="{DynamicResource text-muted}"/>
+                        <TextBlock Text="{Binding AlternateNames, Converter={StaticResource StringListToCSV}}" FontWeight="Bold" Foreground="{DynamicResource text-muted}"/>
+                    </StackPanel>
+                    <StackPanel Grid.Row="2" Grid.Column="1">
                         <TextBlock Text="Released:" FontWeight="Bold" Foreground="{DynamicResource text-muted}"/>
                         <TextBlock Text="{Binding Released, StringFormat=yyyy}" FontWeight="Bold" Foreground="{DynamicResource text-muted}"/>
                     </StackPanel>
-                    <StackPanel Grid.Row="2" Grid.Column="1">
+                    <StackPanel Grid.Row="3" Grid.Column="1">
                         <TextBlock Text="Type:" FontWeight="Bold" Foreground="{DynamicResource text-muted}"/>
                         <TextBlock Text="{Binding MangaType, StringFormat={}{0}}" FontWeight="Bold" Foreground="{DynamicResource text-muted}"/>
                     </StackPanel>
-                    <StackPanel Grid.Row="3" Grid.Column="1">
+                    <StackPanel Grid.Row="4" Grid.Column="1">
                         <TextBlock Text="Authors:" FontWeight="Bold" Foreground="{DynamicResource text-muted}"/>
                         <TextBlock Text="{Binding Authors, Converter={StaticResource StringListToCSV}}" FontWeight="Bold" Foreground="{DynamicResource text-muted}" TextWrapping="WrapWithOverflow"/>
                     </StackPanel>
-                    <StackPanel Grid.Row="4" Grid.Column="1">
+                    <StackPanel Grid.Row="5" Grid.Column="1">
                         <TextBlock Text="Artists:" FontWeight="Bold" Foreground="{DynamicResource text-muted}"/>
                         <TextBlock Text="{Binding Authors, Converter={StaticResource StringListToCSV}}" FontWeight="Bold" Foreground="{DynamicResource text-muted}" TextWrapping="WrapWithOverflow"/>
                     </StackPanel>
-                    <StackPanel Grid.Row="5" Grid.Column="1">
+                    <StackPanel Grid.Row="6" Grid.Column="1">
                         <TextBlock Text="Genres:" FontWeight="Bold" Foreground="{DynamicResource text-muted}"/>
                         <TextBlock Text="{Binding Genres, Converter={StaticResource StringListToCSV}}" FontWeight="Bold" Foreground="{DynamicResource text-muted}" TextWrapping="WrapWithOverflow"/>
                     </StackPanel>
-                    <StackPanel Grid.Row="6" Grid.Column="1">
+                    <StackPanel Grid.Row="7" Grid.Column="1">
                         <TextBlock Text="Sites:" FontWeight="Bold" Foreground="{DynamicResource text-muted}"/>
                         <TextBlock Text="{Binding Locations, Converter={StaticResource LocationListToCSV}}" FontWeight="Bold" Foreground="{DynamicResource text-muted}" TextWrapping="WrapWithOverflow"/>
+                        <TextBlock Text="{Binding DatabaseLocations, Converter={StaticResource LocationListToCSV}}" FontWeight="Bold" Foreground="{DynamicResource text-muted}" TextWrapping="WrapWithOverflow"/>
                     </StackPanel>
                 </Grid>
                 <Grid Grid.Row="1"></Grid>

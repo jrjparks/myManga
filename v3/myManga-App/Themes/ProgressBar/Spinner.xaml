@@ -21,7 +21,7 @@
                 <ControlTemplate>
                     <Grid>
                         <Viewbox VerticalAlignment="Stretch" HorizontalAlignment="Stretch" RenderTransformOrigin="0.5, 0.5">
-                            <TextBlock Text="{DynamicResource icon-spinner}" FontFamily="{DynamicResource FontAwesome}"/>
+                            <TextBlock Text="{DynamicResource fa-spinner}" FontFamily="{DynamicResource FontAwesome}"/>
                             <Viewbox.RenderTransform>
                                 <RotateTransform/>
                             </Viewbox.RenderTransform>

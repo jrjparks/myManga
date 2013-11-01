@@ -1,13 +1,11 @@
-﻿using Core.IO;
-using System;
-using System.Linq;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using System.Xml.Serialization;
-using System.Text;
+using Core.IO;
 
 namespace myMangaSiteExtension.Objects
 {

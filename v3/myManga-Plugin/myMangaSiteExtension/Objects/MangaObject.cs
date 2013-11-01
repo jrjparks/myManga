@@ -5,12 +5,9 @@ using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
-using System.Text;
 using System.Windows;
 using System.Xml.Serialization;
 using Core.IO;
-using Core.MVVM;
-using myMangaSiteExtension.Collections;
 using myMangaSiteExtension.Enums;
 
 namespace myMangaSiteExtension.Objects

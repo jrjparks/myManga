@@ -69,6 +69,7 @@
     <Compile Include="Enums\SupportedObjects.cs" />
     <Compile Include="Interfaces\IDatabaseExtension.cs" />
     <Compile Include="Interfaces\ISiteExtension.cs" />
+    <Compile Include="Objects\BookmarkObject.cs" />
     <Compile Include="Objects\ChapterObject.cs" />
     <Compile Include="Objects\DatabaseObject.cs" />
     <Compile Include="Objects\LocationObject.cs" />

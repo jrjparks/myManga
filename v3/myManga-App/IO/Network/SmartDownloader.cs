@@ -16,9 +16,9 @@ namespace myManga_App.IO.Network
         protected readonly SynchronizationContext synchronizationContext;
         protected readonly App App = App.Current as App;
         public Int32 Concurrency
-        {
-            get { return smartThreadPool.Concurrency; }
-        }
+        { get { return smartThreadPool.Concurrency; } }
+        public Boolean IsIdle
+        { get { return smartThreadPool.IsIdle; } }
 
         public SmartDownloader() : this(null) { }
 

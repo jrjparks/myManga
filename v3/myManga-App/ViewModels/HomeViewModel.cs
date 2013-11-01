@@ -97,18 +97,15 @@ namespace myManga_App.ViewModels
         #region SearchSites
         protected DelegateCommand searchSitesCommand;
         public ICommand SearchSiteCommend
-        {
-            get { return searchSitesCommand ?? (searchSitesCommand = new DelegateCommand(SearchSites, CanSearchSite)); }
-        }
+        { get { return searchSitesCommand ?? (searchSitesCommand = new DelegateCommand(SearchSites, CanSearchSite)); } }
 
         protected Boolean CanSearchSite()
         { return !String.IsNullOrWhiteSpace(SearchFilter) && (SearchFilter.Trim().Length >= 3); }
 
         protected void SearchSites()
         {
-            IsSearching = true;
+            IsLoading = true;
             Singleton<myManga_App.IO.Network.SmartSearch>.Instance.SearchManga(SearchFilter.Trim());
-
         }
 
         private delegate void Instance_SearchCompleteInvoke(object sender, List<MangaObject> e);
@@ -116,7 +113,7 @@ namespace myManga_App.ViewModels
         {
             if (App.Dispatcher.Thread == Thread.CurrentThread)
             {
-                IsSearching = false;
+                IsLoading = false;
                 foreach (MangaObject MangaObj in e)
                     if (!MangaList.Any(mo => mo.Name == MangaObj.Name))
                         MangaList.Add(MangaObj);
@@ -124,19 +121,50 @@ namespace myManga_App.ViewModels
             else
                 App.Dispatcher.BeginInvoke(new Instance_SearchCompleteInvoke(Instance_SearchComplete), new Object[] { sender, e });
         }
+        #endregion
 
-        protected Boolean isSearching;
-        public Boolean IsSearching
+        #region RefreshList
+        protected DelegateCommand refreshListCommand;
+        public ICommand RefreshListCommand
+        { get { return refreshListCommand ?? (refreshListCommand = new DelegateCommand(RefreshList, CanRefresh)); } }
+
+        protected Boolean CanRefresh()
+        { return MangaList.Count > 0; }
+
+        protected void RefreshList()
         {
-            get { return isSearching; }
+            IsLoading = true;
+            MangaObject[] MangaObjects = new MangaObject[MangaList.Count];
+            MangaList.CopyTo(MangaObjects, 0);
+            foreach (MangaObject mangaObject in MangaObjects)
+                Singleton<myManga_App.IO.Network.SmartMangaDownloader>.Instance.DownloadMangaObject(mangaObject);
+            MangaObjects = null;
+        }
+
+        private delegate void Instance_MangaObjectCompleteInvoke(object sender, MangaObject e);
+        void Instance_MangaObjectComplete(object sender, MangaObject e)
+        {
+            if (App.Dispatcher.Thread == Thread.CurrentThread)
+            {
+                IsLoading = !(sender as myManga_App.IO.Network.SmartMangaDownloader).IsIdle;
+                if (!MangaList.Any(mo => mo.Name == e.Name)) MangaList.Add(MangaObj);
+                else MangaList.First(mo => mo.Name == e.Name).Merge(e);
+            }
+            else App.Dispatcher.BeginInvoke(new Instance_MangaObjectCompleteInvoke(Instance_MangaObjectComplete), new Object[] { sender, e });
+        }
+        #endregion
+
+        protected Boolean isLoading;
+        public Boolean IsLoading
+        {
+            get { return isLoading; }
             set
             {
                 OnPropertyChanging();
-                isSearching = value;
+                isLoading = value;
                 OnPropertyChanged();
             }
         }
-        #endregion
 
         protected App App = App.Current as App;
 
@@ -144,6 +172,7 @@ namespace myManga_App.ViewModels
         {
             ConfigureSearchFilter();
             Singleton<myManga_App.IO.Network.SmartSearch>.Instance.SearchComplete += Instance_SearchComplete;
+            Singleton<myManga_App.IO.Network.SmartMangaDownloader>.Instance.MangaObjectComplete += Instance_MangaObjectComplete;
             if (!DesignerProperties.GetIsInDesignMode(new System.Windows.DependencyObject()))
             {
                 foreach (String MangaArchiveFilePath in Directory.GetFiles(App.MANGA_ARCHIVE_DIRECTORY, "*.ma", SearchOption.AllDirectories))

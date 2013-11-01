@@ -39,11 +39,11 @@
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="32px"/>
-                <RowDefinition Height="1*"/>
+                <RowDefinition/>
+                <RowDefinition Height="32px"/>
             </Grid.RowDefinitions>
             <Border 
-                BorderBrush="{DynamicResource icon-dark}" 
-                BorderThickness="1"
+                Grid.Row="0"
                 TextElement.FontSize="16">
                 <Grid>
                     <Grid.ColumnDefinitions>
@@ -51,6 +51,10 @@
                         <ColumnDefinition Width="1*"/>
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
+                    <Grid.InputBindings>
+                        <KeyBinding Command="{Binding SearchSiteCommend}" Key="Return"/>
+                        <KeyBinding Command="{Binding ClearSearchCommand}" Key="Esc"/>
+                    </Grid.InputBindings>
                     <button:MetroButton
                         Grid.Column="0"
                         Content="{DynamicResource fa-search}"
@@ -92,12 +96,19 @@
                 VerticalAlignment="Center" 
                 Width="96" Height="96" 
                 Style="{DynamicResource Spinner}" 
-                Visibility="{Binding IsSearching, Converter={StaticResource BooleanToVisibilityConverter}}"
+                Visibility="{Binding IsLoading, Converter={StaticResource BooleanToVisibilityConverter}}"
                 >
                 <ProgressBar.Foreground>
                     <SolidColorBrush Color="#BF000000"/>
                 </ProgressBar.Foreground>
             </ProgressBar>
+            <button:MetroButton
+                Grid.Row="3"
+                FontSize="16"
+                FontFamily="{DynamicResource FontAwesome}"
+                Content="{DynamicResource fa-refresh}"
+                ContentStringFormat="{}{0} Refresh"
+                Command="{Binding RefreshListCommand}"/>
         </Grid>
         <Grid
             x:Name="MangaObjectDescription"
@@ -124,6 +135,7 @@
                         <RowDefinition/>
                         <RowDefinition/>
                         <RowDefinition/>
+                        <RowDefinition/>
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="200"/>
@@ -132,13 +144,13 @@
                     <TextBlock Grid.ColumnSpan="2" Text="{Binding Name}" TextTrimming="WordEllipsis" FontWeight="Bold" FontSize="24"/>
                     <Grid 
                         Grid.Row="1" 
-                        Grid.RowSpan="7"
+                        Grid.RowSpan="8"
                         Margin="0,0,3,0">
                         <Image Source="{Binding SelectedCover}"/>
                     </Grid>
                     <StackPanel Grid.Row="1" Grid.Column="1">
                         <TextBlock Text="Alternate Titles:" FontWeight="Bold" Foreground="{DynamicResource text-muted}"/>
-                        <TextBlock Text="{Binding AlternateNames, Converter={StaticResource StringListToCSV}}" FontWeight="Bold" Foreground="{DynamicResource text-muted}"/>
+                        <TextBlock Text="{Binding AlternateNames, Converter={StaticResource StringListToCSV}}" FontWeight="Bold" Foreground="{DynamicResource text-muted}" TextTrimming="CharacterEllipsis"/>
                     </StackPanel>
                     <StackPanel Grid.Row="2" Grid.Column="1">
                         <TextBlock Text="Released:" FontWeight="Bold" Foreground="{DynamicResource text-muted}"/>
@@ -150,20 +162,20 @@
                     </StackPanel>
                     <StackPanel Grid.Row="4" Grid.Column="1">
                         <TextBlock Text="Authors:" FontWeight="Bold" Foreground="{DynamicResource text-muted}"/>
-                        <TextBlock Text="{Binding Authors, Converter={StaticResource StringListToCSV}}" FontWeight="Bold" Foreground="{DynamicResource text-muted}" TextWrapping="WrapWithOverflow"/>
+                        <TextBlock Text="{Binding Authors, Converter={StaticResource StringListToCSV}}" FontWeight="Bold" Foreground="{DynamicResource text-muted}" TextTrimming="CharacterEllipsis"/>
                     </StackPanel>
                     <StackPanel Grid.Row="5" Grid.Column="1">
                         <TextBlock Text="Artists:" FontWeight="Bold" Foreground="{DynamicResource text-muted}"/>
-                        <TextBlock Text="{Binding Authors, Converter={StaticResource StringListToCSV}}" FontWeight="Bold" Foreground="{DynamicResource text-muted}" TextWrapping="WrapWithOverflow"/>
+                        <TextBlock Text="{Binding Authors, Converter={StaticResource StringListToCSV}}" FontWeight="Bold" Foreground="{DynamicResource text-muted}" TextTrimming="CharacterEllipsis"/>
                     </StackPanel>
                     <StackPanel Grid.Row="6" Grid.Column="1">
                         <TextBlock Text="Genres:" FontWeight="Bold" Foreground="{DynamicResource text-muted}"/>
-                        <TextBlock Text="{Binding Genres, Converter={StaticResource StringListToCSV}}" FontWeight="Bold" Foreground="{DynamicResource text-muted}" TextWrapping="WrapWithOverflow"/>
+                        <TextBlock Text="{Binding Genres, Converter={StaticResource StringListToCSV}}" FontWeight="Bold" Foreground="{DynamicResource text-muted}" TextTrimming="CharacterEllipsis"/>
                     </StackPanel>
-                    <StackPanel Grid.Row="7" Grid.Column="1">
+                    <StackPanel Grid.Row="7" Grid.Column="1" Grid.RowSpan="2">
                         <TextBlock Text="Sites:" FontWeight="Bold" Foreground="{DynamicResource text-muted}"/>
-                        <TextBlock Text="{Binding Locations, Converter={StaticResource LocationListToCSV}}" FontWeight="Bold" Foreground="{DynamicResource text-muted}" TextWrapping="WrapWithOverflow"/>
-                        <TextBlock Text="{Binding DatabaseLocations, Converter={StaticResource LocationListToCSV}}" FontWeight="Bold" Foreground="{DynamicResource text-muted}" TextWrapping="WrapWithOverflow"/>
+                        <TextBlock Text="{Binding Locations, Converter={StaticResource LocationListToCSV}}" FontWeight="Bold" Foreground="{DynamicResource text-muted}" TextTrimming="CharacterEllipsis"/>
+                        <TextBlock Text="{Binding DatabaseLocations, Converter={StaticResource LocationListToCSV}}" FontWeight="Bold" Foreground="{DynamicResource text-muted}" TextTrimming="CharacterEllipsis"/>
                     </StackPanel>
                 </Grid>
                 <Grid Grid.Row="1"></Grid>

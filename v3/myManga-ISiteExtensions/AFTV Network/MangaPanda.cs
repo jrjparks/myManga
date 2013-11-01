@@ -118,7 +118,7 @@ namespace AFTV_Network
                 Pages = (from HtmlNode PageNode in ChapterObjectDocument.GetElementbyId("pageMenu").SelectNodes(".//option")
                          select new PageObject()
                          {
-                             Url = String.Format("{0}{1}", isea.RootUrl, PageNode.Attributes["value"].Value),
+                             Url = String.Format("{0}{1}", ISEA.RootUrl, PageNode.Attributes["value"].Value),
                              PageNumber = UInt32.Parse(PageNode.NextSibling.InnerText)
                          }).ToList()
             };
@@ -139,7 +139,7 @@ namespace AFTV_Network
             {
                 Name = ImageLink.Segments.Last(),
                 PageNumber = UInt32.Parse(PageNode.NextSibling.InnerText),
-                Url = String.Format("{0}{1}", isea.RootUrl, PageNode.Attributes["value"].Value),
+                Url = String.Format("{0}{1}", ISEA.RootUrl, PageNode.Attributes["value"].Value),
                 NextUrl = (NextNode != null) ? String.Format("{0}{1}", ISEA.RootUrl, NextNode.Attributes["value"].Value) : null,
                 PrevUrl = (PrevNode != null) ? String.Format("{0}{1}", ISEA.RootUrl, PrevNode.Attributes["value"].Value) : null,
                 ImgUrl = ImageLink.ToString()

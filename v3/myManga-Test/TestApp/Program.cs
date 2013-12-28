@@ -11,6 +11,7 @@ using Core.IO;
 using Core.Other;
 using myMangaSiteExtension.Interfaces;
 using myMangaSiteExtension.Utilities;
+using HtmlAgilityPack;
 
 namespace TestApp
 {
@@ -24,7 +25,16 @@ namespace TestApp
             SiteExtentions.Add("MangaReader", new AFTV_Network.MangaReader());
             SiteExtentions.Add("MangaPanda", new AFTV_Network.MangaPanda());
             SiteExtentions.Add("MangaHere", new MangaHere.MangaHere());
+            SiteExtentions.Add("Batoto", new Batoto.Batoto());
+            SiteExtentions.Add("Batoto-Spanish", new Batoto.Batoto_Spanish());
+            SiteExtentions.Add("Batoto-German", new Batoto.Batoto_German());
+            SiteExtentions.Add("Batoto-French", new Batoto.Batoto_French());
             DatabaseExtentions.Add("AnimeNewsNetwork", new AnimeNewsNetwork.AnimeNewsNetwork());
+            foreach (ISiteExtension ise in SiteExtentions.Values)
+            {
+                ISiteExtensionDescriptionAttribute isea = ise.GetType().GetCustomAttribute<ISiteExtensionDescriptionAttribute>(false);
+                Console.WriteLine("Loaded {0}", isea.Name);
+            }
             Search();
         }
 
@@ -49,24 +59,58 @@ namespace TestApp
                     foreach (ISiteExtension ise in SiteExtentions.Values)
                     {
                         ISiteExtensionDescriptionAttribute isea = ise.GetType().GetCustomAttribute<ISiteExtensionDescriptionAttribute>(false);
-                        String SearchURL = ise.GetSearchUri(searchTerm: SearchTerm);
+                        SearchRequestObject sro = ise.GetSearchRequestObject(searchTerm: SearchTerm);
                         Console.Write("Searching {0}...", isea.Name);
 
-                        HttpWebRequest request = WebRequest.Create(SearchURL) as HttpWebRequest;
-                        request.Referer = isea.RefererHeader ?? request.Host;
+                        HttpWebRequest request = WebRequest.Create(sro.Url) as HttpWebRequest;
+                        request.Referer = sro.Referer ?? request.Host;
                         request.AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip;
+                        switch (sro.Method)
+                        {
+                            default:
+                            case myMangaSiteExtension.Enums.SearchMethod.GET:
+                                request.Method = "GET";
+                                break;
+
+                            case myMangaSiteExtension.Enums.SearchMethod.POST:
+                                request.Method = "POST";
+                                request.ContentType = "application/x-www-form-urlencoded";
+                                using (var requestWriter = new StreamWriter(request.GetRequestStream()))
+                                { requestWriter.Write(sro.RequestContent); }
+                                break;
+                        }
+
                         try
                         {
-                            using (HttpWebResponse response = request.GetResponse() as HttpWebResponse)
+                            try
                             {
-                                using (StreamReader streamReader = new StreamReader(response.GetResponseStream()))
+                                using (HttpWebResponse response = request.GetResponse() as HttpWebResponse)
                                 {
-                                    foreach (SearchResultObject searchResultObject in ise.ParseSearch(streamReader.ReadToEnd()))
+                                    using (StreamReader streamReader = new StreamReader(response.GetResponseStream()))
                                     {
-                                        String keyName = new String(searchResultObject.Name.ToLower().Where(Char.IsLetterOrDigit).ToArray());
-                                        if (!RawSearchResults.ContainsKey(keyName))
-                                            RawSearchResults[keyName] = new List<SearchResultObject>();
-                                        RawSearchResults[keyName].Add(searchResultObject);
+                                        foreach (SearchResultObject searchResultObject in ise.ParseSearch(streamReader.ReadToEnd()))
+                                        {
+                                            String keyName = new String(searchResultObject.Name.ToLower().Where(Char.IsLetterOrDigit).ToArray());
+                                            if (!RawSearchResults.ContainsKey(keyName))
+                                                RawSearchResults[keyName] = new List<SearchResultObject>();
+                                            RawSearchResults[keyName].Add(searchResultObject);
+                                        }
+                                    }
+                                }
+                            }
+                            catch (WebException ex)
+                            {
+                                using (HttpWebResponse response = ex.Response as HttpWebResponse)
+                                {
+                                    using (StreamReader streamReader = new StreamReader(response.GetResponseStream()))
+                                    {
+                                        foreach (SearchResultObject searchResultObject in ise.ParseSearch(streamReader.ReadToEnd()))
+                                        {
+                                            String keyName = new String(searchResultObject.Name.ToLower().Where(Char.IsLetterOrDigit).ToArray());
+                                            if (!RawSearchResults.ContainsKey(keyName))
+                                                RawSearchResults[keyName] = new List<SearchResultObject>();
+                                            RawSearchResults[keyName].Add(searchResultObject);
+                                        }
                                     }
                                 }
                             }

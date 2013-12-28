@@ -28,21 +28,35 @@ namespace myManga_App.IO.Network
             synchronizationContext = SynchronizationContext.Current;
         }
 
-        protected String DownloadHtmlContent(String url, String referer = null)
+        protected String GetHtmlContent(String url, String referer = null)
         {
-            String content = null;
-
             HttpWebRequest request = WebRequest.Create(url) as HttpWebRequest;
             request.Referer = referer ?? request.Host;
+            request.Method = "GET";
             request.AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip;
-            using (HttpWebResponse response = request.GetResponse() as HttpWebResponse)
+            return GetResponseString(request);
+        }
+
+        protected String GetResponseString(HttpWebRequest request)
+        {
+            String content = null;
+            try
             {
-                using (StreamReader streamReader = new StreamReader(response.GetResponseStream()))
+                using (HttpWebResponse response = request.GetResponse() as HttpWebResponse)
                 {
-                    content = streamReader.ReadToEnd();
+                    using (StreamReader streamReader = new StreamReader(response.GetResponseStream()))
+                    { content = streamReader.ReadToEnd(); }
                 }
             }
-            return content;
+            catch (WebException webEx)
+            {
+                using (HttpWebResponse response = webEx.Response as HttpWebResponse)
+                {
+                    using (StreamReader streamReader = new StreamReader(response.GetResponseStream()))
+                    { content = streamReader.ReadToEnd(); }
+                }
+            }
+            return System.Web.HttpUtility.HtmlDecode(content);
         }
     }
 }

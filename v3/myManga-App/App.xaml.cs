@@ -18,13 +18,9 @@ namespace myManga_App
     {
         private readonly EmbeddedDLL emdll;
         public DLL_Manager<ISiteExtension, ISiteExtensionCollection> SiteExtensions
-        {
-            get { return Singleton<DLL_Manager<ISiteExtension, ISiteExtensionCollection>>.Instance; }
-        }
+        { get { return Singleton<DLL_Manager<ISiteExtension, ISiteExtensionCollection>>.Instance; } }
         public DLL_Manager<IDatabaseExtension, IDatabaseExtensionCollection> DatabaseExtensions
-        {
-            get { return Singleton<DLL_Manager<IDatabaseExtension, IDatabaseExtensionCollection>>.Instance; }
-        }
+        { get { return Singleton<DLL_Manager<IDatabaseExtension, IDatabaseExtensionCollection>>.Instance; } }
 
         public readonly String PLUGIN_DIRECTORY, MANGA_ARCHIVE_DIRECTORY, MANGA_CHAPTER_ARCHIVE_DIRECTORY;
 
@@ -45,8 +41,6 @@ namespace myManga_App
         }
 
         void Default_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-        {
-            Settings.Default.Save();
-        }
+        { Settings.Default.Save(); }
     }
 }

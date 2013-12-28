@@ -16,7 +16,7 @@ using myMangaSiteExtension.Utilities;
 
 namespace myManga_App.IO.Network
 {
-    public class SmartMangaDownloader : SmartDownloader
+    public sealed class SmartMangaDownloader : SmartDownloader
     {
         public event EventHandler<MangaObject> MangaObjectComplete;
         protected void OnMangaObjectComplete(MangaObject e)
@@ -31,8 +31,8 @@ namespace myManga_App.IO.Network
             }
         }
 
-        public SmartMangaDownloader() : base() { }
-        public SmartMangaDownloader(STPStartInfo stpThredPool) : base(stpThredPool) { }
+        public SmartMangaDownloader() : this(null) { }
+        public SmartMangaDownloader(STPStartInfo stpThredPool) : base(stpThredPool ?? new STPStartInfo() { MaxWorkerThreads = 5, ThreadPoolName = "SmartMangaDownloader" }) { }
 
         public IWorkItemResult DownloadMangaObject(MangaObject mangaObject)
         { return smartThreadPool.QueueWorkItem(new WorkItemCallback(MangaObjectWorker), mangaObject, new PostExecuteWorkItemCallback(MangaObjectWorkerCallback)); }
@@ -55,7 +55,7 @@ namespace myManga_App.IO.Network
                 ISiteExtension ise = App.SiteExtensions.DLLCollection[LocationObj.ExtensionName];
                 ISiteExtensionDescriptionAttribute isea = ise.GetType().GetCustomAttribute<ISiteExtensionDescriptionAttribute>(false);
                 if (isea.SupportedObjects.HasFlag(SupportedObjects.Search))
-                    MangaObjectWorkItems.Add(ise, MangaObjectWig.QueueWorkItem<String, String, String>(DownloadHtmlContent, LocationObj.Url, isea.RefererHeader));
+                    MangaObjectWorkItems.Add(ise, MangaObjectWig.QueueWorkItem<String, String, String>(GetHtmlContent, LocationObj.Url, isea.RefererHeader));
             }
             MangaObjectWig.WaitForIdle();
             foreach (KeyValuePair<ISiteExtension, IWorkItemResult<String>> val in MangaObjectWorkItems)

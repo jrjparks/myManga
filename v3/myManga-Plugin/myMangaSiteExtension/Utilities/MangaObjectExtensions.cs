@@ -108,10 +108,10 @@ namespace myMangaSiteExtension.Utilities
                 foreach (List<ChapterObject> Chapters in (from MangaObject obj in list where obj != null select obj.Chapters))
                     foreach (ChapterObject Chapter in Chapters)
                         if (Chapter != null)
-                            if (!mangaObject.Chapters.Any(o => o.Chapter == Chapter.Chapter && o.SubChapter == Chapter.SubChapter))
+                            if (!mangaObject.Chapters.Any(o => o.Chapter == Chapter.Chapter && (o.SubChapter - Chapter.SubChapter).InRange(-4, 4)))
                                 mangaObject.Chapters.Add(Chapter);
                             else
-                                mangaObject.Chapters.Find(o => o.Chapter == Chapter.Chapter && o.SubChapter == Chapter.SubChapter).Merge(Chapter);
+                                mangaObject.Chapters.Find(o => o.Chapter == Chapter.Chapter && (o.SubChapter - Chapter.SubChapter).InRange(-4, 4)).Merge(Chapter);
             }
         }
 
@@ -152,6 +152,13 @@ namespace myMangaSiteExtension.Utilities
 
         public static void SortChapters(this MangaObject value)
         {
+            // Try to find a place for Chapters with Volume as 0
+            foreach (ChapterObject Chapter in value.Chapters.Where(o => o.Volume <= 0))
+            {
+                ChapterObject prevChapter = value.Chapters.FirstOrDefault(o => o.Chapter == (Chapter.Chapter - 1));
+                if (prevChapter != null)
+                { Chapter.Volume = prevChapter.Volume; }
+            }
             value.Chapters = value.Chapters.OrderBy(c => c.Volume).ThenBy(c => c.Chapter).ThenBy(c => c.SubChapter).ToList();
         }
     }

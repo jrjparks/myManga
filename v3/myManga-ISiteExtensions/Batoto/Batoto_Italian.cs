@@ -1,0 +1,16 @@
+﻿using myMangaSiteExtension;
+using myMangaSiteExtension.Attributes;
+
+namespace Batoto
+{
+    [ISiteExtensionDescription(
+        "Batoto-Italian",
+        "batoto.net",
+        "http://www.batoto.net/",
+        RootUrl = "http://www.batoto.net",
+        Author = "James Parks",
+        Version = "0.0.1",
+        SupportedObjects = SupportedObjects.All,
+        Language = "Italian")]
+    public class Batoto_Italian : Batoto { }
+}

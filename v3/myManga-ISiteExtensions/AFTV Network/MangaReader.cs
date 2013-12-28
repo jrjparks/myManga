@@ -28,9 +28,9 @@ namespace AFTV_Network
         protected ISiteExtensionDescriptionAttribute isea;
         protected virtual ISiteExtensionDescriptionAttribute ISEA { get { return isea ?? (isea = GetType().GetCustomAttribute<ISiteExtensionDescriptionAttribute>(false)); } }
 
-        public String GetSearchUri(String searchTerm)
+        public SearchRequestObject GetSearchRequestObject(String searchTerm)
         {
-            return String.Format("{0}/search/?w={1}", ISEA.RootUrl, Uri.EscapeUriString(searchTerm));
+            return new SearchRequestObject() { Url = String.Format("{0}/search/?w={1}", ISEA.RootUrl, Uri.EscapeUriString(searchTerm)), Method = SearchMethod.GET, Referer = ISEA.RefererHeader };
         }
 
         public MangaObject ParseMangaObject(String content)

@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading;
 using Amib.Threading;
+using HtmlAgilityPack;
 using myMangaSiteExtension;
 using myMangaSiteExtension.Attributes;
 using myMangaSiteExtension.Interfaces;
@@ -38,6 +39,28 @@ namespace myManga_App.IO.Network
         public void SearchWorkerCallback(IWorkItemResult wir)
         { OnSearchComplete(wir.Result as List<MangaObject>); }
 
+        protected String GetSearchResult(SearchRequestObject requestObject)
+        {
+            HttpWebRequest request = WebRequest.Create(requestObject.Url) as HttpWebRequest;
+            request.Referer = requestObject.Referer ?? request.Host;
+            request.AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip;
+            switch (requestObject.Method)
+            {
+                default:
+                case myMangaSiteExtension.Enums.SearchMethod.GET:
+                    request.Method = "GET";
+                    break;
+
+                case myMangaSiteExtension.Enums.SearchMethod.POST:
+                    request.Method = "POST";
+                    request.ContentType = "application/x-www-form-urlencoded";
+                    using (var requestWriter = new StreamWriter(request.GetRequestStream()))
+                    { requestWriter.Write(requestObject.RequestContent); }
+                    break;
+            }
+            return GetResponseString(request);
+        }
+
         protected object SearchWorker(object state)
         { return SearchWorker(state as String); }
         protected List<MangaObject> SearchWorker(String search)
@@ -52,7 +75,7 @@ namespace myManga_App.IO.Network
                 {
                     ISiteExtensionDescriptionAttribute isea = SiteExtension.GetType().GetCustomAttribute<ISiteExtensionDescriptionAttribute>(false);
                     if (isea.SupportedObjects.HasFlag(SupportedObjects.Search))
-                        MangaSearchWorkItems.Add(SiteExtension, SearchWig.QueueWorkItem<String, String, String>(DownloadHtmlContent, SiteExtension.GetSearchUri(searchTerm: search), isea.RefererHeader));
+                        MangaSearchWorkItems.Add(SiteExtension, SearchWig.QueueWorkItem<SearchRequestObject, String>(GetSearchResult, SiteExtension.GetSearchRequestObject(searchTerm: search)));
                 }
                 // Wait for the searches to complete
                 SearchWig.WaitForIdle();
@@ -77,7 +100,7 @@ namespace myManga_App.IO.Network
                         ISiteExtension ise = App.SiteExtensions.DLLCollection[LocationObj.ExtensionName];
                         ISiteExtensionDescriptionAttribute isea = ise.GetType().GetCustomAttribute<ISiteExtensionDescriptionAttribute>(false);
                         if (isea.SupportedObjects.HasFlag(SupportedObjects.Search))
-                            MangaObjectWorkItems.Add(new KeyValuePair<String, ISiteExtension>(MangaObject.Key, ise), SearchWig.QueueWorkItem<String, String, String>(DownloadHtmlContent, LocationObj.Url, isea.RefererHeader));
+                            MangaObjectWorkItems.Add(new KeyValuePair<String, ISiteExtension>(MangaObject.Key, ise), SearchWig.QueueWorkItem<String, String, String>(GetHtmlContent, LocationObj.Url, isea.RefererHeader));
                     }
                 }
                 // Wait for the mangaobjects to load
@@ -93,7 +116,7 @@ namespace myManga_App.IO.Network
                 {
                     IDatabaseExtensionAttribute idea = DatabaseExtension.GetType().GetCustomAttribute<IDatabaseExtensionAttribute>(false);
                     if (idea.SupportedObjects.HasFlag(SupportedObjects.Search))
-                        DatabaseSearchWorkItems.Add(DatabaseExtension, SearchWig.QueueWorkItem<String, String, String>(DownloadHtmlContent, DatabaseExtension.GetSearchUri(searchTerm: search), idea.RefererHeader));
+                        DatabaseSearchWorkItems.Add(DatabaseExtension, SearchWig.QueueWorkItem<String, String, String>(GetHtmlContent, DatabaseExtension.GetSearchUri(searchTerm: search), idea.RefererHeader));
                 }
                 // Wait for the database searches to complete
                 SearchWig.WaitForIdle();
@@ -109,9 +132,7 @@ namespace myManga_App.IO.Network
                 }
             }
             catch (Exception ex)
-            {
-                System.Windows.MessageBox.Show(ex.Message, "SmartSearch had a headache");
-            }
+            { System.Windows.MessageBox.Show(ex.Message, "SmartSearch had a headache"); }
             finally
             {
                 SearchWig.Cancel(true);

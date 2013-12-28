@@ -25,9 +25,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AnimeNewsNetwork", "myManga
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AFTV Network", "myManga-ISiteExtensions\AFTV Network\AFTV Network.csproj", "{E7AF89E1-1359-4F5B-B2EB-A4613BE7C6DF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Batoto", "myManga-ISiteExtensions\Batoto\Batoto.csproj", "{64EB88BE-0DBA-47F7-B282-B248CDA87E79}"
+EndProject
 Global
 	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 8
+		SccNumberOfProjects = 9
 		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
 		SccTeamFoundationServer = https://tfs.codeplex.com/tfs/tfs24
 		SccLocalPath0 = .
@@ -58,6 +60,10 @@ Global
 		SccProjectTopLevelParentUniqueName7 = myManga.sln
 		SccProjectName7 = myManga-ISiteExtensions/AFTV\u0020Network
 		SccLocalPath7 = myManga-ISiteExtensions\\AFTV\u0020Network
+		SccProjectUniqueName8 = myManga-ISiteExtensions\\Batoto\\Batoto.csproj
+		SccProjectTopLevelParentUniqueName8 = myManga.sln
+		SccProjectName8 = myManga-ISiteExtensions/Batoto
+		SccLocalPath8 = myManga-ISiteExtensions\\Batoto
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -144,6 +150,16 @@ Global
 		{E7AF89E1-1359-4F5B-B2EB-A4613BE7C6DF}.Release|Mixed Platforms.Build.0 = Release|x86
 		{E7AF89E1-1359-4F5B-B2EB-A4613BE7C6DF}.Release|x86.ActiveCfg = Release|x86
 		{E7AF89E1-1359-4F5B-B2EB-A4613BE7C6DF}.Release|x86.Build.0 = Release|x86
+		{64EB88BE-0DBA-47F7-B282-B248CDA87E79}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{64EB88BE-0DBA-47F7-B282-B248CDA87E79}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{64EB88BE-0DBA-47F7-B282-B248CDA87E79}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{64EB88BE-0DBA-47F7-B282-B248CDA87E79}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{64EB88BE-0DBA-47F7-B282-B248CDA87E79}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{64EB88BE-0DBA-47F7-B282-B248CDA87E79}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{64EB88BE-0DBA-47F7-B282-B248CDA87E79}.Release|Any CPU.Build.0 = Release|Any CPU
+		{64EB88BE-0DBA-47F7-B282-B248CDA87E79}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{64EB88BE-0DBA-47F7-B282-B248CDA87E79}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{64EB88BE-0DBA-47F7-B282-B248CDA87E79}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -154,6 +170,7 @@ Global
 		{9D021522-BC7A-41E6-899C-B6151FEB504C} = {BE03E57D-1DB5-49E4-B5D4-B3ED9D6E241A}
 		{93CBCB8C-01CF-4DCD-A675-056CF0BE047F} = {A5464BE9-8F0C-49F8-AFCD-EC17E9B575E1}
 		{E7AF89E1-1359-4F5B-B2EB-A4613BE7C6DF} = {A5464BE9-8F0C-49F8-AFCD-EC17E9B575E1}
+		{64EB88BE-0DBA-47F7-B282-B248CDA87E79} = {A5464BE9-8F0C-49F8-AFCD-EC17E9B575E1}
 		{58E9513E-D3CC-42E7-9EB7-7FCF222F6670} = {601D4E6B-2166-403C-922C-97F83ED5F945}
 	EndGlobalSection
 EndGlobal

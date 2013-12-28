@@ -50,6 +50,7 @@
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="1*"/>
                         <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
                     <Grid.InputBindings>
                         <KeyBinding Command="{Binding SearchSiteCommend}" Key="Return"/>
@@ -69,8 +70,89 @@
                         Background="{x:Null}"
                         VerticalContentAlignment="Center"
                         Text="{Binding SearchFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-                    <button:MetroButton
+                    <button:MetroToggleButton 
+                        x:Name="AdvSrchBtn"
                         Grid.Column="2"
+                        Content="{DynamicResource fa-sort-down}"
+                        FontFamily="{DynamicResource FontAwesome}"
+                        ToolTip="Advanced Search" Visibility="Collapsed"/>
+                    <Popup 
+                        PopupAnimation="Slide" 
+                        PlacementTarget="{Binding ElementName=AdvSrchBtn}"
+                        IsOpen="{Binding IsChecked, ElementName=AdvSrchBtn}"
+                        StaysOpen="False">
+                        <Border
+                            BorderThickness="1" 
+                            BorderBrush="{DynamicResource window-theme-primary}" 
+                            Background="{DynamicResource window-background}">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition/>
+                                    <ColumnDefinition/>
+                                    <ColumnDefinition/>
+                                    <ColumnDefinition/>
+                                    <ColumnDefinition/>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                </Grid.RowDefinitions>
+                                <button:MetroToggleButton Content="Action" Grid.Column="0" Grid.Row="0"/>
+                                <button:MetroToggleButton Content="Adventure" Grid.Column="1" Grid.Row="0"/>
+                                <button:MetroToggleButton Content="Comedy" Grid.Column="2" Grid.Row="0"/>
+                                <button:MetroToggleButton Content="Demons" Grid.Column="3" Grid.Row="0"/>
+                                <button:MetroToggleButton Content="Drama" Grid.Column="4" Grid.Row="0"/>
+
+                                <button:MetroToggleButton Content="Ecchi" Grid.Column="0" Grid.Row="1"/>
+                                <button:MetroToggleButton Content="Fantasy" Grid.Column="1" Grid.Row="1"/>
+                                <button:MetroToggleButton Content="Gender Bender" Grid.Column="2" Grid.Row="1"/>
+                                <button:MetroToggleButton Content="Harem" Grid.Column="3" Grid.Row="1"/>
+                                <button:MetroToggleButton Content="Historical" Grid.Column="4" Grid.Row="1"/>
+
+                                <button:MetroToggleButton Content="Horror" Grid.Column="0" Grid.Row="2"/>
+                                <button:MetroToggleButton Content="Josei" Grid.Column="1" Grid.Row="2"/>
+                                <button:MetroToggleButton Content="Magic" Grid.Column="2" Grid.Row="2"/>
+                                <button:MetroToggleButton Content="Martial Arts" Grid.Column="3" Grid.Row="2"/>
+                                <button:MetroToggleButton Content="Mature" Grid.Column="4" Grid.Row="2"/>
+
+                                <button:MetroToggleButton Content="Mecha" Grid.Column="0" Grid.Row="3"/>
+                                <button:MetroToggleButton Content="Military" Grid.Column="1" Grid.Row="3"/>
+                                <button:MetroToggleButton Content="Mystery" Grid.Column="2" Grid.Row="3"/>
+                                <button:MetroToggleButton Content="One Shot" Grid.Column="3" Grid.Row="3"/>
+                                <button:MetroToggleButton Content="Psychological" Grid.Column="4" Grid.Row="3"/>
+
+                                <button:MetroToggleButton Content="Romance" Grid.Column="0" Grid.Row="4"/>
+                                <button:MetroToggleButton Content="School Life" Grid.Column="1" Grid.Row="4"/>
+                                <button:MetroToggleButton Content="Sci-Fi" Grid.Column="2" Grid.Row="4"/>
+                                <button:MetroToggleButton Content="Seinen" Grid.Column="3" Grid.Row="4"/>
+                                <button:MetroToggleButton Content="Shoujo" Grid.Column="4" Grid.Row="4"/>
+
+                                <button:MetroToggleButton Content="Shoujoai" Grid.Column="0" Grid.Row="5"/>
+                                <button:MetroToggleButton Content="Shounen" Grid.Column="1" Grid.Row="5"/>
+                                <button:MetroToggleButton Content="Shounenai" Grid.Column="2" Grid.Row="5"/>
+                                <button:MetroToggleButton Content="Slice of Life" Grid.Column="3" Grid.Row="5"/>
+                                <button:MetroToggleButton Content="Smut" Grid.Column="4" Grid.Row="5"/>
+
+                                <button:MetroToggleButton Content="Sports" Grid.Column="0" Grid.Row="6"/>
+                                <button:MetroToggleButton Content="Super Power" Grid.Column="1" Grid.Row="6"/>
+                                <button:MetroToggleButton Content="Supernatural" Grid.Column="2" Grid.Row="6"/>
+                                <button:MetroToggleButton Content="Tragedy" Grid.Column="3" Grid.Row="6"/>
+                                <button:MetroToggleButton Content="Vampire" Grid.Column="4" Grid.Row="6"/>
+
+                                <button:MetroToggleButton Content="Yaoi" Grid.Column="0" Grid.Row="7"/>
+                                <button:MetroToggleButton Content="Yuri" Grid.Column="1" Grid.Row="7"/>
+                                <button:MetroButton Content="Clear" Grid.Column="4" Grid.Row="7"/>
+                            </Grid>
+                        </Border>
+                    </Popup>
+                    <button:MetroButton
+                        Grid.Column="3"
                         Content="{DynamicResource fa-times}"
                         Command="{Binding ClearSearchCommand}"
                         FontFamily="{DynamicResource FontAwesome}"

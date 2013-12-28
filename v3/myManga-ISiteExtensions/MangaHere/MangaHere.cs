@@ -5,6 +5,7 @@ using System.Reflection;
 using HtmlAgilityPack;
 using myMangaSiteExtension;
 using myMangaSiteExtension.Attributes;
+using myMangaSiteExtension.Enums;
 using myMangaSiteExtension.Interfaces;
 using myMangaSiteExtension.Objects;
 
@@ -24,9 +25,9 @@ namespace MangaHere
         protected ISiteExtensionDescriptionAttribute isea;
         protected virtual ISiteExtensionDescriptionAttribute ISEA { get { return isea ?? (isea = GetType().GetCustomAttribute<ISiteExtensionDescriptionAttribute>(false)); } }
 
-        public string GetSearchUri(string searchTerm)
+        public SearchRequestObject GetSearchRequestObject(String searchTerm)
         {
-            return String.Format("{0}/search.php?name={1}", ISEA.RootUrl, searchTerm);
+            return new SearchRequestObject() { Url = String.Format("{0}/search.php?name={1}", ISEA.RootUrl, Uri.EscapeUriString(searchTerm)), Method = SearchMethod.GET, Referer = ISEA.RefererHeader };
         }
 
         public MangaObject ParseMangaObject(string content)
@@ -53,7 +54,7 @@ namespace MangaHere
             if (AuthorsNodeCollection != null)
                 Authors = (from HtmlNode AuthorNode in AuthorsNodeCollection select AuthorNode.InnerText).ToArray();
             if (ArtistsNodeCollection != null)
-                Artists = (from HtmlNode ArtistNode in ArtistsNodeCollection select ArtistsNode.InnerText).ToArray();
+                Artists = (from HtmlNode ArtistNode in ArtistsNodeCollection select ArtistNode.InnerText).ToArray();
 
             List<ChapterObject> Chapters = new List<ChapterObject>();
             HtmlNodeCollection RawChapterList = MangaDetailsNode.SelectNodes(".//div[contains(@class,'detail_list')]/ul[1]/li");

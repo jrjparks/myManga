@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace myMangaSiteExtension.Enums
 {
-    public enum MangaObjectType
+    [Flags]
+    public enum SearchMethod
     {
-        Unknown = 0x00,
-        Manga = 0x01,
-        Manhwa = 0x02,
-        Manhua = 0x04
+        None = 0x00,
+        GET = 0x01,
+        POST = 0x02,
     }
 }

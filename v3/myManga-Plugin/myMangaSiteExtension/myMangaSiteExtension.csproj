@@ -66,6 +66,7 @@
     <Compile Include="Collections\IDatabaseExtensionCollection.cs" />
     <Compile Include="Collections\ISiteExtensionCollection.cs" />
     <Compile Include="Enums\MangaObjectType.cs" />
+    <Compile Include="Enums\SearchMethod.cs" />
     <Compile Include="Enums\SupportedObjects.cs" />
     <Compile Include="Interfaces\IDatabaseExtension.cs" />
     <Compile Include="Interfaces\ISiteExtension.cs" />
@@ -75,6 +76,7 @@
     <Compile Include="Objects\LocationObject.cs" />
     <Compile Include="Objects\MangaObject.cs" />
     <Compile Include="Objects\PageObject.cs" />
+    <Compile Include="Objects\SearchRequestObject.cs" />
     <Compile Include="Objects\SearchResultObject.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utilities\ChapterObjectExtentions.cs" />

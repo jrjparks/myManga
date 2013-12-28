@@ -93,6 +93,7 @@
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -112,7 +113,8 @@
     </ApplicationDefinition>
     <Compile Include="Converters\LocationListToCSV.cs" />
     <Compile Include="Converters\StringArrayToCSV.cs" />
-    <Compile Include="IO\File System\SmartFileAccess.cs" />
+    <Compile Include="IO\File System\SmartStorage.cs" />
+    <Compile Include="IO\File System\SmartStreamAccess.cs" />
     <Compile Include="IO\Network\SmartChapterDownloader.cs" />
     <Compile Include="IO\Network\SmartDownloader.cs" />
     <Compile Include="IO\Network\SmartMangaDownloader.cs" />

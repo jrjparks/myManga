@@ -11,6 +11,7 @@ using System.Threading;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
+using System.Windows.Threading;
 using Amib.Threading;
 using Core.IO;
 using Core.MVVM;
@@ -76,7 +77,7 @@ namespace myManga_App.ViewModels
                 OnPropertyChanging();
                 searchFilter = value;
                 mangaListView.Refresh();
-                MangaObj = MangaList.FirstOrDefault();
+                mangaListView.MoveCurrentToFirst();
                 OnPropertyChanged();
             }
         }
@@ -136,8 +137,7 @@ namespace myManga_App.ViewModels
             IsLoading = true;
             MangaObject[] MangaObjects = new MangaObject[MangaList.Count];
             MangaList.CopyTo(MangaObjects, 0);
-            foreach (MangaObject mangaObject in MangaObjects)
-                Singleton<myManga_App.IO.Network.SmartMangaDownloader>.Instance.DownloadMangaObject(mangaObject);
+            Singleton<myManga_App.IO.Network.SmartMangaDownloader>.Instance.DownloadMangaObject(MangaObjects.Where(o => o.IsLocal(App.MANGA_ARCHIVE_DIRECTORY, App.MANGA_ARCHIVE_EXTENSION)).ToArray());
             MangaObjects = null;
         }
 
@@ -175,18 +175,47 @@ namespace myManga_App.ViewModels
             Singleton<myManga_App.IO.Network.SmartMangaDownloader>.Instance.MangaObjectComplete += Instance_MangaObjectComplete;
             if (!DesignerProperties.GetIsInDesignMode(new System.Windows.DependencyObject()))
             {
-                foreach (String MangaArchiveFilePath in Directory.GetFiles(App.MANGA_ARCHIVE_DIRECTORY, "*.ma", SearchOption.AllDirectories))
+                foreach (String MangaArchiveFilePath in Directory.GetFiles(App.MANGA_ARCHIVE_DIRECTORY, App.MANGA_ARCHIVE_FILTER, SearchOption.AllDirectories))
                     MangaList.Add(MangaArchiveFilePath.LoadFromArchive<MangaObject>("MangaObject", SaveType.XML));
-                MangaObj = MangaList.FirstOrDefault();
+                App.MangaObjectArchiveWatcher.Changed += MangaObjectArchiveWatcher_Event;
+                App.MangaObjectArchiveWatcher.Created += MangaObjectArchiveWatcher_Event;
+                App.MangaObjectArchiveWatcher.Deleted += MangaObjectArchiveWatcher_Event;
+                mangaListView.MoveCurrentToFirst();
             }
 #if DEBUG
 #endif
         }
 
+        void MangaObjectArchiveWatcher_Event(object sender, FileSystemEventArgs e)
+        {
+            if (App.Dispatcher.Thread == Thread.CurrentThread)
+            {
+                switch (e.ChangeType)
+                {
+                    default:
+                        break;
+
+                    case WatcherChangeTypes.Changed:
+                    case WatcherChangeTypes.Created:
+                        MangaObject c_item = MangaList.FirstOrDefault(o => o.MangaArchiveName(App.MANGA_ARCHIVE_EXTENSION) == e.Name);
+                        if (c_item == null) MangaList.Add(e.FullPath.LoadFromArchive<MangaObject>("MangaObject", SaveType.XML));
+                        else c_item.Merge(e.FullPath.LoadFromArchive<MangaObject>("MangaObject", SaveType.XML));
+                        break;
+
+                    case WatcherChangeTypes.Deleted:
+                        MangaObject d_item = MangaList.FirstOrDefault(o => o.MangaArchiveName(App.MANGA_ARCHIVE_EXTENSION) == e.Name);
+                        if (d_item != null) MangaList.Remove(d_item);
+                        break;
+                }
+            }
+            else
+                App.Dispatcher.Invoke(DispatcherPriority.Send, new System.Action(() => MangaObjectArchiveWatcher_Event(sender, e)));
+        }
+
         protected void ConfigureSearchFilter()
         {
             mangaListView = CollectionViewSource.GetDefaultView(MangaList);
-            mangaListView.Filter = mangaObject => String.IsNullOrWhiteSpace(SearchFilter) ? true : (mangaObject as MangaObject).Name.ToLower().Contains(SearchFilter.ToLower());
+            mangaListView.Filter = mangaObject => String.IsNullOrWhiteSpace(SearchFilter) ? true : (mangaObject as MangaObject).IsNameMatch(SearchFilter);
             if (mangaListView.CanSort)
                 mangaListView.SortDescriptions.Add(new SortDescription("Name", ListSortDirection.Ascending));
         }

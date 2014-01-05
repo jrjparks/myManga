@@ -1,0 +1,25 @@
+﻿<UserControl 
+    x:Class="myManga_App.Views.Settings"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+    mc:Ignorable="d" 
+    d:DesignHeight="400"
+    d:DesignWidth="600" >
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition MinWidth="100" MaxWidth="300"/>
+            <ColumnDefinition Width="15"/>
+            <ColumnDefinition Width="3*"/>
+        </Grid.ColumnDefinitions>
+        <TreeView
+            Background="{x:Null}">
+            <TreeView.Items>
+                <TreeViewItem Header="General">
+                    <TreeViewItem Header="Storage"></TreeViewItem>
+                </TreeViewItem>
+            </TreeView.Items>
+        </TreeView>
+    </Grid>
+</UserControl>

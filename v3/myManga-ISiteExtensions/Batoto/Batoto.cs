@@ -212,22 +212,24 @@ namespace Batoto
                 foreach (HtmlNode SearchResultNode in HtmlSearchResults)
                 {
                     HtmlNode NameLink = SearchResultNode.SelectSingleNode(".//td[1]/strong/a");
-                    String Name = HtmlEntity.DeEntitize(NameLink.InnerText).Trim(),
-                        Link = NameLink.Attributes["href"].Value;
-                    String[] Author_Artists = { SearchResultNode.SelectSingleNode(".//td[2]").InnerText.Trim() };
-                    SearchResults.Add(new SearchResultObject()
+                    if (NameLink != null)
                     {
-                        CoverUrl = null,
-                        ExtensionName = ISEA.Name,
-                        Name = Name,
-                        Url = Link,
-                        Id = -1,
-                        Rating = Double.Parse(SearchResultNode.SelectSingleNode(".//td[3]/div").Attributes["title"].Value.Substring(0, 4)),
-                        Artists = Author_Artists.ToList(),
-                        Authors = Author_Artists.ToList()
-                    });
+                        String Name = HtmlEntity.DeEntitize(NameLink.InnerText).Trim(),
+                            Link = NameLink.Attributes["href"].Value;
+                        String[] Author_Artists = { SearchResultNode.SelectSingleNode(".//td[2]").InnerText.Trim() };
+                        SearchResults.Add(new SearchResultObject()
+                        {
+                            CoverUrl = null,
+                            ExtensionName = ISEA.Name,
+                            Name = Name,
+                            Url = Link,
+                            Id = -1,
+                            Rating = Double.Parse(SearchResultNode.SelectSingleNode(".//td[3]/div").Attributes["title"].Value.Substring(0, 4)),
+                            Artists = Author_Artists.ToList(),
+                            Authors = Author_Artists.ToList()
+                        });
+                    }
                 }
-
             return SearchResults;
         }
     }

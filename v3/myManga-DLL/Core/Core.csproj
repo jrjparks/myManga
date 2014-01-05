@@ -58,8 +58,13 @@
     <Compile Include="DLL\EmbeddedDLL.cs" />
     <Compile Include="IO\KeyValuePair.cs" />
     <Compile Include="IO\Enum.cs" />
-    <Compile Include="IO\ObjectArchive.cs" />
-    <Compile Include="IO\ObjectStorage.cs" />
+    <Compile Include="IO\Storage\Manager\BaseInterfaceClasses\FileStorage.cs" />
+    <Compile Include="IO\Storage\Manager\BaseInterfaceClasses\ZipStorage.cs" />
+    <Compile Include="IO\Storage\Manager\StorageInterface.cs" />
+    <Compile Include="IO\Storage\Manager\StorageManager.cs" />
+    <Compile Include="IO\Storage\Manager\SyncedCache.cs" />
+    <Compile Include="IO\Storage\ObjectArchive.cs" />
+    <Compile Include="IO\Storage\ObjectStorage.cs" />
     <Compile Include="IO\PathSafety.cs" />
     <Compile Include="IO\SerializableObject.cs" />
     <Compile Include="MVVM\DelegateCommand.cs" />

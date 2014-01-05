@@ -16,20 +16,39 @@ namespace myManga_App
     /// </summary>
     public partial class App : Application
     {
+        private readonly FileSystemWatcher mangaObjectArchiveWatcher;
+        public FileSystemWatcher MangaObjectArchiveWatcher
+        { get { return mangaObjectArchiveWatcher; } }
+
+        private readonly FileSystemWatcher chapterObjectArchiveWatcher;
+        public FileSystemWatcher ChapterObjectArchiveWatcher
+        { get { return chapterObjectArchiveWatcher; } }
+
         private readonly EmbeddedDLL emdll;
         public DLL_Manager<ISiteExtension, ISiteExtensionCollection> SiteExtensions
         { get { return Singleton<DLL_Manager<ISiteExtension, ISiteExtensionCollection>>.Instance; } }
         public DLL_Manager<IDatabaseExtension, IDatabaseExtensionCollection> DatabaseExtensions
         { get { return Singleton<DLL_Manager<IDatabaseExtension, IDatabaseExtensionCollection>>.Instance; } }
 
-        public readonly String PLUGIN_DIRECTORY, MANGA_ARCHIVE_DIRECTORY, MANGA_CHAPTER_ARCHIVE_DIRECTORY;
+        public readonly String
+            PLUGIN_DIRECTORY = Path.Combine(Environment.CurrentDirectory, "Plugins").SafeFolder(),
+            MANGA_ARCHIVE_DIRECTORY = Path.Combine(Environment.CurrentDirectory, "Manga Archives").SafeFolder(),
+            CHAPTER_ARCHIVE_DIRECTORY = Path.Combine(Environment.CurrentDirectory, "Chapter Archives").SafeFolder(),
+            MANGA_ARCHIVE_EXTENSION = "ma",
+            CHAPTER_ARCHIVE_EXTENSION = "ca",
+            MANGA_ARCHIVE_FILTER = "*.ma",
+            CHAPTER_ARCHIVE_FILTER = "*.ca";
 
         public App()
         {
-            PLUGIN_DIRECTORY = Path.Combine(Environment.CurrentDirectory, "Plugins").SafeFolder();
-            MANGA_ARCHIVE_DIRECTORY = Path.Combine(Environment.CurrentDirectory, "Manga Archives").SafeFolder();
-            MANGA_CHAPTER_ARCHIVE_DIRECTORY = Path.Combine(Environment.CurrentDirectory, "Manga Chapter Archives").SafeFolder();
             emdll = new EmbeddedDLL("Resources.DLL");
+
+            mangaObjectArchiveWatcher = new FileSystemWatcher(MANGA_ARCHIVE_DIRECTORY, MANGA_ARCHIVE_FILTER);
+            mangaObjectArchiveWatcher.EnableRaisingEvents = true;
+
+            chapterObjectArchiveWatcher = new FileSystemWatcher(CHAPTER_ARCHIVE_DIRECTORY, CHAPTER_ARCHIVE_FILTER);
+            chapterObjectArchiveWatcher.IncludeSubdirectories = true;
+            chapterObjectArchiveWatcher.EnableRaisingEvents = true;
 
             AppDomain.CurrentDomain.AssemblyResolve += emdll.ResolveAssembly;
             SiteExtensions.DLLAppDomain.AssemblyResolve += emdll.ResolveAssembly;

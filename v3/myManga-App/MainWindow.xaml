@@ -6,6 +6,7 @@
     xmlns:window="clr-namespace:myManga_App.Themes.Window"
     xmlns:ViewModels="clr-namespace:myManga_App.ViewModels"
     xmlns:Properties="clr-namespace:myManga_App.Properties"
+    xmlns:button="clr-namespace:myManga_App.Resources.Theme.Buttons"
     Title="{DynamicResource AppTitle}"
     WindowState="{Binding Source={x:Static Properties:Settings.Default}, Path=WindowState, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
     x:Name="myMangaMainWindow"
@@ -30,10 +31,36 @@
         </ResourceDictionary>
     </Window.Resources>
     <Grid>
-        <ContentPresenter Content="{Binding HomeViewModel}" Margin="5,0,5,5"/>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <StackPanel
+            Grid.Row="0"
+            Orientation="Horizontal"
+            TextElement.FontSize="20"
+            TextElement.FontFamily="{DynamicResource FontAwesome}">
+            <button:MetroButton
+                Content="{DynamicResource fa-home}"
+                ToolTip="Home"
+                Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"/>
+            <button:MetroButton
+                Content="{DynamicResource fa-book}"
+                ToolTip="Reader"
+                Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"/>
+            <button:MetroButton
+                Content="{DynamicResource fa-cog}"
+                ToolTip="Settings"
+                Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"/>
+        </StackPanel>
+        <ContentPresenter
+            Grid.Row="1"
+            Content="{Binding HomeViewModel}" 
+            Margin="5,0,5,5"/>
         <StackPanel
             x:Name="Watermark"
             Grid.ZIndex="99"
+            Grid.RowSpan="2"
             IsHitTestVisible="False"
             VerticalAlignment="Center"
             HorizontalAlignment="Center">

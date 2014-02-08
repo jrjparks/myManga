@@ -7,4 +7,7 @@
     <DataTemplate DataType="{x:Type ViewModels:HomeViewModel}">
         <Views:Home/>
     </DataTemplate>
+    <DataTemplate DataType="{x:Type ViewModels:SettingsViewModel}">
+        <Views:Settings/>
+    </DataTemplate>
 </ResourceDictionary>

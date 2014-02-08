@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Core.IO;
+using System;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
+using System.Runtime.Serialization;
 using System.Xml.Serialization;
-using Core.IO;
 
 namespace myMangaSiteExtension.Objects
 {
@@ -75,6 +72,9 @@ namespace myMangaSiteExtension.Objects
                 OnPropertyChanged();
             }
         }
+
+        public BookmarkObject() : base() { }
+        public BookmarkObject(SerializationInfo info, StreamingContext context) : base(info, context) { }
         #endregion
     }
 }

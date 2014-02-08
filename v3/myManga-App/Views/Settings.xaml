@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+    xmlns:button="clr-namespace:myManga_App.Resources.Theme.Buttons"
     mc:Ignorable="d" 
     d:DesignHeight="400"
     d:DesignWidth="600" >
@@ -13,13 +14,48 @@
             <ColumnDefinition Width="15"/>
             <ColumnDefinition Width="3*"/>
         </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
         <TreeView
-            Background="{x:Null}">
+            Background="{x:Null}"
+            Grid.RowSpan="2">
             <TreeView.Items>
                 <TreeViewItem Header="General">
-                    <TreeViewItem Header="Storage"></TreeViewItem>
+                    <TreeViewItem Header="Plugins"/>
+                    <TreeViewItem Header="Storage"/>
                 </TreeViewItem>
             </TreeView.Items>
         </TreeView>
+        <Grid Grid.Column="2">
+            <ListBox
+                Background="{x:Null}"
+                ItemsSource="{Binding SiteExtentionInformationObjects}">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal">
+                            <CheckBox IsChecked="{Binding Enabled, Mode=TwoWay}"/>
+                            <TextBlock Text="{Binding Name}"/>
+                        </StackPanel>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </Grid>
+        <StackPanel
+            HorizontalAlignment="Right"
+            Grid.Column="2"
+            Grid.Row="1"
+            Orientation="Horizontal"
+            TextElement.FontSize="20"
+            TextElement.FontFamily="{DynamicResource FontAwesome}">
+            <button:MetroButton                
+                Content="{StaticResource fa-save}"
+                ContentStringFormat="{}{0} Save"
+                Command="{Binding SaveCommand}"/>
+            <button:MetroButton
+                Content="{StaticResource fa-ban}"
+                ContentStringFormat="{}{0} Cancel"/>
+        </StackPanel>
     </Grid>
 </UserControl>

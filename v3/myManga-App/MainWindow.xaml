@@ -35,27 +35,42 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
         <StackPanel
             Grid.Row="0"
             Orientation="Horizontal"
             TextElement.FontSize="20"
             TextElement.FontFamily="{DynamicResource FontAwesome}">
             <button:MetroButton
-                Content="{DynamicResource fa-home}"
+                Content="{StaticResource fa-home}"
+                ContentStringFormat="{}{0}Home"
                 ToolTip="Home"
-                Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"/>
+                MinWidth="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}">
+            </button:MetroButton>
+            <TextBlock 
+                Text="{StaticResource fa-chevron-right}"
+                TextElement.FontSize="14"
+                VerticalAlignment="Center"/>
             <button:MetroButton
-                Content="{DynamicResource fa-book}"
+                Content="{StaticResource fa-book}"
+                ContentStringFormat="{}{0}Reader"
                 ToolTip="Reader"
-                Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"/>
-            <button:MetroButton
-                Content="{DynamicResource fa-cog}"
-                ToolTip="Settings"
-                Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"/>
+                MinWidth="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"/>
         </StackPanel>
+        <button:MetroButton
+                Grid.Column="1"
+                TextElement.FontSize="20"
+                TextElement.FontFamily="{DynamicResource FontAwesome}"
+                Content="{StaticResource fa-cog}"
+                ToolTip="Settings"
+                MinWidth="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"/>
         <ContentPresenter
             Grid.Row="1"
-            Content="{Binding HomeViewModel}" 
+            Grid.ColumnSpan="2"
+            Content="{Binding SettingsViewModel}" 
             Margin="5,0,5,5"/>
         <StackPanel
             x:Name="Watermark"

@@ -204,7 +204,7 @@ namespace Core.WPF_Controls.BrightnessControl
         private void SetupBrightnessWatch()
         {
             MonitorWatcher = new ManagementEventWatcher(MonitorScope, MonitorEventQuery);
-            StartMonitorWatch();
+            //StartMonitorWatch();
         }
 
         /// <summary>

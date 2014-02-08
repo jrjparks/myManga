@@ -22,18 +22,18 @@ namespace System.Windows.Controls
             this.SmallChange = 1;
 
             MonitorBrightness.Instance.MonitorBrightnessChanged += brightnessManager_MonitorBrightnessChange;
-
-            if (MonitorBrightness.Instance.SupportsControl)
+            if (IsInDesignerMode)
+            {
+                this.Minimum = this.Maximum = this.Value = 0;
+                this.IsEnabled = false;
+            }
+            else if (MonitorBrightness.Instance.SupportsControl)
             {
                 this.Minimum = 0;
                 this.Maximum = MonitorBrightness.Instance.BrightnessLevels.Count() - 1;
                 this.Value = MonitorBrightness.Instance.IndexOfByte(MonitorBrightness.Instance.CurrentBrightness);
                 this.ValueChanged += Slider_ValueChanged;
-            }
-            else if (IsInDesignerMode)
-            {
-                this.Minimum = this.Maximum = this.Value = 0;
-                this.IsEnabled = false;
+                MonitorBrightness.Instance.StartMonitorWatch();
             }
             else
             {
@@ -55,7 +55,8 @@ namespace System.Windows.Controls
         {
             if (this.Dispatcher.Thread == Thread.CurrentThread)
                 UpdateBrightness(b);
-            this.Dispatcher.Invoke(new UpdateBrightnessDelegate(UpdateBrightness), b);
+            else
+                this.Dispatcher.Invoke(new UpdateBrightnessDelegate(UpdateBrightness), b);
         }
         private delegate void UpdateBrightnessDelegate(Byte b);
         private void UpdateBrightness(Byte b)

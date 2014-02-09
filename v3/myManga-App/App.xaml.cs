@@ -43,7 +43,8 @@ namespace myManga_App
             CHAPTER_ARCHIVE_EXTENSION = "ca",
             MANGA_ARCHIVE_FILTER = "*.ma",
             CHAPTER_ARCHIVE_FILTER = "*.ca",
-            USER_CONFIG_FILENAME = "mymanga.conf";
+            USER_CONFIG_FILENAME = "mymanga.conf",
+            USER_CONFIG_PATH = Path.Combine(Environment.CurrentDirectory, "mymanga.conf");
 
         public App()
         {
@@ -81,11 +82,10 @@ namespace myManga_App
         private UserConfigurationObject LoadUserConfig()
         {
             UserConfigurationObject config = new UserConfigurationObject();
-            String configPath = PathSafety.SafeFileName(USER_CONFIG_FILENAME);
-            if (File.Exists(configPath))
-                config.LoadObject(configPath, SaveType.XML);
+            if (File.Exists(USER_CONFIG_PATH))
+                config = config.LoadObject(USER_CONFIG_PATH, SaveType.XML);
             else
-                config.SaveObject(configPath, SaveType.XML);
+                config.SaveObject(USER_CONFIG_PATH, SaveType.XML);
             return config;
         }
 

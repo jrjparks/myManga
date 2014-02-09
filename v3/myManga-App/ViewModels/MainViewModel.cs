@@ -12,6 +12,19 @@ namespace myManga_App.ViewModels
     public sealed class MainViewModel : DependencyObject, IDisposable
     {
         #region Content
+        public static DependencyProperty ContentViewModelProperty = DependencyProperty.Register("ContentViewModel", typeof(Object), typeof(MainViewModel));
+        public Object ContentViewModel
+        {
+            get
+            {
+                return GetValue(ContentViewModelProperty) as Object;
+            }
+            set
+            {
+                SetValue(ContentViewModelProperty, value);
+            }
+        }
+
         private HomeViewModel homeViewModel;
         public HomeViewModel HomeViewModel
         { get { return homeViewModel ?? (homeViewModel = new HomeViewModel()); } }
@@ -22,27 +35,20 @@ namespace myManga_App.ViewModels
         #endregion
 
         #region Settings
-        protected DelegateCommand settingsCommand;
+        private DelegateCommand settingsCommand;
         public ICommand SettingsCommand
         { get { return settingsCommand ?? (settingsCommand = new DelegateCommand(OpenSettings)); } }
 
-        protected void OpenSettings()
-        {
-
-        }
+        private void OpenSettings()
+        { ContentViewModel = SettingsViewModel; }
         #endregion
 
         private App App = App.Current as App;
 
         public MainViewModel()
         {
-            /*
-            if (!DesignerProperties.GetIsInDesignMode(this))
-            {
-                App.SiteExtensions.LoadDLL(App.PLUGIN_DIRECTORY, Filter: "*.mymanga.dll");
-                App.DatabaseExtensions.LoadDLL(App.PLUGIN_DIRECTORY, Filter: "*.mymanga.dll");
-            }
-            //*/
+            ContentViewModel = HomeViewModel;
+            SettingsViewModel.CloseEvent += (s, e) => ContentViewModel = HomeViewModel;
 
             ServicePointManager.DefaultConnectionLimit =
                 Singleton<SmartMangaDownloader>.Instance.Concurrency +

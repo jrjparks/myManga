@@ -54,8 +54,9 @@
                 ContentStringFormat="{}{0} Save"
                 Command="{Binding SaveCommand}"/>
             <button:MetroButton
-                Content="{StaticResource fa-ban}"
-                ContentStringFormat="{}{0} Cancel"/>
+                Content="{StaticResource fa-times}"
+                ContentStringFormat="{}{0} Close"
+                Command="{Binding CloseCommand}"/>
         </StackPanel>
     </Grid>
 </UserControl>

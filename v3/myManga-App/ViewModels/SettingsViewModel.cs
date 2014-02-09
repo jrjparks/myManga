@@ -58,6 +58,16 @@ namespace myManga_App.ViewModels
         protected DelegateCommand saveCommand;
         public ICommand SaveCommand
         { get { return saveCommand ?? (saveCommand = new DelegateCommand(SaveUserConfig)); } }
+
+        protected DelegateCommand closeCommand;
+        public ICommand CloseCommand
+        { get { return closeCommand ?? (closeCommand = new DelegateCommand(OnCloseEvent)); } }
+        public event EventHandler CloseEvent;
+        protected void OnCloseEvent()
+        {
+            if (CloseEvent != null)
+                CloseEvent(this, null);
+        }
         #endregion
 
         protected App App = App.Current as App;

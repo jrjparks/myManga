@@ -34,6 +34,25 @@ namespace myManga_App.ViewModels
         { get { return settingsViewModel ?? (settingsViewModel = new SettingsViewModel()); } }
         #endregion
 
+        #region Header Buttons
+        private DelegateCommand homeCommand;
+        public ICommand HomeCommand
+        { get { return homeCommand ?? (homeCommand = new DelegateCommand(OpenHome)); } }
+
+        private void OpenHome()
+        { ContentViewModel = HomeViewModel; }
+
+        private DelegateCommand readCommand;
+        public ICommand ReadCommand
+        { get { return readCommand ?? (readCommand = new DelegateCommand(OpenRead, CanOpenRead)); } }
+
+        private void OpenRead()
+        { /*ContentViewModel = HomeViewModel;*/ }
+
+        private Boolean CanOpenRead()
+        { return false; }
+        #endregion
+
         #region Settings
         private DelegateCommand settingsCommand;
         public ICommand SettingsCommand

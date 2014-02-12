@@ -82,15 +82,20 @@ namespace myManga_App.IO.Network
                 SearchWig.WaitForIdle();
                 foreach (KeyValuePair<ISiteExtension, IWorkItemResult<String>> val in MangaSearchWorkItems)
                 {
-                    List<SearchResultObject> SearchResults = val.Key.ParseSearch(val.Value.Result);
-                    foreach (SearchResultObject SearchResult in SearchResults)
+                    try
                     {
-                        String key = safeAlphaNumeric.Replace(SearchResult.Name.ToLower(), String.Empty);
-                        if (MangaObjectSearchResults.ContainsKey(key))
-                            MangaObjectSearchResults[key].Merge(SearchResult.ConvertToMangaObject());
-                        else
-                            MangaObjectSearchResults.Add(key, SearchResult.ConvertToMangaObject());
+                        List<SearchResultObject> SearchResults = val.Key.ParseSearch(val.Value.GetResult());
+                        foreach (SearchResultObject SearchResult in SearchResults)
+                        {
+                            String key = safeAlphaNumeric.Replace(SearchResult.Name.ToLower(), String.Empty);
+                            if (MangaObjectSearchResults.ContainsKey(key))
+                                MangaObjectSearchResults[key].Merge(SearchResult.ConvertToMangaObject());
+                            else
+                                MangaObjectSearchResults.Add(key, SearchResult.ConvertToMangaObject());
+                        }
                     }
+                    catch (Exception ex)
+                    { System.Windows.MessageBox.Show(String.Format("MESSAGE:\n{0}\n\nSOURCE:\n{1}", ex.Message, ex.Source), "SmartSearch had a headache"); }
                 }
                 SearchWig.Concurrency = 4;
                 Dictionary<KeyValuePair<String, ISiteExtension>, IWorkItemResult<String>> MangaObjectWorkItems = new Dictionary<KeyValuePair<String, ISiteExtension>, IWorkItemResult<String>>();
@@ -115,9 +120,9 @@ namespace myManga_App.IO.Network
                 Dictionary<IDatabaseExtension, IWorkItemResult<String>> DatabaseSearchWorkItems = new Dictionary<IDatabaseExtension, IWorkItemResult<String>>(App.DatabaseExtensions.DLLCollection.Count);
                 foreach (IDatabaseExtension DatabaseExtension in App.DatabaseExtensions.DLLCollection)
                 {
-                    IDatabaseExtensionAttribute idea = DatabaseExtension.GetType().GetCustomAttribute<IDatabaseExtensionAttribute>(false);
-                    if (idea.SupportedObjects.HasFlag(SupportedObjects.Search))
-                        DatabaseSearchWorkItems.Add(DatabaseExtension, SearchWig.QueueWorkItem<String, String, String>(GetHtmlContent, DatabaseExtension.GetSearchUri(searchTerm: search), idea.RefererHeader));
+                    IDatabaseExtensionDescriptionAttribute ideda = DatabaseExtension.GetType().GetCustomAttribute<IDatabaseExtensionDescriptionAttribute>(false);
+                    if (ideda.SupportedObjects.HasFlag(SupportedObjects.Search) && App.UserConfig.EnabledDatabaseExtentions.Contains(ideda.Name))
+                        DatabaseSearchWorkItems.Add(DatabaseExtension, SearchWig.QueueWorkItem<String, String, String>(GetHtmlContent, DatabaseExtension.GetSearchUri(searchTerm: search), ideda.RefererHeader));
                 }
                 // Wait for the database searches to complete
                 SearchWig.WaitForIdle();
@@ -133,7 +138,7 @@ namespace myManga_App.IO.Network
                 }
             }
             catch (Exception ex)
-            { System.Windows.MessageBox.Show(ex.Message, "SmartSearch had a headache"); }
+            { System.Windows.MessageBox.Show(String.Format("MESSAGE:\n{0}\n\nSOURCE:\n{1}", ex.Message, ex.Source), "SmartSearch had a headache"); }
             finally
             {
                 SearchWig.Cancel(true);

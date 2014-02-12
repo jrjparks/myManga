@@ -48,6 +48,7 @@
                 Content="{StaticResource fa-home}"
                 ContentStringFormat="{}{0}Home"
                 ToolTip="Home"
+                Command="{Binding HomeCommand}"
                 MinWidth="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}">
             </button:MetroButton>
             <TextBlock 
@@ -58,6 +59,7 @@
                 Content="{StaticResource fa-book}"
                 ContentStringFormat="{}{0}Reader"
                 ToolTip="Reader"
+                Command="{Binding ReadCommand}"
                 MinWidth="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"/>
         </StackPanel>
         <button:MetroButton

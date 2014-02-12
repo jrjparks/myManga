@@ -52,6 +52,13 @@ namespace myManga_App.ViewModels
             get { return _SiteExtentionInformationObjects; }
             set { _SiteExtentionInformationObjects = value; OnPropertyChanged("SiteExtentionInformationObjects"); }
         }
+
+        private List<DatabaseExtensionInformationObject> _DatabaseExtensionInformationObjects;
+        public List<DatabaseExtensionInformationObject> DatabaseExtensionInformationObjects
+        {
+            get { return _DatabaseExtensionInformationObjects; }
+            set { _DatabaseExtensionInformationObjects = value; OnPropertyChanged("DatabaseExtensionInformationObjects"); }
+        }
         #endregion
 
         #region Buttons
@@ -80,12 +87,20 @@ namespace myManga_App.ViewModels
                 ISiteExtensionDescriptionAttribute iseda = ise.GetType().GetCustomAttribute<ISiteExtensionDescriptionAttribute>(false);
                 SiteExtentionInformationObjects.Add(new SiteExtentionInformationObject(iseda) { Enabled = App.UserConfig.EnabledSiteExtentions.Contains(iseda.Name) });
             }
+            DatabaseExtensionInformationObjects = new List<DatabaseExtensionInformationObject>(App.DatabaseExtensions.DLLCollection.Count);
+            foreach (IDatabaseExtension ide in App.DatabaseExtensions.DLLCollection)
+            {
+                IDatabaseExtensionDescriptionAttribute ideda = ide.GetType().GetCustomAttribute<IDatabaseExtensionDescriptionAttribute>(false);
+                DatabaseExtensionInformationObjects.Add(new DatabaseExtensionInformationObject(ideda) { Enabled = App.UserConfig.EnabledDatabaseExtentions.Contains(ideda.Name) });
+            }
         }
 
         public void SaveUserConfig()
         {
             App.UserConfig.EnabledSiteExtentions.Clear();
             App.UserConfig.EnabledSiteExtentions.AddRange((from SiteExtentionInformationObject seio in SiteExtentionInformationObjects where seio.Enabled select seio.Name));
+            App.UserConfig.EnabledDatabaseExtentions.Clear();
+            App.UserConfig.EnabledDatabaseExtentions.AddRange((from DatabaseExtensionInformationObject deio in DatabaseExtensionInformationObjects where deio.Enabled select deio.Name));
             App.SaveUserConfig();
         }
 

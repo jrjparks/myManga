@@ -126,7 +126,7 @@ namespace TestApp
                     Dictionary<String, List<DatabaseObject>> RawDatabaseSearchResults = new Dictionary<String, List<DatabaseObject>>();
                     foreach (IDatabaseExtension ide in DatabaseExtentions.Values)
                     {
-                        IDatabaseExtensionAttribute idea = ide.GetType().GetCustomAttribute<IDatabaseExtensionAttribute>(false);
+                        IDatabaseExtensionDescriptionAttribute idea = ide.GetType().GetCustomAttribute<IDatabaseExtensionDescriptionAttribute>(false);
                         String SearchURL = ide.GetSearchUri(searchTerm: SearchTerm);
                         Console.Write("Searching {0}...", idea.Name);
 

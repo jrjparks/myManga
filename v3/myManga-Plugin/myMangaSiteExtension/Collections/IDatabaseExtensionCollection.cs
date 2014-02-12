@@ -17,7 +17,7 @@ namespace myMangaSiteExtension.Collections
         {
             foreach (IDatabaseExtension siteExtensionItem in innerList)
             {
-                IDatabaseExtensionAttribute siteExtensionAttribute = siteExtensionItem.GetType().GetCustomAttribute<IDatabaseExtensionAttribute>(true);
+                IDatabaseExtensionDescriptionAttribute siteExtensionAttribute = siteExtensionItem.GetType().GetCustomAttribute<IDatabaseExtensionDescriptionAttribute>(true);
                 if (siteExtensionAttribute.Name.Equals(name))
                     return innerList.IndexOf(siteExtensionItem);
             }

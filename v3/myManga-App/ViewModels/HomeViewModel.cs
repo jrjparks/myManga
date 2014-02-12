@@ -97,7 +97,7 @@ namespace myManga_App.ViewModels
 
         #region SearchSites
         protected DelegateCommand searchSitesCommand;
-        public ICommand SearchSiteCommend
+        public ICommand SearchSiteCommand
         { get { return searchSitesCommand ?? (searchSitesCommand = new DelegateCommand(SearchSites, CanSearchSite)); } }
 
         protected Boolean CanSearchSite()
@@ -121,6 +121,33 @@ namespace myManga_App.ViewModels
             }
             else
                 App.Dispatcher.BeginInvoke(new Instance_SearchCompleteInvoke(Instance_SearchComplete), new Object[] { sender, e });
+        }
+        #endregion
+
+        #region DownloadManga
+        protected DelegateCommand downloadMangaCommand;
+        public ICommand DownloadMangaCommand
+        { get { return downloadMangaCommand ?? (downloadMangaCommand = new DelegateCommand(DownloadManga, CanDownloadManga)); } }
+
+        protected Boolean CanDownloadManga()
+        { return MangaObj != null; }
+
+        protected void DownloadManga()
+        {
+            Singleton<myManga_App.IO.Network.SmartMangaDownloader>.Instance.DownloadMangaObject(mangaObj);
+        }
+
+        private delegate void Instance_DownloadMangaCompleteInvoke(object sender, MangaObject e);
+        private void Instance_DownloadMangaComplete(object sender, MangaObject e)
+        {
+            if (App.Dispatcher.Thread == Thread.CurrentThread)
+            {
+                MangaObj.SaveToArchive(Path.Combine(App.MANGA_ARCHIVE_DIRECTORY, String.Format("{0}.{1}", MangaObj.Name.SafeFileName(), App.MANGA_ARCHIVE_EXTENSION)), "MangaObject.xml", SaveType.XML);
+                if (!MangaList.Any(mo => mo.Name == e.Name)) MangaList.Add(MangaObj);
+                else MangaList.First(mo => mo.Name == e.Name).Merge(e);
+            }
+            else
+                App.Dispatcher.BeginInvoke(new Instance_DownloadMangaCompleteInvoke(Instance_DownloadMangaComplete), new Object[] { sender, e });
         }
         #endregion
 
@@ -172,11 +199,11 @@ namespace myManga_App.ViewModels
         {
             ConfigureSearchFilter();
             Singleton<myManga_App.IO.Network.SmartSearch>.Instance.SearchComplete += Instance_SearchComplete;
-            Singleton<myManga_App.IO.Network.SmartMangaDownloader>.Instance.MangaObjectComplete += Instance_MangaObjectComplete;
+            Singleton<myManga_App.IO.Network.SmartMangaDownloader>.Instance.MangaObjectComplete += Instance_DownloadMangaComplete;
             if (!DesignerProperties.GetIsInDesignMode(new System.Windows.DependencyObject()))
             {
                 foreach (String MangaArchiveFilePath in Directory.GetFiles(App.MANGA_ARCHIVE_DIRECTORY, App.MANGA_ARCHIVE_FILTER, SearchOption.AllDirectories))
-                    MangaList.Add(MangaArchiveFilePath.LoadFromArchive<MangaObject>("MangaObject", SaveType.XML));
+                    MangaList.Add(MangaArchiveFilePath.LoadFromArchive<MangaObject>("MangaObject.xml", SaveType.XML));
                 App.MangaObjectArchiveWatcher.Changed += MangaObjectArchiveWatcher_Event;
                 App.MangaObjectArchiveWatcher.Created += MangaObjectArchiveWatcher_Event;
                 App.MangaObjectArchiveWatcher.Deleted += MangaObjectArchiveWatcher_Event;
@@ -198,8 +225,8 @@ namespace myManga_App.ViewModels
                     case WatcherChangeTypes.Changed:
                     case WatcherChangeTypes.Created:
                         MangaObject c_item = MangaList.FirstOrDefault(o => o.MangaArchiveName(App.MANGA_ARCHIVE_EXTENSION) == e.Name);
-                        if (c_item == null) MangaList.Add(e.FullPath.LoadFromArchive<MangaObject>("MangaObject", SaveType.XML));
-                        else c_item.Merge(e.FullPath.LoadFromArchive<MangaObject>("MangaObject", SaveType.XML));
+                        if (c_item == null) MangaList.Add(e.FullPath.LoadFromArchive<MangaObject>("MangaObject.xml", SaveType.XML));
+                        else c_item.Merge(e.FullPath.LoadFromArchive<MangaObject>("MangaObject.xml", SaveType.XML));
                         break;
 
                     case WatcherChangeTypes.Deleted:

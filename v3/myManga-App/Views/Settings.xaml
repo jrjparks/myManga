@@ -29,18 +29,32 @@
             </TreeView.Items>
         </TreeView>
         <Grid Grid.Column="2">
-            <ListBox
+            <StackPanel>
+                <ListBox
                 Background="{x:Null}"
                 ItemsSource="{Binding SiteExtentionInformationObjects}">
-                <ListBox.ItemTemplate>
-                    <DataTemplate>
-                        <StackPanel Orientation="Horizontal">
-                            <CheckBox IsChecked="{Binding Enabled, Mode=TwoWay}"/>
-                            <TextBlock Text="{Binding Name}"/>
-                        </StackPanel>
-                    </DataTemplate>
-                </ListBox.ItemTemplate>
-            </ListBox>
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal">
+                                <CheckBox IsChecked="{Binding Enabled, Mode=TwoWay}"/>
+                                <TextBlock Text="{Binding Name}"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+                <ListBox
+                Background="{x:Null}"
+                ItemsSource="{Binding DatabaseExtensionInformationObjects}">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal">
+                                <CheckBox IsChecked="{Binding Enabled, Mode=TwoWay}"/>
+                                <TextBlock Text="{Binding Name}"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </StackPanel>
         </Grid>
         <StackPanel
             HorizontalAlignment="Right"

@@ -71,6 +71,9 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
     <OutputPath>bin\Release\</OutputPath>
   </PropertyGroup>
+  <PropertyGroup>
+    <RunPostBuildEvent>Always</RunPostBuildEvent>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="fastJSON, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -120,6 +123,7 @@
     <Compile Include="IO\Network\SmartMangaDownloader.cs" />
     <Compile Include="IO\Network\SmartSearch.cs" />
     <Compile Include="IO\SmartGroupObject.cs" />
+    <Compile Include="Objects\DatabaseExtensionInformationObject.cs" />
     <Compile Include="Objects\SiteExtentionInformationObject.cs" />
     <Compile Include="Objects\UserConfigurationObject.cs" />
     <Compile Include="Themes\Button\MetroButton.cs" />
@@ -268,6 +272,10 @@
     <Folder Include="Properties\DataSources\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>copy /Y "$(SolutionDir)myManga-ISiteExtensions\*.$(ConfigurationName).mymanga.dll" "$(TargetDir)Plugins\"
+copy /Y "$(SolutionDir)myManga-IDatabaseExtensions\*.$(ConfigurationName).mymanga.dll" "$(TargetDir)Plugins\"</PostBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

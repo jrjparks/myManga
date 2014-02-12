@@ -12,7 +12,7 @@ using myMangaSiteExtension;
 
 namespace AnimeNewsNetwork
 {
-    [IDatabaseExtension(
+    [IDatabaseExtensionDescription(
         "AnimeNewsNetwork",
         "animenewsnetwork.com",
         "http://cdn.animenewsnetwork.com/",
@@ -23,8 +23,8 @@ namespace AnimeNewsNetwork
         Language = "English")]
     public class AnimeNewsNetwork : IDatabaseExtension
     {
-        protected IDatabaseExtensionAttribute idea;
-        protected virtual IDatabaseExtensionAttribute IDEA { get { return idea ?? (idea = GetType().GetCustomAttribute<IDatabaseExtensionAttribute>(false)); } }
+        protected IDatabaseExtensionDescriptionAttribute idea;
+        protected virtual IDatabaseExtensionDescriptionAttribute IDEA { get { return idea ?? (idea = GetType().GetCustomAttribute<IDatabaseExtensionDescriptionAttribute>(false)); } }
 
         public string GetSearchUri(string searchTerm)
         {

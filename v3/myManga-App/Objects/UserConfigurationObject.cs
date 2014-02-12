@@ -43,6 +43,21 @@ namespace myManga_App.Objects
             }
         }
 
+        [XmlIgnore]
+        private List<String> enabledDatabaseExtentions;
+        [XmlArray, XmlArrayItem("DatabaseExtentionName")]
+        public List<String> EnabledDatabaseExtentions
+        {
+            get
+            { return enabledDatabaseExtentions ?? (enabledDatabaseExtentions = new List<String>()); }
+            set
+            {
+                OnPropertyChanging();
+                enabledDatabaseExtentions = value;
+                OnPropertyChanged();
+            }
+        }
+
         public UserConfigurationObject() : base() { }
         public UserConfigurationObject(SerializationInfo info, StreamingContext context) : base(info, context) { }
     }

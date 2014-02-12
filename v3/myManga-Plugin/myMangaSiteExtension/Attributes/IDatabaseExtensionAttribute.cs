@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace myMangaSiteExtension.Attributes
 {
     [DebuggerStepThrough, AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
-    public class IDatabaseExtensionAttribute : Attribute
+    public sealed class IDatabaseExtensionDescriptionAttribute : Attribute
     {
         /// <summary>
         /// Name of the supported site.
@@ -37,7 +37,7 @@ namespace myMangaSiteExtension.Attributes
         /// <param name="Name">Name of the site</param>
         /// <param name="URLFormat">Format of the sites url</param>
         /// <param name="RefererHeader">Referer header to use when connecting to the site</param>
-        public IDatabaseExtensionAttribute(String Name, String URLFormat, String RefererHeader)
+        public IDatabaseExtensionDescriptionAttribute(String Name, String URLFormat, String RefererHeader)
         {
             this.Name = Name;
             this.URLFormat = URLFormat;

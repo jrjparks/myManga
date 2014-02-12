@@ -75,7 +75,7 @@
       <Project>{1C67209C-E3C8-4FF9-9CB1-B788ECB4B284}</Project>
       <Name>Core</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\myManga-IDatabaseExtension\AnimeNewsNetwork\AnimeNewsNetwork.csproj">
+    <ProjectReference Include="..\..\myManga-IDatabaseExtensions\AnimeNewsNetwork\AnimeNewsNetwork.csproj">
       <Project>{58e9513e-d3cc-42e7-9eb7-7fcf222f6670}</Project>
       <Name>AnimeNewsNetwork</Name>
     </ProjectReference>

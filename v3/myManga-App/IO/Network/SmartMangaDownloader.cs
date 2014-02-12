@@ -64,6 +64,7 @@ namespace myManga_App.IO.Network
                 if (dmObj != null)
                     mangaObject.Merge(dmObj);
             }
+            mangaObject.SortChapters();
             return mangaObject;
         }
     }

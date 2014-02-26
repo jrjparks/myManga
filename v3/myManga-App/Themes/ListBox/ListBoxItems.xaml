@@ -1,10 +1,21 @@
 ﻿<ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:system="clr-namespace:System;assembly=mscorlib"
     xmlns:converters="clr-namespace:myManga_App.Converters"
-    xmlns:button="clr-namespace:myManga_App.Resources.Theme.Buttons">
+    xmlns:button="clr-namespace:myManga_App.Resources.Theme.Buttons"
+    xmlns:objects="clr-namespace:myMangaSiteExtension.Objects;assembly=myMangaSiteExtension"
+    xmlns:utils="clr-namespace:myMangaSiteExtension.Utilities;assembly=myMangaSiteExtension">
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="/myManga;component/Themes/CoreResourceDictionary.xaml"/>
+        <ResourceDictionary>
+            <ObjectDataProvider ObjectType="{x:Type utils:MangaObjectExtensions}" MethodName="IsLocal" x:Key="IsLocalContent">
+                <ObjectDataProvider.MethodParameters>
+                    <objects:MangaObject></objects:MangaObject>
+                    <system:String>C:\</system:String>
+                </ObjectDataProvider.MethodParameters>
+            </ObjectDataProvider>
+        </ResourceDictionary>
     </ResourceDictionary.MergedDictionaries>
 
     <converters:StringListToCSV x:Key="StringListToCSV"/>
@@ -60,12 +71,12 @@
                                     </Rectangle.Fill>
                                 </Rectangle>
                                 <TextBlock
-                                Text="{DynamicResource icon-ok}"
-                                FontFamily="{DynamicResource FontAwesome}" 
-                                FontSize="14" 
-                                Foreground="{DynamicResource window-background}" 
-                                Grid.Column="1"
-                                Margin="-1,0,0,-1"/>
+                                    Text="{StaticResource icon-ok}"
+                                    FontFamily="{DynamicResource FontAwesome}" 
+                                    FontSize="14" 
+                                    Foreground="{DynamicResource window-background}" 
+                                    Grid.Column="1"
+                                    Margin="-1,0,0,-1"/>
                             </Grid>
                         </Grid>
                     </Border>
@@ -169,8 +180,17 @@
                             </Grid.ColumnDefinitions>
                             <TextBlock Grid.Row="0" VerticalAlignment="Center" Foreground="{StaticResource text-dark}" FontWeight="Bold" FontSize="14" TextTrimming="CharacterEllipsis" Text="{Binding Name}"/>
                             <TextBlock Grid.Row="1" VerticalAlignment="Center" Foreground="{StaticResource text-muted}" TextTrimming="CharacterEllipsis" Text="{Binding VCsCString}"/>
+                            <TextBlock
+                                x:Name="LocationIcon"
+                                Grid.Row="0"
+                                Grid.Column="1"
+                                FontFamily="{DynamicResource FontAwesome}"
+                                Text="{StaticResource fa-cloud}"
+                                TextAlignment="Center"
+                                VerticalAlignment="Center"/>
                             <button:MetroButton
                                 x:Name="DownloadButton"
+                                Grid.Row="1"
                                 Grid.Column="1"
                                 FontFamily="{DynamicResource FontAwesome}"
                                 Content="{StaticResource fa-download}"/>
@@ -188,6 +208,9 @@
                         </Trigger>
                         <DataTrigger Binding="{Binding Read}" Value="True">
 
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding IsLocalContent}" Value="True">
+                            <Setter TargetName="LocationIcon" Property="Text" Value="{StaticResource fa-hdd-o}"/>
                         </DataTrigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>

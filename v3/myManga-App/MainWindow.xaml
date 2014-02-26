@@ -46,7 +46,7 @@
             TextElement.FontFamily="{DynamicResource FontAwesome}">
             <button:MetroButton
                 Content="{StaticResource fa-home}"
-                ContentStringFormat="{}{0}Home"
+                ContentStringFormat="{}{0} Home"
                 ToolTip="Home"
                 Command="{Binding HomeCommand}"
                 MinWidth="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}">
@@ -57,7 +57,7 @@
                 VerticalAlignment="Center"/>
             <button:MetroButton
                 Content="{StaticResource fa-book}"
-                ContentStringFormat="{}{0}Reader"
+                ContentStringFormat="{}{0} Reader"
                 ToolTip="Reader"
                 Command="{Binding ReadCommand}"
                 MinWidth="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"/>
@@ -66,7 +66,8 @@
             Grid.Column="1"
             TextElement.FontSize="20"
             TextElement.FontFamily="{DynamicResource FontAwesome}"
-            Content="{StaticResource fa-cog}"
+            Content="{DynamicResource fa-ellipsis-vertical}"
+                ContentStringFormat="Settings {0}"
             ToolTip="Settings"
             Command="{Binding SettingsCommand}"
             MinWidth="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"/>

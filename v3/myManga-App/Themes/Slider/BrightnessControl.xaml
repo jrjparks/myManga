@@ -84,8 +84,8 @@
                 BorderBrush="{DynamicResource window-theme-primary}">
                 <Border.Background>
                     <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
-                        <GradientStop Offset="0" Color="{DynamicResource window-theme-primary-color}"/>
-                        <GradientStop Offset="1" Color="{DynamicResource window-theme-secondary-color}"/>
+                        <GradientStop Offset="0" Color="{DynamicResource window-theme-secondary-color}"/>
+                        <GradientStop Offset="1" Color="{DynamicResource window-theme-primary-color}"/>
                     </LinearGradientBrush>
                 </Border.Background>
             </Border>
@@ -147,8 +147,13 @@
                 Height="4"
                 Grid.Row="1"
                 BorderThickness="1"
-                BorderBrush="{DynamicResource window-theme-primary}"
-                Background="{DynamicResource window-theme-secondary}"/>
+                BorderBrush="{DynamicResource window-theme-primary}">
+                <Border.Background>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                        <GradientStop Offset="0" Color="{DynamicResource window-theme-secondary-color}"/>
+                        <GradientStop Offset="1" Color="{DynamicResource window-theme-primary-color}"/>
+                    </LinearGradientBrush>
+                </Border.Background></Border>
             <Track 
                 Grid.Column="1" 
                 x:Name="PART_Track">

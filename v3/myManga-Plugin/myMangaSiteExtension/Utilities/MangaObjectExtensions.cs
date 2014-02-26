@@ -153,21 +153,23 @@ namespace myMangaSiteExtension.Utilities
         public static void SortChapters(this MangaObject value)
         {
             // Try to find a place for Chapters with Volume as 0
-            foreach (ChapterObject Chapter in value.Chapters.Where(o => o.Volume <= 0))
+            /*
+            foreach (ChapterObject Chapter in value.Chapters.Where(c => c.Volume <= 0))
             {
-                ChapterObject prevChapter = value.Chapters.FirstOrDefault(o => o.Chapter == (Chapter.Chapter - 1));
+                ChapterObject prevChapter = value.Chapters.FirstOrDefault(o => o.Chapter == (Chapter.Chapter + 1));
                 if (prevChapter != null)
                 { Chapter.Volume = prevChapter.Volume; }
             }
-            value.Chapters = value.Chapters.OrderBy(c => c.Volume).ThenBy(c => c.Chapter).ThenBy(c => c.SubChapter).ToList();
+            //*/
+            value.Chapters = value.Chapters.OrderBy(c => c.Chapter).ThenBy(c => c.SubChapter).ThenBy(c => c.Volume).ToList();
         }
 
         //Yes the archive is a zip file, read the docs
         public static String MangaArchiveName(this MangaObject value, String Extention = "zip")
-        { return String.Format("{0}.{1}", new String(value.Name.Where(Char.IsLetterOrDigit).ToArray()), Extention); }
+        { return (value != null && value.Name != null) ? String.Format("{0}.{1}", new String(value.Name.Where(Char.IsLetterOrDigit).ToArray()), Extention) : String.Empty; }
 
         public static Boolean IsLocal(this MangaObject value, String Folder, String Extention = "zip")
-        { return System.IO.File.Exists(System.IO.Path.Combine(Folder, value.MangaArchiveName(Extention))); }
+        { return (value != null) ? System.IO.File.Exists(System.IO.Path.Combine(Folder, value.MangaArchiveName(Extention))) : false; }
 
         public static Boolean IsNameMatch(this MangaObject value, String name)
         {

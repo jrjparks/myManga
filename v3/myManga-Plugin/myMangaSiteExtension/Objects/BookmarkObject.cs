@@ -34,6 +34,8 @@ namespace myMangaSiteExtension.Objects
         protected Int32 chapter;
         [NonSerialized, XmlIgnore, EditorBrowsable(EditorBrowsableState.Never)]
         protected Int32 subchapter;
+        [NonSerialized, XmlIgnore, EditorBrowsable(EditorBrowsableState.Never)]
+        protected Int32 page;
         #endregion
 
         #region Public
@@ -69,6 +71,18 @@ namespace myMangaSiteExtension.Objects
             {
                 OnPropertyChanging();
                 subchapter = value;
+                OnPropertyChanged();
+            }
+        }
+
+        [XmlAttribute]
+        public Int32 Page
+        {
+            get { return page; }
+            set
+            {
+                OnPropertyChanging();
+                page = value;
                 OnPropertyChanged();
             }
         }

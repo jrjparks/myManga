@@ -276,7 +276,7 @@
                 ItemsSource="{Binding Chapters}" 
                 ItemContainerStyle="{DynamicResource HomeChapterListBoxItem}"
                 Visibility="{Binding HasItems, Converter={StaticResource BooleanToVisibilityConverter}, RelativeSource={RelativeSource Self}}" 
-                ScrollViewer.HorizontalScrollBarVisibility="Disabled"/>
+                ScrollViewer.HorizontalScrollBarVisibility="Disabled" HorizontalContentAlignment="Stretch"/>
         </Grid>
         <button:MetroButton
             FontFamily="{DynamicResource FontAwesome}"

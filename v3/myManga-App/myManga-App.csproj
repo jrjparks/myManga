@@ -117,6 +117,7 @@
     </ApplicationDefinition>
     <Compile Include="Converters\LocationListToCSV.cs" />
     <Compile Include="Converters\StringArrayToCSV.cs" />
+    <Compile Include="IO\AccessPriority.cs" />
     <Compile Include="IO\File System\SmartStorage.cs" />
     <Compile Include="IO\File System\SmartStreamAccess.cs" />
     <Compile Include="IO\Network\SmartChapterDownloader.cs" />

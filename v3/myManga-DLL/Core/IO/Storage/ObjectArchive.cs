@@ -14,14 +14,16 @@ namespace Core.IO
     [DebuggerStepThrough]
     public static class ObjectArchive
     {
-        public static Boolean SaveToArchive<T>(this T Object, String ArchiveFilePath, String FileName, SaveType SaveType = SaveType.Binary) where T : class
+        public static Boolean SaveToArchive<T>(this T Object, String ArchiveFilePath, String FileName = null, SaveType SaveType = SaveType.Binary) where T : class
         {
             ReadOptions ZipReadOptions = new ReadOptions();
             ZipReadOptions.Encoding = Encoding.UTF8;
-            return Object.SaveToArchive(ArchiveFilePath, FileName, ZipReadOptions, SaveType);
+            return Object.SaveToArchive(ArchiveFilePath, ZipReadOptions, FileName, SaveType);
         }
-        public static Boolean SaveToArchive<T>(this T Object, String ArchiveFilePath, String FileName, ReadOptions ZipReadOption, SaveType SaveType = SaveType.Binary) where T : class
+        public static Boolean SaveToArchive<T>(this T Object, String ArchiveFilePath, ReadOptions ZipReadOption, String FileName, SaveType SaveType = SaveType.Binary) where T : class
         {
+            if (FileName == null)
+                FileName = String.Format("{0}.{1}", typeof(T).Name, (SaveType == IO.SaveType.Binary) ? "bin" : (SaveType == IO.SaveType.XML) ? "xml" : String.Empty);
             if (Object != null)
                 return Object.Serialize(SaveType).SaveStreamToArchive(ArchiveFilePath, FileName, ZipReadOption);
             return false;
@@ -63,8 +65,10 @@ namespace Core.IO
             return false;
         }
 
-        public static T LoadFromArchive<T>(this String ArchiveFilePath, String FileName, SaveType SaveType = SaveType.Binary) where T : class
+        public static T LoadFromArchive<T>(this String ArchiveFilePath, String FileName = null, SaveType SaveType = SaveType.Binary) where T : class
         {
+            if (FileName == null)
+                FileName = String.Format("{0}.{1}", typeof(T).Name, (SaveType == IO.SaveType.Binary) ? "bin" : (SaveType == IO.SaveType.XML) ? "xml" : String.Empty);
             T archObj = null;
             if (File.Exists(ArchiveFilePath))
                 using (Stream DataStream = ArchiveFilePath.LoadFromArchive(FileName))

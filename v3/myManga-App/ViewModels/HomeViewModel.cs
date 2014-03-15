@@ -133,16 +133,15 @@ namespace myManga_App.ViewModels
         { return MangaObj != null; }
 
         protected void DownloadManga()
-        {
-            Singleton<myManga_App.IO.Network.SmartMangaDownloader>.Instance.DownloadMangaObject(mangaObj);
-        }
+        { Singleton<myManga_App.IO.Network.SmartMangaDownloader>.Instance.DownloadMangaObject(mangaObj); }
 
         private delegate void Instance_DownloadMangaCompleteInvoke(object sender, MangaObject e);
         private void Instance_DownloadMangaComplete(object sender, MangaObject e)
         {
             if (App.Dispatcher.Thread == Thread.CurrentThread)
             {
-                MangaObj.SaveToArchive(Path.Combine(App.MANGA_ARCHIVE_DIRECTORY, String.Format("{0}.{1}", MangaObj.Name.SafeFileName(), App.MANGA_ARCHIVE_EXTENSION)), "MangaObject.xml", SaveType.XML);
+                String save_path = Path.Combine(App.MANGA_ARCHIVE_DIRECTORY, e.MangaArchiveName(App.MANGA_ARCHIVE_EXTENSION));
+                MangaObj.SaveToArchive(save_path, SaveType: SaveType.XML);
                 if (!MangaList.Any(mo => mo.Name == e.Name)) MangaList.Add(MangaObj);
                 else MangaList.First(mo => mo.Name == e.Name).Merge(e);
             }
@@ -224,14 +223,25 @@ namespace myManga_App.ViewModels
 
                     case WatcherChangeTypes.Changed:
                     case WatcherChangeTypes.Created:
-                        MangaObject c_item = MangaList.FirstOrDefault(o => o.MangaArchiveName(App.MANGA_ARCHIVE_EXTENSION) == e.Name);
-                        if (c_item == null) MangaList.Add(e.FullPath.LoadFromArchive<MangaObject>("MangaObject.xml", SaveType.XML));
-                        else c_item.Merge(e.FullPath.LoadFromArchive<MangaObject>("MangaObject.xml", SaveType.XML));
+                        try
+                        {
+                            MangaObject c_item = MangaList.First(o => o.MangaArchiveName(App.MANGA_ARCHIVE_EXTENSION) == e.Name);
+                            c_item.Merge(e.FullPath.LoadFromArchive<MangaObject>(SaveType: SaveType.XML));
+                        }
+                        catch
+                        {
+                            MangaList.Add(e.FullPath.LoadFromArchive<MangaObject>(SaveType: SaveType.XML));
+                        }
                         break;
 
                     case WatcherChangeTypes.Deleted:
-                        MangaObject d_item = MangaList.FirstOrDefault(o => o.MangaArchiveName(App.MANGA_ARCHIVE_EXTENSION) == e.Name);
-                        if (d_item != null) MangaList.Remove(d_item);
+                        try
+                        {
+                            MangaObject d_item = MangaList.First(o => o.MangaArchiveName(App.MANGA_ARCHIVE_EXTENSION) == e.Name);
+                            MangaList.Remove(d_item);
+                        }
+                        catch
+                        { }
                         break;
                 }
             }

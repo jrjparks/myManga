@@ -69,7 +69,9 @@
                                         VerticalAlignment="Center"
                                         Width="100px"
                                         WindowChrome.IsHitTestVisibleInChrome="True"
-                                        Focusable="False"/>
+                                        Focusable="False"
+                                        TickPlacement="Both"
+                                        LargeChange="2"/>
                                     <!-- Minimize button content 0 -->
                                     <button:MetroButton
                                         x:Name="MinimizeButton"

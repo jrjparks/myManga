@@ -29,31 +29,22 @@
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type Thumb}">
                     <Border 
-                        x:Name="Thumb">
-                        <Grid>
-                            <Ellipse x:Name="IconBackground" Stroke="{DynamicResource icon-dark}" StrokeThickness="1" Fill="{DynamicResource window-theme-secondary}"/>
-                            <Viewbox VerticalAlignment="Stretch" HorizontalAlignment="Stretch" RenderTransformOrigin="0,0" Margin="1">
-                                <Path
-                                    x:Name="Icon"
-                                    Fill="{DynamicResource text-dark}"
-                                    Height="48"
-                                    Width="48"
-                                    Data="M 42.00,27.00c-1.659,0.00-3.00-1.344-3.00-3.00s 1.341-3.00, 3.00-3.00s 3.00,1.344, 3.00,3.00S 43.659,27.00, 42.00,27.00 z M 34.605,13.395c-1.173-1.173-1.173-3.072,0.00-4.245s 3.072-1.173, 4.245,0.00c 1.17,1.173, 1.17,3.072,0.00,4.245 C 37.68,14.565, 35.778,14.565, 34.605,13.395z M 24.00,36.00c-6.627,0.00-12.00-5.373-12.00-12.00s 5.373-12.00, 12.00-12.00s 12.00,5.373, 12.00,12.00S 30.627,36.00, 24.00,36.00z M 24.00,18.00 C 20.688,18.00, 18.00,20.688, 18.00,24.00s 2.688,6.00, 6.00,6.00s 6.00-2.688, 6.00-6.00S 27.312,18.00, 24.00,18.00z M 24.00,9.00C 22.341,9.00, 21.00,7.656, 21.00,6.00s 1.341-3.00, 3.00-3.00s 3.00,1.344, 3.00,3.00S 25.659,9.00, 24.00,9.00z M 9.153,13.395c-1.173-1.173-1.173-3.072,0.00-4.245c 1.17-1.173, 3.069-1.173, 4.242,0.00s 1.173,3.072,0.00,4.245 C 12.222,14.565, 10.32,14.565, 9.153,13.395z M 6.00,27.00C 4.341,27.00, 3.00,25.656, 3.00,24.00s 1.341-3.00, 3.00-3.00s 3.00,1.344, 3.00,3.00S 7.659,27.00, 6.00,27.00z M 13.395,34.605 c 1.173,1.173, 1.173,3.069,0.00,4.242s-3.072,1.173-4.242,0.00c-1.173-1.173-1.173-3.069,0.00-4.242C 10.32,33.435, 12.222,33.435, 13.395,34.605z M 24.00,39.00c 1.659,0.00, 3.00,1.341, 3.00,3.00s-1.341,3.00-3.00,3.00s-3.00-1.341-3.00-3.00S 22.341,39.00, 24.00,39.00z M 38.85,34.605c 1.17,1.173, 1.17,3.069,0.00,4.242 c-1.173,1.173-3.072,1.173-4.245,0.00s-1.173-3.069,0.00-4.242S 37.68,33.435, 38.85,34.605z"/>
-                            </Viewbox>
-                        </Grid>
-                    </Border>
+                        x:Name="ThumbBorder"
+                        BorderThickness="3"
+                        BorderBrush="{DynamicResource window-foreground-disabled}"
+                        Background="{DynamicResource window-foreground-disabled}"/>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="Icon" Property="Fill" Value="{DynamicResource window-theme-primary}"/>
-                            <Setter TargetName="IconBackground" Property="Fill" Value="{DynamicResource window-theme-secondary}"/>
+                            <Setter TargetName="ThumbBorder" Property="Background" Value="{DynamicResource window-foreground-disabled}"/>
+                            <Setter TargetName="ThumbBorder" Property="BorderBrush" Value="{DynamicResource window-theme-primary}"/>
                         </Trigger>
                         <Trigger Property="IsDragging" Value="True">
-                            <Setter TargetName="Icon" Property="Fill" Value="{DynamicResource window-theme-secondary}"/>
-                            <Setter TargetName="IconBackground" Property="Fill" Value="{DynamicResource window-theme-primary}"/>
+                            <Setter TargetName="ThumbBorder" Property="Background" Value="{DynamicResource window-theme-primary}"/>
+                            <Setter TargetName="ThumbBorder" Property="BorderBrush" Value="{DynamicResource window-theme-secondary}"/>
                         </Trigger>
                         <Trigger Property="IsEnabled" Value="False">
-                            <Setter TargetName="Icon" Property="Fill" Value="{DynamicResource window-foreground-disabled}"/>
-                            <Setter TargetName="IconBackground" Property="Fill" Value="{DynamicResource window-foreground-disabled}"/>
+                            <Setter TargetName="ThumbBorder" Property="Background" Value="{DynamicResource window-foreground-disabled}"/>
+                            <Setter TargetName="ThumbBorder" Property="BorderBrush" Value="{DynamicResource window-foreground-disabled}"/>
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -65,9 +56,28 @@
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto" MinHeight="{TemplateBinding MinHeight}"/>
+                <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
+            <Border
+                x:Name="TrackBorder"
+                Margin="0"
+                Grid.Row="1"
+                Background="{DynamicResource window-theme-secondary}">
+                <Track 
+                    Grid.Row="1" 
+                    x:Name="PART_Track">
+                    <Track.DecreaseRepeatButton>
+                        <RepeatButton Style="{StaticResource BrightnessControlRepeatButton}" Command="Slider.DecreaseLarge"/>
+                    </Track.DecreaseRepeatButton>
+                    <Track.Thumb>
+                        <Thumb Style="{StaticResource BrightnessControlThumb}"/>
+                    </Track.Thumb>
+                    <Track.IncreaseRepeatButton>
+                        <RepeatButton Style="{StaticResource BrightnessControlRepeatButton}" Command="Slider.IncreaseLarge"/>
+                    </Track.IncreaseRepeatButton>
+                </Track>
+            </Border>
             <TickBar
                 x:Name="TopTick"
                 SnapsToDevicePixels="True"
@@ -75,35 +85,6 @@
                 Height="4"
                 Visibility="Collapsed"
                 Fill="{DynamicResource window-theme-primary}"/>
-            <Border
-                x:Name="TrackBorder"
-                Margin="0"
-                Height="4"
-                Grid.Row="1"
-                BorderThickness="1"
-                BorderBrush="{DynamicResource window-theme-primary}">
-                <Border.Background>
-                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
-                        <GradientStop Offset="0" Color="{DynamicResource window-theme-secondary-color}"/>
-                        <GradientStop Offset="1" Color="{DynamicResource window-theme-primary-color}"/>
-                    </LinearGradientBrush>
-                </Border.Background>
-            </Border>
-            <Track 
-                Grid.Row="1" 
-                x:Name="PART_Track">
-                <Track.DecreaseRepeatButton>
-                    <RepeatButton Style="{StaticResource BrightnessControlRepeatButton}"
-                      Command="Slider.DecreaseLarge"/>
-                </Track.DecreaseRepeatButton>
-                <Track.Thumb>
-                    <Thumb Style="{StaticResource BrightnessControlThumb}"/>
-                </Track.Thumb>
-                <Track.IncreaseRepeatButton>
-                    <RepeatButton Style="{StaticResource BrightnessControlRepeatButton}"
-                      Command="Slider.IncreaseLarge"/>
-                </Track.IncreaseRepeatButton>
-            </Track>
             <TickBar
                 x:Name="BottomTick"
                 Grid.Row="2"
@@ -114,14 +95,14 @@
                 Fill="{DynamicResource window-theme-primary}"/>
         </Grid>
         <ControlTemplate.Triggers>
+            <Trigger Property="TickPlacement" Value="Both">
+                <Setter TargetName="TopTick" Property="Visibility" Value="Visible" />
+                <Setter TargetName="BottomTick" Property="Visibility" Value="Visible" />
+            </Trigger>
             <Trigger Property="TickPlacement" Value="TopLeft">
                 <Setter TargetName="TopTick" Property="Visibility" Value="Visible" />
             </Trigger>
             <Trigger Property="TickPlacement" Value="BottomRight">
-                <Setter TargetName="BottomTick" Property="Visibility" Value="Visible" />
-            </Trigger>
-            <Trigger Property="TickPlacement" Value="Both">
-                <Setter TargetName="TopTick" Property="Visibility" Value="Visible" />
                 <Setter TargetName="BottomTick" Property="Visibility" Value="Visible" />
             </Trigger>
         </ControlTemplate.Triggers>
@@ -131,46 +112,37 @@
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="Auto" MinWidth="{TemplateBinding MinWidth}" />
+                <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
+            <Border
+                x:Name="TrackBorder"
+                Margin="0"
+                Grid.Column="1"
+                Background="{DynamicResource window-theme-secondary}">
+                <Track 
+                    Grid.Column="1" 
+                    x:Name="PART_Track">
+                    <Track.DecreaseRepeatButton>
+                        <RepeatButton Style="{StaticResource BrightnessControlRepeatButton}" Command="Slider.DecreaseLarge"/>
+                    </Track.DecreaseRepeatButton>
+                    <Track.Thumb>
+                        <Thumb Style="{StaticResource BrightnessControlThumb}"/>
+                    </Track.Thumb>
+                    <Track.IncreaseRepeatButton>
+                        <RepeatButton Style="{StaticResource BrightnessControlRepeatButton}" Command="Slider.IncreaseLarge"/>
+                    </Track.IncreaseRepeatButton>
+                </Track>
+            </Border>
             <TickBar
-                x:Name="TopTick"
+                x:Name="LeftTick"
                 SnapsToDevicePixels="True"
                 Placement="Left"
                 Width="4"
                 Visibility="Collapsed"
                 Fill="{DynamicResource window-theme-primary}"/>
-            <Border
-                x:Name="TrackBorder"
-                Margin="0"
-                Height="4"
-                Grid.Row="1"
-                BorderThickness="1"
-                BorderBrush="{DynamicResource window-theme-primary}">
-                <Border.Background>
-                    <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
-                        <GradientStop Offset="0" Color="{DynamicResource window-theme-secondary-color}"/>
-                        <GradientStop Offset="1" Color="{DynamicResource window-theme-primary-color}"/>
-                    </LinearGradientBrush>
-                </Border.Background></Border>
-            <Track 
-                Grid.Column="1" 
-                x:Name="PART_Track">
-                <Track.DecreaseRepeatButton>
-                    <RepeatButton Style="{StaticResource BrightnessControlRepeatButton}"
-                      Command="Slider.DecreaseLarge"/>
-                </Track.DecreaseRepeatButton>
-                <Track.Thumb>
-                    <Thumb Style="{StaticResource BrightnessControlThumb}"/>
-                </Track.Thumb>
-                <Track.IncreaseRepeatButton>
-                    <RepeatButton Style="{StaticResource BrightnessControlRepeatButton}"
-                      Command="Slider.IncreaseLarge"/>
-                </Track.IncreaseRepeatButton>
-            </Track>
             <TickBar
-                x:Name="BottomTick"
+                x:Name="RightTick"
                 Grid.Column="2"
                 SnapsToDevicePixels="True"
                 Placement="Right"
@@ -179,15 +151,15 @@
                 Fill="{DynamicResource window-theme-primary}"/>
         </Grid>
         <ControlTemplate.Triggers>
+            <Trigger Property="TickPlacement" Value="Both">
+                <Setter TargetName="LeftTick" Property="Visibility" Value="Visible" />
+                <Setter TargetName="RightTick" Property="Visibility" Value="Visible" />
+            </Trigger>
             <Trigger Property="TickPlacement" Value="TopLeft">
-                <Setter TargetName="TopTick" Property="Visibility" Value="Visible" />
+                <Setter TargetName="LeftTick" Property="Visibility" Value="Visible" />
             </Trigger>
             <Trigger Property="TickPlacement" Value="BottomRight">
-                <Setter TargetName="BottomTick" Property="Visibility" Value="Visible" />
-            </Trigger>
-            <Trigger Property="TickPlacement" Value="Both">
-                <Setter TargetName="TopTick" Property="Visibility" Value="Visible" />
-                <Setter TargetName="BottomTick" Property="Visibility" Value="Visible" />
+                <Setter TargetName="RightTick" Property="Visibility" Value="Visible" />
             </Trigger>
         </ControlTemplate.Triggers>
     </ControlTemplate>
@@ -197,11 +169,11 @@
         <Setter Property="OverridesDefaultStyle" Value="True" />
         <Style.Triggers>
             <Trigger Property="Orientation" Value="Horizontal">
-                <Setter Property="MinWidth" Value="100" />
+                <Setter Property="MinWidth" Value="15" />
                 <Setter Property="Template" Value="{StaticResource HorizontalSlider}" />
             </Trigger>
             <Trigger Property="Orientation" Value="Vertical">
-                <Setter Property="MinHeight" Value="100" />
+                <Setter Property="MinHeight" Value="15" />
                 <Setter Property="Template" Value="{StaticResource VerticalSlider}" />
             </Trigger>
         </Style.Triggers>

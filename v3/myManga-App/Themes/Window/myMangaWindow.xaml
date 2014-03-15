@@ -68,9 +68,11 @@
                                     <core:BrightnessControl 
                                         Margin="5,2"
                                         VerticalAlignment="Center"
-                                        Width="100"
+                                        Width="200"
                                         WindowChrome.IsHitTestVisibleInChrome="True"
-                                        Focusable="False"/>
+                                        Focusable="False"
+                                        LargeChange="2"
+                                        TickPlacement="BottomRight"/>
                                     <!-- Minimize button content 0 -->
                                     <button:MetroButton
                                         x:Name="MinimizeButton"

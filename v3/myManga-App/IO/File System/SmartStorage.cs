@@ -26,7 +26,7 @@ namespace myManga_App.IO.File_System
         public void Write(Stream stream, String filename)
         {
             String tmpFilename = Path.GetTempFileName();
-            using (FileStream file = File.OpenWrite(tmpFilename))
+            using (SmartFileStreamAccess file = (SmartFileStreamAccess)File.OpenWrite(tmpFilename))
             {
                 stream.Seek(0, SeekOrigin.Begin);
                 file.CopyTo(file);

@@ -19,7 +19,7 @@ namespace myManga_App.IO.Network
     public sealed class SmartMangaDownloader : SmartDownloader
     {
         public event EventHandler<MangaObject> MangaObjectComplete;
-        protected void OnMangaObjectComplete(MangaObject e)
+        private void OnMangaObjectComplete(MangaObject e)
         {
             if (MangaObjectComplete != null)
             {
@@ -40,12 +40,12 @@ namespace myManga_App.IO.Network
         public ICollection<IWorkItemResult> DownloadMangaObject(ICollection<MangaObject> mangaObjects)
         { return (from mangaObject in mangaObjects select smartThreadPool.QueueWorkItem(new WorkItemCallback(MangaObjectWorker), mangaObject, new PostExecuteWorkItemCallback(MangaObjectWorkerCallback))).ToList(); }
 
-        protected void MangaObjectWorkerCallback(IWorkItemResult wir)
+        private void MangaObjectWorkerCallback(IWorkItemResult wir)
         { OnMangaObjectComplete(wir.Result as MangaObject); }
 
-        protected object MangaObjectWorker(object state)
+        private object MangaObjectWorker(object state)
         { return MangaObjectWorker(state as MangaObject); }
-        protected MangaObject MangaObjectWorker(MangaObject mangaObject)
+        private MangaObject MangaObjectWorker(MangaObject mangaObject)
         {
             IWorkItemsGroup MangaObjectWig = smartThreadPool.CreateWorkItemsGroup(2);
 

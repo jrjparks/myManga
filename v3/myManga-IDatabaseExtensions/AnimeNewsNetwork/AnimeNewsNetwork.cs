@@ -38,7 +38,8 @@ namespace AnimeNewsNetwork
 
             HtmlNode NameNode = DatabaseObjectDocument.DocumentNode.SelectSingleNode("//info[contains(@type,'Main title')]"),
                 CoverNode = DatabaseObjectDocument.DocumentNode.SelectSingleNode("//info[contains(@type,'Picture')]/img[last()]"),
-                DescriptionNode = DatabaseObjectDocument.DocumentNode.SelectSingleNode("//info[contains(@type,'Plot Summary')]");
+                DescriptionNode = DatabaseObjectDocument.DocumentNode.SelectSingleNode("//info[contains(@type,'Plot Summary')]"),
+                ReleaseNode = DatabaseObjectDocument.DocumentNode.SelectSingleNode("//info[contains(@type,'Vintage')]");
             HtmlNodeCollection AlternateNameNodes = DatabaseObjectDocument.DocumentNode.SelectNodes("//info[contains(@type,'Alternative title')]"),
                 GenreNodes = DatabaseObjectDocument.DocumentNode.SelectNodes("//info[contains(@type,'Genres')]"),
                 StaffNodes = DatabaseObjectDocument.DocumentNode.SelectNodes("//staff/person");
@@ -48,15 +49,16 @@ namespace AnimeNewsNetwork
 
             return new DatabaseObject()
             {
-                Name = NameNode.InnerText,
+                Name = HtmlEntity.DeEntitize(NameNode.InnerText),
                 Covers = Covers,
-                AlternateNames = (AlternateNameNodes != null) ? (from HtmlNode InfoNode in AlternateNameNodes select InfoNode.InnerText).ToList() : new List<String>(),
-                Genres = (GenreNodes != null) ? (from HtmlNode InfoNode in GenreNodes select InfoNode.InnerText).ToList() : new List<String>(),
+                AlternateNames = (AlternateNameNodes != null) ? (from HtmlNode InfoNode in AlternateNameNodes select HtmlEntity.DeEntitize(InfoNode.InnerText.Trim())).ToList() : new List<String>(),
+                Genres = (GenreNodes != null) ? (from HtmlNode InfoNode in GenreNodes select HtmlEntity.DeEntitize(InfoNode.InnerText.Trim())).ToList() : new List<String>(),
                 Locations = { new LocationObject() { 
-                    ExtensionName = "AnimeNewsNetwork", 
+                    ExtensionName = IDEA.Name, 
                     Url = String.Format("{0}/encyclopedia/api.xml?manga={1}", IDEA.RootUrl, DatabaseObjectDocument.DocumentNode.SelectSingleNode("//manga[@id]").Attributes["id"].Value) } },
-                Staff = (StaffNodes != null) ? (from HtmlNode InfoNode in StaffNodes select InfoNode.InnerText).ToList() : new List<String>(),
-                Description = (DescriptionNode != null) ? DescriptionNode.InnerText : String.Empty
+                Staff = (StaffNodes != null) ? (from HtmlNode InfoNode in StaffNodes select HtmlEntity.DeEntitize(InfoNode.InnerText.Trim())).ToList() : new List<String>(),
+                Description = (DescriptionNode != null) ? HtmlEntity.DeEntitize(DescriptionNode.InnerText.Trim()) : String.Empty,
+                ReleaseYear = Int32.Parse(ReleaseNode.FirstChild.InnerText.Substring(0,4))
             };
         }
 

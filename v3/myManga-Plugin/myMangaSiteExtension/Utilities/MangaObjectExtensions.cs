@@ -148,6 +148,12 @@ namespace myMangaSiteExtension.Utilities
             foreach (String Cover in databaseObject.Covers)
                 if (Cover != null && !value.Covers.Any(o => o == Cover))
                     value.Covers.Insert(0, Cover);
+
+            // Released
+            if (value.Released.Equals(DateTime.MinValue))
+            {
+                value.Released = new DateTime(databaseObject.ReleaseYear, 1, 1);
+            }
         }
 
         public static void SortChapters(this MangaObject value)

@@ -79,6 +79,10 @@
       <Project>{58e9513e-d3cc-42e7-9eb7-7fcf222f6670}</Project>
       <Name>AnimeNewsNetwork</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\myManga-IDatabaseExtensions\MangaUpdatesBakaUpdates\MangaUpdatesBakaUpdates.csproj">
+      <Project>{490a4004-2340-414a-9f03-fefff81577ac}</Project>
+      <Name>MangaUpdatesBakaUpdates</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\myManga-ISiteExtensions\AFTV Network\AFTV Network.csproj">
       <Project>{e7af89e1-1359-4f5b-b2eb-a4613be7c6df}</Project>
       <Name>AFTV Network</Name>

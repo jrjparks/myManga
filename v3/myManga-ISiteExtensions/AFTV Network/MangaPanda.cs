@@ -78,7 +78,7 @@ namespace AFTV_Network
             String[] AlternateNames = MangaProperties.SelectSingleNode(".//tr[2]/td[2]").InnerText.Split(new String[] { ", " }, StringSplitOptions.RemoveEmptyEntries),
                 Authors = MangaProperties.SelectSingleNode(".//tr[5]/td[2]").InnerText.Split(new String[] { ", " }, StringSplitOptions.RemoveEmptyEntries),
                 Artists = MangaProperties.SelectSingleNode(".//tr[6]/td[2]").InnerText.Split(new String[] { ", " }, StringSplitOptions.RemoveEmptyEntries),
-                Genres = (from HtmlNode GenreNode in MangaProperties.SelectSingleNode(".//tr[8]/td[2]").SelectNodes(".//span[contains(@class,'genretags')]") select GenreNode.InnerText).ToArray();
+                Genres = (from HtmlNode GenreNode in MangaProperties.SelectSingleNode(".//tr[8]/td[2]").SelectNodes(".//span[contains(@class,'genretags')]") select HtmlEntity.DeEntitize(GenreNode.InnerText)).ToArray();
 
             ChapterObject[] Chapters = (from HtmlNode ChapterNode in ChapterListing.SelectNodes(".//tr[not(contains(@class,'table_head'))]")
                                         select new ChapterObject()
@@ -95,14 +95,14 @@ namespace AFTV_Network
 
             return new MangaObject()
             {
-                Name = Name,
+                Name = HtmlEntity.DeEntitize(Name),
                 MangaType = MangaType,
                 PageFlowDirection = PageFlowDirection,
-                Description = Desciption,
+                Description = HtmlEntity.DeEntitize(Desciption),
                 AlternateNames = AlternateNames.ToList(),
                 Covers = MangaCovers,
-                Authors = Authors.ToList(),
-                Artists = Artists.ToList(),
+                Authors = (from Author in Authors select HtmlEntity.DeEntitize(Author)).ToList(),
+                Artists = (from Artist in Artists select HtmlEntity.DeEntitize(Artist)).ToList(),
                 Genres = Genres.ToList(),
                 Released = DateTime.Parse(Release),
                 Chapters = Chapters.ToList()

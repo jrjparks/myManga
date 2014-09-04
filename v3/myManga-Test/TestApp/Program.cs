@@ -23,18 +23,24 @@ namespace TestApp
 
         static void Main(string[] args)
         {
-            SiteExtentions.Add("MangaReader", new AFTV_Network.MangaReader());
+            //SiteExtentions.Add("MangaReader", new AFTV_Network.MangaReader());
             SiteExtentions.Add("MangaPanda", new AFTV_Network.MangaPanda());
             SiteExtentions.Add("MangaHere", new MangaHere.MangaHere());
-            SiteExtentions.Add("Batoto", new Batoto.Batoto());
-            SiteExtentions.Add("Batoto-Spanish", new Batoto.Batoto_Spanish());
-            SiteExtentions.Add("Batoto-German", new Batoto.Batoto_German());
-            SiteExtentions.Add("Batoto-French", new Batoto.Batoto_French());
+            //SiteExtentions.Add("Batoto", new Batoto.Batoto());
+            //SiteExtentions.Add("Batoto-Spanish", new Batoto.Batoto_Spanish());
+            //SiteExtentions.Add("Batoto-German", new Batoto.Batoto_German());
+            //SiteExtentions.Add("Batoto-French", new Batoto.Batoto_French());
             DatabaseExtentions.Add("AnimeNewsNetwork", new AnimeNewsNetwork.AnimeNewsNetwork());
+            DatabaseExtentions.Add("MangaUpdatesBakaUpdates", new MangaUpdatesBakaUpdates.MangaUpdatesBakaUpdates());
             foreach (ISiteExtension ise in SiteExtentions.Values)
             {
                 ISiteExtensionDescriptionAttribute isea = ise.GetType().GetCustomAttribute<ISiteExtensionDescriptionAttribute>(false);
-                Console.WriteLine("Loaded {0}", isea.Name);
+                Console.WriteLine("Loaded Site Extention {0}", isea.Name);
+            }
+            foreach (IDatabaseExtension ise in DatabaseExtentions.Values)
+            {
+                IDatabaseExtensionDescriptionAttribute isea = ise.GetType().GetCustomAttribute<IDatabaseExtensionDescriptionAttribute>(false);
+                Console.WriteLine("Loaded Database Extention {0}", isea.Name);
             }
             Search();
         }
@@ -150,7 +156,7 @@ namespace TestApp
                             }
                             Console.WriteLine("Done!");
                         }
-                        catch
+                        catch (Exception ex)
                         {
                             Console.WriteLine("Timeout!");
                         }
@@ -174,12 +180,12 @@ namespace TestApp
                     int i = 0;
                     foreach (MangaObject SearchResult in SearchResults)
                     {
-                        Console.WriteLine(String.Format("[{0}]Name: {1}", i, SearchResult.Name));
+                        Console.WriteLine(String.Format("[{0}]Name: {1}", i++, SearchResult.Name));
                         Console.WriteLine(String.Format("\tUrl: {0}", String.Join("\n\t     ", (from LocationObject location in SearchResult.Locations select location.Url).ToArray())));
                         Console.WriteLine(String.Format("\tDatabase: {0}", String.Join("\n\t          ", (from LocationObject location in SearchResult.DatabaseLocations select location.Url).ToArray())));
                         Console.WriteLine(String.Format("\tCover Url: {0}", String.Join("\n\t           ", SearchResult.Covers)));
                         Console.WriteLine(String.Format("\tDescription: {0}", String.Join("\n\t           ", SearchResult.Description)));
-                        ++i;
+                        Console.WriteLine(String.Format("\tReleased: {0}", String.Join("\n\t           ", SearchResult.Released.ToLongDateString())));
                     }
                 }
                 Console.WriteLine();

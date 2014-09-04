@@ -35,6 +35,9 @@ namespace myMangaSiteExtension.Objects
         protected List<String> alternate_names;
 
         [NonSerialized, XmlIgnore, EditorBrowsable(EditorBrowsableState.Never)]
+        protected Int32 release_year;
+
+        [NonSerialized, XmlIgnore, EditorBrowsable(EditorBrowsableState.Never)]
         protected String description;
 
         [NonSerialized, XmlIgnore, EditorBrowsable(EditorBrowsableState.Never)]
@@ -71,6 +74,18 @@ namespace myMangaSiteExtension.Objects
             {
                 OnPropertyChanging();
                 alternate_names = value;
+                OnPropertyChanged();
+            }
+        }
+
+        [XmlAttribute]
+        public Int32 ReleaseYear
+        {
+            get { return release_year; }
+            set
+            {
+                OnPropertyChanging();
+                release_year = value;
                 OnPropertyChanged();
             }
         }

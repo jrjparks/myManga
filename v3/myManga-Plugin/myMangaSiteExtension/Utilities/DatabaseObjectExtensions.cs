@@ -16,6 +16,8 @@ namespace myMangaSiteExtension.Utilities
             DatabaseObject databaseObject = list.First();
             if (list.Count() > 1)
             {
+                databaseObject.ReleaseYear = (Int32)Math.Round((from DatabaseObject obj in list select obj.ReleaseYear).Average());
+
                 // Locations
                 foreach (List<LocationObject> Locations in (from DatabaseObject obj in list.Skip(1) where obj != null select obj.Locations))
                     foreach (LocationObject Location in Locations)

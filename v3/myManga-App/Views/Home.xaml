@@ -196,9 +196,9 @@
         </Grid>
         <Grid
             x:Name="MangaObjectDescription"
-            Visibility="Visible"
             Grid.Column="2" 
             DataContext="{Binding SelectedItem, ElementName=MangaList}">
+            <!--Visibility="{Binding TargetNullValue=Collapsed}"-->
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="3*"/>
                 <ColumnDefinition MinWidth="100" MaxWidth="300"/>
@@ -225,7 +225,7 @@
                         <ColumnDefinition Width="200"/>
                         <ColumnDefinition />
                     </Grid.ColumnDefinitions>
-                    <TextBlock Grid.ColumnSpan="2" Text="{Binding Name}" TextTrimming="WordEllipsis" FontWeight="Bold" FontSize="24"/>
+                    <TextBlock Grid.ColumnSpan="2" Text="{Binding Name}" ToolTip="{Binding Name}" TextTrimming="WordEllipsis" FontWeight="Bold" FontSize="24" Margin="32,0,0,0"/>
                     <Grid 
                         Grid.Row="1" 
                         Grid.RowSpan="8"
@@ -234,42 +234,43 @@
                     </Grid>
                     <StackPanel Grid.Row="1" Grid.Column="1">
                         <TextBlock Text="Alternate Titles:" FontWeight="Bold" Foreground="{DynamicResource text-muted}"/>
-                        <TextBlock Text="{Binding AlternateNames, Converter={StaticResource StringListToCSV}}" FontWeight="Bold" Foreground="{DynamicResource text-muted}" TextTrimming="CharacterEllipsis"/>
+                        <TextBlock Text="{Binding AlternateNames, Converter={StaticResource StringListToCSV}}" ToolTip="{Binding AlternateNames, Converter={StaticResource StringListToCSV}}" FontWeight="Bold" Foreground="{DynamicResource text-muted}" TextTrimming="CharacterEllipsis"/>
                     </StackPanel>
                     <StackPanel Grid.Row="2" Grid.Column="1">
                         <TextBlock Text="Released:" FontWeight="Bold" Foreground="{DynamicResource text-muted}"/>
-                        <TextBlock Text="{Binding Released, StringFormat=yyyy}" FontWeight="Bold" Foreground="{DynamicResource text-muted}"/>
+                        <TextBlock Text="{Binding Released, StringFormat=yyyy}" ToolTip="{Binding Released, StringFormat=yyyy}" FontWeight="Bold" Foreground="{DynamicResource text-muted}"/>
                     </StackPanel>
                     <StackPanel Grid.Row="3" Grid.Column="1">
                         <TextBlock Text="Type:" FontWeight="Bold" Foreground="{DynamicResource text-muted}"/>
-                        <TextBlock Text="{Binding MangaType, StringFormat={}{0}}" FontWeight="Bold" Foreground="{DynamicResource text-muted}"/>
+                        <TextBlock Text="{Binding MangaType, StringFormat={}{0}}" ToolTip="{Binding MangaType, StringFormat={}{0}}" FontWeight="Bold" Foreground="{DynamicResource text-muted}"/>
                     </StackPanel>
                     <StackPanel Grid.Row="4" Grid.Column="1">
                         <TextBlock Text="Authors:" FontWeight="Bold" Foreground="{DynamicResource text-muted}"/>
-                        <TextBlock Text="{Binding Authors, Converter={StaticResource StringListToCSV}}" FontWeight="Bold" Foreground="{DynamicResource text-muted}" TextTrimming="CharacterEllipsis"/>
+                        <TextBlock Text="{Binding Authors, Converter={StaticResource StringListToCSV}}" ToolTip="{Binding Authors, Converter={StaticResource StringListToCSV}}" FontWeight="Bold" Foreground="{DynamicResource text-muted}" TextTrimming="CharacterEllipsis"/>
                     </StackPanel>
                     <StackPanel Grid.Row="5" Grid.Column="1">
                         <TextBlock Text="Artists:" FontWeight="Bold" Foreground="{DynamicResource text-muted}"/>
-                        <TextBlock Text="{Binding Authors, Converter={StaticResource StringListToCSV}}" FontWeight="Bold" Foreground="{DynamicResource text-muted}" TextTrimming="CharacterEllipsis"/>
+                        <TextBlock Text="{Binding Authors, Converter={StaticResource StringListToCSV}}" ToolTip="{Binding Authors, Converter={StaticResource StringListToCSV}}" FontWeight="Bold" Foreground="{DynamicResource text-muted}" TextTrimming="CharacterEllipsis"/>
                     </StackPanel>
                     <StackPanel Grid.Row="6" Grid.Column="1">
                         <TextBlock Text="Genres:" FontWeight="Bold" Foreground="{DynamicResource text-muted}"/>
-                        <TextBlock Text="{Binding Genres, Converter={StaticResource StringListToCSV}}" FontWeight="Bold" Foreground="{DynamicResource text-muted}" TextTrimming="CharacterEllipsis"/>
+                        <TextBlock Text="{Binding Genres, Converter={StaticResource StringListToCSV}}" ToolTip="{Binding Genres, Converter={StaticResource StringListToCSV}}" FontWeight="Bold" Foreground="{DynamicResource text-muted}" TextTrimming="CharacterEllipsis"/>
                     </StackPanel>
-                    <StackPanel Grid.Row="7" Grid.Column="1">
+                    <StackPanel Grid.Row="7" Grid.Column="1" Grid.RowSpan="2">
                         <TextBlock Text="Sites:" FontWeight="Bold" Foreground="{DynamicResource text-muted}"/>
-                        <TextBlock Text="{Binding Locations, Converter={StaticResource LocationListToCSV}}" FontWeight="Bold" Foreground="{DynamicResource text-muted}" TextTrimming="CharacterEllipsis"/>
-                        <TextBlock Text="{Binding DatabaseLocations, Converter={StaticResource LocationListToCSV}}" FontWeight="Bold" Foreground="{DynamicResource text-muted}" TextTrimming="CharacterEllipsis"/>
+                        <TextBlock Text="{Binding Locations, Converter={StaticResource LocationListToCSV}}" ToolTip="{Binding Locations, Converter={StaticResource LocationListToCSV}}" FontWeight="Bold" Foreground="{DynamicResource text-muted}" TextTrimming="CharacterEllipsis"/>
+                        <TextBlock Text="{Binding DatabaseLocations, Converter={StaticResource LocationListToCSV}}" ToolTip="{Binding DatabaseLocations, Converter={StaticResource LocationListToCSV}}" FontWeight="Bold" Foreground="{DynamicResource text-muted}" TextTrimming="CharacterEllipsis"/>
                     </StackPanel>
                 </Grid>
                 <Grid Grid.Row="1"></Grid>
-                <Grid Grid.Row="2">
+                <ScrollViewer Grid.Row="2">
                     <TextBlock 
                         Text="{Binding Description}"
                         TextWrapping="WrapWithOverflow"
-                        TextTrimming="WordEllipsis"
-                        FontSize="16"/>
-                </Grid>
+                        TextTrimming="CharacterEllipsis"
+                        FontSize="16"
+                        MinHeight="100"/>
+                </ScrollViewer>
             </Grid>
             <ListBox 
                 Grid.Column="1"
@@ -286,6 +287,6 @@
             Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"
             Grid.Column="2" 
             HorizontalAlignment="Left" 
-            VerticalAlignment="Bottom"/>
+            VerticalAlignment="Top"/>
     </Grid>
 </UserControl>

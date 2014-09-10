@@ -79,7 +79,7 @@ namespace MangaUpdatesBakaUpdates
                 DatabaseObjectDocument.LoadHtml(content);
                 HtmlWeb HtmlWeb = new HtmlWeb();
                 HtmlNode TableSeriesNode = DatabaseObjectDocument.DocumentNode.SelectSingleNode("//table[contains(@class,'series_rows_table')]");
-                return (from HtmlNode MangaNode in TableSeriesNode.SelectNodes(".//tr").Skip(2).Take(PageCount) where MangaNode.SelectSingleNode(".//td[1]/a") != null select ParseDatabaseObject(HtmlWeb.Load(MangaNode.SelectSingleNode(".//td[1]/a").Attributes["href"].Value).DocumentNode.OuterHtml)).ToList();
+                return (from HtmlNode MangaNode in TableSeriesNode.SelectNodes(".//tr[not(@valign='top')]").Skip(2).Take(PageCount) where MangaNode.SelectSingleNode(".//td[1]/a") != null select ParseDatabaseObject(HtmlWeb.Load(MangaNode.SelectSingleNode(".//td[1]/a").Attributes["href"].Value).DocumentNode.OuterHtml)).ToList();
             }
             return new List<DatabaseObject>();
         }

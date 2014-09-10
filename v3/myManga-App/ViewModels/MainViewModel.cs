@@ -75,6 +75,9 @@ namespace myManga_App.ViewModels
                 Singleton<SmartSearch>.Instance.Concurrency;
         }
 
-        public void Dispose() { App.SiteExtensions.Unload(); }
+        public void Dispose()
+        {
+            App.SiteExtensions.Unload();
+        }
     }
 }

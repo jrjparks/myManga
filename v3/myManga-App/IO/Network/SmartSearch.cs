@@ -138,7 +138,7 @@ namespace myManga_App.IO.Network
                 }
             }
             catch (Exception ex)
-            { System.Windows.MessageBox.Show(String.Format("MESSAGE:\n{0}\n\nSOURCE:\n{1}", ex.Message, ex.Source), "SmartSearch had a headache"); }
+            { System.Windows.MessageBox.Show(String.Format("MESSAGE:\n{0}\n\nSOURCE:\n{1}\n\nSTACK TRACE:\n{2}", ex.Message, ex.Source, ex.StackTrace), "SmartSearch had a headache"); }
             finally
             {
                 SearchWig.Cancel(true);

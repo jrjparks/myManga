@@ -3,11 +3,14 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:ViewModels="clr-namespace:myManga_App.ViewModels"
     xmlns:Views="clr-namespace:myManga_App.Views">
-
+    
     <DataTemplate DataType="{x:Type ViewModels:HomeViewModel}">
-        <Views:Home/>
+        <Views:HomeView/>
     </DataTemplate>
     <DataTemplate DataType="{x:Type ViewModels:SettingsViewModel}">
-        <Views:Settings/>
+        <Views:SettingsView/>
+    </DataTemplate>
+    <DataTemplate DataType="{x:Type ViewModels:SearchViewModel}">
+        <Views:SearchView/>
     </DataTemplate>
 </ResourceDictionary>

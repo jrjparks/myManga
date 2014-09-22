@@ -28,6 +28,15 @@ namespace myManga_App.IO.Network
             synchronizationContext = SynchronizationContext.Current;
         }
 
+        protected Stream GetRawContent(String url, String referer = null)
+        {
+            HttpWebRequest request = WebRequest.Create(url) as HttpWebRequest;
+            request.Referer = referer ?? request.Host;
+            request.Method = "GET";
+            request.AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip;
+            return GetResponse(request);
+        }
+
         protected String GetHtmlContent(String url, String referer = null)
         {
             HttpWebRequest request = WebRequest.Create(url) as HttpWebRequest;
@@ -37,25 +46,31 @@ namespace myManga_App.IO.Network
             return GetResponseString(request);
         }
 
-        protected String GetResponseString(HttpWebRequest request)
+        protected Stream GetResponse(HttpWebRequest request)
         {
-            String content = null;
+            Stream content = null;
             try
             {
                 using (HttpWebResponse response = request.GetResponse() as HttpWebResponse)
                 {
-                    using (StreamReader streamReader = new StreamReader(response.GetResponseStream()))
-                    { content = streamReader.ReadToEnd(); }
+                    response.GetResponseStream().CopyTo(content);
                 }
             }
             catch (WebException webEx)
             {
                 using (HttpWebResponse response = webEx.Response as HttpWebResponse)
                 {
-                    using (StreamReader streamReader = new StreamReader(response.GetResponseStream()))
-                    { content = streamReader.ReadToEnd(); }
+                    response.GetResponseStream().CopyTo(content);
                 }
             }
+            return content;
+        }
+
+        protected String GetResponseString(HttpWebRequest request)
+        {
+            String content = null;
+            using (StreamReader streamReader = new StreamReader(GetResponse(request)))
+            { content = streamReader.ReadToEnd(); }
             return System.Web.HttpUtility.HtmlDecode(content);
         }
     }

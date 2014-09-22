@@ -18,9 +18,9 @@ namespace myManga_App.Views
     /// <summary>
     /// Interaction logic for Settings.xaml
     /// </summary>
-    public partial class Settings : UserControl
+    public partial class SettingsView : UserControl
     {
-        public Settings()
+        public SettingsView()
         {
             InitializeComponent();
         }

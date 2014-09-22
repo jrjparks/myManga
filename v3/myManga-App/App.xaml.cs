@@ -39,22 +39,25 @@ namespace myManga_App
             PLUGIN_DIRECTORY = Path.Combine(Environment.CurrentDirectory, "Plugins").SafeFolder(),
             MANGA_ARCHIVE_DIRECTORY = Path.Combine(Environment.CurrentDirectory, "Manga Archives").SafeFolder(),
             CHAPTER_ARCHIVE_DIRECTORY = Path.Combine(Environment.CurrentDirectory, "Chapter Archives").SafeFolder(),
-            MANGA_ARCHIVE_EXTENSION = "ma",
-            CHAPTER_ARCHIVE_EXTENSION = "ca",
-            MANGA_ARCHIVE_FILTER = "*.ma",
-            CHAPTER_ARCHIVE_FILTER = "*.ca",
+            MANGA_ARCHIVE_EXTENSION = "ma.zip",
+            CHAPTER_ARCHIVE_EXTENSION = "ca.zip",
+            MANGA_ARCHIVE_FILTER = "*.ma.zip",
+            CHAPTER_ARCHIVE_FILTER = "*.ca.zip",
             USER_CONFIG_FILENAME = "mymanga.conf",
             USER_CONFIG_PATH = Path.Combine(Environment.CurrentDirectory, "mymanga.conf");
 
         public App()
         {
+            // Load Embedded DLLs from Resources.
             emdll = new EmbeddedDLL("Resources.DLL");
-
-            mangaObjectArchiveWatcher = new FileSystemWatcher(MANGA_ARCHIVE_DIRECTORY, MANGA_ARCHIVE_FILTER);
-            mangaObjectArchiveWatcher.EnableRaisingEvents = true;
 
             userConfig = LoadUserConfig();
 
+            // Create a File System Watcher for Manga Objects
+            mangaObjectArchiveWatcher = new FileSystemWatcher(MANGA_ARCHIVE_DIRECTORY, MANGA_ARCHIVE_FILTER);
+            mangaObjectArchiveWatcher.EnableRaisingEvents = true;
+
+            // Create a File System Watcher for Manga Chapter Objects
             chapterObjectArchiveWatcher = new FileSystemWatcher(CHAPTER_ARCHIVE_DIRECTORY, CHAPTER_ARCHIVE_FILTER);
             chapterObjectArchiveWatcher.IncludeSubdirectories = true;
             chapterObjectArchiveWatcher.EnableRaisingEvents = true;

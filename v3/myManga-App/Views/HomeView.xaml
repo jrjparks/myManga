@@ -1,5 +1,5 @@
 ﻿<UserControl x:Name="userControl"
-    x:Class="myManga_App.Views.Home"
+    x:Class="myManga_App.Views.HomeView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -194,11 +194,15 @@
                 ContentStringFormat="{}{0} Refresh"
                 Command="{Binding RefreshListCommand}"/>
         </Grid>
+        <Image
+            Grid.Column="2"
+            Source="/myManga;component/Resources/Icon.ico"/>
         <Grid
             x:Name="MangaObjectDescription"
             Grid.Column="2" 
-            DataContext="{Binding SelectedItem, ElementName=MangaList}">
-            <!--Visibility="{Binding TargetNullValue=Collapsed}"-->
+            DataContext="{Binding SelectedItem, ElementName=MangaList}"
+            Visibility="{Binding TargetNullValue=Collapsed}"
+            Background="{DynamicResource window-background}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="3*"/>
                 <ColumnDefinition MinWidth="100" MaxWidth="300"/>

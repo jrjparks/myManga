@@ -1,0 +1,112 @@
+﻿<UserControl 
+    x:Class="myManga_App.Views.SettingsView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+    xmlns:button="clr-namespace:myManga_App.Resources.Theme.Buttons"
+    mc:Ignorable="d" 
+    d:DesignHeight="400"
+    d:DesignWidth="600" >
+    <Grid Background="{DynamicResource window-background}">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition MinWidth="100" MaxWidth="300"/>
+            <ColumnDefinition Width="15"/>
+            <ColumnDefinition Width="3*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <TreeView
+            Background="{x:Null}"
+            Grid.RowSpan="2">
+            <TreeView.Items>
+                <TreeViewItem Header="General">
+                    <TreeViewItem Header="Plugins"/>
+                    <TreeViewItem Header="Storage"/>
+                </TreeViewItem>
+            </TreeView.Items>
+        </TreeView>
+        <Grid Grid.Column="2">
+            <StackPanel>
+                <TextBlock Text="Site Extentions"/>
+                <ListBox
+                    Background="{x:Null}"
+                    ItemsSource="{Binding SiteExtentionInformationObjects}"
+                    HorizontalContentAlignment="Stretch">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <Grid>
+                                <StackPanel Orientation="Horizontal">
+                                    <CheckBox IsChecked="{Binding Enabled, Mode=TwoWay}"/>
+                                    <TextBlock Text="{Binding Name}"/>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                    <Button 
+                                        FontFamily="{DynamicResource FontAwesome}" 
+                                        Content="{DynamicResource fa-arrow-up}"
+                                        Margin="1,0"
+                                        Command="{Binding Path=DataContext.MoveUpCommand, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ItemsControl}}}"
+                                        CommandParameter="{Binding Path=Name, StringFormat={}Site:{0}}"/>
+                                    <Button
+                                        FontFamily="{DynamicResource FontAwesome}" 
+                                        Content="{DynamicResource fa-arrow-down}"
+                                        Margin="1,0"
+                                        Command="{Binding Path=DataContext.MoveDownCommand, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ItemsControl}}}"
+                                        CommandParameter="{Binding Path=Name, StringFormat={}Site:{0}}"/>
+                                </StackPanel>
+                            </Grid>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+                <TextBlock Text="Database Extentions"/>
+                <ListBox
+                    Background="{x:Null}"
+                    ItemsSource="{Binding DatabaseExtensionInformationObjects}"
+                    HorizontalContentAlignment="Stretch">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <Grid>
+                                <StackPanel Orientation="Horizontal">
+                                    <CheckBox IsChecked="{Binding Enabled, Mode=TwoWay}"/>
+                                    <TextBlock Text="{Binding Name}"/>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                    <Button 
+                                        FontFamily="{DynamicResource FontAwesome}" 
+                                        Content="{DynamicResource fa-arrow-up}"
+                                        Margin="1,0"
+                                        Command="{Binding Path=DataContext.MoveUpCommand, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ItemsControl}}}"
+                                        CommandParameter="{Binding Path=Name, StringFormat={}Database:{0}}"/>
+                                    <Button
+                                        FontFamily="{DynamicResource FontAwesome}" 
+                                        Content="{DynamicResource fa-arrow-down}"
+                                        Margin="1,0"
+                                        Command="{Binding Path=DataContext.MoveDownCommand, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ItemsControl}}}"
+                                        CommandParameter="{Binding Path=Name, StringFormat={}Database:{0}}"/>
+                                </StackPanel>
+                            </Grid>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </StackPanel>
+        </Grid>
+        <StackPanel
+            HorizontalAlignment="Right"
+            Grid.Column="2"
+            Grid.Row="1"
+            Orientation="Horizontal"
+            TextElement.FontSize="20"
+            TextElement.FontFamily="{DynamicResource FontAwesome}">
+            <button:MetroButton                
+                Content="{StaticResource fa-save}"
+                ContentStringFormat="{}{0} Save"
+                Command="{Binding SaveCommand}"/>
+            <button:MetroButton
+                Content="{StaticResource fa-times}"
+                ContentStringFormat="{}{0} Close"
+                Command="{Binding CloseCommand}"/>
+        </StackPanel>
+    </Grid>
+</UserControl>

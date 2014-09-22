@@ -75,6 +75,89 @@ namespace myManga_App.ViewModels
             if (CloseEvent != null)
                 CloseEvent(this, null);
         }
+        
+        // Extention List Movements
+        protected DelegateCommand<String> moveUpCommand;
+        public ICommand MoveUpCommand
+        { get { return moveUpCommand ?? (moveUpCommand = new DelegateCommand<String>(MoveElementUpCommand, CanMoveUpCommand)); } }
+
+        protected Boolean CanMoveUpCommand(String content)
+        {
+            String[] ButtonArgs = content.Split(':');
+            Int32 index = 0;
+            switch (ButtonArgs[0])
+            {
+                case "Site":
+                    index = SiteExtentionInformationObjects.FindIndex(_seio => _seio.Name == ButtonArgs[1]);
+                    break;
+                case "Database":
+                    index = DatabaseExtensionInformationObjects.FindIndex(_deio => _deio.Name == ButtonArgs[1]);
+                    break;
+            }
+            return index > 0;
+        }
+
+        protected void MoveElementUpCommand(String content)
+        {
+            String[] ButtonArgs = content.Split(':');
+            Int32 index = 0;
+            switch (ButtonArgs[0])
+            {
+                case "Site":
+                    index = SiteExtentionInformationObjects.FindIndex(_seio => _seio.Name == ButtonArgs[1]);
+                    SiteExtentionInformationObject seio = SiteExtentionInformationObjects[index];
+                    SiteExtentionInformationObjects.RemoveAt(index);
+                    SiteExtentionInformationObjects.Insert(index - 1, seio);
+                    break;
+                case "Database":
+                    index = DatabaseExtensionInformationObjects.FindIndex(_deio => _deio.Name == ButtonArgs[1]);
+                    DatabaseExtensionInformationObject deio = DatabaseExtensionInformationObjects[index];
+                    DatabaseExtensionInformationObjects.RemoveAt(index);
+                    DatabaseExtensionInformationObjects.Insert(index - 1, deio);
+                    break;
+            }
+        }
+
+        protected DelegateCommand<String> moveDownCommand;
+        public ICommand MoveDownCommand
+        { get { return moveDownCommand ?? (moveDownCommand = new DelegateCommand<String>(MoveElementDownCommand, CanMoveDownCommand)); } }
+
+        protected Boolean CanMoveDownCommand(String content)
+        {
+            String[] ButtonArgs = content.Split(':');
+            Int32 index = 0;
+            switch (ButtonArgs[0])
+            {
+                case "Site":
+                    index = SiteExtentionInformationObjects.FindIndex(_seio => _seio.Name == ButtonArgs[1]);
+                    return index < SiteExtentionInformationObjects.Count;
+                case "Database":
+                    index = DatabaseExtensionInformationObjects.FindIndex(_deio => _deio.Name == ButtonArgs[1]);
+                    return index < DatabaseExtensionInformationObjects.Count;
+            }
+            return false;
+        }
+
+        protected void MoveElementDownCommand(String content)
+        {
+            String[] ButtonArgs = content.Split(':');
+            Int32 index = 0;
+            switch (ButtonArgs[0])
+            {
+                case "Site":
+                    index = SiteExtentionInformationObjects.FindIndex(_seio => _seio.Name == ButtonArgs[1]);
+                    SiteExtentionInformationObject seio = SiteExtentionInformationObjects[index];
+                    SiteExtentionInformationObjects.RemoveAt(index);
+                    SiteExtentionInformationObjects.Insert(index + 1, seio);
+                    break;
+                case "Database":
+                    index = DatabaseExtensionInformationObjects.FindIndex(_deio => _deio.Name == ButtonArgs[1]);
+                    DatabaseExtensionInformationObject deio = DatabaseExtensionInformationObjects[index];
+                    DatabaseExtensionInformationObjects.RemoveAt(index);
+                    DatabaseExtensionInformationObjects.Insert(index + 1, deio);
+                    break;
+            }
+        }
         #endregion
 
         protected App App = App.Current as App;

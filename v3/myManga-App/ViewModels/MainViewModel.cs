@@ -32,6 +32,10 @@ namespace myManga_App.ViewModels
         private SettingsViewModel settingsViewModel;
         public SettingsViewModel SettingsViewModel
         { get { return settingsViewModel ?? (settingsViewModel = new SettingsViewModel()); } }
+
+        private SearchViewModel searchViewModel;
+        public SearchViewModel SearchViewModel
+        { get { return searchViewModel ?? (searchViewModel = new SearchViewModel()); } }
         #endregion
 
         #region Header Buttons
@@ -68,6 +72,10 @@ namespace myManga_App.ViewModels
         {
             ContentViewModel = HomeViewModel;
             SettingsViewModel.CloseEvent += (s, e) => ContentViewModel = HomeViewModel;
+            HomeViewModel.SearchEvent += (s, e) => { 
+                ContentViewModel = SearchViewModel;
+                SearchViewModel.StartSearch(e);
+            };
 
             ServicePointManager.DefaultConnectionLimit =
                 Singleton<SmartMangaDownloader>.Instance.Concurrency +

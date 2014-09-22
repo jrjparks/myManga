@@ -11,5 +11,8 @@
     <Setting Name="WindowHeight" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">480</Value>
     </Setting>
+    <Setting Name="SaveType" Type="Core.IO.SaveType" Scope="User">
+      <Value Profile="(Default)">XML</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

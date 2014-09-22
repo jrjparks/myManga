@@ -115,6 +115,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Converters\CommandParameterStringFormat.cs" />
     <Compile Include="Converters\LocationListToCSV.cs" />
     <Compile Include="Converters\StringArrayToCSV.cs" />
     <Compile Include="IO\AccessPriority.cs" />

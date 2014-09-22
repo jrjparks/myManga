@@ -58,5 +58,17 @@ namespace myManga_App.Properties {
                 this["WindowHeight"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("XML")]
+        public global::Core.IO.SaveType SaveType {
+            get {
+                return ((global::Core.IO.SaveType)(this["SaveType"]));
+            }
+            set {
+                this["SaveType"] = value;
+            }
+        }
     }
 }

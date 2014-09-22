@@ -96,6 +96,13 @@ namespace myManga_App.ViewModels
         #endregion
 
         #region SearchSites
+        public event EventHandler<String> SearchEvent;
+        protected void OnSearchEvent(String search_content)
+        {
+            if (SearchEvent != null)
+                SearchEvent(this, search_content);
+        }
+
         protected DelegateCommand searchSitesCommand;
         public ICommand SearchSiteCommand
         { get { return searchSitesCommand ?? (searchSitesCommand = new DelegateCommand(SearchSites, CanSearchSite)); } }
@@ -105,6 +112,7 @@ namespace myManga_App.ViewModels
 
         protected void SearchSites()
         {
+            OnSearchEvent(SearchFilter.Trim());
             IsLoading = true;
             Singleton<myManga_App.IO.Network.SmartSearch>.Instance.SearchManga(SearchFilter.Trim());
         }

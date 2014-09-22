@@ -46,15 +46,15 @@ namespace myManga_App.ViewModels
         #endregion
 
         #region PluginList
-        private List<SiteExtentionInformationObject> _SiteExtentionInformationObjects;
-        public List<SiteExtentionInformationObject> SiteExtentionInformationObjects
+        private ObservableCollection<SiteExtentionInformationObject> _SiteExtentionInformationObjects;
+        public ObservableCollection<SiteExtentionInformationObject> SiteExtentionInformationObjects
         {
             get { return _SiteExtentionInformationObjects; }
             set { _SiteExtentionInformationObjects = value; OnPropertyChanged("SiteExtentionInformationObjects"); }
         }
 
-        private List<DatabaseExtensionInformationObject> _DatabaseExtensionInformationObjects;
-        public List<DatabaseExtensionInformationObject> DatabaseExtensionInformationObjects
+        private ObservableCollection<DatabaseExtensionInformationObject> _DatabaseExtensionInformationObjects;
+        public ObservableCollection<DatabaseExtensionInformationObject> DatabaseExtensionInformationObjects
         {
             get { return _DatabaseExtensionInformationObjects; }
             set { _DatabaseExtensionInformationObjects = value; OnPropertyChanged("DatabaseExtensionInformationObjects"); }
@@ -75,8 +75,8 @@ namespace myManga_App.ViewModels
             if (CloseEvent != null)
                 CloseEvent(this, null);
         }
-        
-        // Extention List Movements
+
+        #region Extention List Movements
         protected DelegateCommand<String> moveUpCommand;
         public ICommand MoveUpCommand
         { get { return moveUpCommand ?? (moveUpCommand = new DelegateCommand<String>(MoveElementUpCommand, CanMoveUpCommand)); } }
@@ -85,13 +85,16 @@ namespace myManga_App.ViewModels
         {
             String[] ButtonArgs = content.Split(':');
             Int32 index = 0;
+            Object obj;
             switch (ButtonArgs[0])
             {
                 case "Site":
-                    index = SiteExtentionInformationObjects.FindIndex(_seio => _seio.Name == ButtonArgs[1]);
+                    obj = SiteExtentionInformationObjects.First(_seio => _seio.Name == ButtonArgs[1]);
+                    index = SiteExtentionInformationObjects.IndexOf(obj as SiteExtentionInformationObject);
                     break;
                 case "Database":
-                    index = DatabaseExtensionInformationObjects.FindIndex(_deio => _deio.Name == ButtonArgs[1]);
+                    obj = DatabaseExtensionInformationObjects.First(_deio => _deio.Name == ButtonArgs[1]);
+                    index = DatabaseExtensionInformationObjects.IndexOf(obj as DatabaseExtensionInformationObject);
                     break;
             }
             return index > 0;
@@ -101,19 +104,24 @@ namespace myManga_App.ViewModels
         {
             String[] ButtonArgs = content.Split(':');
             Int32 index = 0;
+            Object obj;
             switch (ButtonArgs[0])
             {
                 case "Site":
-                    index = SiteExtentionInformationObjects.FindIndex(_seio => _seio.Name == ButtonArgs[1]);
+                    obj = SiteExtentionInformationObjects.First(_seio => _seio.Name == ButtonArgs[1]);
+                    index = SiteExtentionInformationObjects.IndexOf(obj as SiteExtentionInformationObject);
                     SiteExtentionInformationObject seio = SiteExtentionInformationObjects[index];
                     SiteExtentionInformationObjects.RemoveAt(index);
                     SiteExtentionInformationObjects.Insert(index - 1, seio);
+                    OnPropertyChanged("SiteExtentionInformationObjects");
                     break;
                 case "Database":
-                    index = DatabaseExtensionInformationObjects.FindIndex(_deio => _deio.Name == ButtonArgs[1]);
+                    obj = DatabaseExtensionInformationObjects.First(_deio => _deio.Name == ButtonArgs[1]);
+                    index = DatabaseExtensionInformationObjects.IndexOf(obj as DatabaseExtensionInformationObject);
                     DatabaseExtensionInformationObject deio = DatabaseExtensionInformationObjects[index];
                     DatabaseExtensionInformationObjects.RemoveAt(index);
                     DatabaseExtensionInformationObjects.Insert(index - 1, deio);
+                    OnPropertyChanged("DatabaseExtensionInformationObjects");
                     break;
             }
         }
@@ -126,14 +134,17 @@ namespace myManga_App.ViewModels
         {
             String[] ButtonArgs = content.Split(':');
             Int32 index = 0;
+            Object obj;
             switch (ButtonArgs[0])
             {
                 case "Site":
-                    index = SiteExtentionInformationObjects.FindIndex(_seio => _seio.Name == ButtonArgs[1]);
-                    return index < SiteExtentionInformationObjects.Count;
+                    obj = SiteExtentionInformationObjects.First(_seio => _seio.Name == ButtonArgs[1]);
+                    index = SiteExtentionInformationObjects.IndexOf(obj as SiteExtentionInformationObject);
+                    return index < SiteExtentionInformationObjects.Count - 1;
                 case "Database":
-                    index = DatabaseExtensionInformationObjects.FindIndex(_deio => _deio.Name == ButtonArgs[1]);
-                    return index < DatabaseExtensionInformationObjects.Count;
+                    obj = DatabaseExtensionInformationObjects.First(_deio => _deio.Name == ButtonArgs[1]);
+                    index = DatabaseExtensionInformationObjects.IndexOf(obj as DatabaseExtensionInformationObject);
+                    return index < DatabaseExtensionInformationObjects.Count - 1;
             }
             return false;
         }
@@ -142,35 +153,41 @@ namespace myManga_App.ViewModels
         {
             String[] ButtonArgs = content.Split(':');
             Int32 index = 0;
+            Object obj;
             switch (ButtonArgs[0])
             {
                 case "Site":
-                    index = SiteExtentionInformationObjects.FindIndex(_seio => _seio.Name == ButtonArgs[1]);
+                    obj = SiteExtentionInformationObjects.First(_seio => _seio.Name == ButtonArgs[1]);
+                    index = SiteExtentionInformationObjects.IndexOf(obj as SiteExtentionInformationObject);
                     SiteExtentionInformationObject seio = SiteExtentionInformationObjects[index];
                     SiteExtentionInformationObjects.RemoveAt(index);
                     SiteExtentionInformationObjects.Insert(index + 1, seio);
+                    OnPropertyChanged("SiteExtentionInformationObjects");
                     break;
                 case "Database":
-                    index = DatabaseExtensionInformationObjects.FindIndex(_deio => _deio.Name == ButtonArgs[1]);
+                    obj = DatabaseExtensionInformationObjects.First(_deio => _deio.Name == ButtonArgs[1]);
+                    index = DatabaseExtensionInformationObjects.IndexOf(obj as DatabaseExtensionInformationObject);
                     DatabaseExtensionInformationObject deio = DatabaseExtensionInformationObjects[index];
                     DatabaseExtensionInformationObjects.RemoveAt(index);
                     DatabaseExtensionInformationObjects.Insert(index + 1, deio);
+                    OnPropertyChanged("DatabaseExtensionInformationObjects");
                     break;
             }
         }
+        #endregion
         #endregion
 
         protected App App = App.Current as App;
 
         public SettingsViewModel()
         {
-            SiteExtentionInformationObjects = new List<SiteExtentionInformationObject>(App.SiteExtensions.DLLCollection.Count);
+            SiteExtentionInformationObjects = new ObservableCollection<SiteExtentionInformationObject>();
             foreach (ISiteExtension ise in App.SiteExtensions.DLLCollection)
             {
                 ISiteExtensionDescriptionAttribute iseda = ise.GetType().GetCustomAttribute<ISiteExtensionDescriptionAttribute>(false);
                 SiteExtentionInformationObjects.Add(new SiteExtentionInformationObject(iseda) { Enabled = App.UserConfig.EnabledSiteExtentions.Contains(iseda.Name) });
             }
-            DatabaseExtensionInformationObjects = new List<DatabaseExtensionInformationObject>(App.DatabaseExtensions.DLLCollection.Count);
+            DatabaseExtensionInformationObjects = new ObservableCollection<DatabaseExtensionInformationObject>();
             foreach (IDatabaseExtension ide in App.DatabaseExtensions.DLLCollection)
             {
                 IDatabaseExtensionDescriptionAttribute ideda = ide.GetType().GetCustomAttribute<IDatabaseExtensionDescriptionAttribute>(false);

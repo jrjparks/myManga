@@ -6,6 +6,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using System.Xml.Serialization;
 using Core.IO;
+using System.Windows;
 
 namespace myManga_App.Objects
 {
@@ -27,6 +28,44 @@ namespace myManga_App.Objects
                 PropertyChanged(this, new PropertyChangedEventArgs(caller));
         }
         #endregion
+
+        [XmlIgnore]
+        private WindowState windowState;
+        [XmlElement]
+        public WindowState WindowState
+        {
+            get
+            {
+                if (windowState == null)
+                    windowState = WindowState.Normal;
+                return windowState;
+            }
+            set
+            {
+                OnPropertyChanging();
+                windowState = value;
+                OnPropertyChanged();
+            }
+        }
+
+        [XmlIgnore]
+        private Size windowSize;
+        [XmlElement]
+        public Size WindowSize
+        {
+            get
+            {
+                if (windowSize == null)
+                    windowSize = new Size(640, 480);
+                return windowSize;
+            }
+            set
+            {
+                OnPropertyChanging();
+                windowSize = value;
+                OnPropertyChanged();
+            }
+        }
 
         [XmlIgnore]
         private List<String> enabledSiteExtentions;

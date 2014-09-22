@@ -80,7 +80,7 @@ namespace myManga_App
         }
 
         private void Default_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-        { Settings.Default.Save(); }
+        { Settings.Default.Save(); SaveUserConfig(); }
 
         private UserConfigurationObject LoadUserConfig()
         {
@@ -89,12 +89,17 @@ namespace myManga_App
                 config = config.LoadObject(USER_CONFIG_PATH, SaveType.XML);
             else
                 config.SaveObject(USER_CONFIG_PATH, SaveType.XML);
+            Settings.Default.WindowWidth = (Int32)config.WindowSize.Width;
+            Settings.Default.WindowHeight = (Int32)config.WindowSize.Height;
+            Settings.Default.WindowState = config.WindowState;
             return config;
         }
 
         public void SaveUserConfig()
         {
             String configPath = PathSafety.SafeFileName(USER_CONFIG_FILENAME);
+            UserConfig.WindowSize = new Size(Settings.Default.WindowWidth, Settings.Default.WindowHeight);
+            UserConfig.WindowState = Settings.Default.WindowState;
             UserConfig.SaveObject(configPath, SaveType.XML);
         }
     }

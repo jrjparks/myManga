@@ -22,6 +22,7 @@ using myMangaSiteExtension.Attributes;
 using myMangaSiteExtension.Interfaces;
 using myMangaSiteExtension.Objects;
 using myMangaSiteExtension.Utilities;
+using myManga_App.Properties;
 
 namespace myManga_App.ViewModels
 {
@@ -149,7 +150,7 @@ namespace myManga_App.ViewModels
             if (App.Dispatcher.Thread == Thread.CurrentThread)
             {
                 String save_path = Path.Combine(App.MANGA_ARCHIVE_DIRECTORY, e.MangaArchiveName(App.MANGA_ARCHIVE_EXTENSION));
-                MangaObj.SaveToArchive(save_path, SaveType: SaveType.XML);
+                MangaObj.SaveToArchive(save_path, SaveType: Settings.Default.SaveType);
                 if (!MangaList.Any(mo => mo.Name == e.Name)) MangaList.Add(MangaObj);
                 else MangaList.First(mo => mo.Name == e.Name).Merge(e);
             }

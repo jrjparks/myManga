@@ -92,6 +92,7 @@ namespace myManga_App
             Settings.Default.WindowWidth = (Int32)config.WindowSize.Width;
             Settings.Default.WindowHeight = (Int32)config.WindowSize.Height;
             Settings.Default.WindowState = config.WindowState;
+            Settings.Default.SaveType = config.SaveType;
             return config;
         }
 
@@ -100,6 +101,7 @@ namespace myManga_App
             String configPath = PathSafety.SafeFileName(USER_CONFIG_FILENAME);
             UserConfig.WindowSize = new Size(Settings.Default.WindowWidth, Settings.Default.WindowHeight);
             UserConfig.WindowState = Settings.Default.WindowState;
+            UserConfig.SaveType = Settings.Default.SaveType;
             UserConfig.SaveObject(configPath, SaveType.XML);
         }
     }

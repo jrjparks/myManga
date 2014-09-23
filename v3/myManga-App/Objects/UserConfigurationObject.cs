@@ -68,6 +68,25 @@ namespace myManga_App.Objects
         }
 
         [XmlIgnore]
+        private SaveType saveType;
+        [XmlElement]
+        public SaveType SaveType
+        {
+            get
+            {
+                if (saveType == null)
+                    saveType = SaveType.XML;
+                return saveType;
+            }
+            set
+            {
+                OnPropertyChanging();
+                saveType = value;
+                OnPropertyChanged();
+            }
+        }
+
+        [XmlIgnore]
         private List<String> enabledSiteExtentions;
         [XmlArray, XmlArrayItem("SiteExtentionName")]
         public List<String> EnabledSiteExtentions

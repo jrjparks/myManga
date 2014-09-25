@@ -114,22 +114,6 @@ namespace myManga_App.ViewModels
         protected void SearchSites()
         {
             OnSearchEvent(SearchFilter.Trim());
-            IsLoading = true;
-            Singleton<myManga_App.IO.Network.SmartSearch>.Instance.SearchManga(SearchFilter.Trim());
-        }
-
-        private delegate void Instance_SearchCompleteInvoke(object sender, List<MangaObject> e);
-        private void Instance_SearchComplete(object sender, List<MangaObject> e)
-        {
-            if (App.Dispatcher.Thread == Thread.CurrentThread)
-            {
-                IsLoading = false;
-                foreach (MangaObject MangaObj in e)
-                    if (!MangaList.Any(mo => mo.Name == MangaObj.Name))
-                        MangaList.Add(MangaObj);
-            }
-            else
-                App.Dispatcher.BeginInvoke(new Instance_SearchCompleteInvoke(Instance_SearchComplete), new Object[] { sender, e });
         }
         #endregion
 
@@ -206,7 +190,6 @@ namespace myManga_App.ViewModels
         public HomeViewModel()
         {
             ConfigureSearchFilter();
-            Singleton<myManga_App.IO.Network.SmartSearch>.Instance.SearchComplete += Instance_SearchComplete;
             Singleton<myManga_App.IO.Network.SmartMangaDownloader>.Instance.MangaObjectComplete += Instance_DownloadMangaComplete;
             if (!DesignerProperties.GetIsInDesignMode(new System.Windows.DependencyObject()))
             {

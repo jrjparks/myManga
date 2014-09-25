@@ -18,7 +18,7 @@ namespace myManga_App.Views
     /// <summary>
     /// Interaction logic for Search.xaml
     /// </summary>
-    public partial class SearchView : Page
+    public partial class SearchView : UserControl
     {
         public SearchView()
         {

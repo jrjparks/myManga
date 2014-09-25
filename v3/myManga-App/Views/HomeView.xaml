@@ -7,12 +7,13 @@
     xmlns:vm="clr-namespace:myManga_App.ViewModels"
     xmlns:button="clr-namespace:myManga_App.Resources.Theme.Buttons"
     xmlns:system="clr-namespace:System;assembly=mscorlib"
+    xmlns:mangaObjects="clr-namespace:myMangaSiteExtension.Objects;assembly=myMangaSiteExtension"
     mc:Ignorable="d" 
     d:DesignHeight="400"
     d:DesignWidth="600" 
-    Foreground="{StaticResource text-dark}"
-    xmlns:mangaObjects="clr-namespace:myMangaSiteExtension.Objects;assembly=myMangaSiteExtension"
-    FocusManager.FocusedElement="{Binding ElementName=SearchBox}">
+    FocusManager.FocusedElement="{Binding ElementName=SearchBox}"
+    Background="{DynamicResource window-background}" 
+    Foreground="{DynamicResource window-foreground}">
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>

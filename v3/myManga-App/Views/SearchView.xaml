@@ -4,10 +4,104 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+    xmlns:vm="clr-namespace:myManga_App.ViewModels"
+    xmlns:button="clr-namespace:myManga_App.Resources.Theme.Buttons"
+    xmlns:system="clr-namespace:System;assembly=mscorlib"
+    xmlns:mangaObjects="clr-namespace:myMangaSiteExtension.Objects;assembly=myMangaSiteExtension"
     mc:Ignorable="d" 
-    d:DesignHeight="300"
-    d:DesignWidth="300">
-    <Grid>
+    d:DesignHeight="480"
+    d:DesignWidth="640" 
+    Background="{DynamicResource window-background}" 
+    Foreground="{DynamicResource window-foreground}"
+    FocusManager.FocusedElement="{Binding ElementName=SearchBox}">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/myManga;component/Resources/Localization/Dictionary_en-US.xaml"/>
+                <ResourceDictionary Source="/myManga;component/Themes/CoreResourceDictionary.xaml"/>
+                <ResourceDictionary Source="/myManga;component/Themes/Button/MetroButton.xaml"/>
 
+                <ResourceDictionary Source="/myManga;component/Themes/ListBox/ListBoxes.xaml"/>
+                <ResourceDictionary Source="/myManga;component/Themes/ListBox/ListBoxItems.xaml"/>
+
+                <ResourceDictionary Source="/myManga;component/Themes/ProgressBar/Spinner.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+            <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+        </ResourceDictionary>
+    </UserControl.Resources>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition MinWidth="100" MaxWidth="300"/>
+            <ColumnDefinition Width="15"/>
+            <ColumnDefinition Width="3*"/>
+        </Grid.ColumnDefinitions>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="32px"/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <Border 
+                Grid.Row="0"
+                TextElement.FontSize="16">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="1*"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.InputBindings>
+                        <KeyBinding Command="{Binding SearchSiteCommand}" Key="Return"/>
+                        <KeyBinding Command="{Binding ClearSearchCommand}" Key="Esc"/>
+                    </Grid.InputBindings>
+                    <button:MetroButton
+                        Grid.Column="0"
+                        Content="{DynamicResource fa-search}"
+                        Command="{Binding SearchSiteCommand}"
+                        FontFamily="{DynamicResource FontAwesome}"
+                        ToolTip="Search Sites"
+                        Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"/>
+                    <TextBox
+                        x:Name="SearchBox"
+                        Grid.Column="1" 
+                        BorderBrush="{x:Null}" 
+                        BorderThickness="0" 
+                        Background="{x:Null}"
+                        VerticalContentAlignment="Center"
+                        Text="{Binding SearchFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                    <button:MetroButton
+                        Grid.Column="3"
+                        Content="{DynamicResource fa-times}"
+                        Command="{Binding ClearSearchCommand}"
+                        FontFamily="{DynamicResource FontAwesome}"
+                        ToolTip="Clear Search"
+                        Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"/>
+                </Grid>
+            </Border>
+            <ListBox
+                x:Name="MangaList"
+                Grid.Row="1"
+                Background="{x:Null}"
+                BorderBrush="{x:Null}"
+                BorderThickness="0" 
+                ItemContainerStyle="{DynamicResource HomeMangaListBoxItem}" 
+                SelectedIndex="0"
+                Visibility="{Binding HasItems, Converter={StaticResource BooleanToVisibilityConverter}, RelativeSource={RelativeSource Self}}" 
+                ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                SelectedItem="{Binding MangaObj}"
+                ItemsSource="{Binding MangaList}"/>
+            <ProgressBar 
+                Grid.Row="1" 
+                HorizontalAlignment="Center" 
+                VerticalAlignment="Center" 
+                Width="96" Height="96" 
+                Style="{DynamicResource Spinner}" 
+                Visibility="{Binding IsLoading, Converter={StaticResource BooleanToVisibilityConverter}}"
+                >
+                <ProgressBar.Foreground>
+                    <SolidColorBrush Color="#BF000000"/>
+                </ProgressBar.Foreground>
+            </ProgressBar>
+        </Grid>
     </Grid>
 </UserControl>

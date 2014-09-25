@@ -49,6 +49,19 @@ namespace myManga_App.ViewModels
             SearchFilter = search_content;
         }
 
+        protected DelegateCommand searchSitesCommand;
+        public ICommand SearchSiteCommand
+        { get { return searchSitesCommand ?? (searchSitesCommand = new DelegateCommand(SearchSites, CanSearchSite)); } }
+
+        protected Boolean CanSearchSite()
+        { return !String.IsNullOrWhiteSpace(SearchFilter) && (SearchFilter.Trim().Length >= 3); }
+
+        protected void SearchSites()
+        {
+            IsLoading = true;
+            Singleton<myManga_App.IO.Network.SmartSearch>.Instance.SearchManga(SearchFilter.Trim());
+        }
+
         protected Boolean isLoading;
         public Boolean IsLoading
         {

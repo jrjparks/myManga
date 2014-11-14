@@ -77,7 +77,7 @@
     <Compile Include="Other\Parse.cs" />
     <Compile Include="Other\Singleton\Singleton.cs" />
     <Compile Include="WPF Controls\BalancedWrapPanel\BalancedWrapPanel.cs" />
-    <Compile Include="WPF Controls\BalancedWrapPanel\LengthConverter.cs" />
+    <Compile Include="WPF Controls\BalancedWrapPanel\BWP_LengthConverter.cs" />
     <Compile Include="WPF Controls\BalancedWrapPanel\NumericExtensions.cs" />
     <Compile Include="WPF Controls\BalancedWrapPanel\OrientedSize.cs" />
     <Compile Include="WPF Controls\BalancedWrapPanel\TypeConverters.cs" />

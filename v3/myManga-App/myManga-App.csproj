@@ -119,11 +119,10 @@
     <Compile Include="Converters\LocationListToCSV.cs" />
     <Compile Include="Converters\StringArrayToCSV.cs" />
     <Compile Include="IO\AccessPriority.cs" />
-    <Compile Include="IO\File System\SmartStorage.cs" />
-    <Compile Include="IO\File System\SmartFileStreamAccess.cs" />
     <Compile Include="IO\Network\SmartChapterDownloader.cs" />
     <Compile Include="IO\Network\SmartDownloader.cs" />
     <Compile Include="IO\Network\SmartMangaDownloader.cs" />
+    <Compile Include="IO\Network\SmartPageDownloader.cs" />
     <Compile Include="IO\Network\SmartSearch.cs" />
     <Compile Include="IO\SmartGroupObject.cs" />
     <Compile Include="Objects\DatabaseExtensionInformationObject.cs" />
@@ -280,6 +279,7 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="IO\File System\" />
     <Folder Include="Properties\DataSources\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

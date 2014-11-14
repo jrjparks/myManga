@@ -13,6 +13,7 @@ using myMangaSiteExtension.Interfaces;
 using myMangaSiteExtension.Utilities;
 using HtmlAgilityPack;
 using System.Text;
+using Core.IO.Storage.Manager.BaseInterfaceClasses;
 
 namespace TestApp
 {
@@ -20,13 +21,16 @@ namespace TestApp
     {
         static Dictionary<String, ISiteExtension> SiteExtentions = new Dictionary<String, ISiteExtension>();
         static Dictionary<String, IDatabaseExtension> DatabaseExtentions = new Dictionary<String, IDatabaseExtension>();
+        static ZipStorage zip_storage;
 
         static void Main(string[] args)
         {
-            //SiteExtentions.Add("MangaReader", new AFTV_Network.MangaReader());
+            zip_storage = Core.Other.Singleton.Singleton<ZipStorage>.Instance;
+
+            SiteExtentions.Add("MangaReader", new AFTV_Network.MangaReader());
             SiteExtentions.Add("MangaPanda", new AFTV_Network.MangaPanda());
             SiteExtentions.Add("MangaHere", new MangaHere.MangaHere());
-            //SiteExtentions.Add("Batoto", new Batoto.Batoto());
+            SiteExtentions.Add("Batoto", new Batoto.Batoto());
             //SiteExtentions.Add("Batoto-Spanish", new Batoto.Batoto_Spanish());
             //SiteExtentions.Add("Batoto-German", new Batoto.Batoto_German());
             //SiteExtentions.Add("Batoto-French", new Batoto.Batoto_French());
@@ -42,7 +46,9 @@ namespace TestApp
                 IDatabaseExtensionDescriptionAttribute isea = ise.GetType().GetCustomAttribute<IDatabaseExtensionDescriptionAttribute>(false);
                 Console.WriteLine("Loaded Database Extention {0}", isea.Name);
             }
-            Search();
+            LoadManga();
+            //Search();
+            zip_storage.Destroy();
         }
 
         static void Search()
@@ -58,7 +64,8 @@ namespace TestApp
                     MangaObject mObj = SearchResults[srIndex];
                     mObj.LoadMangaObject();
                     mObj.SortChapters();
-                    mObj.SaveToArchive(String.Format("{0}.ma", mObj.Name).SafeFileName(), "MangaObject", SaveType.XML);
+                    zip_storage.Write(String.Format("{0}.ma", mObj.Name).SafeFileName(), "MangaObject", mObj.Serialize(SaveType.XML));
+                    //mObj.SaveToArchive(String.Format("{0}.ma", mObj.Name).SafeFileName(), "MangaObject", SaveType.XML);
                 }
                 else
                 {
@@ -156,7 +163,7 @@ namespace TestApp
                             }
                             Console.WriteLine("Done!");
                         }
-                        catch (Exception ex)
+                        catch
                         {
                             Console.WriteLine("Timeout!");
                         }
@@ -198,7 +205,7 @@ namespace TestApp
 
         static void LoadManga()
         {
-            MangaObject mObj = LoadMangaObject("http://www.mangahere.com/manga/fairy_tail/", SiteExtentions["MangaHere"]);
+            MangaObject mObj = LoadMangaObject("http://www.mangahere.co/manga/magi/", SiteExtentions["MangaHere"]);
             Console.WriteLine("Returned MangaObject:");
             Console.WriteLine("\tName:{0}", mObj.Name);
             Console.WriteLine("\tReleased:{0}", mObj.Released.ToString("yyyy"));
@@ -227,7 +234,8 @@ namespace TestApp
             Console.ReadLine();
             Console.WriteLine("Loading...");
             cObj.LoadPageObjects(0);
-            cObj.SaveToArchive(cObj.Name + ".xml.mca", "ChapterObject", SaveType.XML);
+            zip_storage.Write(cObj.Name + ".xml.mca", "ChapterObject", cObj.Serialize(SaveType.XML));
+            //cObj.SaveToArchive(cObj.Name + ".xml.mca", "ChapterObject", SaveType.XML);
             Console.WriteLine("Returned ChapterObject:");
             foreach (PageObject pageObject in cObj.Pages)
             {
@@ -382,7 +390,7 @@ namespace TestApp
                                     DrawProgressBar(String.Format("[{1}]Downloading: {0}", pageObject.Name, pageObject.PageNumber), (Int32)imgStream.Position, (Int32)response.ContentLength, 60);
                                 }
                             }
-                            catch (Exception ex)
+                            catch
                             {
                                 DrawProgressBar(String.Format("[{1}]Error: {0}", pageObject.Name, pageObject.PageNumber), (Int32)imgStream.Position, (Int32)response.ContentLength, 60);
                             }
@@ -391,7 +399,8 @@ namespace TestApp
                             imgStream.Seek(0, SeekOrigin.Begin);
                         Console.WriteLine();
                         Console.Write("\tSaving: {0}...", pageObject.Name);
-                        imgStream.SaveStreamToArchive(chapterObject.Name + ".xml.mca", pageObject.Name, new Ionic.Zip.ReadOptions());
+                        zip_storage.Write(chapterObject.Name + ".xml.mca", pageObject.Name, imgStream);
+                        // imgStream.SaveStreamToArchive(chapterObject.Name + ".xml.mca", pageObject.Name, new Ionic.Zip.ReadOptions());
                         Console.WriteLine("Saved");
                     }
                 }

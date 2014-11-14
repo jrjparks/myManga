@@ -17,7 +17,7 @@ namespace System.Windows
     /// represent an object measurement such as a height or width.
     /// </summary>
     /// <QualityBand>Stable</QualityBand>
-    public partial class LengthConverter : TypeConverter
+    public partial class BWP_LengthConverter : TypeConverter
     {
         /// <summary>
         /// Conversions from units to pixels.
@@ -34,7 +34,7 @@ namespace System.Windows
         /// Initializes a new instance of the
         /// <see cref="T:System.Windows.LengthConverter" /> class.
         /// </summary>
-        public LengthConverter()
+        public BWP_LengthConverter()
         {
         }
 

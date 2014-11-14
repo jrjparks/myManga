@@ -62,13 +62,13 @@ namespace MangaHere
             {
                 String volNode = ChapterNode.SelectSingleNode(".//span[1]/span").InnerText;
                 String[] volChapSub = { (volNode != null && volNode.Length > 0) ? volNode.Substring(4).Trim() : "0" };
-                HtmlNode ChapterTitle = ChapterNode.SelectSingleNode(".//span[1]/a");
-                String ChapterNumber = ChapterTitle.InnerText.Substring(ChapterTitle.InnerText.LastIndexOf(' ') + 1).Trim();
+                String ChapterTitle = ChapterNode.SelectSingleNode(".//span[1]/a").InnerText.Trim();
+                String ChapterNumber = ChapterTitle.Substring(ChapterTitle.LastIndexOf(' ') + 1).Trim();
                 volChapSub = volChapSub.Concat(ChapterNumber.Split(new char[] { '.' }, StringSplitOptions.RemoveEmptyEntries)).ToArray();
 
                 ChapterObject Chapter = new ChapterObject()
                 {
-                    Name = ChapterTitle.InnerText.Trim(),
+                    Name = ChapterTitle,
                     Volume = Int32.Parse(volChapSub[0]),
                     Chapter = Int32.Parse(volChapSub[1]),
                     Locations = { 

@@ -42,7 +42,7 @@ namespace System.Windows.Controls
 
         #region Dependency Properties
 
-        [TypeConverter(typeof(LengthConverter))]
+        [TypeConverter(typeof(BWP_LengthConverter))]
         public double ItemHeight
         {
             get
@@ -55,7 +55,7 @@ namespace System.Windows.Controls
             }
         }
 
-        [TypeConverter(typeof(LengthConverter))]
+        [TypeConverter(typeof(BWP_LengthConverter))]
         public double ItemWidth
         {
             get

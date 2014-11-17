@@ -57,9 +57,9 @@ namespace Core.IO.Storage.Manager.BaseInterfaceClasses
             return true;
         }
 
-        public Stream Read(string archive_filename, string filename, Stream stream)
+        public Stream Read(string archive_filename, string filename)
         {
-            return Read(archive_filename, stream, filename);
+            return Read(archive_filename, filename);
         }
 
         public Stream Read(string filename, params object[] args)

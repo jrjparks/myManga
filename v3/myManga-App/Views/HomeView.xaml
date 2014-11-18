@@ -195,9 +195,9 @@
                 ContentStringFormat="{}{0} Refresh"
                 Command="{Binding RefreshListCommand}"/>
         </Grid>
-        <Image
-            Grid.Column="2"
-            Source="/myManga;component/Resources/Icon.ico"/>
+        <Border Grid.Column="2">
+            <Image Source="/myManga;component/Resources/Icon.ico" HorizontalAlignment="Center" VerticalAlignment="Center" Stretch="None"/>
+        </Border>
         <Grid
             x:Name="MangaObjectDescription"
             Grid.Column="2" 

@@ -59,28 +59,32 @@ namespace Core.IO.Storage.Manager.BaseInterfaceClasses
 
         public Stream Read(string archive_filename, string filename)
         {
-            return Read(archive_filename, filename);
+            return Read(archive_filename, filename as Object);
         }
 
         public Stream Read(string filename, params object[] args)
         {
             if (File.Exists(filename))
             {
-                MemoryStream DataStream = new MemoryStream();
-                using (Stream fstream = File.Open(filename, FileMode.OpenOrCreate, FileAccess.Read, FileShare.Read))
+                MemoryStream stream = new MemoryStream();
+                using (Stream fstream = File.Open(filename, FileMode.Open, FileAccess.Read, FileShare.Read))
                 {
-                    using (ZipFile zipFile = ZipFile.Read(fstream, this.ZipReadOptions))
+                    try
                     {
-                        using (Stream ZipData = new MemoryStream())
+                        using (ZipFile zipFile = ZipFile.Read(fstream, this.ZipReadOptions))
                         {
-                            zipFile[(String)args[0]].Extract(ZipData);
-                            ZipData.Position = 0;
-                            ZipData.CopyTo(DataStream);
+                            using (Stream ZipData = new MemoryStream())
+                            {
+                                zipFile[(String)args[0]].Extract(ZipData);
+                                ZipData.Seek(0, SeekOrigin.Begin);
+                                ZipData.CopyTo(stream);
+                            }
                         }
                     }
+                    catch { }
                 }
-                DataStream.Position = 0;
-                return DataStream;
+                stream.Seek(0, SeekOrigin.Begin);
+                return stream;
             }
             return null;
         }

@@ -179,6 +179,8 @@ namespace myMangaSiteExtension.Utilities
 
         public static Boolean IsNameMatch(this MangaObject value, String name)
         {
+            if (value == null)
+                return false;
             String _name = new String(name.Where(Char.IsLetterOrDigit).ToArray()).ToLower();
             return new String(value.Name.Where(Char.IsLetterOrDigit).ToArray()).ToLower().Contains(_name) ||
                 value.AlternateNames.FirstOrDefault(o => new String(o.Where(Char.IsLetterOrDigit).ToArray()).ToLower().Contains(_name)) != null;

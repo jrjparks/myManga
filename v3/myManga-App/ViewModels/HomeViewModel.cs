@@ -135,10 +135,8 @@ namespace myManga_App.ViewModels
             if (App.Dispatcher.Thread == Thread.CurrentThread)
             {
                 String save_path = Path.Combine(App.MANGA_ARCHIVE_DIRECTORY, e.MangaArchiveName(App.MANGA_ARCHIVE_EXTENSION));
-                Singleton<ZipStorage>.Instance.Write(save_path, MangaObj.GetType().Name, MangaObj.Serialize(SaveType: Settings.Default.SaveType));
+                Singleton<ZipStorage>.Instance.Write(save_path, e.GetType().Name, e.Serialize(SaveType: Settings.Default.SaveType));
                 //MangaObj.SaveToArchive(save_path, SaveType: Settings.Default.SaveType);
-                if (!MangaList.Any(mo => mo.Name == e.Name)) MangaList.Add(MangaObj);
-                else MangaList.First(mo => mo.Name == e.Name).Merge(e);
             }
             else
                 App.Dispatcher.BeginInvoke(new Instance_DownloadMangaCompleteInvoke(Instance_DownloadMangaComplete), new Object[] { sender, e });
@@ -196,7 +194,14 @@ namespace myManga_App.ViewModels
             if (!DesignerProperties.GetIsInDesignMode(new System.Windows.DependencyObject()))
             {
                 foreach (String MangaArchiveFilePath in Directory.GetFiles(App.MANGA_ARCHIVE_DIRECTORY, App.MANGA_ARCHIVE_FILTER, SearchOption.AllDirectories))
-                    MangaList.Add(MangaArchiveFilePath.LoadFromArchive<MangaObject>("MangaObject.xml", SaveType.XML));
+                {
+                    using (Stream archive_manga = Singleton<Core.IO.Storage.Manager.BaseInterfaceClasses.ZipStorage>.Instance.Read(MangaArchiveFilePath, typeof(MangaObject).Name))
+                    {
+                        try
+                        { MangaList.Add(archive_manga.Deserialize<MangaObject>(SaveType: Settings.Default.SaveType)); }
+                        catch { }
+                    }
+                }
                 App.MangaObjectArchiveWatcher.Changed += MangaObjectArchiveWatcher_Event;
                 App.MangaObjectArchiveWatcher.Created += MangaObjectArchiveWatcher_Event;
                 App.MangaObjectArchiveWatcher.Deleted += MangaObjectArchiveWatcher_Event;
@@ -210,7 +215,7 @@ namespace myManga_App.ViewModels
         {
             if (App.Dispatcher.Thread == Thread.CurrentThread)
             {
-                MangaObject current_manga_object = MangaList.First(o => o.MangaArchiveName(App.MANGA_ARCHIVE_EXTENSION) == e.Name);
+                MangaObject current_manga_object = MangaList.FirstOrDefault(o => o.MangaArchiveName(App.MANGA_ARCHIVE_EXTENSION) == e.Name);
                 switch (e.ChangeType)
                 {
                     default:

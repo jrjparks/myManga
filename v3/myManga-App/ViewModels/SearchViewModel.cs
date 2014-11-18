@@ -22,6 +22,7 @@ using myMangaSiteExtension.Attributes;
 using myMangaSiteExtension.Interfaces;
 using myMangaSiteExtension.Objects;
 using myMangaSiteExtension.Utilities;
+using myManga_App.Properties;
 
 namespace myManga_App.ViewModels
 {
@@ -47,6 +48,7 @@ namespace myManga_App.ViewModels
         public void StartSearch(String search_content)
         {
             SearchFilter = search_content;
+            SearchSites();
         }
 
         protected DelegateCommand searchSitesCommand;
@@ -72,34 +74,6 @@ namespace myManga_App.ViewModels
                 isLoading = value;
                 OnPropertyChanged();
             }
-        }
-
-        private delegate void Instance_SearchCompleteInvoke(object sender, List<MangaObject> e);
-        private void Instance_SearchComplete(object sender, List<MangaObject> e)
-        {
-            if (App.Dispatcher.Thread == Thread.CurrentThread)
-            {
-                IsLoading = false;
-                foreach (MangaObject MangaObj in e)
-                    if (!MangaList.Any(mo => mo.Name == MangaObj.Name))
-                        MangaList.Add(MangaObj);
-            }
-            else
-                App.Dispatcher.BeginInvoke(new Instance_SearchCompleteInvoke(Instance_SearchComplete), new Object[] { sender, e });
-        }
-
-        private delegate void Instance_DownloadMangaCompleteInvoke(object sender, MangaObject e);
-        private void Instance_DownloadMangaComplete(object sender, MangaObject e)
-        {
-            if (App.Dispatcher.Thread == Thread.CurrentThread)
-            {
-                String save_path = Path.Combine(App.MANGA_ARCHIVE_DIRECTORY, e.MangaArchiveName(App.MANGA_ARCHIVE_EXTENSION));
-                MangaObj.SaveToArchive(save_path, SaveType: SaveType.XML);
-                if (!MangaList.Any(mo => mo.Name == e.Name)) MangaList.Add(MangaObj);
-                else MangaList.First(mo => mo.Name == e.Name).Merge(e);
-            }
-            else
-                App.Dispatcher.BeginInvoke(new Instance_DownloadMangaCompleteInvoke(Instance_DownloadMangaComplete), new Object[] { sender, e });
         }
         #endregion
 
@@ -144,6 +118,45 @@ namespace myManga_App.ViewModels
         }
 
         protected ICollectionView mangaListView;
+        #endregion
+
+        #region Store MangaInfo
+        protected DelegateCommand storeMangaInfoCommand;
+        public ICommand StoreMangaInfoCommand
+        { get { return storeMangaInfoCommand ?? (storeMangaInfoCommand = new DelegateCommand(StoreMangaInfo, CanStoreMangaInfo)); } }
+
+        protected Boolean CanStoreMangaInfo()
+        { return MangaObj != null; }
+
+        protected void StoreMangaInfo()
+        { Singleton<myManga_App.IO.Network.SmartMangaDownloader>.Instance.DownloadMangaObject(MangaObj); }
+
+        private delegate void Instance_SearchCompleteInvoke(object sender, List<MangaObject> e);
+        private void Instance_SearchComplete(object sender, List<MangaObject> e)
+        {
+            if (App.Dispatcher.Thread == Thread.CurrentThread)
+            {
+                IsLoading = false;
+                foreach (MangaObject MangaObj in e)
+                    if (!MangaList.Any(mo => mo.Name == MangaObj.Name))
+                        MangaList.Add(MangaObj);
+            }
+            else
+                App.Dispatcher.BeginInvoke(new Instance_SearchCompleteInvoke(Instance_SearchComplete), new Object[] { sender, e });
+        }
+
+        private delegate void Instance_DownloadMangaCompleteInvoke(object sender, MangaObject e);
+        private void Instance_DownloadMangaComplete(object sender, MangaObject e)
+        {
+            if (App.Dispatcher.Thread == Thread.CurrentThread)
+            {
+                String save_path = Path.Combine(App.MANGA_ARCHIVE_DIRECTORY, e.MangaArchiveName(App.MANGA_ARCHIVE_EXTENSION));
+                Singleton<Core.IO.Storage.Manager.BaseInterfaceClasses.ZipStorage>.Instance.Write(save_path, e.GetType().Name, e.Serialize(SaveType: Settings.Default.SaveType));
+                //MangaObj.SaveToArchive(save_path, SaveType: SaveType.XML);
+            }
+            else
+                App.Dispatcher.BeginInvoke(new Instance_DownloadMangaCompleteInvoke(Instance_DownloadMangaComplete), new Object[] { sender, e });
+        }
         #endregion
 
         protected App App = App.Current as App;

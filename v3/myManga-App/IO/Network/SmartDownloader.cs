@@ -48,21 +48,28 @@ namespace myManga_App.IO.Network
 
         protected Stream GetResponse(HttpWebRequest request)
         {
-            Stream content = null;
+            Stream content = new MemoryStream();
             try
             {
                 using (HttpWebResponse response = request.GetResponse() as HttpWebResponse)
                 {
-                    response.GetResponseStream().CopyTo(content);
+                    using (Stream response_stream = response.GetResponseStream())
+                    {
+                        response_stream.CopyTo(content);
+                    }
                 }
             }
             catch (WebException webEx)
             {
                 using (HttpWebResponse response = webEx.Response as HttpWebResponse)
                 {
-                    response.GetResponseStream().CopyTo(content);
+                    using (Stream response_stream = response.GetResponseStream())
+                    {
+                        response_stream.CopyTo(content);
+                    }
                 }
             }
+            content.Seek(0, SeekOrigin.Begin);
             return content;
         }
 
@@ -70,7 +77,9 @@ namespace myManga_App.IO.Network
         {
             String content = null;
             using (StreamReader streamReader = new StreamReader(GetResponse(request)))
-            { content = streamReader.ReadToEnd(); }
+            {
+                content = streamReader.ReadToEnd();
+            }
             return System.Web.HttpUtility.HtmlDecode(content);
         }
     }

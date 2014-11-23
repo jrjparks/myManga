@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Core.IO;
 
 namespace Core.IO.Storage.Manager.BaseInterfaceClasses
 {
@@ -53,6 +54,7 @@ namespace Core.IO.Storage.Manager.BaseInterfaceClasses
         {
             ZipStorageObject zso = new ZipStorageObject(filename, (String)args[0], new MemoryStream());
             stream.CopyTo(zso.Stream);
+            zso.Stream.Seek(0, SeekOrigin.Begin);
             write_queue.Enqueue(zso);
             return true;
         }
@@ -67,7 +69,7 @@ namespace Core.IO.Storage.Manager.BaseInterfaceClasses
             if (File.Exists(filename))
             {
                 MemoryStream stream = new MemoryStream();
-                using (Stream fstream = File.Open(filename, FileMode.Open, FileAccess.Read, FileShare.Read))
+                using (Stream fstream = File.Open(filename, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
                 {
                     try
                     {
@@ -108,39 +110,46 @@ namespace Core.IO.Storage.Manager.BaseInterfaceClasses
         protected void WriteConsumer()
         {
             ZipStorageObject write_item;
-            while (run_queue)
+
+            while (this.run_queue)
             {
                 while (write_queue.TryDequeue(out write_item))
                 {
-                    Boolean FileExists = (File.Exists(write_item.ArchiveFilename) && ZipFile.IsZipFile(write_item.ArchiveFilename));
-                    String FileIOPath = Path.GetTempFileName();
-                    try
+                    try // Try to write to the Zip archive file
                     {
-                        using (Stream fstream = File.Open(write_item.ArchiveFilename, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.Read))
+                        Boolean IsZip = false; //File.Exists(write_item.ArchiveFilename) && ZipFile.IsZipFile(write_item.ArchiveFilename);
+                        Stream zip_stream = new MemoryStream();
+                        String DirName = Path.GetDirectoryName(write_item.ArchiveFilename).SafeFolder();
+                        using (Stream fstream = File.Open(write_item.ArchiveFilename, FileMode.OpenOrCreate, FileAccess.Read, FileShare.ReadWrite))
+                        { fstream.CopyTo(zip_stream); zip_stream.Seek(0, SeekOrigin.Begin); }
+                        IsZip = ZipFile.IsZipFile(zip_stream, false);
+                        zip_stream.Seek(0, SeekOrigin.Begin);
+                        using (ZipFile zipFile = IsZip ? ZipFile.Read(zip_stream, this.ZipReadOptions) : new ZipFile(Encoding.UTF8))
                         {
-                            using (ZipFile zipFile = FileExists ? ZipFile.Read(fstream, this.ZipReadOptions) : new ZipFile(Encoding.UTF8))
-                            {
-                                DateTime dt = DateTime.Now;
-                                zipFile.Comment = String.Format("{0} - {1}", dt.ToLongDateString(), dt.ToLongTimeString());
-                                zipFile.CompressionLevel = Ionic.Zlib.CompressionLevel.BestCompression;
-                                zipFile.CompressionMethod = CompressionMethod.Deflate;
+                            DateTime dt = DateTime.Now;
+                            zipFile.Comment = String.Format("Last updated at: {0} - {1}", dt.ToLongDateString(), dt.ToLongTimeString());
+                            zipFile.CompressionLevel = Ionic.Zlib.CompressionLevel.BestCompression;
+                            zipFile.UseZip64WhenSaving = Zip64Option.AsNecessary;
+                            zipFile.AlternateEncoding = Encoding.ASCII;
+                            zipFile.AlternateEncodingUsage = ZipOption.AsNecessary;
 
-                                write_item.Stream.Seek(0, SeekOrigin.Begin);
-                                zipFile.UpdateEntry(write_item.Filename, write_item.Stream);
+                            ZipEntry zipEntry = zipFile.UpdateEntry(write_item.Filename, write_item.Stream);
+                            zipEntry.Comment = String.Format("Last updated at: {0} - {1}", write_item.CreatedTime.ToLongDateString(), write_item.CreatedTime.ToLongTimeString());
 
-                                zipFile.Save(FileIOPath);
-                            }
+                            using (Stream fstream = File.Open(write_item.ArchiveFilename, FileMode.Open, FileAccess.Write, FileShare.Read))
+                            { zipFile.Save(fstream); } // Overwrite old zip file with new data.
                         }
-                        File.Copy(FileIOPath, write_item.ArchiveFilename, true);
                         write_item.Stream.Close();
                     }
                     catch
                     {
-                        // Reappend write_item if write fails
-                        write_queue.Enqueue(write_item);
-                        Thread.Sleep(1000);
+                        // Reappend write_item if write fails and are within time limit of 30min
+                        if (this.run_queue && DateTime.Now.Subtract(write_item.CreatedTime).Duration().Minutes < 30)
+                        {
+                            write_queue.Enqueue(write_item);
+                            Thread.Sleep(1000);
+                        }
                     }
-                    File.Delete(FileIOPath);
                 }
                 Thread.Sleep(1000);
             }

@@ -46,5 +46,12 @@ namespace myMangaSiteExtension.Utilities
                             chapterObject.Locations.Add(Location);
             }
         }
+
+        //Yes the archive is a zip file, read the docs
+        public static String ChapterArchiveName(this ChapterObject value, String Extention = "zip")
+        { return String.Format("{0}.{1}.{2}.{3}", value.Volume, value.Chapter, value.SubChapter, Extention); }
+
+        public static Boolean IsLocal(this ChapterObject value, String Folder, String Extention = "zip")
+        { return (value != null) ? System.IO.File.Exists(System.IO.Path.Combine(Folder, value.ChapterArchiveName(Extention))) : false; }
     }
 }

@@ -16,7 +16,7 @@ namespace AFTV_Network
 {
     [ISiteExtensionDescription(
         "MangaPanda",
-        "mangapanda.net",
+        "mangapanda.com",
         "http://www.mangapanda.com/",
         RootUrl = "http://www.mangapanda.com",
         Author = "James Parks",
@@ -50,7 +50,7 @@ namespace AFTV_Network
                 ChapterListing = MangaObjectDocument.GetElementbyId("listing"),
                 MangaDesciption = MangaObjectDocument.GetElementbyId("readmangasum").SelectSingleNode(".//p");
 
-            String Name = MangaProperties.SelectSingleNode(".//tr[1]/td[2]/h2").InnerText,
+            String MangaName = HtmlEntity.DeEntitize(MangaProperties.SelectSingleNode(".//tr[1]/td[2]/h2").InnerText),
                 ReadDirection = MangaProperties.SelectSingleNode(".//tr[7]/td[2]").InnerText,
                 ReleaseYear = Regex.Match(MangaProperties.SelectSingleNode(".//tr[3]/td[2]").InnerText, @"\d+").Value,
                 Release = String.Format("01/01/{0}", String.IsNullOrWhiteSpace(ReleaseYear) ? "0001" : ReleaseYear),
@@ -83,7 +83,8 @@ namespace AFTV_Network
             ChapterObject[] Chapters = (from HtmlNode ChapterNode in ChapterListing.SelectNodes(".//tr[not(contains(@class,'table_head'))]")
                                         select new ChapterObject()
                                         {
-                                            Name = ChapterNode.SelectSingleNode(".//td[1]").LastChild.InnerText.Substring(3).Trim(),
+                                            MangaName = MangaName,
+                                            Name = HtmlEntity.DeEntitize(ChapterNode.SelectSingleNode(".//td[1]").LastChild.InnerText.Substring(3).Trim()),
                                             Chapter = Int32.Parse(ChapterNode.SelectSingleNode(".//td[1]/a").InnerText.Substring(ChapterNode.SelectSingleNode(".//td[1]/a").InnerText.LastIndexOf(' ') + 1)),
                                             Locations = { 
                                                     new LocationObject() { 
@@ -95,7 +96,7 @@ namespace AFTV_Network
 
             return new MangaObject()
             {
-                Name = HtmlEntity.DeEntitize(Name),
+                Name = MangaName,
                 MangaType = MangaType,
                 PageFlowDirection = PageFlowDirection,
                 Description = HtmlEntity.DeEntitize(Desciption),

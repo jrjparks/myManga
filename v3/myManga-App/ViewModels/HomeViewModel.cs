@@ -127,20 +127,16 @@ namespace myManga_App.ViewModels
         { return MangaObj != null; }
 
         protected void DownloadManga()
-        { Singleton<myManga_App.IO.Network.SmartMangaDownloader>.Instance.DownloadMangaObject(mangaObj); }
+        { Singleton<myManga_App.IO.Network.SmartDownloadManager>.Instance.Download(mangaObj); }
+        #endregion
 
-        private delegate void Instance_DownloadMangaCompleteInvoke(object sender, MangaObject e);
-        private void Instance_DownloadMangaComplete(object sender, MangaObject e)
-        {
-            if (App.Dispatcher.Thread == Thread.CurrentThread)
-            {
-                String save_path = Path.Combine(App.MANGA_ARCHIVE_DIRECTORY, e.MangaArchiveName(App.MANGA_ARCHIVE_EXTENSION));
-                Singleton<ZipStorage>.Instance.Write(save_path, e.GetType().Name, e.Serialize(SaveType: Settings.Default.SaveType));
-                //MangaObj.SaveToArchive(save_path, SaveType: Settings.Default.SaveType);
-            }
-            else
-                App.Dispatcher.BeginInvoke(new Instance_DownloadMangaCompleteInvoke(Instance_DownloadMangaComplete), new Object[] { sender, e });
-        }
+        #region DownloadChapter
+        protected DelegateCommand<ChapterObject> downloadChapterCommand;
+        public ICommand DownloadChapterCommand
+        { get { return downloadChapterCommand ?? (downloadChapterCommand = new DelegateCommand<ChapterObject>(DownloadChapter)); } }
+
+        protected void DownloadChapter(ChapterObject ChapterObj)
+        { Singleton<myManga_App.IO.Network.SmartDownloadManager>.Instance.Download(ChapterObj); }
         #endregion
 
         #region RefreshList
@@ -190,7 +186,6 @@ namespace myManga_App.ViewModels
         public HomeViewModel()
         {
             ConfigureSearchFilter();
-            Singleton<myManga_App.IO.Network.SmartMangaDownloader>.Instance.MangaObjectComplete += Instance_DownloadMangaComplete;
             if (!DesignerProperties.GetIsInDesignMode(new System.Windows.DependencyObject()))
             {
                 foreach (String MangaArchiveFilePath in Directory.GetFiles(App.MANGA_ARCHIVE_DIRECTORY, App.MANGA_ARCHIVE_FILTER, SearchOption.AllDirectories))
@@ -225,11 +220,14 @@ namespace myManga_App.ViewModels
                     case WatcherChangeTypes.Created:
                         using (Stream archive_file = Singleton<ZipStorage>.Instance.Read(e.FullPath, typeof(MangaObject).Name))
                         {
-                            MangaObject new_manga_object = archive_file.Deserialize<MangaObject>(SaveType: Settings.Default.SaveType);
-                            if (current_manga_object != null)
-                                current_manga_object.Merge(new_manga_object);
-                            else
-                                MangaList.Add(new_manga_object);
+                            if (archive_file.CanRead && archive_file.Length > 0)
+                            {
+                                MangaObject new_manga_object = archive_file.Deserialize<MangaObject>(SaveType: Settings.Default.SaveType);
+                                if (current_manga_object != null)
+                                    current_manga_object.Merge(new_manga_object);
+                                else
+                                    MangaList.Add(new_manga_object);
+                            }
                         }
                         break;
 

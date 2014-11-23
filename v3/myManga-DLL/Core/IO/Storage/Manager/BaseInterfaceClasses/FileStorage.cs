@@ -47,7 +47,7 @@ namespace Core.IO.Storage.Manager.BaseInterfaceClasses
         public Stream Read(string filename, params object[] args)
         {
             Stream stream = new MemoryStream();
-            using (Stream fstream = File.Open(filename, FileMode.Open, FileAccess.Read, FileShare.Read))
+            using (Stream fstream = File.Open(filename, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
             {
                 Byte[] buffer = new Byte[8 * 1024]; Int32 length;
                 while ((length = fstream.Read(buffer, 0, buffer.Length)) > 0)
@@ -80,7 +80,7 @@ namespace Core.IO.Storage.Manager.BaseInterfaceClasses
             {
                 while (write_queue.TryDequeue(out write_item))
                 {
-                    String FileIOPath = Path.GetTempFileName();
+                    String FileIOPath = write_item.Filename; // Path.GetTempFileName();
                     try
                     {
                         using (Stream fstream = File.Open(FileIOPath, FileMode.OpenOrCreate, FileAccess.Write, FileShare.Read))
@@ -90,15 +90,16 @@ namespace Core.IO.Storage.Manager.BaseInterfaceClasses
                             while ((length = write_item.Stream.Read(buffer, 0, buffer.Length)) > 0) // Read to buffer
                                 fstream.Write(buffer, 0, length); // Write buffer to file
                         }
-                        File.Copy(FileIOPath, write_item.Filename, true);
                     }
                     catch
                     {
-                        // Reappend write_item if write fails
-                        write_queue.Enqueue(write_item);
-                        Thread.Sleep(1000);
+                        // Reappend write_item if write fails and are within time limit of 30min
+                        if (DateTime.Now.Subtract(write_item.CreatedTime).Duration().Minutes < 30)
+                        {
+                            write_queue.Enqueue(write_item);
+                            Thread.Sleep(1000);
+                        }
                     }
-                    File.Delete(FileIOPath);
                 }
                 Thread.Sleep(1000);
             }

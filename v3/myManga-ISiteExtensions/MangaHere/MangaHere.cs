@@ -46,7 +46,8 @@ namespace MangaHere
                 GenresNode = MangaPropertiesNode.SelectSingleNode(".//ul/li[4]");
             HtmlNodeCollection AuthorsNodeCollection = AuthorsNode.SelectNodes(".//a"),
                 ArtistsNodeCollection = ArtistsNode.SelectNodes(".//a");
-            String Desciption = MangaDesciptionNode != null ? MangaDesciptionNode.FirstChild.InnerText : String.Empty;
+            String Desciption = MangaDesciptionNode != null ? MangaDesciptionNode.FirstChild.InnerText : String.Empty,
+                MangaName = HtmlEntity.DeEntitize(System.Threading.Thread.CurrentThread.CurrentCulture.TextInfo.ToTitleCase(TitleNode.LastChild.InnerText.ToLower()));
 
             String[] AlternateNames = MangaPropertiesNode.SelectSingleNode(".//ul/li[3]").LastChild.InnerText.Split(new String[] { "; " }, StringSplitOptions.RemoveEmptyEntries),
                 Authors = { }, Artists = { },
@@ -68,6 +69,7 @@ namespace MangaHere
 
                 ChapterObject Chapter = new ChapterObject()
                 {
+                    MangaName = MangaName,
                     Name = ChapterTitle,
                     Volume = Int32.Parse(volChapSub[0]),
                     Chapter = Int32.Parse(volChapSub[1]),
@@ -86,8 +88,8 @@ namespace MangaHere
 
             MangaObject MangaObj = new MangaObject()
             {
-                Name = System.Threading.Thread.CurrentThread.CurrentCulture.TextInfo.ToTitleCase(TitleNode.LastChild.InnerText.ToLower()),
-                Description = Desciption,
+                Name = MangaName,
+                Description = HtmlEntity.DeEntitize(Desciption),
                 AlternateNames = AlternateNames.ToList(),
                 Covers = { MangaPropertiesNode.SelectSingleNode(".//img[1]/@src").Attributes["src"].Value },
                 Authors = Authors.ToList(),

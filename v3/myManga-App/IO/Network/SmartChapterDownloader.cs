@@ -38,7 +38,7 @@ namespace myManga_App.IO.Network
         { return smartThreadPool.QueueWorkItem(new WorkItemCallback(ChapterObjectWorker), chapterObject, new PostExecuteWorkItemCallback(ChapterObjectWorkerCallback)); }
 
         public ICollection<IWorkItemResult> DownloadChapterObject(ICollection<ChapterObject> chapterObjects)
-        { return (from chapterObject in chapterObjects select smartThreadPool.QueueWorkItem(new WorkItemCallback(ChapterObjectWorker), chapterObject, new PostExecuteWorkItemCallback(ChapterObjectWorkerCallback))).ToList(); }
+        { return (from chapterObject in chapterObjects select DownloadChapterObject(chapterObject)).ToList(); }
 
         private void ChapterObjectWorkerCallback(IWorkItemResult wir)
         { OnChapterObjectComplete(wir.Result as ChapterObject); }
@@ -63,6 +63,8 @@ namespace myManga_App.IO.Network
                 ChapterObject dmObj = val.Key.ParseChapterObject(val.Value.Result);
                 if (dmObj != null)
                     chapterObject.Merge(dmObj);
+                if (chapterObject.Pages.Count <= 0)
+                    chapterObject.Pages = dmObj.Pages;
             }
             return chapterObject;
         }

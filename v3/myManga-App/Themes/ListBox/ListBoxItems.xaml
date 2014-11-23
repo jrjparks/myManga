@@ -17,6 +17,7 @@
             </ObjectDataProvider>
         </ResourceDictionary>
     </ResourceDictionary.MergedDictionaries>
+    <converters:LoadImageFromMangaArchive x:Key="LoadImageFromMangaArchive"/>
 
     <converters:StringListToCSV x:Key="StringListToCSV"/>
     <converters:LocationListToCSV x:Key="LocationListToCSV"/>
@@ -130,7 +131,7 @@
                                 Margin="6,2" 
                                 Width="48" 
                                 Height="72"
-                                Source="{Binding SelectedCover}"/>
+                                Source="{Binding Converter={StaticResource LoadImageFromMangaArchive}}"/>
                             <TextBlock Grid.Column="1" Grid.Row="0" VerticalAlignment="Center" Foreground="{StaticResource text-dark}" FontWeight="Bold" FontSize="14" TextTrimming="CharacterEllipsis" Text="{Binding Name, FallbackValue=No-Name}"/>
                             <TextBlock Grid.Column="1" Grid.Row="1" VerticalAlignment="Center" Foreground="{StaticResource text-muted}" TextTrimming="CharacterEllipsis" Text="{Binding Locations, Converter={StaticResource LocationListToCSV}, Mode=OneWay, FallbackValue=No-Location}"/>
                             <TextBlock Grid.Column="1" Grid.Row="2" VerticalAlignment="Center" Foreground="{StaticResource text-muted}" TextTrimming="CharacterEllipsis" Text="{Binding DatabaseLocations, Converter={StaticResource LocationListToCSV}, Mode=OneWay, FallbackValue=No-Database}"/>
@@ -193,7 +194,9 @@
                                 Grid.Row="1"
                                 Grid.Column="1"
                                 FontFamily="{DynamicResource FontAwesome}"
-                                Content="{StaticResource fa-download}"/>
+                                Content="{StaticResource fa-download}"
+                                Command="{Binding Path=DataContext.DownloadChapterCommand, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl}}"
+                                CommandParameter="{Binding}"/>
                         </Grid>
                     </Border>
                     <ControlTemplate.Triggers>

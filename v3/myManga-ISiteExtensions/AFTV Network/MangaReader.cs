@@ -50,7 +50,7 @@ namespace AFTV_Network
                 ChapterListing = MangaObjectDocument.GetElementbyId("listing"),
                 MangaDesciption = MangaObjectDocument.GetElementbyId("readmangasum").SelectSingleNode(".//p");
 
-            String Name = MangaProperties.SelectSingleNode(".//tr[1]/td[2]/h2").InnerText,
+            String MangaName = HtmlEntity.DeEntitize(MangaProperties.SelectSingleNode(".//tr[1]/td[2]/h2").InnerText),
                 ReadDirection = MangaProperties.SelectSingleNode(".//tr[7]/td[2]").InnerText,
                 ReleaseYear = Regex.Match(MangaProperties.SelectSingleNode(".//tr[3]/td[2]").InnerText, @"\d+").Value,
                 Release = String.Format("01/01/{0}", String.IsNullOrWhiteSpace(ReleaseYear) ? "0001" : ReleaseYear),
@@ -82,23 +82,24 @@ namespace AFTV_Network
 
             ChapterObject[] Chapters = (from HtmlNode ChapterNode in ChapterListing.SelectNodes(".//tr[not(contains(@class,'table_head'))]")
                                         select new ChapterObject()
-                                            {
-                                                Name = ChapterNode.SelectSingleNode(".//td[1]").LastChild.InnerText.Substring(3).Trim(),
-                                                Chapter = Int32.Parse(ChapterNode.SelectSingleNode(".//td[1]/a").InnerText.Substring(ChapterNode.SelectSingleNode(".//td[1]/a").InnerText.LastIndexOf(' ') + 1)),
-                                                Locations = { 
+                                        {
+                                            MangaName = MangaName,
+                                            Name = ChapterNode.SelectSingleNode(".//td[1]").LastChild.InnerText.Substring(3).Trim(),
+                                            Chapter = Int32.Parse(ChapterNode.SelectSingleNode(".//td[1]/a").InnerText.Substring(ChapterNode.SelectSingleNode(".//td[1]/a").InnerText.LastIndexOf(' ') + 1)),
+                                            Locations = { 
                                                     new LocationObject() { 
                                                         ExtensionName = ISEA.Name, 
                                                         Url = String.Format("{0}{1}", ISEA.RootUrl, ChapterNode.SelectSingleNode(".//td[1]/a").Attributes["href"].Value) } 
                                                 },
-                                                Released = DateTime.Parse(ChapterNode.SelectSingleNode(".//td[2]").InnerText)
-                                            }).ToArray();
+                                            Released = DateTime.Parse(ChapterNode.SelectSingleNode(".//td[2]").InnerText)
+                                        }).ToArray();
 
             return new MangaObject()
             {
-                Name = Name,
+                Name = MangaName,
                 MangaType = MangaType,
                 PageFlowDirection = PageFlowDirection,
-                Description = Desciption,
+                Description = HtmlEntity.DeEntitize(Desciption),
                 AlternateNames = AlternateNames.ToList(),
                 Covers = MangaCovers,
                 Authors = Authors.ToList(),

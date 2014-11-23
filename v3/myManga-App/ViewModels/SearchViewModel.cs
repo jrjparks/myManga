@@ -23,6 +23,7 @@ using myMangaSiteExtension.Interfaces;
 using myMangaSiteExtension.Objects;
 using myMangaSiteExtension.Utilities;
 using myManga_App.Properties;
+using myManga_App.IO.Network;
 
 namespace myManga_App.ViewModels
 {
@@ -129,7 +130,7 @@ namespace myManga_App.ViewModels
         { return MangaObj != null; }
 
         protected void StoreMangaInfo()
-        { Singleton<myManga_App.IO.Network.SmartMangaDownloader>.Instance.DownloadMangaObject(MangaObj); }
+        { Singleton<myManga_App.IO.Network.SmartDownloadManager>.Instance.Download(MangaObj); }
 
         private delegate void Instance_SearchCompleteInvoke(object sender, List<MangaObject> e);
         private void Instance_SearchComplete(object sender, List<MangaObject> e)
@@ -144,28 +145,14 @@ namespace myManga_App.ViewModels
             else
                 App.Dispatcher.BeginInvoke(new Instance_SearchCompleteInvoke(Instance_SearchComplete), new Object[] { sender, e });
         }
-
-        private delegate void Instance_DownloadMangaCompleteInvoke(object sender, MangaObject e);
-        private void Instance_DownloadMangaComplete(object sender, MangaObject e)
-        {
-            if (App.Dispatcher.Thread == Thread.CurrentThread)
-            {
-                String save_path = Path.Combine(App.MANGA_ARCHIVE_DIRECTORY, e.MangaArchiveName(App.MANGA_ARCHIVE_EXTENSION));
-                Singleton<Core.IO.Storage.Manager.BaseInterfaceClasses.ZipStorage>.Instance.Write(save_path, e.GetType().Name, e.Serialize(SaveType: Settings.Default.SaveType));
-                //MangaObj.SaveToArchive(save_path, SaveType: SaveType.XML);
-            }
-            else
-                App.Dispatcher.BeginInvoke(new Instance_DownloadMangaCompleteInvoke(Instance_DownloadMangaComplete), new Object[] { sender, e });
-        }
         #endregion
 
-        protected App App = App.Current as App;
+        protected readonly App App = App.Current as App;
 
         public SearchViewModel()
         {
             ConfigureSearchFilter();
             Singleton<myManga_App.IO.Network.SmartSearch>.Instance.SearchComplete += Instance_SearchComplete;
-            Singleton<myManga_App.IO.Network.SmartMangaDownloader>.Instance.MangaObjectComplete += Instance_DownloadMangaComplete;
         }
 
         protected void ConfigureSearchFilter()

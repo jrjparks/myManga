@@ -17,9 +17,9 @@ namespace Batoto
 {
     [ISiteExtensionDescription(
         "Batoto",
-        "batoto.net",
-        "http://www.batoto.net/",
-        RootUrl = "http://www.batoto.net",
+        "bato.to",
+        "http://bato.to/",
+        RootUrl = "http://bato.to",
         Author = "James Parks",
         Version = "0.0.1",
         SupportedObjects = SupportedObjects.All,
@@ -50,7 +50,7 @@ namespace Batoto
             HtmlNode MangaProperties = InformationNode.SelectSingleNode(".//table[contains(@class,'ipb_table')]"),
                 ChapterListing = MangaObjectDocument.DocumentNode.SelectSingleNode("//table[contains(@class,'chapters_list')]");
 
-            String Name = HtmlEntity.DeEntitize(MangaObjectDocument.DocumentNode.SelectSingleNode("//h1[contains(@class,'ipsType_pagetitle')]").InnerText.Trim()),
+            String MangaName = HtmlEntity.DeEntitize(MangaObjectDocument.DocumentNode.SelectSingleNode("//h1[contains(@class,'ipsType_pagetitle')]").InnerText.Trim()),
                 MangaTypeProp = HtmlEntity.DeEntitize(MangaProperties.SelectSingleNode(".//tr[5]/td[2]").InnerText),
                 Desciption = HtmlEntity.DeEntitize(MangaProperties.SelectSingleNode(".//tr[7]/td[2]").InnerText.Replace("<br>", "\n"));
             MangaObjectType MangaType = MangaObjectType.Unknown;
@@ -114,7 +114,8 @@ namespace Batoto
                     DateTime.TryParse(ReleaseData, out Released);
                     ChapterObject chapterObject = new ChapterObject()
                     {
-                        Name = ChapterName,
+                        MangaName = MangaName,
+                        Name = HtmlEntity.DeEntitize(ChapterName),
                         Volume = Volume,
                         Chapter = Chapter,
                         SubChapter = SubChapter,
@@ -144,10 +145,10 @@ namespace Batoto
 
             return new MangaObject()
             {
-                Name = Name,
+                Name = MangaName,
                 MangaType = MangaType,
                 PageFlowDirection = PageFlowDirection,
-                Description = Desciption,
+                Description = HtmlEntity.DeEntitize(Desciption),
                 AlternateNames = AlternateNames.ToList(),
                 Covers = new List<String>(new String[] { MangaCover }),
                 Authors = Authors.ToList(),

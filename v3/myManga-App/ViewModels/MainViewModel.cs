@@ -77,10 +77,7 @@ namespace myManga_App.ViewModels
                 SearchViewModel.StartSearch(e);
             };
 
-            ServicePointManager.DefaultConnectionLimit =
-                Singleton<SmartMangaDownloader>.Instance.Concurrency +
-                Singleton<SmartChapterDownloader>.Instance.Concurrency +
-                Singleton<SmartSearch>.Instance.Concurrency;
+            ServicePointManager.DefaultConnectionLimit = Singleton<SmartDownloadManager>.Instance.Concurrency;
         }
 
         public void Dispose()

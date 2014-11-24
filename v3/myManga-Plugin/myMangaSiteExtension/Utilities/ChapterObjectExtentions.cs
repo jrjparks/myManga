@@ -53,5 +53,8 @@ namespace myMangaSiteExtension.Utilities
 
         public static Boolean IsLocal(this ChapterObject value, String Folder, String Extention = "zip")
         { return (value != null) ? System.IO.File.Exists(System.IO.Path.Combine(Folder, value.ChapterArchiveName(Extention))) : false; }
+
+        public static PageObject PageObjectOfBookmarkObject(this ChapterObject value, BookmarkObject bookmark_object)
+        { return value.Pages.Find(p => p.PageNumber == bookmark_object.Page); }
     }
 }

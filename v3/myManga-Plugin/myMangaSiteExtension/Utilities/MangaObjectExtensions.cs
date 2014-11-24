@@ -185,5 +185,8 @@ namespace myMangaSiteExtension.Utilities
             return new String(value.Name.Where(Char.IsLetterOrDigit).ToArray()).ToLower().Contains(_name) ||
                 value.AlternateNames.FirstOrDefault(o => new String(o.Where(Char.IsLetterOrDigit).ToArray()).ToLower().Contains(_name)) != null;
         }
+
+        public static ChapterObject ChapterObjectOfBookmarkObject(this MangaObject value, BookmarkObject bookmark_object)
+        { return value.Chapters.Find(c => c.Volume == bookmark_object.Volume && c.Chapter == bookmark_object.Chapter && c.SubChapter == bookmark_object.SubChapter); }
     }
 }

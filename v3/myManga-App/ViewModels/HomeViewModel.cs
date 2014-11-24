@@ -148,25 +148,7 @@ namespace myManga_App.ViewModels
         { return MangaList.Count > 0; }
 
         protected void RefreshList()
-        {
-            IsLoading = true;
-            MangaObject[] MangaObjects = new MangaObject[MangaList.Count];
-            MangaList.CopyTo(MangaObjects, 0);
-            Singleton<myManga_App.IO.Network.SmartMangaDownloader>.Instance.DownloadMangaObject(MangaObjects.Where(o => o.IsLocal(App.MANGA_ARCHIVE_DIRECTORY, App.MANGA_ARCHIVE_EXTENSION)).ToArray());
-            MangaObjects = null;
-        }
-
-        private delegate void Instance_MangaObjectCompleteInvoke(object sender, MangaObject e);
-        void Instance_MangaObjectComplete(object sender, MangaObject e)
-        {
-            if (App.Dispatcher.Thread == Thread.CurrentThread)
-            {
-                IsLoading = !(sender as myManga_App.IO.Network.SmartMangaDownloader).IsIdle;
-                if (!MangaList.Any(mo => mo.Name == e.Name)) MangaList.Add(MangaObj);
-                else MangaList.First(mo => mo.Name == e.Name).Merge(e);
-            }
-            else App.Dispatcher.BeginInvoke(new Instance_MangaObjectCompleteInvoke(Instance_MangaObjectComplete), new Object[] { sender, e });
-        }
+        { Singleton<myManga_App.IO.Network.SmartDownloadManager>.Instance.Download(MangaList); }
         #endregion
 
         protected Boolean isLoading;
@@ -190,11 +172,14 @@ namespace myManga_App.ViewModels
             {
                 foreach (String MangaArchiveFilePath in Directory.GetFiles(App.MANGA_ARCHIVE_DIRECTORY, App.MANGA_ARCHIVE_FILTER, SearchOption.AllDirectories))
                 {
-                    using (Stream archive_manga = Singleton<Core.IO.Storage.Manager.BaseInterfaceClasses.ZipStorage>.Instance.Read(MangaArchiveFilePath, typeof(MangaObject).Name))
+                    Stream archive_file;
+                    if (Singleton<ZipStorage>.Instance.TryRead(MangaArchiveFilePath, out archive_file, typeof(MangaObject).Name))
                     {
-                        try
-                        { MangaList.Add(archive_manga.Deserialize<MangaObject>(SaveType: Settings.Default.SaveType)); }
-                        catch { }
+                        if (archive_file.CanRead && archive_file.Length > 0)
+                        {
+                            MangaList.Add(archive_file.Deserialize<MangaObject>(SaveType: Settings.Default.SaveType));
+                        }
+                        archive_file.Close();
                     }
                 }
                 App.MangaObjectArchiveWatcher.Changed += MangaObjectArchiveWatcher_Event;
@@ -218,16 +203,15 @@ namespace myManga_App.ViewModels
 
                     case WatcherChangeTypes.Changed:
                     case WatcherChangeTypes.Created:
-                        using (Stream archive_file = Singleton<ZipStorage>.Instance.Read(e.FullPath, typeof(MangaObject).Name))
+                        Stream archive_file;
+                        if (Singleton<ZipStorage>.Instance.TryRead(e.FullPath, out archive_file, typeof(MangaObject).Name))
                         {
-                            if (archive_file.CanRead && archive_file.Length > 0)
-                            {
-                                MangaObject new_manga_object = archive_file.Deserialize<MangaObject>(SaveType: Settings.Default.SaveType);
-                                if (current_manga_object != null)
-                                    current_manga_object.Merge(new_manga_object);
-                                else
-                                    MangaList.Add(new_manga_object);
-                            }
+                            MangaObject new_manga_object = archive_file.Deserialize<MangaObject>(SaveType: Settings.Default.SaveType);
+                            if (current_manga_object != null)
+                                current_manga_object.Merge(new_manga_object);
+                            else
+                                MangaList.Add(new_manga_object);
+                            archive_file.Close();
                         }
                         break;
 

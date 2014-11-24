@@ -66,6 +66,13 @@
 						FontFamily="{DynamicResource FontAwesome}"
 						ToolTip="Search Sites"
 						Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"/>
+                    <button:MetroButton
+						Grid.Column="0"
+						Content="{DynamicResource fa-search}"
+						Command="{Binding SearchSiteCommand}"
+						FontFamily="{DynamicResource OpenIconic}"
+						ToolTip="Search Sites"
+						Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"/>
                     <TextBox
 						x:Name="SearchBox"
 						Grid.Column="1" 

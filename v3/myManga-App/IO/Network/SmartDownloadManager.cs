@@ -1,5 +1,6 @@
 ﻿using Amib.Threading;
 using Core.IO;
+using Core.IO.Storage.Manager.BaseInterfaceClasses;
 using Core.Other.Singleton;
 using myManga_App.Properties;
 using myMangaSiteExtension.Objects;
@@ -23,7 +24,15 @@ namespace myManga_App.IO.Network
         public Int32 Concurrency
         { get { return smd.Concurrency + scd.Concurrency + spd.Concurrency + sid.Concurrency; } }
         public Boolean IsIdle
-        { get { return smd.IsIdle && scd.IsIdle && spd.IsIdle; } }
+        { get { return smd.IsIdle && scd.IsIdle && spd.IsIdle && sid.IsIdle; } }
+        public Boolean SmartMangaDownloaderIsIdle
+        { get { return smd.IsIdle; } }
+        public Boolean SmartChapterDownloaderIsIdle
+        { get { return scd.IsIdle; } }
+        public Boolean SmartPageDownloaderIsIdle
+        { get { return spd.IsIdle; } }
+        public Boolean SmartImageDownloaderIsIdle
+        { get { return sid.IsIdle; } }
 
         public SmartDownloadManager() : this(null) { }
         public SmartDownloadManager(STPStartInfo stpThredPool)
@@ -54,7 +63,8 @@ namespace myManga_App.IO.Network
             if (App.Dispatcher.Thread == Thread.CurrentThread)
             {
                 String save_path = Path.Combine(App.MANGA_ARCHIVE_DIRECTORY, e.MangaArchiveName(App.MANGA_ARCHIVE_EXTENSION));
-                Singleton<Core.IO.Storage.Manager.BaseInterfaceClasses.ZipStorage>.Instance.Write(save_path, e.GetType().Name, e.Serialize(SaveType: Settings.Default.SaveType));
+                Singleton<ZipStorage>.Instance.Write(save_path, e.GetType().Name, e.Serialize(SaveType: Settings.Default.SaveType));
+                Singleton<ZipStorage>.Instance.Write(save_path, typeof(BookmarkObject).Name, new BookmarkObject().Serialize(SaveType: Settings.Default.SaveType));
                 foreach (String cover_url in e.Covers)
                 { sid.Download(cover_url, save_path); }
             }
@@ -76,7 +86,7 @@ namespace myManga_App.IO.Network
             if (App.Dispatcher.Thread == Thread.CurrentThread)
             {
                 String save_path = Path.Combine(App.CHAPTER_ARCHIVE_DIRECTORY, new String(e.MangaName.Where(Char.IsLetterOrDigit).ToArray()), e.ChapterArchiveName(App.CHAPTER_ARCHIVE_EXTENSION));
-                Singleton<Core.IO.Storage.Manager.BaseInterfaceClasses.ZipStorage>.Instance.Write(save_path, e.GetType().Name, e.Serialize(SaveType: Settings.Default.SaveType));
+                Singleton<ZipStorage>.Instance.Write(save_path, e.GetType().Name, e.Serialize(SaveType: Settings.Default.SaveType));
                 spd.DownloadPageObjectPages(e);
             }
             else
@@ -88,7 +98,7 @@ namespace myManga_App.IO.Network
         private void spd_PageObjectComplete(object sender, SmartPageDownloader.PageObjectCompleted e)
         {
             String save_path = Path.Combine(App.CHAPTER_ARCHIVE_DIRECTORY, new String(e.ChapterObject.MangaName.Where(Char.IsLetterOrDigit).ToArray()), e.ChapterObject.ChapterArchiveName(App.CHAPTER_ARCHIVE_EXTENSION));
-            Singleton<Core.IO.Storage.Manager.BaseInterfaceClasses.ZipStorage>.Instance.Write(save_path, e.ChapterObject.GetType().Name, e.ChapterObject.Serialize(SaveType: Settings.Default.SaveType));
+            Singleton<ZipStorage>.Instance.Write(save_path, e.ChapterObject.GetType().Name, e.ChapterObject.Serialize(SaveType: Settings.Default.SaveType));
             sid.Download(e.PageObject.ImgUrl, save_path);
         }
         #endregion
@@ -96,7 +106,7 @@ namespace myManga_App.IO.Network
         #region SmartImageDownloader
         private void sid_SmartImageDownloadObjectComplete(object sender, SmartImageDownloader.SmartImageDownloadObject e)
         {
-            Singleton<Core.IO.Storage.Manager.BaseInterfaceClasses.ZipStorage>.Instance.Write(e.LocalPath, e.Filename, e.Stream);
+            Singleton<ZipStorage>.Instance.Write(e.LocalPath, e.Filename, e.Stream);
             e.Stream.Close();
         }
         #endregion

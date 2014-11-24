@@ -49,7 +49,7 @@ namespace myManga_App
         public App()
         {
             // Load Embedded DLLs from Resources.
-            emdll = new EmbeddedDLL("Resources.DLL");
+            emdll = new EmbeddedDLL();
 
             userConfig = LoadUserConfig();
 

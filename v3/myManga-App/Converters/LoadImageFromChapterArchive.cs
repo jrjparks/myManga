@@ -11,7 +11,7 @@ using System.Windows.Media.Imaging;
 namespace myManga_App.Converters
 {
     [ValueConversion(typeof(MangaObject), typeof(ImageSource))]
-    public class LoadImageFromMangaArchive : IValueConverter
+    public class LoadImageFromChapterArchive : IValueConverter
     {
         private readonly App App = App.Current as App;
 
@@ -20,7 +20,7 @@ namespace myManga_App.Converters
             MangaObject mo = value as MangaObject;
             try
             {
-                String archive_filename = Path.Combine(App.MANGA_ARCHIVE_DIRECTORY, mo.MangaArchiveName(App.MANGA_ARCHIVE_EXTENSION)),
+                String archive_filename = Path.Combine(App.CHAPTER_ARCHIVE_DIRECTORY, mo.MangaArchiveName(App.CHAPTER_ARCHIVE_EXTENSION)),
                     filename = Path.GetFileName(mo.SelectedCover);
                 BitmapImage bitmapImage = new BitmapImage();
                 using (Stream image_stream = Singleton<ZipStorage>.Instance.Read(archive_filename, filename))

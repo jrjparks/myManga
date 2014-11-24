@@ -84,15 +84,15 @@
     <Reference Include="HtmlAgilityPack, Version=1.4.6.0, Culture=neutral, PublicKeyToken=bd319b19eaf3b43a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\HtmlAgilityPack.1.4.6\lib\Net45\HtmlAgilityPack.dll</HintPath>
-      <Private>True</Private>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Ionic.Zip, Version=1.9.1.8, Culture=neutral, PublicKeyToken=edbe51ad942a3f5c, processorArchitecture=MSIL">
       <HintPath>..\packages\DotNetZip.1.9.1.8\lib\net20\Ionic.Zip.dll</HintPath>
-      <Private>True</Private>
+      <Private>False</Private>
     </Reference>
     <Reference Include="SmartThreadPool">
       <HintPath>..\packages\SmartThreadPool.dll.2.2.3\lib\SmartThreadPool.dll</HintPath>
-      <Private>True</Private>
+      <Private>False</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -116,6 +116,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Converters\CommandParameterStringFormat.cs" />
+    <Compile Include="Converters\LoadImageFromChapterArchive.cs" />
     <Compile Include="Converters\LoadImageFromMangaArchive.cs" />
     <Compile Include="Converters\LocationListToCSV.cs" />
     <Compile Include="Converters\StringArrayToCSV.cs" />
@@ -250,10 +251,12 @@
     <ProjectReference Include="..\myManga-DLL\Core\Core.csproj">
       <Project>{1C67209C-E3C8-4FF9-9CB1-B788ECB4B284}</Project>
       <Name>Core</Name>
+      <Private>True</Private>
     </ProjectReference>
     <ProjectReference Include="..\myManga-Plugin\myMangaSiteExtension\myMangaSiteExtension.csproj">
       <Project>{088e2638-3bed-4b11-a548-36e3539d86f2}</Project>
       <Name>myMangaSiteExtension</Name>
+      <Private>True</Private>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
@@ -284,10 +287,17 @@
   <ItemGroup>
     <Folder Include="Properties\DataSources\" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\DLL\SmartThreadPool.dll" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>xcopy "$(SolutionDir)myManga-ISiteExtensions\*.$(ConfigurationName).mymanga.dll" "$(TargetDir)Plugins\" /F /R /Y /I
 xcopy "$(SolutionDir)myManga-IDatabaseExtensions\*.$(ConfigurationName).mymanga.dll" "$(TargetDir)Plugins\" /F /R /Y /I</PostBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup>
+    <PreBuildEvent>
+    </PreBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

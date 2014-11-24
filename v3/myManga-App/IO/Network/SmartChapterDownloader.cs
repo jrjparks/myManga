@@ -48,24 +48,28 @@ namespace myManga_App.IO.Network
         private ChapterObject ChapterObjectWorker(ChapterObject chapterObject)
         {
             IWorkItemsGroup ChapterObjectWig = smartThreadPool.CreateWorkItemsGroup(2);
+            ISiteExtension ise = null;
+            LocationObject LocationObj = null;
+            foreach (String ExtentionName in App.UserConfig.EnabledSiteExtentions)
+            {
+                LocationObj = chapterObject.Locations.FirstOrDefault((l) => l.ExtensionName == ExtentionName);
+                if (LocationObj != null)
+                {
+                    ise = App.SiteExtensions.DLLCollection[LocationObj.ExtensionName];
+                    break;
+                }
+            }
+            if (ise == null)
+            {
+                LocationObj = chapterObject.Locations.First();
+                ise = App.SiteExtensions.DLLCollection[LocationObj.ExtensionName];
+            }
+            ISiteExtensionDescriptionAttribute isea = ise.GetType().GetCustomAttribute<ISiteExtensionDescriptionAttribute>(false);
 
-            Dictionary<ISiteExtension, IWorkItemResult<String>> ChapterObjectWorkItems = new Dictionary<ISiteExtension, IWorkItemResult<String>>();
-            foreach (LocationObject LocationObj in chapterObject.Locations.FindAll(l => l.Enabled))
-            {
-                ISiteExtension ise = App.SiteExtensions.DLLCollection[LocationObj.ExtensionName];
-                ISiteExtensionDescriptionAttribute isea = ise.GetType().GetCustomAttribute<ISiteExtensionDescriptionAttribute>(false);
-                if (isea.SupportedObjects.HasFlag(SupportedObjects.Search))
-                    ChapterObjectWorkItems.Add(ise, ChapterObjectWig.QueueWorkItem<String, String, String>(GetHtmlContent, LocationObj.Url, isea.RefererHeader));
-            }
-            ChapterObjectWig.WaitForIdle();
-            foreach (KeyValuePair<ISiteExtension, IWorkItemResult<String>> val in ChapterObjectWorkItems)
-            {
-                ChapterObject dmObj = val.Key.ParseChapterObject(val.Value.Result);
-                if (dmObj != null)
-                    chapterObject.Merge(dmObj);
-                if (chapterObject.Pages.Count <= 0)
-                    chapterObject.Pages = dmObj.Pages;
-            }
+            ChapterObject dcObj = ise.ParseChapterObject(GetHtmlContent(LocationObj.Url, isea.RefererHeader));
+            chapterObject.Merge(dcObj);
+            chapterObject.Pages = dcObj.Pages;
+
             return chapterObject;
         }
     }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -7,6 +8,7 @@ using System.Threading.Tasks;
 
 namespace Core.Other.Singleton
 {
+    [DebuggerStepThrough]
     public static class Singleton<T>
        where T : class
     {
@@ -37,7 +39,7 @@ namespace Core.Other.Singleton
 
                             if (constructor == null || constructor.IsAssembly)
                                 // Also exclude internal constructors.
-                                throw new Exception(String.Format("A private or " + "protected constructor is missing for '{0}'.", typeof(T).Name));
+                                throw new Exception(String.Format("A private or protected constructor is missing for '{0}'.", typeof(T).Name));
                             instance = (T)constructor.Invoke(null);
                         }
                     }

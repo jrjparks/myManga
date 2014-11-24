@@ -20,7 +20,7 @@ namespace myManga_App.IO.Network
             public PageObject PageObject { get; private set; }
             public ISiteExtension SiteExtension { get; private set; }
 
-            public PageObjectCompleted(ChapterObject ChapterObject, PageObject PageObject, ISiteExtension SiteExtension)
+            public PageObjectCompleted(ChapterObject ChapterObject, PageObject PageObject, ISiteExtension SiteExtension = null)
             {
                 this.ChapterObject = ChapterObject;
                 this.PageObject = PageObject;
@@ -64,7 +64,7 @@ namespace myManga_App.IO.Network
             PageObject dpObj = pageObjectCompleted.SiteExtension.ParsePageObject(base.GetHtmlContent(pageObjectCompleted.PageObject.Url, pageObjectCompleted.PageObject.Url));
             Int32 index = pageObjectCompleted.ChapterObject.Pages.FindIndex((po) => po.Url == dpObj.Url);
             pageObjectCompleted.ChapterObject.Pages[index] = dpObj;
-            return new PageObjectCompleted(pageObjectCompleted.ChapterObject, dpObj, null);
+            return new PageObjectCompleted(pageObjectCompleted.ChapterObject, dpObj);
         }
     }
 }

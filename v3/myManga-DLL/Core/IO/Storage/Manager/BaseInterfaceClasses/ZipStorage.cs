@@ -60,41 +60,41 @@ namespace Core.IO.Storage.Manager.BaseInterfaceClasses
         }
 
         public Stream Read(string archive_filename, string filename)
-        {
-            return Read(archive_filename, filename as Object);
-        }
+        { return Read(archive_filename, filename as Object); }
 
         public Stream Read(string filename, params object[] args)
         {
             if (args.Length > 0)
             {
                 String EntryName = args[0] as String;
-                if (File.Exists(filename))
+                MemoryStream stream = null;
+                using (Stream fstream = File.Open(filename, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
                 {
-                    MemoryStream stream = new MemoryStream();
-                    using (Stream fstream = File.Open(filename, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+                    using (ZipFile zipFile = ZipFile.Read(fstream, this.ZipReadOptions))
                     {
-                        using (ZipFile zipFile = ZipFile.Read(fstream, this.ZipReadOptions))
-                        {
-                            if (zipFile.ContainsEntry((String)args[0]))
-                                using (Stream ZipData = new MemoryStream())
-                                {
-                                    zipFile[(String)args[0]].Extract(ZipData);
-                                    ZipData.Seek(0, SeekOrigin.Begin);
-                                    ZipData.CopyTo(stream);
-                                }
-                        }
+                        if (zipFile.ContainsEntry((String)args[0]))
+                            using (Stream ZipData = new MemoryStream())
+                            {
+                                zipFile[(String)args[0]].Extract(ZipData);
+                                ZipData.Seek(0, SeekOrigin.Begin);
+
+                                stream = new MemoryStream();
+                                ZipData.CopyTo(stream);
+                                stream.Seek(0, SeekOrigin.Begin);
+                            }
                     }
-                    stream.Seek(0, SeekOrigin.Begin);
-                    return stream.Length > 0 ? stream : null;
                 }
+                return stream;
             }
             return null;
         }
 
+        public bool TryRead(string archive_filename, string filename, out Stream stream)
+        { return TryRead(archive_filename, out stream, filename); }
+
         public bool TryRead(string filename, out Stream stream, params object[] args)
         {
-            try { stream = Read(filename, args); return true; }
+            try { stream = Read(filename, args); return stream != null; }
             catch { stream = null; return false; }
         }
 
@@ -118,15 +118,17 @@ namespace Core.IO.Storage.Manager.BaseInterfaceClasses
                 {
                     try // Try to write to the Zip archive file
                     {
-                        Boolean IsZip = false; //File.Exists(write_item.ArchiveFilename) && ZipFile.IsZipFile(write_item.ArchiveFilename);
                         Stream zip_stream = new MemoryStream();
                         String DirName = Path.GetDirectoryName(write_item.ArchiveFilename).SafeFolder();
+
+                        // Open file stream and check to see if it is a zip file
                         using (Stream fstream = File.Open(write_item.ArchiveFilename, FileMode.OpenOrCreate, FileAccess.Read, FileShare.ReadWrite))
                         { fstream.CopyTo(zip_stream); zip_stream.Seek(0, SeekOrigin.Begin); }
-                        IsZip = ZipFile.IsZipFile(zip_stream, false);
-                        zip_stream.Seek(0, SeekOrigin.Begin);
+                        Boolean IsZip = ZipFile.IsZipFile(zip_stream, false);
+                        zip_stream.Seek(0, SeekOrigin.Begin);       // Seek back to the beginning of the file to read it.
+
                         using (ZipFile zipFile = IsZip ? ZipFile.Read(zip_stream, this.ZipReadOptions) : new ZipFile(Encoding.UTF8))
-                        {
+                        {   // Read existing or create a new zip file
                             DateTime dt = DateTime.Now;
                             zipFile.Comment = String.Format("Last updated at: {0} - {1}", dt.ToLongDateString(), dt.ToLongTimeString());
                             zipFile.CompressionLevel = Ionic.Zlib.CompressionLevel.BestCompression;
@@ -137,7 +139,7 @@ namespace Core.IO.Storage.Manager.BaseInterfaceClasses
                             ZipEntry zipEntry = zipFile.UpdateEntry(write_item.Filename, write_item.Stream);
                             zipEntry.Comment = String.Format("Last updated at: {0} - {1}", write_item.CreatedTime.ToLongDateString(), write_item.CreatedTime.ToLongTimeString());
 
-                            using (Stream fstream = File.Open(write_item.ArchiveFilename, FileMode.Open, FileAccess.Write, FileShare.Read))
+                            using (Stream fstream = File.Open(write_item.ArchiveFilename, FileMode.Truncate, FileAccess.Write, FileShare.Read))
                             { zipFile.Save(fstream); } // Overwrite old zip file with new data.
                         }
                         write_item.Stream.Close();

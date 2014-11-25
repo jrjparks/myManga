@@ -51,9 +51,6 @@ namespace myManga_App.IO.Network
             return (from PageObject in ChapterObject.Pages select smartThreadPool.QueueWorkItem(new WorkItemCallback(PageObjectWorker), new PageObjectCompleted(ChapterObject, PageObject, ise), new PostExecuteWorkItemCallback(PageObjectWorkerCallback))).ToList();
         }
 
-        public ICollection<ICollection<IWorkItemResult>> DownloadPageObjectPages(ICollection<ChapterObject> ChapterObjects)
-        { return (from ChapterObject in ChapterObjects select DownloadPageObjectPages(ChapterObject)).ToList(); }
-
         private void PageObjectWorkerCallback(IWorkItemResult wir)
         { OnPageObjectComplete(wir.Result as PageObjectCompleted); }
 

@@ -76,6 +76,16 @@ namespace myManga_App.ViewModels
                 OnPropertyChanged();
             }
         }
+
+        protected DelegateCommand clearSearchCommand;
+        public ICommand ClearSearchCommand
+        {
+            get { return clearSearchCommand ?? (clearSearchCommand = new DelegateCommand(ClearSearch, CanClearSearch)); }
+        }
+        protected void ClearSearch()
+        { SearchFilter = String.Empty; }
+        protected Boolean CanClearSearch()
+        { return !String.IsNullOrWhiteSpace(SearchFilter); }
         #endregion
 
         #region Manga List

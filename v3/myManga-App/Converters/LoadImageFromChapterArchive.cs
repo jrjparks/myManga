@@ -21,27 +21,24 @@ namespace myManga_App.Converters
             try
             {
                 String archive_filename = Path.Combine(App.CHAPTER_ARCHIVE_DIRECTORY, mo.MangaArchiveName(App.CHAPTER_ARCHIVE_EXTENSION)),
-                    filename = Path.GetFileName(mo.SelectedCover);
-                BitmapImage bitmapImage = new BitmapImage();
-                using (Stream image_stream = Singleton<ZipStorage>.Instance.Read(archive_filename, filename))
-                {
-                    bitmapImage.BeginInit();
-                    if (image_stream != null && image_stream.Length > 0)
-                        bitmapImage.StreamSource = image_stream;            // Load from local zip
-                    else
-                        bitmapImage.UriSource = new Uri(mo.SelectedCover);  // Load from web
+                    filename = parameter as String;
+                BitmapImage bitmap_image = new BitmapImage();
 
-                    bitmapImage.CacheOption = BitmapCacheOption.OnLoad;
-                    bitmapImage.EndInit();
+                Stream image_stream;
+                bitmap_image.BeginInit();
 
-                    using (bitmapImage.StreamSource) { }
-                }
-                return bitmapImage;
+                if (Singleton<ZipStorage>.Instance.TryRead(archive_filename, filename, out image_stream) && image_stream.Length > 0)
+                { bitmap_image.StreamSource = image_stream; }                // Load from local zip
+                else { bitmap_image.UriSource = new Uri(mo.SelectedCover); } // Load from web
+
+                bitmap_image.CacheOption = BitmapCacheOption.OnLoad;
+                bitmap_image.EndInit();
+                if (bitmap_image.StreamSource != null) { bitmap_image.StreamSource.Close(); /* Close bitmapImage.StreamSource if used */ }
+                if (image_stream != null) { image_stream.Close(); /* Close image_stream if used */ }
+
+                return bitmap_image;
             }
-            catch
-            {
-                return null;
-            }
+            catch { return null; }
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)

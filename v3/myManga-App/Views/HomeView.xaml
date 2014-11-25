@@ -66,13 +66,6 @@
 						FontFamily="{DynamicResource FontAwesome}"
 						ToolTip="Search Sites"
 						Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"/>
-                    <button:MetroButton
-						Grid.Column="0"
-						Content="{DynamicResource fa-search}"
-						Command="{Binding SearchSiteCommand}"
-						FontFamily="{DynamicResource OpenIconic}"
-						ToolTip="Search Sites"
-						Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"/>
                     <TextBox
 						x:Name="SearchBox"
 						Grid.Column="1" 
@@ -198,7 +191,7 @@
 				FontFamily="{DynamicResource FontAwesome}"
 				Content="{DynamicResource fa-refresh}"
 				ContentStringFormat="{}{0} Refresh"
-				Command="{Binding RefreshListCommand}"/>
+				Command="{Binding RefreshMangaListCommand}"/>
         </Grid>
         <Border Grid.Column="2">
             <Image Source="/myManga;component/Resources/Icon.ico" HorizontalAlignment="Center" VerticalAlignment="Center" Stretch="None"/>
@@ -286,14 +279,14 @@
             <ListBox 
 				Grid.Column="1"
 				ItemsSource="{Binding Chapters}" 
-				ItemContainerStyle="{DynamicResource HomeChapterListBoxItem}"
+				ItemContainerStyle="{DynamicResource HomeView_ChapterListBoxItem}"
 				Visibility="{Binding HasItems, Converter={StaticResource BooleanToVisibilityConverter}, RelativeSource={RelativeSource Self}}" 
 				ScrollViewer.HorizontalScrollBarVisibility="Disabled" HorizontalContentAlignment="Stretch"/>
         </Grid>
         <button:MetroButton
-			FontFamily="{DynamicResource FontAwesome}"
-			Content="{StaticResource fa-download}"
-			Command="{Binding DownloadMangaCommand}"
+			FontFamily="{DynamicResource OpenIconic}"
+			Content="{DynamicResource oi-reload}"
+			Command="{Binding RefreshMangaCommand}"
 			Height="32"
 			Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"
 			Grid.Column="2" 

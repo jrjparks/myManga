@@ -32,19 +32,31 @@
                         x:Name="ThumbBorder"
                         BorderThickness="3"
                         BorderBrush="{DynamicResource window-foreground-disabled}"
-                        Background="{DynamicResource window-foreground-disabled}"/>
+                        Background="{DynamicResource window-foreground-disabled}">
+                        <TextBlock
+                            x:Name="ThumbIcon"
+                            FontFamily="{DynamicResource OpenIconic}" 
+                            Text="{DynamicResource oi-lightbulb}" 
+                            Foreground="{DynamicResource window-theme-primary}"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Margin="0,-3,0,0"/>
+                    </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
                             <Setter TargetName="ThumbBorder" Property="Background" Value="{DynamicResource window-foreground-disabled}"/>
                             <Setter TargetName="ThumbBorder" Property="BorderBrush" Value="{DynamicResource window-theme-primary}"/>
+                            <Setter TargetName="ThumbIcon" Property="Foreground" Value="{DynamicResource window-theme-primary}"/>
                         </Trigger>
                         <Trigger Property="IsDragging" Value="True">
                             <Setter TargetName="ThumbBorder" Property="Background" Value="{DynamicResource window-theme-primary}"/>
                             <Setter TargetName="ThumbBorder" Property="BorderBrush" Value="{DynamicResource window-theme-secondary}"/>
+                            <Setter TargetName="ThumbIcon" Property="Foreground" Value="{DynamicResource window-theme-secondary}"/>
                         </Trigger>
                         <Trigger Property="IsEnabled" Value="False">
                             <Setter TargetName="ThumbBorder" Property="Background" Value="{DynamicResource window-foreground-disabled}"/>
                             <Setter TargetName="ThumbBorder" Property="BorderBrush" Value="{DynamicResource window-foreground-disabled}"/>
+                            <Setter TargetName="ThumbIcon" Property="Foreground" Value="{DynamicResource window-foreground-disabled}"/>
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>

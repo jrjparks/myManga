@@ -153,7 +153,75 @@
         </Setter>
     </Style>
 
-    <Style TargetType="{x:Type ListBoxItem}" BasedOn="{StaticResource {x:Type ListBoxItem}}" x:Key="HomeChapterListBoxItem">
+    <Style TargetType="{x:Type ListBoxItem}" BasedOn="{StaticResource {x:Type ListBoxItem}}" x:Key="HomeView_ChapterListBoxItem">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type ListBoxItem}">
+                    <Border
+                        x:Name="ItemBorder"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="0"
+                        Padding="{TemplateBinding BorderThickness}"
+                        Background="{TemplateBinding Background}"
+                        TextElement.Foreground="{TemplateBinding Foreground}">
+                        <Grid
+                            x:Name="Content"
+                            Margin="{TemplateBinding Padding}"
+                            SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                            TextBlock.TextAlignment="Left">
+                            <Grid.RowDefinitions>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Row="0" VerticalAlignment="Center" Foreground="{StaticResource text-dark}" FontWeight="Bold" FontSize="14" TextTrimming="CharacterEllipsis" Text="{Binding Name}"/>
+                            <TextBlock Grid.Row="1" VerticalAlignment="Center" Foreground="{StaticResource text-muted}" TextTrimming="CharacterEllipsis" Text="{Binding VCsCString}"/>
+                            <TextBlock
+                                x:Name="LocationIcon"
+                                Grid.Row="0"
+                                Grid.Column="1"
+                                FontFamily="{DynamicResource FontAwesome}"
+                                Text="{StaticResource fa-cloud}"
+                                TextAlignment="Center"
+                                VerticalAlignment="Center"/>
+                            <button:MetroButton
+                                x:Name="DownloadButton"
+                                Grid.Row="1"
+                                Grid.Column="1"
+                                FontFamily="{DynamicResource FontAwesome}"
+                                Content="{StaticResource fa-download}"
+                                Command="{Binding Path=DataContext.DownloadChapterCommand, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl}}"
+                                CommandParameter="{Binding}"/>
+                        </Grid>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter TargetName="ItemBorder" Property="BorderThickness" Value="{Binding Path=BorderThickness, RelativeSource={RelativeSource AncestorType={x:Type ListBoxItem}}}"/>
+                            <Setter TargetName="ItemBorder" Property="Padding" Value="0"/>
+                        </Trigger>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="DownloadButton" Property="Background" Value="{DynamicResource window-theme-secondary}"/>
+                            <Setter TargetName="ItemBorder" Property="Background" Value="{DynamicResource window-theme-secondary}"/>
+                            <Setter TargetName="ItemBorder" Property="TextElement.Foreground" Value="{DynamicResource window-theme-primary}"/>
+                        </Trigger>
+                        <DataTrigger Binding="{Binding Read}" Value="True">
+
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding IsLocalContent}" Value="True">
+                            <Setter TargetName="LocationIcon" Property="Text" Value="{StaticResource fa-hdd-o}"/>
+                        </DataTrigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="{x:Type ListBoxItem}" BasedOn="{StaticResource {x:Type ListBoxItem}}" x:Key="SearchView_ChapterListBoxItem">
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type ListBoxItem}">

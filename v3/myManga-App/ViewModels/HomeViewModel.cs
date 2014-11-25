@@ -118,18 +118,6 @@ namespace myManga_App.ViewModels
         }
         #endregion
 
-        #region DownloadManga
-        protected DelegateCommand downloadMangaCommand;
-        public ICommand DownloadMangaCommand
-        { get { return downloadMangaCommand ?? (downloadMangaCommand = new DelegateCommand(DownloadManga, CanDownloadManga)); } }
-
-        protected Boolean CanDownloadManga()
-        { return MangaObj != null; }
-
-        protected void DownloadManga()
-        { Singleton<myManga_App.IO.Network.SmartDownloadManager>.Instance.Download(mangaObj); }
-        #endregion
-
         #region DownloadChapter
         protected DelegateCommand<ChapterObject> downloadChapterCommand;
         public ICommand DownloadChapterCommand
@@ -139,15 +127,27 @@ namespace myManga_App.ViewModels
         { Singleton<myManga_App.IO.Network.SmartDownloadManager>.Instance.Download(ChapterObj); }
         #endregion
 
-        #region RefreshList
-        protected DelegateCommand refreshListCommand;
-        public ICommand RefreshListCommand
-        { get { return refreshListCommand ?? (refreshListCommand = new DelegateCommand(RefreshList, CanRefresh)); } }
+        #region RefreshManga
+        protected DelegateCommand refreshMangaCommand;
+        public ICommand RefreshMangaCommand
+        { get { return refreshMangaCommand ?? (refreshMangaCommand = new DelegateCommand(RefreshManga, CanRefreshManga)); } }
 
-        protected Boolean CanRefresh()
+        protected Boolean CanRefreshManga()
+        { return MangaObj != null; }
+
+        protected void RefreshManga()
+        { Singleton<myManga_App.IO.Network.SmartDownloadManager>.Instance.Download(mangaObj); }
+        #endregion
+
+        #region RefreshMangaList
+        protected DelegateCommand refreshMangaListCommand;
+        public ICommand RefreshMangaListCommand
+        { get { return refreshMangaListCommand ?? (refreshMangaListCommand = new DelegateCommand(RefreshMangaList, CanRefreshMangaList)); } }
+
+        protected Boolean CanRefreshMangaList()
         { return MangaList.Count > 0; }
 
-        protected void RefreshList()
+        protected void RefreshMangaList()
         { Singleton<myManga_App.IO.Network.SmartDownloadManager>.Instance.Download(MangaList); }
         #endregion
 

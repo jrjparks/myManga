@@ -43,20 +43,27 @@
             Grid.Row="0"
             Orientation="Horizontal"
             TextElement.FontSize="20"
-            TextElement.FontFamily="{DynamicResource FontAwesome}">
+            TextElement.FontFamily="{DynamicResource OpenIconic}">
             <button:MetroButton
-                Content="{StaticResource fa-home}"
+                Content="{StaticResource oi-home}"
                 ContentStringFormat="{}{0} Home"
                 ToolTip="Home"
                 Command="{Binding HomeCommand}"
                 MinWidth="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}">
             </button:MetroButton>
-            <TextBlock 
+            <TextBlock
+                TextElement.FontFamily="{DynamicResource FontAwesome}"
                 Text="{StaticResource fa-chevron-right}"
                 TextElement.FontSize="14"
                 VerticalAlignment="Center"/>
             <button:MetroButton
-                Content="{StaticResource fa-book}"
+                Content="{StaticResource oi-magnifying-glass}"
+                ContentStringFormat="{}{0} Search"
+                ToolTip="Reader"
+                Command="{Binding ReadCommand}"
+                MinWidth="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"/>
+            <button:MetroButton
+                Content="{StaticResource oi-book}"
                 ContentStringFormat="{}{0} Reader"
                 ToolTip="Reader"
                 Command="{Binding ReadCommand}"

@@ -96,6 +96,10 @@
                         </DataTemplate>
                     </ListBox.ItemTemplate>
                 </ListBox>
+                <TextBlock Text="Storage Serialization"/>
+                <ComboBox
+                    ItemsSource="{Binding SaveTypes}"
+                    SelectedItem="{Binding SelectedSaveType}"/>
             </StackPanel>
         </Grid>
         <StackPanel

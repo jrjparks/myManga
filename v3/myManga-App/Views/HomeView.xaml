@@ -183,8 +183,7 @@
 				Width="96" Height="96" 
 				Style="{DynamicResource Spinner}" 
 				Visibility="{Binding IsLoading, Converter={StaticResource BooleanToVisibilityConverter}}"
-                Foreground="#BF000000"
-                />
+                Foreground="#BF000000"/>
             <button:MetroButton
 				Grid.Row="3"
 				FontSize="16"

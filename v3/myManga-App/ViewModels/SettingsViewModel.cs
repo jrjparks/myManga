@@ -10,6 +10,8 @@ using System.Runtime.CompilerServices;
 using myManga_App.Objects;
 using Core.MVVM;
 using System.Windows.Input;
+using Core.IO;
+using myManga_App.Properties;
 
 namespace myManga_App.ViewModels
 {
@@ -75,6 +77,7 @@ namespace myManga_App.ViewModels
             if (CloseEvent != null)
                 CloseEvent(this, null);
         }
+        #endregion
 
         #region Extention List Movements
         protected DelegateCommand<String> moveUpCommand;
@@ -175,9 +178,25 @@ namespace myManga_App.ViewModels
             }
         }
         #endregion
+
+        #region SaveType
+        public IEnumerable<SaveType> SaveTypes
+        { get { return Enum.GetValues(typeof(SaveType)).Cast<SaveType>(); } }
+
+        private SaveType selectedSaveType;
+        public SaveType SelectedSaveType
+        {
+            get { return selectedSaveType; }
+            set
+            {
+                OnPropertyChanging();
+                selectedSaveType = value;
+                OnPropertyChanged();
+            }
+        }
         #endregion
 
-        protected App App = App.Current as App;
+        protected readonly App App = App.Current as App;
 
         public SettingsViewModel()
         {
@@ -193,6 +212,7 @@ namespace myManga_App.ViewModels
                 IDatabaseExtensionDescriptionAttribute ideda = ide.GetType().GetCustomAttribute<IDatabaseExtensionDescriptionAttribute>(false);
                 DatabaseExtensionInformationObjects.Add(new DatabaseExtensionInformationObject(ideda) { Enabled = App.UserConfig.EnabledDatabaseExtentions.Contains(ideda.Name) });
             }
+            SelectedSaveType = Settings.Default.SaveType;
         }
 
         public void SaveUserConfig()
@@ -201,6 +221,7 @@ namespace myManga_App.ViewModels
             App.UserConfig.EnabledSiteExtentions.AddRange((from SiteExtentionInformationObject seio in SiteExtentionInformationObjects where seio.Enabled select seio.Name));
             App.UserConfig.EnabledDatabaseExtentions.Clear();
             App.UserConfig.EnabledDatabaseExtentions.AddRange((from DatabaseExtensionInformationObject deio in DatabaseExtensionInformationObjects where deio.Enabled select deio.Name));
+            Settings.Default.SaveType = SelectedSaveType;
             App.SaveUserConfig();
         }
 

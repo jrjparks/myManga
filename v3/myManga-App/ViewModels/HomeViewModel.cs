@@ -27,7 +27,7 @@ using Core.IO.Storage.Manager.BaseInterfaceClasses;
 
 namespace myManga_App.ViewModels
 {
-    public class HomeViewModel : IDisposable, INotifyPropertyChanging, INotifyPropertyChanged
+    public class HomeViewModel : DependencyObject, IDisposable, INotifyPropertyChanging, INotifyPropertyChanged
     {
         #region NotifyPropertyChange
         public event PropertyChangingEventHandler PropertyChanging;
@@ -168,7 +168,7 @@ namespace myManga_App.ViewModels
         public HomeViewModel()
         {
             ConfigureSearchFilter();
-            if (!DesignerProperties.GetIsInDesignMode(new System.Windows.DependencyObject()))
+            if (!DesignerProperties.GetIsInDesignMode(this))
             {
                 foreach (String MangaArchiveFilePath in Directory.GetFiles(App.MANGA_ARCHIVE_DIRECTORY, App.MANGA_ARCHIVE_FILTER, SearchOption.AllDirectories))
                 {

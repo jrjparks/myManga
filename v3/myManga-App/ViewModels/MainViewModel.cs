@@ -6,11 +6,28 @@ using myManga_App.IO.Network;
 using Core.Other.Singleton;
 using Core.MVVM;
 using System.Windows.Input;
+using System.Runtime.CompilerServices;
 
 namespace myManga_App.ViewModels
 {
-    public sealed class MainViewModel : DependencyObject, IDisposable
+    public sealed class MainViewModel : DependencyObject, IDisposable, INotifyPropertyChanging, INotifyPropertyChanged
     {
+        #region NotifyPropertyChange
+        public event PropertyChangingEventHandler PropertyChanging;
+        protected void OnPropertyChanging([CallerMemberName] String caller = "")
+        {
+            if (PropertyChanging != null)
+                PropertyChanging(this, new PropertyChangingEventArgs(caller));
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        protected void OnPropertyChanged([CallerMemberName] String caller = "")
+        {
+            if (PropertyChanged != null)
+                PropertyChanged(this, new PropertyChangedEventArgs(caller));
+        }
+        #endregion
+
         #region Content
         public static DependencyProperty ContentViewModelProperty = DependencyProperty.Register("ContentViewModel", typeof(Object), typeof(MainViewModel));
         public Object ContentViewModel
@@ -66,7 +83,21 @@ namespace myManga_App.ViewModels
         { ContentViewModel = SettingsViewModel; }
         #endregion
 
-        private App App = App.Current as App;
+        #region Download Active
+        private Boolean isLoading = false;
+        public Boolean IsLoading
+        {
+            get { return isLoading; }
+            set
+            {
+                OnPropertyChanging();
+                isLoading = value;
+                OnPropertyChanged();
+            }
+        }
+        #endregion
+
+        private readonly App App = App.Current as App;
 
         public MainViewModel()
         {
@@ -78,6 +109,7 @@ namespace myManga_App.ViewModels
             };
 
             ServicePointManager.DefaultConnectionLimit = Singleton<SmartDownloadManager>.Instance.Concurrency;
+            Singleton<SmartDownloadManager>.Instance.ActivityUpdated += (s, e) => { IsLoading = !(s as SmartDownloadManager).IsIdle; };
         }
 
         public void Dispose()

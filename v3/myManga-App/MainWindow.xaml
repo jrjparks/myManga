@@ -27,7 +27,10 @@
                 <ResourceDictionary Source="/myManga;component/Themes/CoreResourceDictionary.xaml"/>
                 <ResourceDictionary Source="/myManga;component/Resources/Localization/Dictionary_en-US.xaml"/>
                 <ResourceDictionary Source="/myManga;component/Resources/ViewModel-View-Link.xaml"/>
+
+                <ResourceDictionary Source="/myManga;component/Themes/ProgressBar/Spinner.xaml"/>
             </ResourceDictionary.MergedDictionaries>
+            <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
         </ResourceDictionary>
     </Window.Resources>
     <Grid>
@@ -126,5 +129,13 @@
                     Margin="0,0,0,0"/>
             </StackPanel>
         </StackPanel>
+        <ProgressBar
+            Grid.Row="1"
+			HorizontalAlignment="Center" 
+			VerticalAlignment="Bottom" 
+			Width="32" Height="32" 
+			Style="{DynamicResource Spinner}" 
+			Visibility="{Binding IsLoading, Converter={StaticResource BooleanToVisibilityConverter}}"
+            Foreground="#BF000000"/>
     </Grid>
 </window:myMangaWindow>

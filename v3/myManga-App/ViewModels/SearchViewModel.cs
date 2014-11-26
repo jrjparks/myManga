@@ -140,7 +140,7 @@ namespace myManga_App.ViewModels
         { return MangaObj != null; }
 
         protected void StoreMangaInfo()
-        { Singleton<myManga_App.IO.Network.SmartDownloadManager>.Instance.Download(MangaObj); }
+        { Singleton<myManga_App.IO.Network.DownloadManager>.Instance.Download(MangaObj); }
 
         private delegate void Instance_SearchCompleteInvoke(object sender, List<MangaObject> e);
         private void Instance_SearchComplete(object sender, List<MangaObject> e)

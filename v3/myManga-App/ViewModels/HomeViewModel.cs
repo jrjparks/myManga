@@ -124,7 +124,7 @@ namespace myManga_App.ViewModels
         { get { return downloadChapterCommand ?? (downloadChapterCommand = new DelegateCommand<ChapterObject>(DownloadChapter)); } }
 
         protected void DownloadChapter(ChapterObject ChapterObj)
-        { Singleton<myManga_App.IO.Network.SmartDownloadManager>.Instance.Download(ChapterObj); }
+        { Singleton<myManga_App.IO.Network.DownloadManager>.Instance.Download(MangaObj, ChapterObj); }
         #endregion
 
         #region RefreshManga
@@ -136,7 +136,7 @@ namespace myManga_App.ViewModels
         { return MangaObj != null; }
 
         protected void RefreshManga()
-        { Singleton<myManga_App.IO.Network.SmartDownloadManager>.Instance.Download(mangaObj); }
+        { Singleton<myManga_App.IO.Network.DownloadManager>.Instance.Download(mangaObj); }
         #endregion
 
         #region RefreshMangaList
@@ -148,7 +148,7 @@ namespace myManga_App.ViewModels
         { return MangaList.Count > 0; }
 
         protected void RefreshMangaList()
-        { Singleton<myManga_App.IO.Network.SmartDownloadManager>.Instance.Download(MangaList); }
+        { foreach (MangaObject manga_object in MangaList) Singleton<myManga_App.IO.Network.DownloadManager>.Instance.Download(manga_object); }
         #endregion
 
         protected Boolean isLoading;

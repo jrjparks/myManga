@@ -83,7 +83,6 @@ namespace AFTV_Network
             ChapterObject[] Chapters = (from HtmlNode ChapterNode in ChapterListing.SelectNodes(".//tr[not(contains(@class,'table_head'))]")
                                         select new ChapterObject()
                                         {
-                                            MangaName = MangaName,
                                             Name = HtmlEntity.DeEntitize(ChapterNode.SelectSingleNode(".//td[1]").LastChild.InnerText.Substring(3).Trim()),
                                             Chapter = Int32.Parse(ChapterNode.SelectSingleNode(".//td[1]/a").InnerText.Substring(ChapterNode.SelectSingleNode(".//td[1]/a").InnerText.LastIndexOf(' ') + 1)),
                                             Locations = { 

@@ -114,7 +114,6 @@ namespace Batoto
                     DateTime.TryParse(ReleaseData, out Released);
                     ChapterObject chapterObject = new ChapterObject()
                     {
-                        MangaName = MangaName,
                         Name = HtmlEntity.DeEntitize(ChapterName),
                         Volume = Volume,
                         Chapter = Chapter,

@@ -32,8 +32,6 @@ namespace myMangaSiteExtension.Objects
         [NonSerialized, XmlIgnore, EditorBrowsable(EditorBrowsableState.Never)]
         protected String name;
         [NonSerialized, XmlIgnore, EditorBrowsable(EditorBrowsableState.Never)]
-        protected String manga_name;
-        [NonSerialized, XmlIgnore, EditorBrowsable(EditorBrowsableState.Never)]
         protected Int32 volume;
         [NonSerialized, XmlIgnore, EditorBrowsable(EditorBrowsableState.Never)]
         protected Int32 chapter;
@@ -61,18 +59,6 @@ namespace myMangaSiteExtension.Objects
             {
                 OnPropertyChanging();
                 name = value;
-                OnPropertyChanged();
-            }
-        }
-
-        [XmlAttribute]
-        public String MangaName
-        {
-            get { return manga_name; }
-            set
-            {
-                OnPropertyChanging();
-                manga_name = value;
                 OnPropertyChanged();
             }
         }

@@ -170,9 +170,12 @@ namespace myMangaSiteExtension.Utilities
             value.Chapters = value.Chapters.OrderBy(c => c.Chapter).ThenBy(c => c.SubChapter).ThenBy(c => c.Volume).ToList();
         }
 
+        public static String MangaFileName(this MangaObject value)
+        { return (value != null && value.Name != null) ? new String(value.Name.Where(Char.IsLetterOrDigit).ToArray()) : String.Empty; }
+
         //Yes the archive is a zip file, read the docs
         public static String MangaArchiveName(this MangaObject value, String Extention = "zip")
-        { return (value != null && value.Name != null) ? String.Format("{0}.{1}", new String(value.Name.Where(Char.IsLetterOrDigit).ToArray()), Extention) : String.Empty; }
+        { return (value != null && value.Name != null) ? String.Format("{0}.{1}", value.MangaFileName(), Extention) : String.Empty; }
 
         public static Boolean IsLocal(this MangaObject value, String Folder, String Extention = "zip")
         { return (value != null) ? System.IO.File.Exists(System.IO.Path.Combine(Folder, value.MangaArchiveName(Extention))) : false; }

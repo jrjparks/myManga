@@ -14,14 +14,14 @@ namespace myManga_App.ViewModels
     {
         #region NotifyPropertyChange
         public event PropertyChangingEventHandler PropertyChanging;
-        protected void OnPropertyChanging([CallerMemberName] String caller = "")
+        private void OnPropertyChanging([CallerMemberName] String caller = "")
         {
             if (PropertyChanging != null)
                 PropertyChanging(this, new PropertyChangingEventArgs(caller));
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
-        protected void OnPropertyChanged([CallerMemberName] String caller = "")
+        private void OnPropertyChanged([CallerMemberName] String caller = "")
         {
             if (PropertyChanged != null)
                 PropertyChanged(this, new PropertyChangedEventArgs(caller));
@@ -108,8 +108,8 @@ namespace myManga_App.ViewModels
                 SearchViewModel.StartSearch(e);
             };
 
-            ServicePointManager.DefaultConnectionLimit = Singleton<SmartDownloadManager>.Instance.Concurrency;
-            Singleton<SmartDownloadManager>.Instance.ActivityUpdated += (s, e) => { IsLoading = !(s as SmartDownloadManager).IsIdle; };
+            ServicePointManager.DefaultConnectionLimit = Singleton<DownloadManager>.Instance.Concurrency;
+            Singleton<DownloadManager>.Instance.StatusChange += (s, e) => { IsLoading = !(s as DownloadManager).IsIdle; };
         }
 
         public void Dispose()

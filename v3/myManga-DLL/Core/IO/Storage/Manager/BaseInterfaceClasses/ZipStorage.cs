@@ -27,7 +27,7 @@ namespace Core.IO.Storage.Manager.BaseInterfaceClasses
                 this.Filename = Filename;
                 this.Stream = Stream;
 
-                CreatedTime = DateTime.Now;
+                this.CreatedTime = DateTime.Now;
             }
         }
 

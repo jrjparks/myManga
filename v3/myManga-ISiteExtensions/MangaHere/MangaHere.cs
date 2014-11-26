@@ -69,7 +69,6 @@ namespace MangaHere
 
                 ChapterObject Chapter = new ChapterObject()
                 {
-                    MangaName = MangaName,
                     Name = ChapterTitle,
                     Volume = Int32.Parse(volChapSub[0]),
                     Chapter = Int32.Parse(volChapSub[1]),

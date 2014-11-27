@@ -189,6 +189,23 @@ namespace myMangaSiteExtension.Utilities
                 value.AlternateNames.FirstOrDefault(o => new String(o.Where(Char.IsLetterOrDigit).ToArray()).ToLower().Contains(_name)) != null;
         }
 
+        public static Int32 IndexOfChapterObject(this MangaObject value, ChapterObject chapter_object)
+        { return value.Chapters.FindIndex(c => c.Volume == chapter_object.Volume && c.Chapter == chapter_object.Chapter && c.SubChapter == chapter_object.SubChapter); }
+
+        public static ChapterObject NextChapterObject(this MangaObject value, ChapterObject chapter_object)
+        {
+            Int32 index = value.IndexOfChapterObject(chapter_object) + 1;
+            if (index >= value.Chapters.Count) return null;
+            return value.Chapters[index];
+        }
+
+        public static ChapterObject PrevChapterObject(this MangaObject value, ChapterObject chapter_object)
+        {
+            Int32 index = value.IndexOfChapterObject(chapter_object) - 1;
+            if (index < 0) return null;
+            return value.Chapters[index];
+        }
+
         public static ChapterObject ChapterObjectOfBookmarkObject(this MangaObject value, BookmarkObject bookmark_object)
         { return value.Chapters.Find(c => c.Volume == bookmark_object.Volume && c.Chapter == bookmark_object.Chapter && c.SubChapter == bookmark_object.SubChapter); }
     }

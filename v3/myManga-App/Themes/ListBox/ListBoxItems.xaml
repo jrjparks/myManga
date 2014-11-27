@@ -181,14 +181,22 @@
                             </Grid.ColumnDefinitions>
                             <TextBlock Grid.Row="0" VerticalAlignment="Center" Foreground="{StaticResource text-dark}" FontWeight="Bold" FontSize="14" TextTrimming="CharacterEllipsis" Text="{Binding Name}"/>
                             <TextBlock Grid.Row="1" VerticalAlignment="Center" Foreground="{StaticResource text-muted}" TextTrimming="CharacterEllipsis" Text="{Binding VCsCString}"/>
-                            <TextBlock
+                            <!--<TextBlock
                                 x:Name="LocationIcon"
                                 Grid.Row="0"
                                 Grid.Column="1"
                                 FontFamily="{DynamicResource FontAwesome}"
                                 Text="{StaticResource fa-cloud}"
                                 TextAlignment="Center"
-                                VerticalAlignment="Center"/>
+                                VerticalAlignment="Center"/>-->
+                            <button:MetroButton
+                                x:Name="ReadChapterButton"
+                                Grid.Row="0"
+                                Grid.Column="1"
+                                FontFamily="{DynamicResource OpenIconic}"
+                                Content="{StaticResource oi-book}"
+                                Command="{Binding Path=DataContext.ReadChapterCommand, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl}}"
+                                CommandParameter="{Binding}"/>
                             <button:MetroButton
                                 x:Name="DownloadButton"
                                 Grid.Row="1"
@@ -213,7 +221,7 @@
 
                         </DataTrigger>
                         <DataTrigger Binding="{Binding IsLocalContent}" Value="True">
-                            <Setter TargetName="LocationIcon" Property="Text" Value="{StaticResource fa-hdd-o}"/>
+                            <!--<Setter TargetName="LocationIcon" Property="Text" Value="{StaticResource fa-hdd-o}"/>-->
                         </DataTrigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>

@@ -13,4 +13,7 @@
     <DataTemplate DataType="{x:Type ViewModels:SearchViewModel}">
         <Views:SearchView/>
     </DataTemplate>
+    <DataTemplate DataType="{x:Type ViewModels:ReaderViewModel}">
+        <Views:ReaderView/>
+    </DataTemplate>
 </ResourceDictionary>

@@ -119,6 +119,7 @@
     <Compile Include="Converters\LoadImageFromChapterArchive.cs" />
     <Compile Include="Converters\LoadImageFromMangaArchive.cs" />
     <Compile Include="Converters\LocationListToCSV.cs" />
+    <Compile Include="Converters\ObjectIsLocal.cs" />
     <Compile Include="Converters\StringArrayToCSV.cs" />
     <Compile Include="IO\AccessPriority.cs" />
     <Compile Include="IO\Network\DownloadManager.cs" />
@@ -132,10 +133,14 @@
     <Compile Include="Themes\Window\myMangaWindow.cs" />
     <Compile Include="ViewModels\HomeViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
+    <Compile Include="ViewModels\ReaderViewModel.cs" />
     <Compile Include="ViewModels\SearchViewModel.cs" />
     <Compile Include="ViewModels\SettingsViewModel.cs" />
     <Compile Include="Views\HomeView.xaml.cs">
       <DependentUpon>HomeView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ReaderView.xaml.cs">
+      <DependentUpon>ReaderView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\SearchView.xaml.cs">
       <DependentUpon>SearchView.xaml</DependentUpon>
@@ -208,6 +213,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\HomeView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\ReaderView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

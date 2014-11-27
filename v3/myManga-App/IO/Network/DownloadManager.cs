@@ -137,6 +137,7 @@ namespace myManga_App.IO.Network
             }
         }
 
+        #region Worker Classes
         private class MangaObjectWorkerClass : WorkerClass<MangaObject, MangaObject>
         {
             public MangaObjectWorkerClass() : base(null) { }
@@ -246,7 +247,7 @@ namespace myManga_App.IO.Network
                 this.Filename = filename != null ? filename : Path.GetFileName(new Uri(url).LocalPath);     // Use the LocalPath from the url if filename is null
 
                 this.URL = url;
-                this.Referer = referer ?? url;                                                // Use the URL if referer in null
+                this.Referer = referer ?? url;                                                              // Use the URL if referer in null
                 this.LocalPath = local_path;
             }
         }
@@ -270,6 +271,7 @@ namespace myManga_App.IO.Network
                 return new WorkerResult<ImageDownloadRequest>(Value);
             }
         }
+        #endregion
         #endregion
 
         #region Events
@@ -301,7 +303,7 @@ namespace myManga_App.IO.Network
             this.SmartThreadPool = new SmartThreadPool(STPStartInfo ?? new STPStartInfo()
             {   // Default STPStartInfo
                 ThreadPoolName = String.Format("{0}-{1}", this.GetType().Name, Guid.NewGuid()),
-                MaxWorkerThreads = 8,
+                MaxWorkerThreads = Environment.ProcessorCount,
             });
 
             this.SynchronizationContext = SynchronizationContext ?? SynchronizationContext.Current;

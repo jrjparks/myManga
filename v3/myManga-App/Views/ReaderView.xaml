@@ -1,0 +1,67 @@
+﻿<UserControl 
+    x:Class="myManga_App.Views.ReaderView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+    xmlns:vm="clr-namespace:myManga_App.ViewModels"
+    xmlns:button="clr-namespace:myManga_App.Resources.Theme.Buttons"
+    xmlns:system="clr-namespace:System;assembly=mscorlib"
+    xmlns:mangaObjects="clr-namespace:myMangaSiteExtension.Objects;assembly=myMangaSiteExtension"
+    xmlns:Converters="clr-namespace:myManga_App.Converters" x:Name="userControl"
+    mc:Ignorable="d" 
+    d:DesignHeight="400"
+    d:DesignWidth="600"
+    Background="{DynamicResource window-background}" 
+    Foreground="{DynamicResource window-foreground}">
+    <UserControl.Resources>
+        <Converters:LoadImageFromChapterArchive x:Key="LoadImageFromChapterArchive"/>
+    </UserControl.Resources>
+    <UserControl.InputBindings>
+        <KeyBinding Command="{Binding PrevPageCommand}" Key="Left"/>
+        <KeyBinding Command="{Binding NextPageCommand}" Key="Right"/>
+    </UserControl.InputBindings>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="24"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="48"/>
+            <ColumnDefinition/>
+            <ColumnDefinition Width="48"/>
+        </Grid.ColumnDefinitions>
+        <TextBlock 
+            Grid.Column="1" 
+            HorizontalAlignment="Center"
+            VerticalAlignment="Bottom"
+            Text="{Binding ChapterTitle, Mode=OneWay}"/>
+        <button:MetroButton
+            Grid.Column="0"
+            Grid.Row="1"
+            VerticalContentAlignment="Center"
+            HorizontalContentAlignment="Center" 
+            FontFamily="{DynamicResource OpenIconic}"
+            Content="{DynamicResource oi-arrow-thick-left}"
+            Command="{Binding PrevPageCommand}"/>
+        <Image
+            Grid.Column="1"
+            Grid.Row="1">
+            <Image.Source>
+                <MultiBinding Converter="{StaticResource LoadImageFromChapterArchive}">
+                    <Binding Path="MangaObject"/>
+                    <Binding Path="ChapterObject"/>
+                    <Binding Path="BookmarkObject"/>
+                </MultiBinding>
+            </Image.Source>
+        </Image>
+        <button:MetroButton
+            Grid.Column="2"
+            Grid.Row="1"
+            VerticalContentAlignment="Center"
+            HorizontalContentAlignment="Center"
+            FontFamily="{DynamicResource OpenIconic}"
+            Content="{DynamicResource oi-arrow-thick-right}"
+            Command="{Binding NextPageCommand}"/>
+    </Grid>
+</UserControl>

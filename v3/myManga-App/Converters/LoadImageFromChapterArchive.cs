@@ -10,26 +10,29 @@ using System.Windows.Media.Imaging;
 
 namespace myManga_App.Converters
 {
-    [ValueConversion(typeof(MangaObject), typeof(ImageSource))]
-    public class LoadImageFromChapterArchive : IValueConverter
+    [ValueConversion(typeof(object[]), typeof(ImageSource))]
+    public class LoadImageFromChapterArchive : IMultiValueConverter
     {
         private readonly App App = App.Current as App;
 
-        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        public object Convert(object[] values, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
-            MangaObject mo = value as MangaObject;
+            MangaObject MangaObject = values[0] as MangaObject;
+            ChapterObject ChapterObject = values[1] as ChapterObject;
+            BookmarkObject BookmarkObject = values[2] as BookmarkObject;
+            if (MangaObject == null || ChapterObject == null || BookmarkObject == null) return null;
+            PageObject PageObject = ChapterObject.PageObjectOfBookmarkObject(BookmarkObject);
+            String archive_path = Path.Combine(App.CHAPTER_ARCHIVE_DIRECTORY, MangaObject.MangaFileName(), ChapterObject.ChapterArchiveName(App.CHAPTER_ARCHIVE_EXTENSION));
             try
             {
-                String archive_filename = Path.Combine(App.CHAPTER_ARCHIVE_DIRECTORY, mo.MangaArchiveName(App.CHAPTER_ARCHIVE_EXTENSION)),
-                    filename = parameter as String;
                 BitmapImage bitmap_image = new BitmapImage();
 
                 Stream image_stream;
                 bitmap_image.BeginInit();
 
-                if (Singleton<ZipStorage>.Instance.TryRead(archive_filename, filename, out image_stream) && image_stream.Length > 0)
-                { bitmap_image.StreamSource = image_stream; }                // Load from local zip
-                else { bitmap_image.UriSource = new Uri(mo.SelectedCover); } // Load from web
+                if (Singleton<ZipStorage>.Instance.TryRead(archive_path, PageObject.Name, out image_stream) && image_stream.Length > 0)
+                { bitmap_image.StreamSource = image_stream; }                   // Load from local zip
+                else { bitmap_image.UriSource = new Uri(PageObject.ImgUrl); }   // Load from web
 
                 bitmap_image.CacheOption = BitmapCacheOption.OnLoad;
                 bitmap_image.EndInit();
@@ -41,7 +44,7 @@ namespace myManga_App.Converters
             catch { return null; }
         }
 
-        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, System.Globalization.CultureInfo culture)
         {
             throw new NotSupportedException("There is no way I'm writing a reverse image look-up...");
         }

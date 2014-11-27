@@ -32,14 +32,8 @@ namespace myManga_App.ViewModels
         public static DependencyProperty ContentViewModelProperty = DependencyProperty.Register("ContentViewModel", typeof(Object), typeof(MainViewModel));
         public Object ContentViewModel
         {
-            get
-            {
-                return GetValue(ContentViewModelProperty) as Object;
-            }
-            set
-            {
-                SetValue(ContentViewModelProperty, value);
-            }
+            get { return GetValue(ContentViewModelProperty) as Object; }
+            set { SetValue(ContentViewModelProperty, value); }
         }
 
         private HomeViewModel homeViewModel;
@@ -53,6 +47,10 @@ namespace myManga_App.ViewModels
         private SearchViewModel searchViewModel;
         public SearchViewModel SearchViewModel
         { get { return searchViewModel ?? (searchViewModel = new SearchViewModel()); } }
+
+        private ReaderViewModel readerViewModel;
+        public ReaderViewModel ReaderViewModel
+        { get { return readerViewModel ?? (readerViewModel = new ReaderViewModel()); } }
         #endregion
 
         #region Header Buttons
@@ -68,10 +66,10 @@ namespace myManga_App.ViewModels
         { get { return readCommand ?? (readCommand = new DelegateCommand(OpenRead, CanOpenRead)); } }
 
         private void OpenRead()
-        { /*ContentViewModel = HomeViewModel;*/ }
+        { ContentViewModel = ReaderViewModel; }
 
         private Boolean CanOpenRead()
-        { return false; }
+        { return ReaderViewModel.MangaObject != null && ReaderViewModel.ChapterObject != null; }
         #endregion
 
         #region Settings
@@ -106,6 +104,11 @@ namespace myManga_App.ViewModels
             HomeViewModel.SearchEvent += (s, e) => { 
                 ContentViewModel = SearchViewModel;
                 SearchViewModel.StartSearch(e);
+            };
+            HomeViewModel.ReadChapterEvent += (s, m, c) =>
+            {
+                ContentViewModel = ReaderViewModel;
+                ReaderViewModel.OpenChapter(m, c);
             };
 
             ServicePointManager.DefaultConnectionLimit = Singleton<DownloadManager>.Instance.Concurrency;

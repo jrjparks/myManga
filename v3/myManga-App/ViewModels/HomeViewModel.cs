@@ -127,6 +127,23 @@ namespace myManga_App.ViewModels
         { Singleton<myManga_App.IO.Network.DownloadManager>.Instance.Download(MangaObj, ChapterObj); }
         #endregion
 
+        #region ReadChapter
+        public delegate void ReadChapterDelegate(Object sender, MangaObject MangaObject, ChapterObject ChapterObject);
+        public event ReadChapterDelegate ReadChapterEvent;
+        protected void OnReadChapterEvent(MangaObject MangaObject, ChapterObject ChapterObject)
+        {
+            if (ReadChapterEvent != null)
+                ReadChapterEvent(this, MangaObject, ChapterObject);
+        }
+
+        protected DelegateCommand<ChapterObject> readChapterCommand;
+        public ICommand ReadChapterCommand
+        { get { return readChapterCommand ?? (readChapterCommand = new DelegateCommand<ChapterObject>(ReadChapter)); } }
+
+        protected void ReadChapter(ChapterObject ChapterObj)
+        { OnReadChapterEvent(this.MangaObj, ChapterObj); }
+        #endregion
+
         #region RefreshManga
         protected DelegateCommand refreshMangaCommand;
         public ICommand RefreshMangaCommand
@@ -163,7 +180,7 @@ namespace myManga_App.ViewModels
             }
         }
 
-        protected App App = App.Current as App;
+        protected readonly App App = App.Current as App;
 
         public HomeViewModel()
         {
@@ -177,7 +194,7 @@ namespace myManga_App.ViewModels
                     {
                         if (archive_file.CanRead && archive_file.Length > 0)
                         {
-                            MangaList.Add(archive_file.Deserialize<MangaObject>(SaveType: Settings.Default.SaveType));
+                            MangaList.Add(archive_file.Deserialize<MangaObject>(SaveType: App.UserConfig.SaveType));
                         }
                         archive_file.Close();
                     }
@@ -206,7 +223,7 @@ namespace myManga_App.ViewModels
                         Stream archive_file;
                         if (Singleton<ZipStorage>.Instance.TryRead(e.FullPath, out archive_file, typeof(MangaObject).Name))
                         {
-                            MangaObject new_manga_object = archive_file.Deserialize<MangaObject>(SaveType: Settings.Default.SaveType);
+                            MangaObject new_manga_object = archive_file.Deserialize<MangaObject>(SaveType: App.UserConfig.SaveType);
                             if (current_manga_object != null)
                                 current_manga_object.Merge(new_manga_object);
                             else

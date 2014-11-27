@@ -30,9 +30,6 @@
             <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
         </ResourceDictionary>
     </UserControl.Resources>
-    <!--<UserControl.DataContext>
-        <vm:HomeViewModel/>
-    </UserControl.DataContext>-->
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition MinWidth="100" MaxWidth="300"/>

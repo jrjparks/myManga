@@ -44,17 +44,35 @@
             FontFamily="{DynamicResource OpenIconic}"
             Content="{DynamicResource oi-arrow-thick-left}"
             Command="{Binding PrevPageCommand}"/>
-        <Image
+        <ScrollViewer
+            x:Name="ImageContentScrollViewer"
             Grid.Column="1"
-            Grid.Row="1">
-            <Image.Source>
-                <MultiBinding Converter="{StaticResource LoadImageFromChapterArchive}">
-                    <Binding Path="MangaObject"/>
-                    <Binding Path="ChapterObject"/>
-                    <Binding Path="BookmarkObject"/>
-                </MultiBinding>
-            </Image.Source>
-        </Image>
+            Grid.Row="1" 
+            PanningMode="Both" 
+            IsManipulationEnabled="True" 
+            CanContentScroll="True" 
+            HorizontalScrollBarVisibility="Auto" 
+            VerticalScrollBarVisibility="Auto">
+            <Image
+                x:Name="ImageContent"
+                HorizontalAlignment="Center" 
+                VerticalAlignment="Top" 
+                Stretch="None" 
+                IsHitTestVisible="False"
+                Binding.SourceUpdated="ImageContent_SourceUpdated"
+                Binding.TargetUpdated="ImageContent_SourceUpdated">
+                <Image.Source>
+                    <MultiBinding 
+                        Converter="{StaticResource LoadImageFromChapterArchive}"
+                        NotifyOnSourceUpdated="True"
+                        NotifyOnTargetUpdated="True">
+                        <Binding Path="MangaObject"/>
+                        <Binding Path="ChapterObject"/>
+                        <Binding Path="BookmarkObject"/>
+                    </MultiBinding>
+                </Image.Source>
+            </Image>
+        </ScrollViewer>
         <button:MetroButton
             Grid.Column="2"
             Grid.Row="1"

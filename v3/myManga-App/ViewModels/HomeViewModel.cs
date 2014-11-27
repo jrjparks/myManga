@@ -67,6 +67,19 @@ namespace myManga_App.ViewModels
                 OnPropertyChanging();
                 mangaObj = value;
                 OnPropertyChanged();
+                LoadBookmarkObject();
+            }
+        }
+
+        protected ChapterObject _SelectedChapter;
+        public ChapterObject SelectedChapter
+        {
+            get { return _SelectedChapter; }
+            set
+            {
+                OnPropertyChanging();
+                _SelectedChapter = value;
+                OnPropertyChanged();
             }
         }
 
@@ -142,6 +155,15 @@ namespace myManga_App.ViewModels
 
         protected void ReadChapter(ChapterObject ChapterObj)
         { OnReadChapterEvent(this.MangaObj, ChapterObj); }
+
+        protected DelegateCommand resumeReadingCommand;
+        public ICommand ResumeReadingCommand
+        { get { return resumeReadingCommand ?? (resumeReadingCommand = new DelegateCommand(ResumeReading, CanResumeReading)); } }
+
+        protected void ResumeReading()
+        { OnReadChapterEvent(this.MangaObj, this.SelectedChapter); }
+        protected Boolean CanResumeReading()
+        { return this.MangaObj != null && this.SelectedChapter != null; }
         #endregion
 
         #region RefreshManga
@@ -247,6 +269,15 @@ namespace myManga_App.ViewModels
             mangaListView.Filter = mangaObject => String.IsNullOrWhiteSpace(SearchFilter) ? true : (mangaObject as MangaObject).IsNameMatch(SearchFilter);
             if (mangaListView.CanSort)
                 mangaListView.SortDescriptions.Add(new SortDescription("Name", ListSortDirection.Ascending));
+        }
+
+        private void LoadBookmarkObject()
+        {
+            Stream bookmark_file;
+            BookmarkObject BookmarkObject = null;
+            if (Singleton<ZipStorage>.Instance.TryRead(Path.Combine(App.MANGA_ARCHIVE_DIRECTORY, this.MangaObj.MangaArchiveName(App.MANGA_ARCHIVE_EXTENSION)), out bookmark_file, typeof(BookmarkObject).Name))
+            { using (bookmark_file) BookmarkObject = bookmark_file.Deserialize<BookmarkObject>(SaveType: App.UserConfig.SaveType); }
+            if (BookmarkObject != null){ this.SelectedChapter = this.MangaObj.ChapterObjectOfBookmarkObject(BookmarkObject); }
         }
 
         public void Dispose() { }

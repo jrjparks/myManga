@@ -136,6 +136,7 @@
 			Width="32" Height="32" 
 			Style="{DynamicResource Spinner}" 
 			Visibility="{Binding IsLoading, Converter={StaticResource BooleanToVisibilityConverter}}"
-            Foreground="#BF000000"/>
+            Foreground="#BF000000"
+            IsHitTestVisible="False"/>
     </Grid>
 </window:myMangaWindow>

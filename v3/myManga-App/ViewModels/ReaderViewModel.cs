@@ -40,6 +40,8 @@ namespace myManga_App.ViewModels
 
         #region Variables
         private readonly App App = App.Current as App;
+        private Boolean ContinueReading { get; set; }
+
         private Boolean PreloadingNext { get; set; }
         private Boolean PreloadingPrev { get; set; }
 
@@ -113,7 +115,7 @@ namespace myManga_App.ViewModels
             OnPropertyChanging("BookmarkObject");
             OnPropertyChanging("ChapterTitle");
             if (this.BookmarkObject.Page < this.ChapterObject.Pages.Last().PageNumber) ++this.BookmarkObject.Page;
-            else OpenChapter(this.MangaObject, this.NextChapterObject);
+            else { this.ContinueReading = true; OpenChapter(this.MangaObject, this.NextChapterObject); }
             OnPropertyChanged("BookmarkObject");
             OnPropertyChanged("ChapterTitle");
             SaveBookmarkObject();
@@ -136,7 +138,7 @@ namespace myManga_App.ViewModels
             OnPropertyChanging("BookmarkObject");
             OnPropertyChanging("ChapterTitle");
             if (this.BookmarkObject.Page > this.ChapterObject.Pages.First().PageNumber) --this.BookmarkObject.Page;
-            else OpenChapter(this.MangaObject, this.PrevChapterObject);
+            else { this.ContinueReading = true; OpenChapter(this.MangaObject, this.PrevChapterObject); }
             OnPropertyChanged("BookmarkObject");
             OnPropertyChanged("ChapterTitle");
             SaveBookmarkObject();
@@ -167,10 +169,12 @@ namespace myManga_App.ViewModels
             LoadChapterObject();
             LoadBookmarkObject();
             OnPropertyChanged("ChapterTitle");
+            this.ContinueReading = false;
         }
 
         public ReaderViewModel()
         {
+            this.ContinueReading = false;
             if (!DesignerProperties.GetIsInDesignMode(this))
             {
                 App.ChapterObjectArchiveWatcher.Changed += ChapterObjectArchiveWatcher_Event;
@@ -206,7 +210,8 @@ namespace myManga_App.ViewModels
                 this.BookmarkObject.Volume = this.ChapterObject.Volume;
                 this.BookmarkObject.Chapter = this.ChapterObject.Chapter;
                 this.BookmarkObject.SubChapter = this.ChapterObject.SubChapter;
-                this.BookmarkObject.Page = (Int32)this.ChapterObject.Pages.First().PageNumber;
+                if (this.ContinueReading && this.BookmarkObject.Page <= 1) this.BookmarkObject.Page = (Int32)this.ChapterObject.Pages.Last().PageNumber;
+                else this.BookmarkObject.Page = (Int32)this.ChapterObject.Pages.First().PageNumber;
             }
         }
 

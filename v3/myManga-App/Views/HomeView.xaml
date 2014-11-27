@@ -189,16 +189,15 @@
 				ContentStringFormat="{}{0} Refresh"
 				Command="{Binding RefreshMangaListCommand}"/>
         </Grid>
-        <Border Grid.Column="2">
+        <Border Grid.Column="1" Grid.ColumnSpan="2" Margin="9,0,6,0">
             <Image Source="/myManga;component/Resources/Icon.ico" HorizontalAlignment="Center" VerticalAlignment="Center" Stretch="None"/>
         </Border>
         <Grid
 			x:Name="MangaObjectDescription"
 			Grid.Column="2" 
 			DataContext="{Binding SelectedItem, ElementName=MangaList}"
-			Background="{DynamicResource window-background}">
-            <!--
-            Visibility="{Binding TargetNullValue=Collapsed}"-->
+			Background="{DynamicResource window-background}"
+            Visibility="{Binding TargetNullValue=Collapsed}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="3*"/>
                 <ColumnDefinition MinWidth="100" MaxWidth="300"/>
@@ -230,7 +229,18 @@
 						Grid.Row="1" 
 						Grid.RowSpan="8"
 						Margin="0,0,3,0">
-                        <Image Source="{Binding Converter={StaticResource LoadImageFromMangaArchive}}"/>
+                        <Image x:Name="CoverImage" Source="{Binding Converter={StaticResource LoadImageFromMangaArchive}}"/>
+                        <button:MetroButton
+                            Width="{Binding ActualWidth, Mode=OneWay, ElementName=CoverImage}"
+                            MinWidth="150"
+                            VerticalAlignment="Bottom"
+                            FontFamily="{DynamicResource OpenIconic}"
+                            Content="{DynamicResource oi-eye}"
+                            ContentStringFormat="{}{0} Resume Reading"
+                            FontSize="18"
+                            Opacity="0.75"
+                            Padding="5"
+                            Command="{Binding Path=DataContext.ResumeReadingCommand, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl}}"/>
                     </Grid>
                     <StackPanel Grid.Row="1" Grid.Column="1">
                         <TextBlock Text="Alternate Titles:" FontWeight="Bold" Foreground="{DynamicResource text-muted}"/>
@@ -274,7 +284,9 @@
             </Grid>
             <ListBox 
 				Grid.Column="1"
-				ItemsSource="{Binding Chapters}" 
+				ItemsSource="{Binding Chapters}"
+                SelectedItem="{Binding DataContext.SelectedChapter, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl}}"
+                SelectedIndex="0"
 				ItemContainerStyle="{DynamicResource HomeView_ChapterListBoxItem}"
 				Visibility="{Binding HasItems, Converter={StaticResource BooleanToVisibilityConverter}, RelativeSource={RelativeSource Self}}" 
 				ScrollViewer.HorizontalScrollBarVisibility="Disabled" HorizontalContentAlignment="Stretch"/>

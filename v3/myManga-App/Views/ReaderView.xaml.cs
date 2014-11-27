@@ -24,5 +24,8 @@ namespace myManga_App.Views
         {
             InitializeComponent();
         }
+
+        private void ImageContent_SourceUpdated(object sender, DataTransferEventArgs e)
+        { this.ImageContentScrollViewer.ScrollToHome(); }
     }
 }

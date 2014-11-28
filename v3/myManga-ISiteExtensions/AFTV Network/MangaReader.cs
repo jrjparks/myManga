@@ -84,7 +84,7 @@ namespace AFTV_Network
                                         select new ChapterObject()
                                         {
                                             Name = HtmlEntity.DeEntitize(ChapterNode.SelectSingleNode(".//td[1]").LastChild.InnerText.Substring(3).Trim()),
-                                            Chapter = Int32.Parse(ChapterNode.SelectSingleNode(".//td[1]/a").InnerText.Substring(ChapterNode.SelectSingleNode(".//td[1]/a").InnerText.LastIndexOf(' ') + 1)),
+                                            Chapter = UInt32.Parse(ChapterNode.SelectSingleNode(".//td[1]/a").InnerText.Substring(ChapterNode.SelectSingleNode(".//td[1]/a").InnerText.LastIndexOf(' ') + 1)),
                                             Locations = { 
                                                     new LocationObject() { 
                                                         ExtensionName = ISEA.Name, 

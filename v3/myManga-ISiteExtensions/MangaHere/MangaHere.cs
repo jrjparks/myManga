@@ -70,8 +70,8 @@ namespace MangaHere
                 ChapterObject Chapter = new ChapterObject()
                 {
                     Name = ChapterTitle,
-                    Volume = Int32.Parse(volChapSub[0]),
-                    Chapter = Int32.Parse(volChapSub[1]),
+                    Volume = UInt32.Parse(volChapSub[0]),
+                    Chapter = UInt32.Parse(volChapSub[1]),
                     Locations = { 
                         new LocationObject() { 
                                 ExtensionName = ISEA.Name, 
@@ -80,7 +80,7 @@ namespace MangaHere
                     Released = ChapterNode.SelectSingleNode(".//span[2]").InnerText.ToLower().Equals("today") ? DateTime.Today : (ChapterNode.SelectSingleNode(".//span[2]").InnerText.ToLower().Equals("yesterday") ? DateTime.Today.AddDays(-1) : DateTime.Parse(ChapterNode.SelectSingleNode(".//span[2]").InnerText))
                 };
                 if (volChapSub.Length == 3)
-                    Chapter.SubChapter = Int32.Parse(volChapSub[2]);
+                    Chapter.SubChapter = UInt32.Parse(volChapSub[2]);
                 Chapters.Add(Chapter);
             }
             Chapters.Reverse();

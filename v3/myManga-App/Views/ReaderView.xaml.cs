@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Core.Other;
 
 namespace myManga_App.Views
 {
@@ -27,5 +28,8 @@ namespace myManga_App.Views
 
         private void ImageContent_SourceUpdated(object sender, DataTransferEventArgs e)
         { this.ImageContentScrollViewer.ScrollToHome(); }
+
+        private void PageList_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        { this.PageList.ScrollToCenterOfView(this.PageList.SelectedItem); }
     }
 }

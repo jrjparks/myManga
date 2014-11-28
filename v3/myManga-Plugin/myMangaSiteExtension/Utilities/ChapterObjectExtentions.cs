@@ -25,17 +25,17 @@ namespace myMangaSiteExtension.Utilities
                 }
 
                 // Volume
-                foreach (Int32 Volume in (from ChapterObject obj in list where obj != null select obj.Volume))
+                foreach (UInt32 Volume in (from ChapterObject obj in list where obj != null select obj.Volume))
                     if (chapterObject.Volume <= 0 && Volume >= 0)
                         chapterObject.Volume = Volume;
 
                 // Chapter
-                foreach (Int32 Chapter in (from ChapterObject obj in list where obj != null select obj.Chapter))
+                foreach (UInt32 Chapter in (from ChapterObject obj in list where obj != null select obj.Chapter))
                     if (chapterObject.Chapter <= 0 && Chapter >= 0)
                         chapterObject.Chapter = Chapter;
 
                 // SubChapter
-                foreach (Int32 SubChapter in (from ChapterObject obj in list where obj != null select obj.SubChapter))
+                foreach (UInt32 SubChapter in (from ChapterObject obj in list where obj != null select obj.SubChapter))
                     if (chapterObject.SubChapter <= 0 && SubChapter >= 0)
                         chapterObject.SubChapter = SubChapter;
 

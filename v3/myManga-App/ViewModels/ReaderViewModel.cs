@@ -71,6 +71,22 @@ namespace myManga_App.ViewModels
         private ChapterObject PrevChapterObject { get; set; }
         private ChapterObject NextChapterObject { get; set; }
 
+        private PageObject _SelectedPageObject;
+        public PageObject SelectedPageObject
+        {
+            get { return _SelectedPageObject; }
+            set
+            {
+                OnPropertyChanging();
+                OnPropertyChanging("ChapterTitle");
+                _SelectedPageObject = value;
+                if(value != null) this.BookmarkObject.Page = value.PageNumber;
+                OnPropertyChanged();
+                OnPropertyChanged("ChapterTitle");
+                SaveBookmarkObject();
+            }
+        }
+
         private BookmarkObject _BookmarkObject;
         public BookmarkObject BookmarkObject
         {
@@ -98,10 +114,10 @@ namespace myManga_App.ViewModels
         private String NextArchiveFilePath { get; set; }
 
         public String ArchiveImageURL
-        { get { return this.ChapterObject.PageObjectOfBookmarkObject(this.BookmarkObject).ImgUrl; } }
+        { get { return this.SelectedPageObject.ImgUrl; } }
 
         public String ChapterTitle
-        { get { return String.Format("{0} / {1} - Page: {2} of {3}", this.MangaObject.Name, this.ChapterObject.Name, this.BookmarkObject.Page, this.ChapterObject.Pages.Last().PageNumber); } }
+        { get { return String.Format("{0} / {1} - Page: {2} of {3}", this.MangaObject.Name, this.ChapterObject.Name, this.SelectedPageObject != null ? this.SelectedPageObject.PageNumber : 0, this.ChapterObject.Pages.Count > 0 ? this.ChapterObject.Pages.Last().PageNumber : 0); } }
         #endregion
 
         #region Commands
@@ -112,13 +128,9 @@ namespace myManga_App.ViewModels
 
         private void NextPage()
         {
-            OnPropertyChanging("BookmarkObject");
-            OnPropertyChanging("ChapterTitle");
             if (this.BookmarkObject.Page < this.ChapterObject.Pages.Last().PageNumber) ++this.BookmarkObject.Page;
             else { this.ContinueReading = true; OpenChapter(this.MangaObject, this.NextChapterObject); }
-            OnPropertyChanged("BookmarkObject");
-            OnPropertyChanged("ChapterTitle");
-            SaveBookmarkObject();
+            this.SelectedPageObject = this.ChapterObject.PageObjectOfBookmarkObject(this.BookmarkObject);
         }
         private Boolean CanNextPage()
         {
@@ -135,13 +147,9 @@ namespace myManga_App.ViewModels
 
         private void PrevPage()
         {
-            OnPropertyChanging("BookmarkObject");
-            OnPropertyChanging("ChapterTitle");
             if (this.BookmarkObject.Page > this.ChapterObject.Pages.First().PageNumber) --this.BookmarkObject.Page;
             else { this.ContinueReading = true; OpenChapter(this.MangaObject, this.PrevChapterObject); }
-            OnPropertyChanged("BookmarkObject");
-            OnPropertyChanged("ChapterTitle");
-            SaveBookmarkObject();
+            this.SelectedPageObject = this.ChapterObject.PageObjectOfBookmarkObject(this.BookmarkObject);
         }
         private Boolean CanPrevPage()
         {
@@ -210,9 +218,10 @@ namespace myManga_App.ViewModels
                 this.BookmarkObject.Volume = this.ChapterObject.Volume;
                 this.BookmarkObject.Chapter = this.ChapterObject.Chapter;
                 this.BookmarkObject.SubChapter = this.ChapterObject.SubChapter;
-                if (this.ContinueReading && this.BookmarkObject.Page <= 1) this.BookmarkObject.Page = (Int32)this.ChapterObject.Pages.Last().PageNumber;
-                else this.BookmarkObject.Page = (Int32)this.ChapterObject.Pages.First().PageNumber;
+                if (this.ContinueReading && this.BookmarkObject.Page <= 1) this.BookmarkObject.Page = this.ChapterObject.Pages.Last().PageNumber;
+                else this.BookmarkObject.Page = this.ChapterObject.Pages.First().PageNumber;
             }
+            this.SelectedPageObject = this.ChapterObject.PageObjectOfBookmarkObject(this.BookmarkObject);
         }
 
         private void SaveBookmarkObject()

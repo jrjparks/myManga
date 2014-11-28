@@ -29,18 +29,18 @@ namespace myMangaSiteExtension.Objects
 
         #region Protected
         [NonSerialized, XmlIgnore, EditorBrowsable(EditorBrowsableState.Never)]
-        protected Int32 volume;
+        protected UInt32 volume;
         [NonSerialized, XmlIgnore, EditorBrowsable(EditorBrowsableState.Never)]
-        protected Int32 chapter;
+        protected UInt32 chapter;
         [NonSerialized, XmlIgnore, EditorBrowsable(EditorBrowsableState.Never)]
-        protected Int32 subchapter;
+        protected UInt32 subchapter;
         [NonSerialized, XmlIgnore, EditorBrowsable(EditorBrowsableState.Never)]
-        protected Int32 page;
+        protected UInt32 page;
         #endregion
 
         #region Public
         [XmlAttribute]
-        public Int32 Volume
+        public UInt32 Volume
         {
             get { return volume; }
             set
@@ -52,7 +52,7 @@ namespace myMangaSiteExtension.Objects
         }
 
         [XmlAttribute]
-        public Int32 Chapter
+        public UInt32 Chapter
         {
             get { return chapter; }
             set
@@ -64,7 +64,7 @@ namespace myMangaSiteExtension.Objects
         }
 
         [XmlAttribute]
-        public Int32 SubChapter
+        public UInt32 SubChapter
         {
             get { return subchapter; }
             set
@@ -76,7 +76,7 @@ namespace myMangaSiteExtension.Objects
         }
 
         [XmlAttribute]
-        public Int32 Page
+        public UInt32 Page
         {
             get { return page; }
             set

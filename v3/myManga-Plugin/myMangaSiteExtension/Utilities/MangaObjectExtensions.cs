@@ -108,10 +108,10 @@ namespace myMangaSiteExtension.Utilities
                 foreach (List<ChapterObject> Chapters in (from MangaObject obj in list where obj != null select obj.Chapters))
                     foreach (ChapterObject Chapter in Chapters)
                         if (Chapter != null)
-                            if (!mangaObject.Chapters.Any(o => o.Chapter == Chapter.Chapter && (o.SubChapter - Chapter.SubChapter).InRange(-4, 4)))
+                            if (!mangaObject.Chapters.Any(o => o.Chapter == Chapter.Chapter && ((Int32)o.SubChapter - Chapter.SubChapter).InRange(-4, 4)))
                                 mangaObject.Chapters.Add(Chapter);
                             else
-                                mangaObject.Chapters.Find(o => o.Chapter == Chapter.Chapter && (o.SubChapter - Chapter.SubChapter).InRange(-4, 4)).Merge(Chapter);
+                                mangaObject.Chapters.Find(o => o.Chapter == Chapter.Chapter && ((Int32)o.SubChapter - Chapter.SubChapter).InRange(-4, 4)).Merge(Chapter);
             }
         }
 

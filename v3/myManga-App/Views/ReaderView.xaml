@@ -15,7 +15,17 @@
     Background="{DynamicResource window-background}" 
     Foreground="{DynamicResource window-foreground}">
     <UserControl.Resources>
-        <Converters:LoadImageFromChapterArchive x:Key="LoadImageFromChapterArchive"/>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/myManga;component/Resources/Localization/Dictionary_en-US.xaml"/>
+                <ResourceDictionary Source="/myManga;component/Themes/CoreResourceDictionary.xaml"/>
+                <ResourceDictionary Source="/myManga;component/Themes/Button/MetroButton.xaml"/>
+                
+                <ResourceDictionary Source="/myManga;component/Themes/ListBox/ListBoxes.xaml"/>
+                <ResourceDictionary Source="/myManga;component/Themes/ListBox/ListBoxItems.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+            <Converters:LoadImageFromChapterArchive x:Key="LoadImageFromChapterArchive"/>
+        </ResourceDictionary>
     </UserControl.Resources>
     <UserControl.InputBindings>
         <KeyBinding Command="{Binding PrevPageCommand}" Key="Left"/>
@@ -31,11 +41,38 @@
             <ColumnDefinition/>
             <ColumnDefinition Width="48"/>
         </Grid.ColumnDefinitions>
-        <TextBlock 
+        <StackPanel
+            Orientation="Horizontal"
             Grid.Column="1" 
             HorizontalAlignment="Center"
-            VerticalAlignment="Bottom"
-            Text="{Binding ChapterTitle, Mode=OneWay}"/>
+            VerticalAlignment="Bottom">
+            <TextBlock
+                Text="{Binding ChapterTitle, Mode=OneWay}"/>
+            <button:MetroToggleButton
+                x:Name="PageOverviewToggle"
+                FontFamily="{DynamicResource OpenIconic}"
+                Content="{DynamicResource oi-arrow-thick-bottom}"
+                ContentStringFormat="Page Overview {0}"/>
+            <Popup
+				PopupAnimation="Slide" 
+				PlacementTarget="{Binding ElementName=PageOverviewToggle}"
+				IsOpen="{Binding IsChecked, ElementName=PageOverviewToggle}"
+				StaysOpen="False">
+                <ListBox
+                    x:Name="PageList"
+                    ItemsSource="{Binding ChapterObject.Pages}"
+                    SelectedItem="{Binding SelectedPageObject}" 
+                    IsSynchronizedWithCurrentItem="False" 
+                    ItemContainerStyle="{DynamicResource ReaderView_PageListBoxItem}" 
+                    SelectionChanged="PageList_SelectionChanged">
+                    <ListBox.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel IsItemsHost="True" Orientation="Horizontal"/>
+                        </ItemsPanelTemplate>
+                    </ListBox.ItemsPanel>
+                </ListBox>
+            </Popup>
+        </StackPanel>
         <button:MetroButton
             Grid.Column="0"
             Grid.Row="1"
@@ -68,7 +105,7 @@
                         NotifyOnTargetUpdated="True">
                         <Binding Path="MangaObject"/>
                         <Binding Path="ChapterObject"/>
-                        <Binding Path="BookmarkObject"/>
+                        <Binding Path="SelectedPageObject"/>
                     </MultiBinding>
                 </Image.Source>
             </Image>

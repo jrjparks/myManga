@@ -100,13 +100,13 @@ namespace Batoto
                     String ChapterName = VolChapNameNode.InnerText.Substring(VolChapMatch.Length + 2).Trim(),
                         ReleaseData = ReleaseData = ChapterNode.SelectSingleNode("td[5]").InnerText;
                     ChapterObject PrevChapter = Chapters.LastOrDefault();
-                    Int32 Volume = 0, Chapter = 0, SubChapter = 0;
+                    UInt32 Volume = 0, Chapter = 0, SubChapter = 0;
                     if (VolChapMatch.Groups["Volume"].Success)
-                        Int32.TryParse(VolChapMatch.Groups["Volume"].Value, out Volume);
+                        UInt32.TryParse(VolChapMatch.Groups["Volume"].Value, out Volume);
                     if (VolChapMatch.Groups["Chapter"].Success)
-                        Int32.TryParse(VolChapMatch.Groups["Chapter"].Value, out Chapter);
+                        UInt32.TryParse(VolChapMatch.Groups["Chapter"].Value, out Chapter);
                     if (VolChapMatch.Groups["SubChapter"].Success)
-                        Int32.TryParse(VolChapMatch.Groups["SubChapter"].Value, out SubChapter);
+                        UInt32.TryParse(VolChapMatch.Groups["SubChapter"].Value, out SubChapter);
 
                     DateTime Released = DateTime.MinValue;
                     if (ReleaseData.Contains("-"))
@@ -125,10 +125,10 @@ namespace Batoto
                                 Url = VolChapNameNode.Attributes["href"].Value }
                         }
                     };
-                    if (!Chapters.Any(o => o.Chapter == chapterObject.Chapter && (o.SubChapter - chapterObject.SubChapter).InRange(-4, 4)))
+                    if (!Chapters.Any(o => o.Chapter == chapterObject.Chapter && ((Int32)o.SubChapter - chapterObject.SubChapter).InRange(-4, 4)))
                         Chapters.Add(chapterObject);
                     else
-                        Chapters.Find(o => o.Chapter == chapterObject.Chapter && (o.SubChapter - chapterObject.SubChapter).InRange(-4, 4)).Merge(chapterObject);
+                        Chapters.Find(o => o.Chapter == chapterObject.Chapter && ((Int32)o.SubChapter - chapterObject.SubChapter).InRange(-4, 4)).Merge(chapterObject);
                 }
             }
             Chapters.Reverse();

@@ -19,9 +19,8 @@ namespace myManga_App.Converters
         {
             MangaObject MangaObject = values[0] as MangaObject;
             ChapterObject ChapterObject = values[1] as ChapterObject;
-            BookmarkObject BookmarkObject = values[2] as BookmarkObject;
-            if (MangaObject == null || ChapterObject == null || BookmarkObject == null) return null;
-            PageObject PageObject = ChapterObject.PageObjectOfBookmarkObject(BookmarkObject);
+            PageObject PageObject = values[2] as PageObject;
+            if (MangaObject == null || ChapterObject == null || PageObject == null) return null;
             String archive_path = Path.Combine(App.CHAPTER_ARCHIVE_DIRECTORY, MangaObject.MangaFileName(), ChapterObject.ChapterArchiveName(App.CHAPTER_ARCHIVE_EXTENSION));
             try
             {

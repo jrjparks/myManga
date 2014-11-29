@@ -8,12 +8,15 @@
     xmlns:button="clr-namespace:myManga_App.Resources.Theme.Buttons"
     xmlns:system="clr-namespace:System;assembly=mscorlib"
     xmlns:mangaObjects="clr-namespace:myMangaSiteExtension.Objects;assembly=myMangaSiteExtension"
-    xmlns:Converters="clr-namespace:myManga_App.Converters" x:Name="userControl"
+    xmlns:Converters="clr-namespace:myManga_App.Converters"
+    xmlns:controls="clr-namespace:System.Windows.Controls;assembly=Core"
+    x:Name="userControl"
     mc:Ignorable="d" 
     d:DesignHeight="400"
     d:DesignWidth="600"
     Background="{DynamicResource window-background}" 
-    Foreground="{DynamicResource window-foreground}">
+    Foreground="{DynamicResource window-foreground}"
+    FocusManager.FocusedElement="{Binding ElementName=userControl}">
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -25,6 +28,7 @@
                 <ResourceDictionary Source="/myManga;component/Themes/ListBox/ListBoxItems.xaml"/>
             </ResourceDictionary.MergedDictionaries>
             <Converters:LoadImageFromChapterArchive x:Key="LoadImageFromChapterArchive"/>
+            <Converters:BooleanInverter x:Key="BooleanInverter"/>
         </ResourceDictionary>
     </UserControl.Resources>
     <UserControl.InputBindings>
@@ -33,7 +37,7 @@
     </UserControl.InputBindings>
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="24"/>
+            <RowDefinition MinHeight="24" Height="Auto"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
@@ -41,38 +45,56 @@
             <ColumnDefinition/>
             <ColumnDefinition Width="48"/>
         </Grid.ColumnDefinitions>
-        <StackPanel
-            Orientation="Horizontal"
-            Grid.Column="1" 
-            HorizontalAlignment="Center"
-            VerticalAlignment="Bottom">
-            <TextBlock
-                Text="{Binding ChapterTitle, Mode=OneWay}"/>
-            <button:MetroToggleButton
-                x:Name="PageOverviewToggle"
-                FontFamily="{DynamicResource OpenIconic}"
-                Content="{DynamicResource oi-arrow-thick-bottom}"
-                ContentStringFormat="Page Overview {0}"/>
-            <Popup
-				PopupAnimation="Slide" 
-				PlacementTarget="{Binding ElementName=PageOverviewToggle}"
-				IsOpen="{Binding IsChecked, ElementName=PageOverviewToggle}"
-				StaysOpen="False">
-                <ListBox
+        <!--<Expander
+            Grid.ColumnSpan="3">
+            <Expander.Header>
+                <TextBlock Text="{Binding ChapterTitle, Mode=OneWay, FallbackValue=Chapter Info}" TextAlignment="Center"/>
+            </Expander.Header>
+            <ListBox
                     x:Name="PageList"
                     ItemsSource="{Binding ChapterObject.Pages}"
                     SelectedItem="{Binding SelectedPageObject}" 
                     IsSynchronizedWithCurrentItem="False" 
                     ItemContainerStyle="{DynamicResource ReaderView_PageListBoxItem}" 
                     SelectionChanged="PageList_SelectionChanged">
-                    <ListBox.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <StackPanel IsItemsHost="True" Orientation="Horizontal"/>
-                        </ItemsPanelTemplate>
-                    </ListBox.ItemsPanel>
-                </ListBox>
-            </Popup>
-        </StackPanel>
+                <ListBox.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel IsItemsHost="True" Orientation="Horizontal"/>
+                    </ItemsPanelTemplate>
+                </ListBox.ItemsPanel>
+            </ListBox>
+        </Expander>-->
+        <button:MetroToggleButton 
+            x:Name="PageListDropdown"
+            Grid.ColumnSpan="3"
+            Content="{Binding ChapterTitle, Mode=OneWay, FallbackValue=Pages}" 
+            IsHitTestVisible="{Binding IsOpen, Converter={StaticResource BooleanInverter}, ElementName=PageListPopup, Mode=OneWay}"/>
+        <Popup
+            x:Name="PageListPopup"
+            Width="{Binding ActualWidth, ElementName=PageListDropdown, Mode=OneWay}"
+			PlacementTarget="{Binding ElementName=PageListDropdown}"
+            PlacementRectangle="{Binding ElementName=PageListDropdown}"
+			IsOpen="{Binding IsChecked, ElementName=PageListDropdown}"
+            PopupAnimation="Slide"
+            Grid.ColumnSpan="3" 
+            StaysOpen="False">
+            <ListBox
+                x:Name="PageList"
+                ItemsSource="{Binding ChapterObject.Pages, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}"
+                SelectedItem="{Binding SelectedPageObject, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}" 
+                IsSynchronizedWithCurrentItem="True" 
+                ItemContainerStyle="{DynamicResource ReaderView_PageListBoxItem}" 
+                ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                Background="{DynamicResource window-background}"
+                SourceUpdated="ImageContent_SourceUpdated"
+                SelectionChanged="PageList_SelectionChanged">
+                <ListBox.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel IsItemsHost="True" Orientation="Horizontal"/>
+                    </ItemsPanelTemplate>
+                </ListBox.ItemsPanel>
+            </ListBox>
+        </Popup>
         <button:MetroButton
             Grid.Column="0"
             Grid.Row="1"
@@ -80,7 +102,8 @@
             HorizontalContentAlignment="Center" 
             FontFamily="{DynamicResource OpenIconic}"
             Content="{DynamicResource oi-arrow-thick-left}"
-            Command="{Binding PrevPageCommand}"/>
+            Command="{Binding PrevPageCommand}"
+            FontSize="24"/>
         <ScrollViewer
             x:Name="ImageContentScrollViewer"
             Grid.Column="1"
@@ -94,10 +117,12 @@
                 x:Name="ImageContent"
                 HorizontalAlignment="Center" 
                 VerticalAlignment="Top" 
-                Stretch="None" 
+                Stretch="UniformToFill" 
                 IsHitTestVisible="False"
                 Binding.SourceUpdated="ImageContent_SourceUpdated"
-                Binding.TargetUpdated="ImageContent_SourceUpdated">
+                Binding.TargetUpdated="ImageContent_SourceUpdated" 
+                Height="{Binding Source.PixelHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"
+                Width="{Binding Source.PixelWidth, Mode=OneWay, RelativeSource={RelativeSource Self}}">
                 <Image.Source>
                     <MultiBinding 
                         Converter="{StaticResource LoadImageFromChapterArchive}"
@@ -117,6 +142,7 @@
             HorizontalContentAlignment="Center"
             FontFamily="{DynamicResource OpenIconic}"
             Content="{DynamicResource oi-arrow-thick-right}"
-            Command="{Binding NextPageCommand}"/>
+            Command="{Binding NextPageCommand}"
+            FontSize="24"/>
     </Grid>
 </UserControl>

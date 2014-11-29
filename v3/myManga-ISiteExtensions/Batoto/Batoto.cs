@@ -189,10 +189,11 @@ namespace Batoto
                 NextNode = PageNode.SelectSingleNode(".//following-sibling::option");
 
             Uri ImageLink = new Uri(PageObjectDocument.GetElementbyId("comic_page").Attributes["src"].Value);
+            String Name = ImageLink.ToString().Split('/').Last();
 
             return new PageObject()
             {
-                Name = ImageLink.Segments.Last(),
+                Name = Name,
                 PageNumber = UInt32.Parse(PageNode.NextSibling.InnerText.Substring(5)),
                 Url = PageNode.Attributes["value"].Value,
                 NextUrl = (NextNode != null) ? NextNode.Attributes["value"].Value : null,

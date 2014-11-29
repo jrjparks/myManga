@@ -27,7 +27,7 @@ namespace myManga_App.Views
         }
 
         private void ImageContent_SourceUpdated(object sender, DataTransferEventArgs e)
-        { this.ImageContentScrollViewer.ScrollToHome(); }
+        { this.ImageContentScrollViewer.ScrollToHome(); this.PageList.ScrollToCenterOfView(this.PageList.SelectedItem); }
 
         private void PageList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         { this.PageList.ScrollToCenterOfView(this.PageList.SelectedItem); }

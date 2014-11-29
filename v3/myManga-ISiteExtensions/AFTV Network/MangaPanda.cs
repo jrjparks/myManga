@@ -134,10 +134,11 @@ namespace AFTV_Network
                 NextNode = PageNode.SelectSingleNode(".//following-sibling::option");
 
             Uri ImageLink = new Uri(PageObjectDocument.GetElementbyId("img").Attributes["src"].Value);
+            String Name = ImageLink.ToString().Split('/').Last();
 
             return new PageObject()
             {
-                Name = ImageLink.Segments.Last(),
+                Name = Name,
                 PageNumber = UInt32.Parse(PageNode.NextSibling.InnerText),
                 Url = String.Format("{0}{1}", ISEA.RootUrl, PageNode.Attributes["value"].Value),
                 NextUrl = (NextNode != null) ? String.Format("{0}{1}", ISEA.RootUrl, NextNode.Attributes["value"].Value) : null,

@@ -303,7 +303,7 @@ namespace myManga_App.IO.Network
             this.SmartThreadPool = new SmartThreadPool(STPStartInfo ?? new STPStartInfo()
             {   // Default STPStartInfo
                 ThreadPoolName = String.Format("{0}-{1}", this.GetType().Name, Guid.NewGuid()),
-                MaxWorkerThreads = Environment.ProcessorCount,
+                MaxWorkerThreads = Environment.ProcessorCount * 2,
             });
 
             this.SynchronizationContext = SynchronizationContext ?? SynchronizationContext.Current;

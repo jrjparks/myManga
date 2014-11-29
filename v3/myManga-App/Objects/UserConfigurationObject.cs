@@ -35,11 +35,7 @@ namespace myManga_App.Objects
         public WindowState WindowState
         {
             get
-            {
-                if (windowState == null)
-                    windowState = WindowState.Normal;
-                return windowState;
-            }
+            { return windowState; }
             set
             {
                 OnPropertyChanging();
@@ -73,11 +69,7 @@ namespace myManga_App.Objects
         public SaveType SaveType
         {
             get
-            {
-                if (saveType == null)
-                    saveType = SaveType.XML;
-                return saveType;
-            }
+            { return saveType; }
             set
             {
                 OnPropertyChanging();

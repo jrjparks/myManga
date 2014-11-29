@@ -299,6 +299,7 @@
     </Style>
 
     <Style TargetType="{x:Type ListBoxItem}" BasedOn="{StaticResource {x:Type ListBoxItem}}" x:Key="ReaderView_PageListBoxItem">
+        <Setter Property="Foreground" Value="{DynamicResource window-theme-primary-disabled}"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type ListBoxItem}">
@@ -316,11 +317,7 @@
                             HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                             VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
                             TextBlock.TextAlignment="Left">
-                            <Grid.RowDefinitions>
-                                <RowDefinition/>
-                                <RowDefinition Height="24"/>
-                            </Grid.RowDefinitions>
-                            <Image Grid.Row="0" MaxHeight="200" MaxWidth="200" 
+                            <Image MaxHeight="200" MaxWidth="200" 
                                    RenderOptions.BitmapScalingMode="NearestNeighbor" RenderOptions.EdgeMode="Aliased">
                                 <Image.Source>
                                     <MultiBinding Converter="{StaticResource LoadImageFromChapterArchive}">
@@ -338,7 +335,13 @@
                                     </MultiBinding>
                                 </Image.Source>
                             </Image>
-                            <TextBlock Grid.Row="1" Text="{Binding PageNumber}" TextAlignment="Center"/>
+                            <TextBlock 
+                                VerticalAlignment="Bottom" 
+                                Text="{Binding PageNumber}" 
+                                FontSize="20"
+                                Padding="3"
+                                TextAlignment="Center" 
+                                Background="#BF000000"/>
                         </Grid>
                     </Border>
                     <ControlTemplate.Triggers>

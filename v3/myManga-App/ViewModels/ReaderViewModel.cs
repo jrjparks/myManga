@@ -80,10 +80,9 @@ namespace myManga_App.ViewModels
                 OnPropertyChanging();
                 OnPropertyChanging("ChapterTitle");
                 _SelectedPageObject = value;
-                if(value != null) this.BookmarkObject.Page = value.PageNumber;
                 OnPropertyChanged();
                 OnPropertyChanged("ChapterTitle");
-                SaveBookmarkObject();
+                if (value != null) SaveBookmarkObject();
             }
         }
 
@@ -174,9 +173,11 @@ namespace myManga_App.ViewModels
             try { this.NextArchiveFilePath = Path.Combine(base_path, NextChapterObject.ChapterArchiveName(App.CHAPTER_ARCHIVE_EXTENSION)); }
             catch { this.NextArchiveFilePath = null; }
 
+            PreloadingPrev = PreloadingNext = false;
+
+            PreloadChapters();
             LoadChapterObject();
             LoadBookmarkObject();
-            OnPropertyChanged("ChapterTitle");
             this.ContinueReading = false;
         }
 
@@ -192,11 +193,11 @@ namespace myManga_App.ViewModels
         }
 
         #region Methods
-        public void PreloadNextChapter()
+        public void PreloadChapters()
         {
-            if (!PreloadingPrev && File.Exists(this.PrevArchiveFilePath))
+            if (!PreloadingPrev && !File.Exists(this.PrevArchiveFilePath))
             { Singleton<DownloadManager>.Instance.Download(this.MangaObject, this.PrevChapterObject); this.PreloadingPrev = true; }
-            if (!PreloadingNext && File.Exists(this.NextArchiveFilePath))
+            if (!PreloadingNext && !File.Exists(this.NextArchiveFilePath))
             { Singleton<DownloadManager>.Instance.Download(this.MangaObject, this.NextChapterObject); this.PreloadingNext = true; }
         }
 
@@ -225,7 +226,19 @@ namespace myManga_App.ViewModels
         }
 
         private void SaveBookmarkObject()
-        { Singleton<ZipStorage>.Instance.Write(Path.Combine(App.MANGA_ARCHIVE_DIRECTORY, this.MangaObject.MangaArchiveName(App.MANGA_ARCHIVE_EXTENSION)), typeof(BookmarkObject).Name, this.BookmarkObject.Serialize(SaveType: App.UserConfig.SaveType)); OnPropertyChanged("ArchiveFilePath"); }
+        {
+            if (this.ChapterObject != null)
+            {
+                this.BookmarkObject.Volume = this.ChapterObject.Volume;
+                this.BookmarkObject.Chapter = this.ChapterObject.Chapter;
+                this.BookmarkObject.SubChapter = this.ChapterObject.SubChapter;
+            }
+            if (this.SelectedPageObject != null) this.BookmarkObject.Page = this.SelectedPageObject.PageNumber;
+            Singleton<ZipStorage>.Instance.Write(
+                Path.Combine(App.MANGA_ARCHIVE_DIRECTORY, this.MangaObject.MangaArchiveName(App.MANGA_ARCHIVE_EXTENSION)),
+                typeof(BookmarkObject).Name,
+                this.BookmarkObject.Serialize(SaveType: App.UserConfig.SaveType));
+        }
         #endregion
 
         #region Event Handlers
@@ -240,7 +253,7 @@ namespace myManga_App.ViewModels
                         case WatcherChangeTypes.Changed:
                             Stream archive_file;
                             if (Singleton<ZipStorage>.Instance.TryRead(e.FullPath, out archive_file, typeof(ChapterObject).Name))
-                            { using (archive_file) this.ChapterObject = archive_file.Deserialize<ChapterObject>(SaveType: App.UserConfig.SaveType); }
+                            { using (archive_file) { this.ChapterObject = archive_file.Deserialize<ChapterObject>(SaveType: App.UserConfig.SaveType); } }
                             break;
 
                         case WatcherChangeTypes.Deleted:

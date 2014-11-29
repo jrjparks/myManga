@@ -13,9 +13,9 @@ namespace MangaHere
 {
     [ISiteExtensionDescription(
         "MangaHere",
-        "mangahere.com",
-        "http://www.mangahere.com/",
-        RootUrl = "http://www.mangahere.com",
+        "mangahere.co",
+        "http://www.mangahere.co/",
+        RootUrl = "http://www.mangahere.co",
         Author = "James Parks",
         Version = "0.0.1",
         SupportedObjects = SupportedObjects.All,
@@ -130,10 +130,11 @@ namespace MangaHere
             String ImgSrc = PageObjectDocument.GetElementbyId("image").Attributes["src"].Value;
             ImgSrc = ImgSrc.Substring(0, ImgSrc.LastIndexOf('?'));
             Uri ImageLink = new Uri(ImgSrc);
+            String Name = ImageLink.ToString().Split('/').Last();
 
             return new PageObject()
             {
-                Name = ImageLink.Segments.Last(),
+                Name = Name,
                 PageNumber = UInt32.Parse(PageNode.NextSibling.InnerText),
                 Url = PageNode.Attributes["value"].Value,
                 NextUrl = (NextNode != null) ? NextNode.Attributes["value"].Value : null,

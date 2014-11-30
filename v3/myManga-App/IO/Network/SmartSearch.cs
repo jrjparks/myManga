@@ -75,7 +75,7 @@ namespace myManga_App.IO.Network
                 foreach (ISiteExtension SiteExtension in App.SiteExtensions.DLLCollection)
                 {
                     ISiteExtensionDescriptionAttribute isea = SiteExtension.GetType().GetCustomAttribute<ISiteExtensionDescriptionAttribute>(false);
-                    if (isea.SupportedObjects.HasFlag(SupportedObjects.Search) && App.UserConfig.EnabledSiteExtentions.Contains(isea.Name))
+                    if (isea.SupportedObjects.HasFlag(SupportedObjects.Search) && App.UserConfig.EnabledSiteExtensions.Contains(isea.Name))
                         MangaSearchWorkItems.Add(SiteExtension, SearchWig.QueueWorkItem<SearchRequestObject, String>(GetSearchResult, SiteExtension.GetSearchRequestObject(searchTerm: search)));
                 }
                 // Wait for the searches to complete

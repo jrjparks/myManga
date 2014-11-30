@@ -10,29 +10,13 @@ using System.Runtime.CompilerServices;
 
 namespace myManga_App.ViewModels
 {
-    public sealed class MainViewModel : DependencyObject, IDisposable, INotifyPropertyChanging, INotifyPropertyChanged
+    public sealed class MainViewModel : BaseViewModel
     {
-        #region NotifyPropertyChange
-        public event PropertyChangingEventHandler PropertyChanging;
-        private void OnPropertyChanging([CallerMemberName] String caller = "")
-        {
-            if (PropertyChanging != null)
-                PropertyChanging(this, new PropertyChangingEventArgs(caller));
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-        private void OnPropertyChanged([CallerMemberName] String caller = "")
-        {
-            if (PropertyChanged != null)
-                PropertyChanged(this, new PropertyChangedEventArgs(caller));
-        }
-        #endregion
-
         #region Content
-        public static DependencyProperty ContentViewModelProperty = DependencyProperty.Register("ContentViewModel", typeof(Object), typeof(MainViewModel));
-        public Object ContentViewModel
+        public static DependencyProperty ContentViewModelProperty = DependencyProperty.Register("ContentViewModel", typeof(BaseViewModel), typeof(BaseViewModel));
+        public BaseViewModel ContentViewModel
         {
-            get { return GetValue(ContentViewModelProperty) as Object; }
+            get { return GetValue(ContentViewModelProperty) as BaseViewModel; }
             set { SetValue(ContentViewModelProperty, value); }
         }
 
@@ -60,6 +44,16 @@ namespace myManga_App.ViewModels
 
         private void OpenHome()
         { ContentViewModel = HomeViewModel; }
+
+        private DelegateCommand searchCommand;
+        public ICommand SearchCommand
+        { get { return searchCommand ?? (searchCommand = new DelegateCommand(OpenSearch, CanOpenSearch)); } }
+
+        private void OpenSearch()
+        { ContentViewModel = SearchViewModel; }
+
+        private Boolean CanOpenSearch()
+        { return SearchViewModel != null; }
 
         private DelegateCommand readCommand;
         public ICommand ReadCommand

@@ -13,7 +13,7 @@ namespace Core.Other.Singleton
        where T : class
     {
         static volatile T instance;
-        static object objlock = new object();
+        static readonly object objlock = new object();
 
         static Singleton() { }
 

@@ -119,6 +119,19 @@ namespace myManga_App.IO.Network
             public virtual WorkerResult<R> WorkerMethod(T Value) { return null; }
         }
 
+        private sealed class WorkerItem<T> where T : class
+        {
+            public Guid Id { get; private set; }
+
+            public T Data { get; private set; }
+
+            public WorkerItem(T Data)
+            {
+                this.Id = Guid.NewGuid(); ;
+                this.Data = Data;
+            }
+        }
+
         private sealed class WorkerResult<R> where R : class
         {
             public Guid Id { get; private set; }
@@ -145,14 +158,14 @@ namespace myManga_App.IO.Network
 
             public override WorkerResult<MangaObject> WorkerMethod(MangaObject Value)
             {
-                Dictionary<ISiteExtension, String> SiteExtentionContent = new Dictionary<ISiteExtension, String>(Value.Locations.Count);
+                Dictionary<ISiteExtension, String> SiteExtensionContent = new Dictionary<ISiteExtension, String>(Value.Locations.Count);
                 foreach (LocationObject LocationObj in Value.Locations.FindAll(l => l.Enabled))
                 {
-                    ISiteExtension SiteExtention = App.SiteExtensions.DLLCollection[LocationObj.ExtensionName];
-                    ISiteExtensionDescriptionAttribute SiteExtentionDescriptionAttribute = SiteExtention.GetType().GetCustomAttribute<ISiteExtensionDescriptionAttribute>(false);
-                    SiteExtentionContent.Add(SiteExtention, Downloader.GetHtmlContent(LocationObj.Url, SiteExtentionDescriptionAttribute.RefererHeader));
+                    ISiteExtension SiteExtension = App.SiteExtensions.DLLCollection[LocationObj.ExtensionName];
+                    ISiteExtensionDescriptionAttribute SiteExtensionDescriptionAttribute = SiteExtension.GetType().GetCustomAttribute<ISiteExtensionDescriptionAttribute>(false);
+                    SiteExtensionContent.Add(SiteExtension, Downloader.GetHtmlContent(LocationObj.Url, SiteExtensionDescriptionAttribute.RefererHeader));
                 }
-                foreach (System.Collections.Generic.KeyValuePair<ISiteExtension, String> Content in SiteExtentionContent)
+                foreach (System.Collections.Generic.KeyValuePair<ISiteExtension, String> Content in SiteExtensionContent)
                 {
                     try
                     {
@@ -181,22 +194,22 @@ namespace myManga_App.IO.Network
             {
                 try
                 {
-                    ISiteExtension SiteExtention = null;
+                    ISiteExtension SiteExtension = null;
                     LocationObject LocationObj = null;
-                    foreach (String ExtentionName in App.UserConfig.EnabledSiteExtentions)
+                    foreach (String ExtentionName in App.UserConfig.EnabledSiteExtensions)
                     {
                         LocationObj = Value.ChapterObject.Locations.FirstOrDefault((l) => l.ExtensionName == ExtentionName);
                         if (LocationObj != null)
-                        { SiteExtention = App.SiteExtensions.DLLCollection[LocationObj.ExtensionName]; break; }
+                        { SiteExtension = App.SiteExtensions.DLLCollection[LocationObj.ExtensionName]; break; }
                     }
-                    if (SiteExtention == null)
+                    if (SiteExtension == null)
                     {
                         LocationObj = Value.ChapterObject.Locations.First();
-                        SiteExtention = App.SiteExtensions.DLLCollection[LocationObj.ExtensionName];
+                        SiteExtension = App.SiteExtensions.DLLCollection[LocationObj.ExtensionName];
                     }
-                    ISiteExtensionDescriptionAttribute SiteExtentionDescriptionAttribute = SiteExtention.GetType().GetCustomAttribute<ISiteExtensionDescriptionAttribute>(false);
+                    ISiteExtensionDescriptionAttribute SiteExtensionDescriptionAttribute = SiteExtension.GetType().GetCustomAttribute<ISiteExtensionDescriptionAttribute>(false);
 
-                    ChapterObject DownloadedChapterObject = SiteExtention.ParseChapterObject(Downloader.GetHtmlContent(LocationObj.Url, SiteExtentionDescriptionAttribute.RefererHeader));
+                    ChapterObject DownloadedChapterObject = SiteExtension.ParseChapterObject(Downloader.GetHtmlContent(LocationObj.Url, SiteExtensionDescriptionAttribute.RefererHeader));
                     Value.ChapterObject.Merge(DownloadedChapterObject);
                     Value.ChapterObject.Pages = DownloadedChapterObject.Pages;
                 }
@@ -222,7 +235,7 @@ namespace myManga_App.IO.Network
             {
                 try
                 {
-                    ISiteExtension SiteExtension = App.SiteExtensions.DLLCollection.First((_ise) => Value.PageObject.Url.Contains(_ise.GetType().GetCustomAttribute<ISiteExtensionDescriptionAttribute>(false).URLFormat));
+                    ISiteExtension SiteExtension = App.SiteExtensions.DLLCollection.First(_SiteExtension => Value.PageObject.Url.Contains(_SiteExtension.GetType().GetCustomAttribute<ISiteExtensionDescriptionAttribute>(false).URLFormat));
                     PageObject DownloadedPageObject = SiteExtension.ParsePageObject(Downloader.GetHtmlContent(Value.PageObject.Url, Value.PageObject.Url));
                     Int32 index = Value.ChapterObject.Pages.FindIndex((po) => po.Url == DownloadedPageObject.Url);
                     Value.ChapterObject.Pages[index] = DownloadedPageObject;

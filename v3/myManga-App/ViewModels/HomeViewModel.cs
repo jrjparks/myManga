@@ -27,24 +27,8 @@ using Core.IO.Storage.Manager.BaseInterfaceClasses;
 
 namespace myManga_App.ViewModels
 {
-    public class HomeViewModel : DependencyObject, IDisposable, INotifyPropertyChanging, INotifyPropertyChanged
+    public class HomeViewModel : BaseViewModel
     {
-        #region NotifyPropertyChange
-        public event PropertyChangingEventHandler PropertyChanging;
-        protected void OnPropertyChanging([CallerMemberName] String caller = "")
-        {
-            if (PropertyChanging != null)
-                PropertyChanging(this, new PropertyChangingEventArgs(caller));
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-        protected void OnPropertyChanged([CallerMemberName] String caller = "")
-        {
-            if (PropertyChanged != null)
-                PropertyChanged(this, new PropertyChangedEventArgs(caller));
-        }
-        #endregion
-
         #region MangaList
         protected ObservableCollection<MangaObject> mangaList;
         public ObservableCollection<MangaObject> MangaList

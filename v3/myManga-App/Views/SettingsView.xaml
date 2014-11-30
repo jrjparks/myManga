@@ -35,7 +35,7 @@
                 <TextBlock Text="Site Extentions"/>
                 <ListBox
 					Background="{x:Null}"
-					ItemsSource="{Binding SiteExtentionInformationObjects}"
+					ItemsSource="{Binding SiteExtensionInformationObjects}"
 					HorizontalContentAlignment="Stretch">
                     <ListBox.ItemTemplate>
                         <DataTemplate>

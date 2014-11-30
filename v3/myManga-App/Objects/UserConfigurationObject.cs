@@ -79,16 +79,16 @@ namespace myManga_App.Objects
         }
 
         [XmlIgnore]
-        private List<String> enabledSiteExtentions;
-        [XmlArray, XmlArrayItem("SiteExtentionName")]
-        public List<String> EnabledSiteExtentions
+        private List<String> enabledSiteExtensions;
+        [XmlArray, XmlArrayItem("SiteExtensionName")]
+        public List<String> EnabledSiteExtensions
         {
             get
-            { return enabledSiteExtentions ?? (enabledSiteExtentions = new List<String>()); }
+            { return enabledSiteExtensions ?? (enabledSiteExtensions = new List<String>()); }
             set
             {
                 OnPropertyChanging();
-                enabledSiteExtentions = value;
+                enabledSiteExtensions = value;
                 OnPropertyChanged();
             }
         }

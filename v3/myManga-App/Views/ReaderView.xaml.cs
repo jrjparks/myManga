@@ -22,9 +22,7 @@ namespace myManga_App.Views
     public partial class ReaderView : UserControl
     {
         public ReaderView()
-        {
-            InitializeComponent();
-        }
+        { InitializeComponent(); }
 
         private void ImageContent_SourceUpdated(object sender, DataTransferEventArgs e)
         { this.ImageContentScrollViewer.ScrollToHome(); this.PageList.ScrollToCenterOfView(this.PageList.SelectedItem); }

@@ -11,7 +11,7 @@ using myMangaSiteExtension;
 namespace myManga_App.Objects
 {
     [Serializable, XmlRoot, DebuggerStepThrough]
-    public class SiteExtentionInformationObject : SerializableObject, INotifyPropertyChanging, INotifyPropertyChanged
+    public class SiteExtensionInformationObject : SerializableObject, INotifyPropertyChanging, INotifyPropertyChanged
     {
         #region NotifyPropertyChange
         public event PropertyChangingEventHandler PropertyChanging;
@@ -94,9 +94,9 @@ namespace myManga_App.Objects
             }
         }
 
-        public SiteExtentionInformationObject() : base() { }
-        public SiteExtentionInformationObject(ISiteExtensionDescriptionAttribute attribute) : base() { iSiteExtensionDescriptionAttribute = attribute; }
-        public SiteExtentionInformationObject(SerializationInfo info, StreamingContext context) : base(info, context) { }
+        public SiteExtensionInformationObject() : base() { }
+        public SiteExtensionInformationObject(ISiteExtensionDescriptionAttribute attribute) : base() { iSiteExtensionDescriptionAttribute = attribute; }
+        public SiteExtensionInformationObject(SerializationInfo info, StreamingContext context) : base(info, context) { }
         #endregion
     }
 }

@@ -63,8 +63,13 @@
                 Content="{StaticResource oi-magnifying-glass}"
                 ContentStringFormat="{}{0} Search"
                 ToolTip="Reader"
-                Command="{Binding ReadCommand}"
+                Command="{Binding SearchCommand}"
                 MinWidth="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"/>
+            <TextBlock
+                TextElement.FontFamily="{DynamicResource FontAwesome}"
+                Text="{StaticResource fa-chevron-right}"
+                TextElement.FontSize="14"
+                VerticalAlignment="Center"/>
             <button:MetroButton
                 Content="{StaticResource oi-book}"
                 ContentStringFormat="{}{0} Reader"
@@ -131,12 +136,14 @@
         </StackPanel>
         <ProgressBar
             Grid.Row="1"
+            Margin="15"
 			HorizontalAlignment="Center" 
 			VerticalAlignment="Bottom" 
-			Width="32" Height="32" 
+			Width="64" Height="{Binding Width, Mode=OneWay, RelativeSource={RelativeSource Self}}" 
 			Style="{DynamicResource Spinner}" 
 			Visibility="{Binding IsLoading, Converter={StaticResource BooleanToVisibilityConverter}}"
-            Foreground="#BF000000"
+            Opacity="0.50"
+            Foreground="#FF000000"
             IsHitTestVisible="False"/>
     </Grid>
 </window:myMangaWindow>

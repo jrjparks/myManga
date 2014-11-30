@@ -27,24 +27,8 @@ using myManga_App.IO.Network;
 
 namespace myManga_App.ViewModels
 {
-    public class SearchViewModel : IDisposable, INotifyPropertyChanging, INotifyPropertyChanged
+    public class SearchViewModel : BaseViewModel
     {
-        #region NotifyPropertyChange
-        public event PropertyChangingEventHandler PropertyChanging;
-        protected void OnPropertyChanging([CallerMemberName] String caller = "")
-        {
-            if (PropertyChanging != null)
-                PropertyChanging(this, new PropertyChangingEventArgs(caller));
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-        protected void OnPropertyChanged([CallerMemberName] String caller = "")
-        {
-            if (PropertyChanged != null)
-                PropertyChanged(this, new PropertyChangedEventArgs(caller));
-        }
-        #endregion
-
         #region Search
         public void StartSearch(String search_content)
         {

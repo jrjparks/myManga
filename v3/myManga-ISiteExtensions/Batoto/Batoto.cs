@@ -160,9 +160,7 @@ namespace Batoto
         }
 
         protected Boolean IsValidRatingChar(Char c)
-        {
-            return Char.IsDigit(c) || c.Equals('.');
-        }
+        { return Char.IsDigit(c) || c.Equals('.'); }
 
         public ChapterObject ParseChapterObject(string content)
         {

@@ -127,11 +127,13 @@
     <Compile Include="IO\Network\SmartDownloader.cs" />
     <Compile Include="IO\Network\SmartSearch.cs" />
     <Compile Include="IO\SmartGroupObject.cs" />
+    <Compile Include="IO\ViewModel\Messenger.cs" />
     <Compile Include="Objects\DatabaseExtensionInformationObject.cs" />
     <Compile Include="Objects\SiteExtentionInformationObject.cs" />
     <Compile Include="Objects\UserConfigurationObject.cs" />
     <Compile Include="Themes\Button\MetroButton.cs" />
     <Compile Include="Themes\Window\myMangaWindow.cs" />
+    <Compile Include="ViewModels\BaseViewModel.cs" />
     <Compile Include="ViewModels\HomeViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="ViewModels\ReaderViewModel.cs" />

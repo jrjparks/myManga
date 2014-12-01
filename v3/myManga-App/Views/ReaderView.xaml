@@ -112,11 +112,11 @@
             IsManipulationEnabled="True" 
             CanContentScroll="True" 
             HorizontalScrollBarVisibility="Auto" 
-            VerticalScrollBarVisibility="Auto">
+            VerticalScrollBarVisibility="Auto"
+            VerticalContentAlignment="Center"
+            HorizontalContentAlignment="Center">
             <Image
                 x:Name="ImageContent"
-                HorizontalAlignment="Center" 
-                VerticalAlignment="Top" 
                 Stretch="UniformToFill" 
                 IsHitTestVisible="False"
                 Binding.SourceUpdated="ImageContent_SourceUpdated"

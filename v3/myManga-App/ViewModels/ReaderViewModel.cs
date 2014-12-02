@@ -3,6 +3,8 @@ using Core.IO.Storage.Manager.BaseInterfaceClasses;
 using Core.MVVM;
 using Core.Other.Singleton;
 using myManga_App.IO.Network;
+using myManga_App.IO.ViewModel;
+using myManga_App.Objects;
 using myMangaSiteExtension.Objects;
 using myMangaSiteExtension.Utilities;
 using System;
@@ -143,8 +145,12 @@ namespace myManga_App.ViewModels
         #endregion
         #endregion
 
+        private void OpenChapter(ReadChapterRequestObject ReadChapterRequest)
+        { OpenChapter(ReadChapterRequest.MangaObject, ReadChapterRequest.ChapterObject); }
+
         public void OpenChapter(MangaObject MangaObject, ChapterObject ChapterObject)
         {
+            Messenger.Default.Send(this, "FocusRequest");
             this.MangaObject = MangaObject;
             this.ChapterObject = ChapterObject;
             this.PrevChapterObject = this.MangaObject.PrevChapterObject(this.ChapterObject);
@@ -170,9 +176,8 @@ namespace myManga_App.ViewModels
             this.ContinueReading = false;
             if (!DesignerProperties.GetIsInDesignMode(this))
             {
-                App.ChapterObjectArchiveWatcher.Changed += ChapterObjectArchiveWatcher_Event;
-                App.ChapterObjectArchiveWatcher.Created += ChapterObjectArchiveWatcher_Event;
-                App.ChapterObjectArchiveWatcher.Deleted += ChapterObjectArchiveWatcher_Event;
+                Messenger.Default.RegisterRecipient<FileSystemEventArgs>(this, ChapterObjectArchiveWatcher_Event, "ChapterObjectArchiveWatcher");
+                Messenger.Default.RegisterRecipient<ReadChapterRequestObject>(this, OpenChapter, "ReadChapterRequest");
             }
         }
 
@@ -226,26 +231,22 @@ namespace myManga_App.ViewModels
         #endregion
 
         #region Event Handlers
-        private void ChapterObjectArchiveWatcher_Event(object sender, FileSystemEventArgs e)
+        private void ChapterObjectArchiveWatcher_Event(FileSystemEventArgs e)
         {
-            if (App.Dispatcher.Thread == Thread.CurrentThread)
-            {
-                if(e.FullPath.Equals(ArchiveFilePath))
-                    switch (e.ChangeType)
-                    {
-                        case WatcherChangeTypes.Created:
-                        case WatcherChangeTypes.Changed:
-                            Stream archive_file;
-                            if (Singleton<ZipStorage>.Instance.TryRead(e.FullPath, out archive_file, typeof(ChapterObject).Name))
-                            { using (archive_file) { this.ChapterObject = archive_file.Deserialize<ChapterObject>(SaveType: App.UserConfig.SaveType); } }
-                            break;
+            if (e.FullPath.Equals(ArchiveFilePath))
+                switch (e.ChangeType)
+                {
+                    case WatcherChangeTypes.Created:
+                    case WatcherChangeTypes.Changed:
+                        Stream archive_file;
+                        if (Singleton<ZipStorage>.Instance.TryRead(e.FullPath, out archive_file, typeof(ChapterObject).Name))
+                        { using (archive_file) { this.ChapterObject = archive_file.Deserialize<ChapterObject>(SaveType: App.UserConfig.SaveType); } }
+                        break;
 
-                        case WatcherChangeTypes.Deleted:
-                            Singleton<DownloadManager>.Instance.Download(this.MangaObject, this.ChapterObject);
-                            break;
-                    }
-            }
-            else App.Dispatcher.Invoke(DispatcherPriority.Send, new System.Action(() => ChapterObjectArchiveWatcher_Event(sender, e)));
+                    case WatcherChangeTypes.Deleted:
+                        Singleton<DownloadManager>.Instance.Download(this.MangaObject, this.ChapterObject);
+                        break;
+                }
         }
         #endregion
     }

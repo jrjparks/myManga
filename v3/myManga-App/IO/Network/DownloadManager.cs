@@ -91,7 +91,8 @@ namespace myManga_App.IO.Network
                 }
             }
 
-            public WorkerClass(SynchronizationContext SynchronizationContext) { this.SynchronizationContext = SynchronizationContext; }
+            public WorkerClass(SynchronizationContext SynchronizationContext) 
+            { this.SynchronizationContext = SynchronizationContext ?? SynchronizationContext.Current ?? new SynchronizationContext(); }
 
             public IWorkItemResult RunWork(SmartThreadPool SmartThreadPool, T Value)
             { return SmartThreadPool.QueueWorkItem(new WorkItemCallback(WorkerMethod), Value, new PostExecuteWorkItemCallback(WorkerCallback)); }

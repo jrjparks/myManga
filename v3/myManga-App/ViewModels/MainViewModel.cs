@@ -7,6 +7,10 @@ using Core.Other.Singleton;
 using Core.MVVM;
 using System.Windows.Input;
 using System.Runtime.CompilerServices;
+using System.IO;
+using System.Threading;
+using System.Windows.Threading;
+using myManga_App.IO.ViewModel;
 
 namespace myManga_App.ViewModels
 {
@@ -89,25 +93,46 @@ namespace myManga_App.ViewModels
         }
         #endregion
 
-        private readonly App App = App.Current as App;
-
         public MainViewModel()
         {
             ContentViewModel = HomeViewModel;
-            SettingsViewModel.CloseEvent += (s, e) => ContentViewModel = HomeViewModel;
-            HomeViewModel.SearchEvent += (s, e) => { 
-                ContentViewModel = SearchViewModel;
-                SearchViewModel.StartSearch(e);
-            };
-            HomeViewModel.ReadChapterEvent += (s, m, c) =>
+            if (!DesignerProperties.GetIsInDesignMode(this))
             {
-                ContentViewModel = ReaderViewModel;
-                ReaderViewModel.OpenChapter(m, c);
-            };
+                Messenger.Default.RegisterRecipient<BaseViewModel>(this, ChangeViewModelFocus, "FocusRequest");
 
-            ServicePointManager.DefaultConnectionLimit = Singleton<DownloadManager>.Instance.Concurrency;
-            Singleton<DownloadManager>.Instance.StatusChange += (s, e) => { IsLoading = !(s as DownloadManager).IsIdle; };
+                SettingsViewModel.CloseEvent += (s, e) => ContentViewModel = HomeViewModel;
+
+                ServicePointManager.DefaultConnectionLimit = Singleton<DownloadManager>.Instance.Concurrency;
+                Singleton<DownloadManager>.Instance.StatusChange += (s, e) => { IsLoading = !(s as DownloadManager).IsIdle; };
+
+                App.MangaObjectArchiveWatcher.Changed += MangaObjectArchiveWatcher_Event;
+                App.MangaObjectArchiveWatcher.Created += MangaObjectArchiveWatcher_Event;
+                App.MangaObjectArchiveWatcher.Deleted += MangaObjectArchiveWatcher_Event;
+                App.MangaObjectArchiveWatcher.Renamed += MangaObjectArchiveWatcher_Event;
+
+                App.ChapterObjectArchiveWatcher.Changed += ChapterObjectArchiveWatcher_Event;
+                App.ChapterObjectArchiveWatcher.Created += ChapterObjectArchiveWatcher_Event;
+                App.ChapterObjectArchiveWatcher.Deleted += ChapterObjectArchiveWatcher_Event;
+                App.ChapterObjectArchiveWatcher.Renamed += ChapterObjectArchiveWatcher_Event;
+            }
         }
+
+        void MangaObjectArchiveWatcher_Event(object sender, FileSystemEventArgs e)
+        {
+            if (App.Dispatcher.Thread == Thread.CurrentThread)
+            { Messenger.Default.Send(e, "MangaObjectArchive"); }
+            else App.Dispatcher.Invoke(DispatcherPriority.Send, new System.Action(() => MangaObjectArchiveWatcher_Event(sender, e)));
+        }
+
+        void ChapterObjectArchiveWatcher_Event(object sender, FileSystemEventArgs e)
+        {
+            if (App.Dispatcher.Thread == Thread.CurrentThread)
+            { Messenger.Default.Send(e, "ChapterObjectArchiveWatcher"); }
+            else App.Dispatcher.Invoke(DispatcherPriority.Send, new System.Action(() => MangaObjectArchiveWatcher_Event(sender, e)));
+        }
+
+        void ChangeViewModelFocus(BaseViewModel ViewModel)
+        { this.ContentViewModel = ViewModel; }
 
         public void Dispose()
         {

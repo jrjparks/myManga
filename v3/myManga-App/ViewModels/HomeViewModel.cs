@@ -24,6 +24,8 @@ using myMangaSiteExtension.Objects;
 using myMangaSiteExtension.Utilities;
 using myManga_App.Properties;
 using Core.IO.Storage.Manager.BaseInterfaceClasses;
+using myManga_App.IO.ViewModel;
+using myManga_App.Objects;
 
 namespace myManga_App.ViewModels
 {
@@ -95,13 +97,6 @@ namespace myManga_App.ViewModels
         #endregion
 
         #region SearchSites
-        public event EventHandler<String> SearchEvent;
-        protected void OnSearchEvent(String search_content)
-        {
-            if (SearchEvent != null)
-                SearchEvent(this, search_content);
-        }
-
         protected DelegateCommand searchSitesCommand;
         public ICommand SearchSiteCommand
         { get { return searchSitesCommand ?? (searchSitesCommand = new DelegateCommand(SearchSites, CanSearchSite)); } }
@@ -110,9 +105,7 @@ namespace myManga_App.ViewModels
         { return !String.IsNullOrWhiteSpace(SearchFilter) && (SearchFilter.Trim().Length >= 3); }
 
         protected void SearchSites()
-        {
-            OnSearchEvent(SearchFilter.Trim());
-        }
+        { Messenger.Default.Send(SearchFilter.Trim(), "SearchRequest"); }
         #endregion
 
         #region DownloadChapter
@@ -125,27 +118,19 @@ namespace myManga_App.ViewModels
         #endregion
 
         #region ReadChapter
-        public delegate void ReadChapterDelegate(Object sender, MangaObject MangaObject, ChapterObject ChapterObject);
-        public event ReadChapterDelegate ReadChapterEvent;
-        protected void OnReadChapterEvent(MangaObject MangaObject, ChapterObject ChapterObject)
-        {
-            if (ReadChapterEvent != null)
-                ReadChapterEvent(this, MangaObject, ChapterObject);
-        }
-
         protected DelegateCommand<ChapterObject> readChapterCommand;
         public ICommand ReadChapterCommand
         { get { return readChapterCommand ?? (readChapterCommand = new DelegateCommand<ChapterObject>(ReadChapter)); } }
 
         protected void ReadChapter(ChapterObject ChapterObj)
-        { OnReadChapterEvent(this.MangaObj, ChapterObj); }
+        { Messenger.Default.Send(new ReadChapterRequestObject(this.MangaObj, ChapterObj), "ReadChapterRequest"); }
 
         protected DelegateCommand resumeReadingCommand;
         public ICommand ResumeReadingCommand
         { get { return resumeReadingCommand ?? (resumeReadingCommand = new DelegateCommand(ResumeReading, CanResumeReading)); } }
 
         protected void ResumeReading()
-        { OnReadChapterEvent(this.MangaObj, this.SelectedChapter); }
+        { Messenger.Default.Send(new ReadChapterRequestObject(this.MangaObj, this.SelectedChapter), "ReadChapterRequest"); }
         protected Boolean CanResumeReading()
         { return this.MangaObj != null && this.SelectedChapter != null; }
         #endregion
@@ -186,8 +171,6 @@ namespace myManga_App.ViewModels
             }
         }
 
-        protected readonly App App = App.Current as App;
-
         public HomeViewModel()
         {
             ConfigureSearchFilter();
@@ -205,46 +188,40 @@ namespace myManga_App.ViewModels
                         archive_file.Close();
                     }
                 }
-                App.MangaObjectArchiveWatcher.Changed += MangaObjectArchiveWatcher_Event;
-                App.MangaObjectArchiveWatcher.Created += MangaObjectArchiveWatcher_Event;
-                App.MangaObjectArchiveWatcher.Deleted += MangaObjectArchiveWatcher_Event;
                 mangaListView.MoveCurrentToFirst();
+
+                Messenger.Default.RegisterRecipient<FileSystemEventArgs>(this, MangaObjectArchiveWatcher_Event, "MangaObjectArchive");
             }
 #if DEBUG
 #endif
         }
 
-        void MangaObjectArchiveWatcher_Event(object sender, FileSystemEventArgs e)
+        void MangaObjectArchiveWatcher_Event(FileSystemEventArgs e)
         {
-            if (App.Dispatcher.Thread == Thread.CurrentThread)
+            MangaObject current_manga_object = MangaList.FirstOrDefault(o => o.MangaArchiveName(App.MANGA_ARCHIVE_EXTENSION) == e.Name);
+            switch (e.ChangeType)
             {
-                MangaObject current_manga_object = MangaList.FirstOrDefault(o => o.MangaArchiveName(App.MANGA_ARCHIVE_EXTENSION) == e.Name);
-                switch (e.ChangeType)
-                {
-                    default:
-                        break;
+                default:
+                    break;
 
-                    case WatcherChangeTypes.Changed:
-                    case WatcherChangeTypes.Created:
-                        Stream archive_file;
-                        if (Singleton<ZipStorage>.Instance.TryRead(e.FullPath, out archive_file, typeof(MangaObject).Name))
-                        {
-                            MangaObject new_manga_object = archive_file.Deserialize<MangaObject>(SaveType: App.UserConfig.SaveType);
-                            if (current_manga_object != null)
-                                current_manga_object.Merge(new_manga_object);
-                            else
-                                MangaList.Add(new_manga_object);
-                            archive_file.Close();
-                        }
-                        break;
+                case WatcherChangeTypes.Changed:
+                case WatcherChangeTypes.Created:
+                    Stream archive_file;
+                    if (Singleton<ZipStorage>.Instance.TryRead(e.FullPath, out archive_file, typeof(MangaObject).Name))
+                    {
+                        MangaObject new_manga_object = archive_file.Deserialize<MangaObject>(SaveType: App.UserConfig.SaveType);
+                        if (current_manga_object != null)
+                            current_manga_object.Merge(new_manga_object);
+                        else
+                            MangaList.Add(new_manga_object);
+                        archive_file.Close();
+                    }
+                    break;
 
-                    case WatcherChangeTypes.Deleted:
-                        MangaList.Remove(current_manga_object);
-                        break;
-                }
+                case WatcherChangeTypes.Deleted:
+                    MangaList.Remove(current_manga_object);
+                    break;
             }
-            else
-                App.Dispatcher.Invoke(DispatcherPriority.Send, new System.Action(() => MangaObjectArchiveWatcher_Event(sender, e)));
         }
 
         protected void ConfigureSearchFilter()

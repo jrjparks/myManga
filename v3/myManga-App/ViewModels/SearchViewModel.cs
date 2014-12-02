@@ -24,6 +24,7 @@ using myMangaSiteExtension.Objects;
 using myMangaSiteExtension.Utilities;
 using myManga_App.Properties;
 using myManga_App.IO.Network;
+using myManga_App.IO.ViewModel;
 
 namespace myManga_App.ViewModels
 {
@@ -32,6 +33,7 @@ namespace myManga_App.ViewModels
         #region Search
         public void StartSearch(String search_content)
         {
+            Messenger.Default.Send(this, "FocusRequest");
             SearchFilter = search_content;
             SearchSites();
         }
@@ -45,6 +47,7 @@ namespace myManga_App.ViewModels
 
         protected void SearchSites()
         {
+            MangaList.Clear();
             IsLoading = true;
             Singleton<myManga_App.IO.Network.SmartSearch>.Instance.SearchManga(SearchFilter.Trim());
         }
@@ -141,12 +144,14 @@ namespace myManga_App.ViewModels
         }
         #endregion
 
-        protected readonly App App = App.Current as App;
-
         public SearchViewModel()
         {
             ConfigureSearchFilter();
-            Singleton<myManga_App.IO.Network.SmartSearch>.Instance.SearchComplete += Instance_SearchComplete;
+            if (!DesignerProperties.GetIsInDesignMode(this))
+            {
+                Singleton<myManga_App.IO.Network.SmartSearch>.Instance.SearchComplete += Instance_SearchComplete;
+                Messenger.Default.RegisterRecipient<String>(this, StartSearch, "SearchRequest");
+            }
         }
 
         protected void ConfigureSearchFilter()

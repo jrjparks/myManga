@@ -129,6 +129,7 @@
     <Compile Include="IO\SmartGroupObject.cs" />
     <Compile Include="IO\ViewModel\Messenger.cs" />
     <Compile Include="Objects\DatabaseExtensionInformationObject.cs" />
+    <Compile Include="Objects\ReadChapterRequestObject.cs" />
     <Compile Include="Objects\SiteExtentionInformationObject.cs" />
     <Compile Include="Objects\UserConfigurationObject.cs" />
     <Compile Include="Themes\Button\MetroButton.cs" />

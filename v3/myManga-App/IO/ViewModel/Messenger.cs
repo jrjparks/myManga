@@ -4,6 +4,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace myManga_App.IO.ViewModel
@@ -17,9 +18,12 @@ namespace myManga_App.IO.ViewModel
         public static Messenger Default
         { get { return Singleton<Messenger>.Instance; } }
 
-        private static readonly ConcurrentDictionary<MessengerKey, Object> Dictionary = new ConcurrentDictionary<MessengerKey, Object>();
+        protected readonly SynchronizationContext SynchronizationContext;
+        protected readonly ConcurrentDictionary<MessengerKey, Object> Dictionary = new ConcurrentDictionary<MessengerKey, Object>();
 
-        private Messenger() { }
+        private Messenger() : this(null) { }
+        private Messenger(SynchronizationContext SynchronizationContext = null)
+        { this.SynchronizationContext = SynchronizationContext ?? SynchronizationContext.Current ?? new SynchronizationContext(); }
 
         public Boolean RegisterRecipient<T>(Object Recipient, Action<T> Action)
         { return RegisterRecipient(Recipient, Action, null); }
@@ -41,7 +45,8 @@ namespace myManga_App.IO.ViewModel
             IEnumerable<KeyValuePair<MessengerKey, Object>> Results;
             if (Context == null) Results = from Result in Dictionary where Result.Key.Context == null select Result;
             else Results = from Result in Dictionary where Result.Key.Context != null && Result.Key.Context.Equals(Context) select Result;
-            foreach (Action<T> Action in Results.Select(x => x.Value).OfType<Action<T>>()) Action(Message);
+            foreach (Action<T> Action in Results.Select(x => x.Value).OfType<Action<T>>())
+            { this.SynchronizationContext.Post(delegate { Action.Invoke(Message); }, null); }
         }
 
         protected class MessengerKey

@@ -11,6 +11,8 @@ namespace myManga_App.ViewModels
 {
     public abstract class BaseViewModel : DependencyObject, IDisposable, INotifyPropertyChanging, INotifyPropertyChanged
     {
+        protected readonly App App = App.Current as App;
+
         #region NotifyPropertyChange
         public event PropertyChangingEventHandler PropertyChanging;
         protected void OnPropertyChanging([CallerMemberName] String caller = "")

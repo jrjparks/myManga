@@ -180,8 +180,6 @@ namespace myManga_App.ViewModels
         }
         #endregion
 
-        protected readonly App App = App.Current as App;
-
         public SettingsViewModel()
         {
             SiteExtensionInformationObjects = new ObservableCollection<SiteExtensionInformationObject>();

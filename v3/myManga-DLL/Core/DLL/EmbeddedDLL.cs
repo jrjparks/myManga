@@ -21,6 +21,7 @@ namespace Core.DLL
         {
             this.ExecutingAssembly = ExecutingAssembly ?? Assembly.GetEntryAssembly();
             _ManifestResourceNames.AddRange(this.ExecutingAssembly.GetManifestResourceNames().Where((rn) => rn.EndsWith(".dll")));
+            if (PreLoadDLLs) this.PreLoadDLLs();
         }
 
         private void PreLoadDLLs()

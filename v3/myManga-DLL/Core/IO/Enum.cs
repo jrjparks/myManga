@@ -10,7 +10,7 @@ namespace Core.IO
     /// </summary>
     public enum SaveType
     {
+        XML,
         Binary,
-        XML
     }
 }

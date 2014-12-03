@@ -51,6 +51,10 @@ namespace myManga_App
             // Load Embedded DLLs from Resources.
             emdll = new EmbeddedDLL();
 
+            AppDomain.CurrentDomain.AssemblyResolve += emdll.ResolveAssembly;
+            SiteExtensions.DLLAppDomain.AssemblyResolve += emdll.ResolveAssembly;
+            DatabaseExtensions.DLLAppDomain.AssemblyResolve += emdll.ResolveAssembly;
+
             userConfig = LoadUserConfig();
 
             // Create a File System Watcher for Manga Objects
@@ -61,10 +65,6 @@ namespace myManga_App
             chapterObjectArchiveWatcher = new FileSystemWatcher(CHAPTER_ARCHIVE_DIRECTORY, CHAPTER_ARCHIVE_FILTER);
             chapterObjectArchiveWatcher.IncludeSubdirectories = true;
             chapterObjectArchiveWatcher.EnableRaisingEvents = true;
-
-            AppDomain.CurrentDomain.AssemblyResolve += emdll.ResolveAssembly;
-            SiteExtensions.DLLAppDomain.AssemblyResolve += emdll.ResolveAssembly;
-            DatabaseExtensions.DLLAppDomain.AssemblyResolve += emdll.ResolveAssembly;
 
             Settings.Default.PropertyChanged += Default_PropertyChanged;
 

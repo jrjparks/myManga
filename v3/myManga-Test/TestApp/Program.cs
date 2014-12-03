@@ -25,6 +25,14 @@ namespace TestApp
 
         static void Main(string[] args)
         {
+            MangaObject test = new MangaObject();
+            test.Name = "Test";
+            test.MangaType = myMangaSiteExtension.Enums.MangaObjectType.Unknown;
+
+            Stream test_stream_1 = test.Serialize(SaveType.Binary);
+            MangaObject test2 = test_stream_1.Deserialize<MangaObject>(SaveType.Binary);
+
+
             zip_storage = Core.Other.Singleton.Singleton<ZipStorage>.Instance;
 
             SiteExtentions.Add("MangaReader", new AFTV_Network.MangaReader());

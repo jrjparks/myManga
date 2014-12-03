@@ -99,9 +99,6 @@ namespace myMangaSiteExtension.Objects
             }
         }
 
-        [XmlIgnore]
-        public String VCsCString { get { return String.Format("Vol {0} Chap {1}.{2}", Volume, Chapter, SubChapter); } }
-
         [XmlArray, XmlArrayItem("Location")]
         public List<LocationObject> Locations
         {

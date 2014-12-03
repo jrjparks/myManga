@@ -161,7 +161,5 @@ namespace myManga_App.ViewModels
             if (mangaListView.CanSort)
                 mangaListView.SortDescriptions.Add(new SortDescription("Name", ListSortDirection.Ascending));
         }
-
-        public void Dispose() { }
     }
 }

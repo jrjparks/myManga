@@ -181,10 +181,12 @@ namespace myManga_App.ViewModels
                     Stream archive_file;
                     if (Singleton<ZipStorage>.Instance.TryRead(MangaArchiveFilePath, out archive_file, typeof(MangaObject).Name))
                     {
-                        if (archive_file.CanRead && archive_file.Length > 0)
+                        try
                         {
-                            MangaList.Add(archive_file.Deserialize<MangaObject>(SaveType: App.UserConfig.SaveType));
+                            if (archive_file.CanRead && archive_file.Length > 0)
+                            { MangaList.Add(archive_file.Deserialize<MangaObject>(SaveType: App.UserConfig.SaveType)); }
                         }
+                        catch { }
                         archive_file.Close();
                     }
                 }
@@ -240,7 +242,5 @@ namespace myManga_App.ViewModels
             { using (bookmark_file) BookmarkObject = bookmark_file.Deserialize<BookmarkObject>(SaveType: App.UserConfig.SaveType); }
             if (BookmarkObject != null){ this.SelectedChapter = this.MangaObj.ChapterObjectOfBookmarkObject(BookmarkObject); }
         }
-
-        public void Dispose() { }
     }
 }

@@ -189,6 +189,9 @@ namespace myMangaSiteExtension.Utilities
                 value.AlternateNames.FirstOrDefault(o => new String(o.Where(Char.IsLetterOrDigit).ToArray()).ToLower().Contains(_name)) != null;
         }
 
+        public static String SelectedCover(this MangaObject value)
+        { return value.Covers.Count > value.PreferredCover ? value.Covers[value.PreferredCover] : value.Covers.FirstOrDefault(); }
+
         public static Int32 IndexOfChapterObject(this MangaObject value, ChapterObject chapter_object)
         { return value.Chapters.FindIndex(c => c.Volume == chapter_object.Volume && c.Chapter == chapter_object.Chapter && c.SubChapter == chapter_object.SubChapter); }
 

@@ -97,36 +97,31 @@ namespace Core.IO
                 try
                 {
                     MemoryStream ObjectStream = new MemoryStream();
-                    using (MemoryStream tmpStream = new MemoryStream())
+                    using (MemoryStream SerializeStream = new MemoryStream())
                     {
                         switch (SaveType)
                         {
                             default:
                             case SaveType.Binary:
                                 BinaryFormatter ObjectFormatter = new BinaryFormatter();
-                                ObjectFormatter.Serialize(tmpStream, Object);
-                                tmpStream.Seek(0, SeekOrigin.Begin);
-                                tmpStream.CopyTo(ObjectStream);
+                                using (GZipStream GZipSerializeStream = new GZipStream(SerializeStream, CompressionMode.Compress, true))
+                                { ObjectFormatter.Serialize(GZipSerializeStream, Object); } // Compress stream with GZip
                                 break;
 
                             case SaveType.XML:
                                 XmlSerializer ObjectSerializer = new XmlSerializer(typeof(T));
-                                using (TextWriter ObjectXMLWriter = new StreamWriter(tmpStream, Encoding.UTF8))
-                                {
-                                    ObjectSerializer.Serialize(ObjectXMLWriter, Object);
-                                    tmpStream.Seek(0, SeekOrigin.Begin);
-                                    tmpStream.CopyTo(ObjectStream);
-                                }
+                                using (TextWriter ObjectXMLWriter = new StreamWriter(SerializeStream, Encoding.UTF8, 2 << 18, true)) // 2 << 18 = 512 KB buffer
+                                { ObjectSerializer.Serialize(ObjectXMLWriter, Object); }
                                 break;
                         }
+                        SerializeStream.Seek(0, SeekOrigin.Begin);
+                        SerializeStream.CopyTo(ObjectStream);
                     }
                     ObjectStream.Seek(0, SeekOrigin.Begin);
                     return ObjectStream;
                 }
                 catch (Exception ex)
-                {
-                    throw new Exception(String.Format("Error serializing data as {0}.", SaveType.ToString()), ex);
-                }
+                { throw new Exception(String.Format("Error serializing data as {0}.", SaveType.ToString()), ex); }
             }
             return null;
         }
@@ -135,6 +130,7 @@ namespace Core.IO
         {
             if (ObjectStream != null)
             {
+                ObjectStream.Seek(0, SeekOrigin.Begin);
                 try
                 {
                     T Object = null;
@@ -143,7 +139,8 @@ namespace Core.IO
                         default:
                         case SaveType.Binary:
                             BinaryFormatter ObjectFormatter = new BinaryFormatter();
-                            Object = (T)ObjectFormatter.Deserialize(ObjectStream);
+                            using (GZipStream GZipObjectStream = new GZipStream(ObjectStream, CompressionMode.Decompress, true))
+                            { Object = (T)ObjectFormatter.Deserialize(GZipObjectStream); } // Decompress stream with GZip
                             break;
 
                         case SaveType.XML:
@@ -154,9 +151,7 @@ namespace Core.IO
                     return Object;
                 }
                 catch (Exception ex)
-                {
-                    throw new Exception(String.Format("Error deserializing data as {0}.", SaveType.ToString()), ex);
-                }
+                { throw new Exception(String.Format("Error deserializing data as {0}.", SaveType.ToString()), ex); }
             }
             return null;
         }

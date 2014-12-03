@@ -219,12 +219,6 @@ namespace myMangaSiteExtension.Objects
             }
         }
 
-        [XmlIgnore]
-        public String SelectedCover
-        {
-            get { return Covers.Count > PreferredCover ? Covers[PreferredCover] : Covers.FirstOrDefault(); }
-        }
-
         [XmlArray, XmlArrayItem]
         public List<ChapterObject> Chapters
         {
@@ -258,8 +252,6 @@ namespace myMangaSiteExtension.Objects
                 OnPropertyChanged();
             }
         }
-        [XmlIgnore]
-        public bool RatingSpecified { get { return this.Rating >= 0; } }
 
         public MangaObject() : base() { }
         public MangaObject(SerializationInfo info, StreamingContext context) : base(info, context) { }

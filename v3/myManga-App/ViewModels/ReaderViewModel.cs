@@ -25,7 +25,6 @@ namespace myManga_App.ViewModels
     public sealed class ReaderViewModel : BaseViewModel
     {
         #region Variables
-        private readonly App App = App.Current as App;
         private Boolean ContinueReading { get; set; }
 
         private Boolean PreloadingNext { get; set; }

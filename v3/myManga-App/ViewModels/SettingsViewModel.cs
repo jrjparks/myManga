@@ -12,6 +12,10 @@ using Core.MVVM;
 using System.Windows.Input;
 using Core.IO;
 using myManga_App.Properties;
+using Core.Other.Singleton;
+using Core.IO.Storage.Manager.BaseInterfaceClasses;
+using myMangaSiteExtension.Objects;
+using System.IO;
 
 namespace myManga_App.ViewModels
 {
@@ -183,7 +187,7 @@ namespace myManga_App.ViewModels
         public SettingsViewModel()
         {
             SiteExtensionInformationObjects = new ObservableCollection<SiteExtensionInformationObject>();
-            foreach (String SiteExtensionName in App.UserConfig.EnabledSiteExtensions) 
+            foreach (String SiteExtensionName in App.UserConfig.EnabledSiteExtensions)
             {
                 if (App.SiteExtensions.DLLCollection.Contains(SiteExtensionName))
                 {
@@ -223,10 +227,26 @@ namespace myManga_App.ViewModels
             App.UserConfig.EnabledSiteExtensions.AddRange((from SiteExtensionInformationObject seio in SiteExtensionInformationObjects where seio.Enabled select seio.Name));
             App.UserConfig.EnabledDatabaseExtentions.Clear();
             App.UserConfig.EnabledDatabaseExtentions.AddRange((from DatabaseExtensionInformationObject deio in DatabaseExtensionInformationObjects where deio.Enabled select deio.Name));
+            if(Settings.Default.SaveType != SelectedSaveType) ConvertStoredFiles();
             Settings.Default.SaveType = SelectedSaveType;
             App.SaveUserConfig();
         }
 
-        public void Dispose() { }
+        private void ConvertStoredFiles()
+        {
+            Stream archive_stream;
+            foreach (String filepath in Directory.EnumerateFiles(App.MANGA_ARCHIVE_DIRECTORY, App.MANGA_ARCHIVE_FILTER))
+            {
+                if (Singleton<ZipStorage>.Instance.TryRead(filepath, typeof(MangaObject).Name, out archive_stream))
+                { try { Singleton<ZipStorage>.Instance.Write(filepath, typeof(MangaObject).Name, archive_stream.Deserialize<MangaObject>(Settings.Default.SaveType).Serialize(this.SelectedSaveType)); } catch { } archive_stream.Close(); }
+                if (Singleton<ZipStorage>.Instance.TryRead(filepath, typeof(BookmarkObject).Name, out archive_stream))
+                { try { Singleton<ZipStorage>.Instance.Write(filepath, typeof(BookmarkObject).Name, archive_stream.Deserialize<BookmarkObject>(Settings.Default.SaveType).Serialize(this.SelectedSaveType)); } catch { } archive_stream.Close(); }
+            }
+            foreach (String filepath in Directory.EnumerateFiles(App.CHAPTER_ARCHIVE_DIRECTORY, App.CHAPTER_ARCHIVE_FILTER, SearchOption.AllDirectories))
+            {
+                if (Singleton<ZipStorage>.Instance.TryRead(filepath, typeof(ChapterObject).Name, out archive_stream))
+                { try { Singleton<ZipStorage>.Instance.Write(filepath, typeof(ChapterObject).Name, archive_stream.Deserialize<ChapterObject>(Settings.Default.SaveType).Serialize(this.SelectedSaveType)); } catch { } archive_stream.Close(); }
+            }
+        }
     }
 }

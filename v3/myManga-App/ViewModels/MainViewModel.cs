@@ -134,8 +134,9 @@ namespace myManga_App.ViewModels
         void ChangeViewModelFocus(BaseViewModel ViewModel)
         { this.ContentViewModel = ViewModel; }
 
-        public void Dispose()
+        public override void Dispose()
         {
+            base.Dispose();
             App.SiteExtensions.Unload();
         }
     }

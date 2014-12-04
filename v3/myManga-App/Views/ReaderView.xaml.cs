@@ -13,6 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Core.Other;
+using myManga_App.ViewModels;
 
 namespace myManga_App.Views
 {
@@ -25,7 +26,13 @@ namespace myManga_App.Views
         { InitializeComponent(); }
 
         private void ImageContent_SourceUpdated(object sender, DataTransferEventArgs e)
-        { this.ImageContentScrollViewer.ScrollToHome(); this.PageList.ScrollToCenterOfView(this.PageList.SelectedItem); }
+        {
+            this.ImageContentScrollViewer.ScrollToHome();
+            this.PageList.ScrollToCenterOfView(this.PageList.SelectedItem);
+            if (this.DataContext is ReaderViewModel)
+                if ((this.DataContext as ReaderViewModel).MangaObject.MangaType == myMangaSiteExtension.Enums.MangaObjectType.Manga)
+                    this.ImageContentScrollViewer.ScrollToRightEnd();
+        }
 
         private void PageList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         { this.PageList.ScrollToCenterOfView(this.PageList.SelectedItem); }

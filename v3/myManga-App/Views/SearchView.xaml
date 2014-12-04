@@ -112,15 +112,15 @@
                 <RowDefinition Height="8"/>
             </Grid.RowDefinitions>
             <button:MetroButton
-                    Grid.Row="2"
-                    Content="Start Reading"
-                    FontSize="18"
-                    Command="{Binding StoreMangaInfoCommand}"/>
+                Grid.Row="2"
+                Content="Start Reading"
+                FontSize="18"
+                Command="{Binding StoreMangaInfoCommand}"/>
             <Grid
                 x:Name="MangaObjectDescription"
                 DataContext="{Binding SelectedItem, ElementName=MangaList}"
-                Background="{DynamicResource window-background}">
-                <!--Visibility="{Binding TargetNullValue=Collapsed}"-->
+                Background="{DynamicResource window-background}"
+                Visibility="{Binding TargetNullValue=Collapsed}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="3*"/>
                     <ColumnDefinition MinWidth="100" MaxWidth="300"/>
@@ -200,6 +200,7 @@
 				    ItemContainerStyle="{DynamicResource SearchView_ChapterListBoxItem}"
 				    Visibility="{Binding HasItems, Converter={StaticResource BooleanToVisibilityConverter}, RelativeSource={RelativeSource Self}}" 
 				    ScrollViewer.HorizontalScrollBarVisibility="Disabled" HorizontalContentAlignment="Stretch"/>
+
             </Grid>
         </Grid>
     </Grid>

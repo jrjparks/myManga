@@ -102,6 +102,18 @@ namespace myManga_App.ViewModels
 
         public String ChapterTitle
         { get { return String.Format("{0} / {1} - Page: {2} of {3}", this.MangaObject.Name, this.ChapterObject.Name, this.SelectedPageObject != null ? this.SelectedPageObject.PageNumber : 0, this.ChapterObject.Pages.Count > 0 ? this.ChapterObject.Pages.Last().PageNumber : 0); } }
+
+        private Double _PageZoom;
+        public Double PageZoom
+        {
+            get { return _PageZoom; }
+            set
+            {
+                OnPropertyChanging();
+                _PageZoom = value;
+                OnPropertyChanged();
+            }
+        }
         #endregion
 
         #region Commands
@@ -142,12 +154,21 @@ namespace myManga_App.ViewModels
             return p_page;
         }
         #endregion
+
+        #region Reset PageZoom
+        private DelegateCommand _ResetPageZoomCommand;
+        public ICommand ResetPageZoomCommand
+        { get { return _ResetPageZoomCommand ?? (_ResetPageZoomCommand = new DelegateCommand(ResetPageZoom)); } }
+
+        private void ResetPageZoom()
+        { this.PageZoom = 1; }
+        #endregion
         #endregion
 
         private void OpenChapter(ReadChapterRequestObject ReadChapterRequest)
-        { OpenChapter(ReadChapterRequest.MangaObject, ReadChapterRequest.ChapterObject); }
+        { this.PageZoom = 1; OpenChapter(ReadChapterRequest.MangaObject, ReadChapterRequest.ChapterObject); }
 
-        public void OpenChapter(MangaObject MangaObject, ChapterObject ChapterObject)
+        private void OpenChapter(MangaObject MangaObject, ChapterObject ChapterObject)
         {
             Messenger.Default.Send(this, "FocusRequest");
             this.MangaObject = MangaObject;
@@ -171,8 +192,10 @@ namespace myManga_App.ViewModels
         }
 
         public ReaderViewModel()
+            : base()
         {
             this.ContinueReading = false;
+            this.PageZoom = 1;
             if (!DesignerProperties.GetIsInDesignMode(this))
             {
                 Messenger.Default.RegisterRecipient<FileSystemEventArgs>(this, ChapterObjectArchiveWatcher_Event, "ChapterObjectArchiveWatcher");

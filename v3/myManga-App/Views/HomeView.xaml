@@ -171,6 +171,7 @@
 				SelectedIndex="0"
 				Visibility="{Binding HasItems, Converter={StaticResource BooleanToVisibilityConverter}, RelativeSource={RelativeSource Self}}" 
 				ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                IsSynchronizedWithCurrentItem="True"
 				SelectedItem="{Binding MangaObj}"
 				ItemsSource="{Binding MangaList}"/>
             <ProgressBar 
@@ -287,6 +288,7 @@
 				ItemsSource="{Binding Chapters}"
                 SelectedItem="{Binding DataContext.SelectedChapter, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl}}"
                 SelectedIndex="0"
+                IsSynchronizedWithCurrentItem="True"
 				ItemContainerStyle="{DynamicResource HomeView_ChapterListBoxItem}"
 				Visibility="{Binding HasItems, Converter={StaticResource BooleanToVisibilityConverter}, RelativeSource={RelativeSource Self}}" 
 				ScrollViewer.HorizontalScrollBarVisibility="Disabled" HorizontalContentAlignment="Stretch"/>

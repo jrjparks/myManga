@@ -57,6 +57,18 @@ namespace myManga_App.ViewModels
             }
         }
 
+        private BookmarkObject _BookmarkObject;
+        public BookmarkObject BookmarkObject
+        {
+            get { return _BookmarkObject; }
+            set
+            {
+                OnPropertyChanging();
+                _BookmarkObject = value;
+                OnPropertyChanged();
+            }
+        }
+
         protected ChapterObject _SelectedChapter;
         public ChapterObject SelectedChapter
         {
@@ -130,7 +142,7 @@ namespace myManga_App.ViewModels
         { get { return resumeReadingCommand ?? (resumeReadingCommand = new DelegateCommand(ResumeReading, CanResumeReading)); } }
 
         protected void ResumeReading()
-        { Messenger.Default.Send(new ReadChapterRequestObject(this.MangaObj, this.SelectedChapter), "ReadChapterRequest"); }
+        { Messenger.Default.Send(new ReadChapterRequestObject(this.MangaObj, this.MangaObj.ChapterObjectOfBookmarkObject(this.BookmarkObject)), "ReadChapterRequest"); }
         protected Boolean CanResumeReading()
         { return this.MangaObj != null && this.SelectedChapter != null; }
         #endregion
@@ -237,10 +249,9 @@ namespace myManga_App.ViewModels
         private void LoadBookmarkObject()
         {
             Stream bookmark_file;
-            BookmarkObject BookmarkObject = null;
             if (Singleton<ZipStorage>.Instance.TryRead(Path.Combine(App.MANGA_ARCHIVE_DIRECTORY, this.MangaObj.MangaArchiveName(App.MANGA_ARCHIVE_EXTENSION)), out bookmark_file, typeof(BookmarkObject).Name))
-            { using (bookmark_file) BookmarkObject = bookmark_file.Deserialize<BookmarkObject>(SaveType: App.UserConfig.SaveType); }
-            if (BookmarkObject != null){ this.SelectedChapter = this.MangaObj.ChapterObjectOfBookmarkObject(BookmarkObject); }
+            { using (bookmark_file) this.BookmarkObject = bookmark_file.Deserialize<BookmarkObject>(SaveType: App.UserConfig.SaveType); }
+            if (this.BookmarkObject != null) { this.SelectedChapter = this.MangaObj.ChapterObjectOfBookmarkObject(this.BookmarkObject); }
         }
     }
 }

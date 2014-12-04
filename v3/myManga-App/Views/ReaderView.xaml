@@ -23,9 +23,10 @@
                 <ResourceDictionary Source="/myManga;component/Resources/Localization/Dictionary_en-US.xaml"/>
                 <ResourceDictionary Source="/myManga;component/Themes/CoreResourceDictionary.xaml"/>
                 <ResourceDictionary Source="/myManga;component/Themes/Button/MetroButton.xaml"/>
-                
+
                 <ResourceDictionary Source="/myManga;component/Themes/ListBox/ListBoxes.xaml"/>
                 <ResourceDictionary Source="/myManga;component/Themes/ListBox/ListBoxItems.xaml"/>
+                <ResourceDictionary Source="/myManga;component/Themes/Slider/Slider.xaml"/>
             </ResourceDictionary.MergedDictionaries>
             <Converters:LoadImageFromChapterArchive x:Key="LoadImageFromChapterArchive"/>
             <Converters:BooleanInverter x:Key="BooleanInverter"/>
@@ -45,25 +46,6 @@
             <ColumnDefinition/>
             <ColumnDefinition Width="48"/>
         </Grid.ColumnDefinitions>
-        <!--<Expander
-            Grid.ColumnSpan="3">
-            <Expander.Header>
-                <TextBlock Text="{Binding ChapterTitle, Mode=OneWay, FallbackValue=Chapter Info}" TextAlignment="Center"/>
-            </Expander.Header>
-            <ListBox
-                    x:Name="PageList"
-                    ItemsSource="{Binding ChapterObject.Pages}"
-                    SelectedItem="{Binding SelectedPageObject}" 
-                    IsSynchronizedWithCurrentItem="False" 
-                    ItemContainerStyle="{DynamicResource ReaderView_PageListBoxItem}" 
-                    SelectionChanged="PageList_SelectionChanged">
-                <ListBox.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <StackPanel IsItemsHost="True" Orientation="Horizontal"/>
-                    </ItemsPanelTemplate>
-                </ListBox.ItemsPanel>
-            </ListBox>
-        </Expander>-->
         <button:MetroToggleButton 
             x:Name="PageListDropdown"
             Grid.ColumnSpan="3"
@@ -71,29 +53,65 @@
             IsHitTestVisible="{Binding IsOpen, Converter={StaticResource BooleanInverter}, ElementName=PageListPopup, Mode=OneWay}"/>
         <Popup
             x:Name="PageListPopup"
+            AllowsTransparency="True"
             Width="{Binding ActualWidth, ElementName=PageListDropdown, Mode=OneWay}"
 			PlacementTarget="{Binding ElementName=PageListDropdown}"
             PlacementRectangle="{Binding ElementName=PageListDropdown}"
 			IsOpen="{Binding IsChecked, ElementName=PageListDropdown}"
-            PopupAnimation="Slide"
+            PopupAnimation="Fade"
             Grid.ColumnSpan="3" 
             StaysOpen="False">
-            <ListBox
-                x:Name="PageList"
-                ItemsSource="{Binding ChapterObject.Pages, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}"
-                SelectedItem="{Binding SelectedPageObject, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}" 
-                IsSynchronizedWithCurrentItem="True" 
-                ItemContainerStyle="{DynamicResource ReaderView_PageListBoxItem}" 
-                ScrollViewer.VerticalScrollBarVisibility="Disabled"
-                Background="{DynamicResource window-background}"
-                SourceUpdated="ImageContent_SourceUpdated"
-                SelectionChanged="PageList_SelectionChanged">
-                <ListBox.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <StackPanel IsItemsHost="True" Orientation="Horizontal"/>
-                    </ItemsPanelTemplate>
-                </ListBox.ItemsPanel>
-            </ListBox>
+            <StackPanel
+                Orientation="Vertical"
+                Background="{DynamicResource window-background}">
+                <ListBox
+                    x:Name="PageList"
+                    ItemsSource="{Binding ChapterObject.Pages, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}"
+                    SelectedItem="{Binding SelectedPageObject, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}" 
+                    IsSynchronizedWithCurrentItem="True" 
+                    ItemContainerStyle="{DynamicResource ReaderView_PageListBoxItem}" 
+                    ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                    Background="{DynamicResource window-background}"
+                    SourceUpdated="ImageContent_SourceUpdated"
+                    SelectionChanged="PageList_SelectionChanged">
+                    <ListBox.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel IsItemsHost="True" Orientation="Horizontal"/>
+                        </ItemsPanelTemplate>
+                    </ListBox.ItemsPanel>
+                </ListBox>
+                <Separator/>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock 
+                        Text="Zoom:"
+                        FontSize="14"
+                        VerticalAlignment="Center"
+                        Margin="0,0,3,0"/>
+                    <Slider
+                        Grid.Column="1"
+                        Orientation="Horizontal"
+                        Minimum="0.5"
+                        Maximum="2"
+                        Value="{Binding Path=PageZoom, Mode=TwoWay, FallbackValue=1}" 
+                        TickPlacement="BottomRight"
+                        TickFrequency="0.1"
+                        LargeChange="0.5" 
+                        SmallChange="0.1" 
+                        IsMoveToPointEnabled="True" 
+                        IsSnapToTickEnabled="True"/>
+                    <button:MetroButton
+                        Grid.Column="2"
+                        Content="Reset"
+                        FontSize="14"
+                        Padding="5,1"
+                        Command="{Binding ResetPageZoomCommand}"/>
+                </Grid>
+            </StackPanel>
         </Popup>
         <button:MetroButton
             Grid.Column="0"
@@ -133,6 +151,11 @@
                         <Binding Path="SelectedPageObject"/>
                     </MultiBinding>
                 </Image.Source>
+                <Image.LayoutTransform>
+                    <ScaleTransform 
+                        ScaleX="{Binding Path=PageZoom, Mode=OneWay, FallbackValue=1}" 
+                        ScaleY="{Binding Path=PageZoom, Mode=OneWay, FallbackValue=1}"/>
+                </Image.LayoutTransform>
             </Image>
         </ScrollViewer>
         <button:MetroButton

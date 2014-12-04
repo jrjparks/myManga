@@ -10,7 +10,12 @@
     d:DesignHeight="400"
     d:DesignWidth="600" >
     <UserControl.Resources>
-        <Converters:CommandParameterStringFormat x:Key="CommandParameterStringFormat"/>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/myManga;component/Themes/ScrollBar/ScrollBar.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+            <Converters:CommandParameterStringFormat x:Key="CommandParameterStringFormat"/>
+        </ResourceDictionary>
     </UserControl.Resources>
     <Grid Background="{DynamicResource window-background}">
         <Grid.ColumnDefinitions>

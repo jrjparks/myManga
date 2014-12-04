@@ -26,6 +26,7 @@
 
                 <ResourceDictionary Source="/myManga;component/Themes/ListBox/ListBoxes.xaml"/>
                 <ResourceDictionary Source="/myManga;component/Themes/ListBox/ListBoxItems.xaml"/>
+                <ResourceDictionary Source="/myManga;component/Themes/ScrollBar/ScrollBar.xaml"/>
                 <ResourceDictionary Source="/myManga;component/Themes/Slider/Slider.xaml"/>
             </ResourceDictionary.MergedDictionaries>
             <Converters:LoadImageFromChapterArchive x:Key="LoadImageFromChapterArchive"/>

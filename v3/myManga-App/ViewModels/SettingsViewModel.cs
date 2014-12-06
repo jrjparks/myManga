@@ -184,6 +184,20 @@ namespace myManga_App.ViewModels
         }
         #endregion
 
+        #region DefaultPageZoom
+        private Double defaultPageZoom;
+        public Double DefaultPageZoom
+        {
+            get { return defaultPageZoom; }
+            set
+            {
+                OnPropertyChanging();
+                defaultPageZoom = value;
+                OnPropertyChanged();
+            }
+        }
+        #endregion
+
         public SettingsViewModel()
         {
             SiteExtensionInformationObjects = new ObservableCollection<SiteExtensionInformationObject>();
@@ -219,14 +233,16 @@ namespace myManga_App.ViewModels
                 DatabaseExtensionInformationObjects.Add(new DatabaseExtensionInformationObject(DatabaseExtensionDescriptionAttribute) { Enabled = App.UserConfig.EnabledDatabaseExtentions.Contains(DatabaseExtensionDescriptionAttribute.Name) });
             }
             SelectedSaveType = Settings.Default.SaveType;
+            this.DefaultPageZoom = App.UserConfig.DefaultPageZoom;
         }
 
         public void SaveUserConfig()
         {
             App.UserConfig.EnabledSiteExtensions.Clear();
-            App.UserConfig.EnabledSiteExtensions.AddRange((from SiteExtensionInformationObject seio in SiteExtensionInformationObjects where seio.Enabled select seio.Name));
+            App.UserConfig.EnabledSiteExtensions.AddRange((from SiteExtensionInformationObject seio in this.SiteExtensionInformationObjects where seio.Enabled select seio.Name));
             App.UserConfig.EnabledDatabaseExtentions.Clear();
-            App.UserConfig.EnabledDatabaseExtentions.AddRange((from DatabaseExtensionInformationObject deio in DatabaseExtensionInformationObjects where deio.Enabled select deio.Name));
+            App.UserConfig.EnabledDatabaseExtentions.AddRange((from DatabaseExtensionInformationObject deio in this.DatabaseExtensionInformationObjects where deio.Enabled select deio.Name));
+            App.UserConfig.DefaultPageZoom = this.DefaultPageZoom;
             if(Settings.Default.SaveType != SelectedSaveType) ConvertStoredFiles();
             Settings.Default.SaveType = SelectedSaveType;
             App.SaveUserConfig();

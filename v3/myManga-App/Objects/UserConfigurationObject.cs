@@ -108,6 +108,20 @@ namespace myManga_App.Objects
             }
         }
 
+        [XmlIgnore]
+        private Double defaultPageZoom;
+        [XmlElement]
+        public Double DefaultPageZoom
+        {
+            get { return defaultPageZoom; }
+            set
+            {
+                OnPropertyChanging();
+                defaultPageZoom = value;
+                OnPropertyChanged();
+            }
+        }
+
         public UserConfigurationObject() : base() { }
         public UserConfigurationObject(SerializationInfo info, StreamingContext context) : base(info, context) { }
     }

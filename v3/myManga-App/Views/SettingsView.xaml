@@ -13,6 +13,7 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="/myManga;component/Themes/ScrollBar/ScrollBar.xaml"/>
+                <ResourceDictionary Source="/myManga;component/Themes/Slider/Slider.xaml"/>
             </ResourceDictionary.MergedDictionaries>
             <Converters:CommandParameterStringFormat x:Key="CommandParameterStringFormat"/>
         </ResourceDictionary>
@@ -105,6 +106,26 @@
                 <ComboBox
                     ItemsSource="{Binding SaveTypes}"
                     SelectedItem="{Binding SelectedSaveType}"/>
+                <TextBlock Text="Default Zoom Level"/>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="200"/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Text="{Binding DefaultPageZoom, StringFormat=Zoom\ Amount:\ {0:#.##}}"/>
+                    <Slider
+                        Grid.Column="1"
+                        Orientation="Horizontal"
+                        Minimum="0.5"
+                        Maximum="2"
+                        Value="{Binding Path=DefaultPageZoom, Mode=TwoWay, FallbackValue=1}" 
+                        TickPlacement="BottomRight"
+                        TickFrequency="0.1"
+                        LargeChange="0.5" 
+                        SmallChange="0.1" 
+                        IsMoveToPointEnabled="True" 
+                        IsSnapToTickEnabled="True"/>
+                </Grid>
             </StackPanel>
         </Grid>
         <StackPanel

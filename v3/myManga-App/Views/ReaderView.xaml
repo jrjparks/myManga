@@ -35,7 +35,10 @@
     </UserControl.Resources>
     <UserControl.InputBindings>
         <KeyBinding Command="{Binding PrevPageCommand}" Key="Left"/>
+        <KeyBinding Command="{Binding PrevPageCommand}" Key="BrowserForward"/>
+
         <KeyBinding Command="{Binding NextPageCommand}" Key="Right"/>
+        <KeyBinding Command="{Binding NextPageCommand}" Key="BrowserBack"/>
     </UserControl.InputBindings>
     <Grid>
         <Grid.RowDefinitions>

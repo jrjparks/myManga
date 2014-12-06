@@ -166,7 +166,7 @@ namespace myManga_App.ViewModels
         #endregion
 
         private void OpenChapter(ReadChapterRequestObject ReadChapterRequest)
-        { this.PageZoom = 1; OpenChapter(ReadChapterRequest.MangaObject, ReadChapterRequest.ChapterObject); }
+        { this.PageZoom = App.UserConfig.DefaultPageZoom; OpenChapter(ReadChapterRequest.MangaObject, ReadChapterRequest.ChapterObject); }
 
         private void OpenChapter(MangaObject MangaObject, ChapterObject ChapterObject)
         {
@@ -195,7 +195,7 @@ namespace myManga_App.ViewModels
             : base()
         {
             this.ContinueReading = false;
-            this.PageZoom = 1;
+            this.PageZoom = App.UserConfig.DefaultPageZoom;
             if (!DesignerProperties.GetIsInDesignMode(this))
             {
                 Messenger.Default.RegisterRecipient<FileSystemEventArgs>(this, ChapterObjectArchiveWatcher_Event, "ChapterObjectArchiveWatcher");

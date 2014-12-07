@@ -98,7 +98,7 @@
         </Setter>
     </Style>
 
-    <Style TargetType="{x:Type ListBoxItem}" BasedOn="{StaticResource {x:Type ListBoxItem}}" x:Key="HomeMangaListBoxItem">
+    <Style TargetType="{x:Type ListBoxItem}" BasedOn="{StaticResource {x:Type ListBoxItem}}" x:Key="HomeView_MangaListBoxItem">
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type ListBoxItem}">
@@ -138,6 +138,9 @@
                             <TextBlock Grid.Column="1" Grid.Row="2" VerticalAlignment="Center" Foreground="{StaticResource text-muted}" TextTrimming="CharacterEllipsis" Text="{Binding DatabaseLocations, Converter={StaticResource LocationListToCSV}, Mode=OneWay, FallbackValue=No-Database}"/>
                             <TextBlock Grid.Column="1" Grid.Row="3" VerticalAlignment="Center" Foreground="{StaticResource text-muted}" TextTrimming="CharacterEllipsis" Text="{Binding Genres, Converter={StaticResource StringListToCSV}, Mode=OneWay, FallbackValue=No-Genre}"/>
                         </Grid>
+                        <Border.InputBindings>
+                            <MouseBinding MouseAction="LeftDoubleClick" Command="{Binding Path=DataContext.ResumeReadingCommand, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl}}"/>
+                        </Border.InputBindings>
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsSelected" Value="True">

@@ -22,6 +22,12 @@ namespace myManga_App.IO.Network
 {
     public sealed class DownloadManager
     {
+        /// <summary>
+        /// This is the recommended use.
+        /// </summary>
+        public static DownloadManager Default
+        { get { return Singleton<DownloadManager>.Instance; } }
+
         #region Classes
         private sealed class Downloader
         {
@@ -316,8 +322,15 @@ namespace myManga_App.IO.Network
         {
             this.SmartThreadPool = new SmartThreadPool(STPStartInfo ?? new STPStartInfo()
             {   // Default STPStartInfo
+
+                // Default name: DownloadManager-00000000-0000-0000-0000-000000000000
                 ThreadPoolName = String.Format("{0}-{1}", this.GetType().Name, Guid.NewGuid()),
+
+                // Default MaxWorkerThreads: System ProcessorCount * 2
                 MaxWorkerThreads = Environment.ProcessorCount * 2,
+
+                // We're not in a rush here for system resources.
+                ThreadPriority = ThreadPriority.BelowNormal
             });
 
             this.SynchronizationContext = SynchronizationContext ?? SynchronizationContext.Current;

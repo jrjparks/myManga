@@ -163,7 +163,7 @@
                 </Grid>
             </Border>
             <ListBox
-				x:Name="MangaList"
+				x:Name="MangaObjectItems"
 				Grid.Row="1"
 				Background="{x:Null}"
 				BorderBrush="{x:Null}"
@@ -173,8 +173,8 @@
 				Visibility="{Binding HasItems, Converter={StaticResource BooleanToVisibilityConverter}, RelativeSource={RelativeSource Self}}" 
 				ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                 IsSynchronizedWithCurrentItem="True"
-				SelectedItem="{Binding MangaObj}"
-				ItemsSource="{Binding MangaList}"/>
+				SelectedItem="{Binding SelectedMangaObject}"
+				ItemsSource="{Binding MangaObjectItems}"/>
             <ProgressBar 
 				Grid.Row="1" 
 				HorizontalAlignment="Center" 
@@ -197,7 +197,7 @@
         <Grid
 			x:Name="MangaObjectDescription"
 			Grid.Column="2" 
-			DataContext="{Binding SelectedItem, ElementName=MangaList}"
+			DataContext="{Binding SelectedItem, ElementName=MangaObjectItems}"
 			Background="{DynamicResource window-background}"
             Visibility="{Binding TargetNullValue=Collapsed}">
             <Grid.ColumnDefinitions>

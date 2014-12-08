@@ -67,7 +67,7 @@ namespace myManga_App.ViewModels
         { ContentViewModel = ReaderViewModel; }
 
         private Boolean CanOpenRead()
-        { return ReaderViewModel.MangaObject != null && ReaderViewModel.ChapterObject != null; }
+        { return ReaderViewModel != null && ReaderViewModel.MangaObject != null && ReaderViewModel.ChapterObject != null; }
         #endregion
 
         #region Settings
@@ -102,8 +102,8 @@ namespace myManga_App.ViewModels
 
                 SettingsViewModel.CloseEvent += (s, e) => ContentViewModel = HomeViewModel;
 
-                ServicePointManager.DefaultConnectionLimit = Singleton<DownloadManager>.Instance.Concurrency;
-                Singleton<DownloadManager>.Instance.StatusChange += (s, e) => { IsLoading = !(s as DownloadManager).IsIdle; };
+                ServicePointManager.DefaultConnectionLimit = DownloadManager.Default.Concurrency;
+                DownloadManager.Default.StatusChange += (s, e) => { IsLoading = !(s as DownloadManager).IsIdle; };
 
                 App.MangaObjectArchiveWatcher.Changed += MangaObjectArchiveWatcher_Event;
                 App.MangaObjectArchiveWatcher.Created += MangaObjectArchiveWatcher_Event;
@@ -120,7 +120,7 @@ namespace myManga_App.ViewModels
         void MangaObjectArchiveWatcher_Event(object sender, FileSystemEventArgs e)
         {
             if (App.Dispatcher.Thread == Thread.CurrentThread)
-            { Messenger.Default.Send(e, "MangaObjectArchive"); }
+            { Messenger.Default.Send(e, "MangaObjectArchiveWatcher"); }
             else App.Dispatcher.Invoke(DispatcherPriority.Send, new System.Action(() => MangaObjectArchiveWatcher_Event(sender, e)));
         }
 
@@ -128,7 +128,7 @@ namespace myManga_App.ViewModels
         {
             if (App.Dispatcher.Thread == Thread.CurrentThread)
             { Messenger.Default.Send(e, "ChapterObjectArchiveWatcher"); }
-            else App.Dispatcher.Invoke(DispatcherPriority.Send, new System.Action(() => MangaObjectArchiveWatcher_Event(sender, e)));
+            else App.Dispatcher.Invoke(DispatcherPriority.Send, new System.Action(() => ChapterObjectArchiveWatcher_Event(sender, e)));
         }
 
         void ChangeViewModelFocus(BaseViewModel ViewModel)

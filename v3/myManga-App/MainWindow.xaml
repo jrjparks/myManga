@@ -77,15 +77,26 @@
                 Command="{Binding ReadCommand}"
                 MinWidth="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"/>
         </StackPanel>
-        <button:MetroButton
+        <StackPanel
             Grid.Column="1"
-            TextElement.FontSize="20"
-            TextElement.FontFamily="{DynamicResource FontAwesome}"
-            Content="{DynamicResource fa-ellipsis-vertical}"
+            Orientation="Horizontal">
+            <ProgressBar
+                VerticalAlignment="Center"
+                Height="24"
+			    Width="{Binding Height, Mode=OneWay, RelativeSource={RelativeSource Self}}" 
+			    Style="{DynamicResource Spinner}" 
+			    Visibility="{Binding IsLoading, Converter={StaticResource BooleanToVisibilityConverter}}"
+                Foreground="#FF000000"
+                IsHitTestVisible="False"/>
+            <button:MetroButton
+                TextElement.FontSize="20"
+                TextElement.FontFamily="{DynamicResource FontAwesome}"
+                Content="{DynamicResource fa-ellipsis-vertical}"
                 ContentStringFormat="Settings {0}"
-            ToolTip="Settings"
-            Command="{Binding SettingsCommand}"
-            MinWidth="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"/>
+                ToolTip="Settings"
+                Command="{Binding SettingsCommand}"
+                MinWidth="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"/>
+        </StackPanel>
         <ContentPresenter
             Grid.Row="1"
             Grid.ColumnSpan="2"
@@ -134,16 +145,5 @@
                     Margin="0,0,0,0"/>
             </StackPanel>
         </StackPanel>
-        <ProgressBar
-            Grid.Row="1"
-            Margin="15"
-			HorizontalAlignment="Center" 
-			VerticalAlignment="Bottom" 
-			Width="64" Height="{Binding Width, Mode=OneWay, RelativeSource={RelativeSource Self}}" 
-			Style="{DynamicResource Spinner}" 
-			Visibility="{Binding IsLoading, Converter={StaticResource BooleanToVisibilityConverter}}"
-            Opacity="0.50"
-            Foreground="#FF000000"
-            IsHitTestVisible="False"/>
     </Grid>
 </window:myMangaWindow>

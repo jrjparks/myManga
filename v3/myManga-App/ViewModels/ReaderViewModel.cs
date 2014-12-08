@@ -110,7 +110,7 @@ namespace myManga_App.ViewModels
             set
             {
                 OnPropertyChanging();
-                _PageZoom = value;
+                _PageZoom = value < 0.5 ? 0.5 : value;
                 OnPropertyChanged();
             }
         }
@@ -161,7 +161,7 @@ namespace myManga_App.ViewModels
         { get { return _ResetPageZoomCommand ?? (_ResetPageZoomCommand = new DelegateCommand(ResetPageZoom)); } }
 
         private void ResetPageZoom()
-        { this.PageZoom = 1; }
+        { this.PageZoom = App.UserConfig.DefaultPageZoom; }
         #endregion
         #endregion
 
@@ -195,11 +195,15 @@ namespace myManga_App.ViewModels
             : base()
         {
             this.ContinueReading = false;
-            this.PageZoom = App.UserConfig.DefaultPageZoom;
             if (!DesignerProperties.GetIsInDesignMode(this))
             {
+                this.PageZoom = App.UserConfig.DefaultPageZoom;
                 Messenger.Default.RegisterRecipient<FileSystemEventArgs>(this, ChapterObjectArchiveWatcher_Event, "ChapterObjectArchiveWatcher");
                 Messenger.Default.RegisterRecipient<ReadChapterRequestObject>(this, OpenChapter, "ReadChapterRequest");
+            }
+            else
+            {
+                this.PageZoom = 1;
             }
         }
 
@@ -207,9 +211,9 @@ namespace myManga_App.ViewModels
         public void PreloadChapters()
         {
             if (!PreloadingPrev && !File.Exists(this.PrevArchiveFilePath))
-            { Singleton<DownloadManager>.Instance.Download(this.MangaObject, this.PrevChapterObject); this.PreloadingPrev = true; }
+            { DownloadManager.Default.Download(this.MangaObject, this.PrevChapterObject); this.PreloadingPrev = true; }
             if (!PreloadingNext && !File.Exists(this.NextArchiveFilePath))
-            { Singleton<DownloadManager>.Instance.Download(this.MangaObject, this.NextChapterObject); this.PreloadingNext = true; }
+            { DownloadManager.Default.Download(this.MangaObject, this.NextChapterObject); this.PreloadingNext = true; }
         }
 
         private void LoadChapterObject()
@@ -266,7 +270,7 @@ namespace myManga_App.ViewModels
                         break;
 
                     case WatcherChangeTypes.Deleted:
-                        Singleton<DownloadManager>.Instance.Download(this.MangaObject, this.ChapterObject);
+                        DownloadManager.Default.Download(this.MangaObject, this.ChapterObject);
                         break;
                 }
         }

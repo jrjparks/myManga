@@ -127,7 +127,7 @@ namespace myManga_App.ViewModels
         { return MangaObj != null; }
 
         protected void StoreMangaInfo()
-        { Singleton<myManga_App.IO.Network.DownloadManager>.Instance.Download(MangaObj); }
+        { DownloadManager.Default.Download(MangaObj); }
 
         private delegate void Instance_SearchCompleteInvoke(object sender, List<MangaObject> e);
         private void Instance_SearchComplete(object sender, List<MangaObject> e)
@@ -146,9 +146,9 @@ namespace myManga_App.ViewModels
 
         public SearchViewModel()
         {
-            ConfigureSearchFilter();
             if (!DesignerProperties.GetIsInDesignMode(this))
             {
+                ConfigureSearchFilter();
                 Singleton<myManga_App.IO.Network.SmartSearch>.Instance.SearchComplete += Instance_SearchComplete;
                 Messenger.Default.RegisterRecipient<String>(this, StartSearch, "SearchRequest");
             }

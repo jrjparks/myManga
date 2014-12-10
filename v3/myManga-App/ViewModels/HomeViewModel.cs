@@ -27,13 +27,14 @@ using Core.IO.Storage.Manager.BaseInterfaceClasses;
 using myManga_App.IO.ViewModel;
 using myManga_App.Objects;
 using myManga_App.IO.Network;
+using myManga_App.Objects.MVVM;
 
 namespace myManga_App.ViewModels
 {
-    public class HomeViewModel : BaseViewModel
+    public sealed class HomeViewModel : BaseViewModel
     {
         #region MangaList
-        protected ObservableCollection<MangaObject> mangaObjectItems;
+        private ObservableCollection<MangaObject> mangaObjectItems;
         public ObservableCollection<MangaObject> MangaObjectItems
         {
             get { return mangaObjectItems ?? (mangaObjectItems = new ObservableCollection<MangaObject>()); }
@@ -45,14 +46,14 @@ namespace myManga_App.ViewModels
             }
         }
 
-        protected MangaObject selectedMangaObject;
+        private MangaObject selectedMangaObject;
         public MangaObject SelectedMangaObject
         {
             get { return selectedMangaObject; }
             set
             {
                 OnPropertyChanging();
-                selectedMangaObject = value;
+                selectedMangaObject = value ?? MangaObjectItems.FirstOrDefault();
                 OnPropertyChanged();
                 LoadBookmarkObject();
             }
@@ -70,7 +71,7 @@ namespace myManga_App.ViewModels
             }
         }
 
-        protected ChapterObject _SelectedChapter;
+        private ChapterObject _SelectedChapter;
         public ChapterObject SelectedChapter
         {
             get { return _SelectedChapter; }
@@ -82,7 +83,7 @@ namespace myManga_App.ViewModels
             }
         }
 
-        protected String searchFilter;
+        private String searchFilter;
         public String SearchFilter
         {
             get { return searchFilter; }
@@ -96,83 +97,102 @@ namespace myManga_App.ViewModels
             }
         }
 
-        protected ICollectionView mangaListView;
+        private ICollectionView mangaListView;
 
-        protected DelegateCommand clearSearchCommand;
+        private DelegateCommand clearSearchCommand;
         public ICommand ClearSearchCommand
         {
             get { return clearSearchCommand ?? (clearSearchCommand = new DelegateCommand(ClearSearch, CanClearSearch)); }
         }
-        protected void ClearSearch()
+        private void ClearSearch()
         { SearchFilter = String.Empty; }
-        protected Boolean CanClearSearch()
+        private Boolean CanClearSearch()
         { return !String.IsNullOrWhiteSpace(SearchFilter); }
         #endregion
 
         #region SearchSites
-        protected DelegateCommand searchSitesCommand;
+        private DelegateCommand searchSitesCommand;
         public ICommand SearchSiteCommand
         { get { return searchSitesCommand ?? (searchSitesCommand = new DelegateCommand(SearchSites, CanSearchSite)); } }
 
-        protected Boolean CanSearchSite()
+        private Boolean CanSearchSite()
         { return !String.IsNullOrWhiteSpace(SearchFilter) && (SearchFilter.Trim().Length >= 3); }
 
-        protected void SearchSites()
+        private void SearchSites()
         { Messenger.Default.Send(SearchFilter.Trim(), "SearchRequest"); }
         #endregion
 
         #region DownloadChapter
-        protected DelegateCommand<ChapterObject> downloadChapterCommand;
+        private DelegateCommand<ChapterObject> downloadChapterCommand;
         public ICommand DownloadChapterCommand
         { get { return downloadChapterCommand ?? (downloadChapterCommand = new DelegateCommand<ChapterObject>(DownloadChapter)); } }
 
-        protected void DownloadChapter(ChapterObject ChapterObj)
+        private void DownloadChapter(ChapterObject ChapterObj)
         { DownloadManager.Default.Download(SelectedMangaObject, ChapterObj); }
         #endregion
 
         #region ReadChapter
-        protected DelegateCommand<ChapterObject> readChapterCommand;
+        private DelegateCommand<ChapterObject> readChapterCommand;
         public ICommand ReadChapterCommand
         { get { return readChapterCommand ?? (readChapterCommand = new DelegateCommand<ChapterObject>(ReadChapter)); } }
 
-        protected void ReadChapter(ChapterObject ChapterObj)
+        private void ReadChapter(ChapterObject ChapterObj)
         { Messenger.Default.Send(new ReadChapterRequestObject(this.SelectedMangaObject, ChapterObj), "ReadChapterRequest"); }
 
-        protected DelegateCommand resumeReadingCommand;
+        private DelegateCommand resumeReadingCommand;
         public ICommand ResumeReadingCommand
         { get { return resumeReadingCommand ?? (resumeReadingCommand = new DelegateCommand(ResumeReading, CanResumeReading)); } }
 
-        protected void ResumeReading()
-        { Messenger.Default.Send(new ReadChapterRequestObject(this.SelectedMangaObject, this.SelectedMangaObject.ChapterObjectOfBookmarkObject(this.BookmarkObject)), "ReadChapterRequest"); }
-        protected Boolean CanResumeReading()
+        private void ResumeReading()
+        {
+            String bookmark_chapter_path = Path.Combine(App.CHAPTER_ARCHIVE_DIRECTORY, this.SelectedMangaObject.MangaFileName());
+            if (this.SelectedMangaObject.ChapterObjectOfBookmarkObject(this.BookmarkObject).IsLocal(bookmark_chapter_path, App.CHAPTER_ARCHIVE_EXTENSION))
+                Messenger.Default.Send(new ReadChapterRequestObject(this.SelectedMangaObject, this.SelectedMangaObject.ChapterObjectOfBookmarkObject(this.BookmarkObject)), "ReadChapterRequest");
+            else
+            {
+                ChapterObject c = this.SelectedMangaObject.Chapters.First();
+                this.BookmarkObject = new myMangaSiteExtension.Objects.BookmarkObject() {
+                    Volume = c.Volume,
+                    Chapter = c.Chapter,
+                    SubChapter = c.SubChapter,
+                    Page = 1
+                };
+                Singleton<ZipStorage>.Instance.Write(
+                Path.Combine(App.MANGA_ARCHIVE_DIRECTORY, this.SelectedMangaObject.MangaArchiveName(App.MANGA_ARCHIVE_EXTENSION)),
+                typeof(BookmarkObject).Name,
+                this.BookmarkObject.Serialize(SaveType: App.UserConfig.SaveType));
+                DownloadManager.Default.Download(this.SelectedMangaObject, this.SelectedMangaObject.ChapterObjectOfBookmarkObject(this.BookmarkObject));
+            }
+        }
+        private Boolean CanResumeReading()
         { return this.SelectedMangaObject != null && this.SelectedChapter != null; }
         #endregion
 
         #region RefreshManga
-        protected DelegateCommand refreshMangaCommand;
+        private DelegateCommand refreshMangaCommand;
         public ICommand RefreshMangaCommand
         { get { return refreshMangaCommand ?? (refreshMangaCommand = new DelegateCommand(RefreshManga, CanRefreshManga)); } }
 
-        protected Boolean CanRefreshManga()
+        private Boolean CanRefreshManga()
         { return SelectedMangaObject != null; }
 
-        protected void RefreshManga()
+        private void RefreshManga()
         { DownloadManager.Default.Download(selectedMangaObject); }
         #endregion
 
         #region RefreshMangaList
-        protected DelegateCommand refreshMangaListCommand;
+        private DelegateCommand refreshMangaListCommand;
         public ICommand RefreshMangaListCommand
         { get { return refreshMangaListCommand ?? (refreshMangaListCommand = new DelegateCommand(RefreshMangaList, CanRefreshMangaList)); } }
 
-        protected Boolean CanRefreshMangaList()
+        private Boolean CanRefreshMangaList()
         { return MangaObjectItems.Count > 0; }
 
-        protected void RefreshMangaList()
+        private void RefreshMangaList()
         { foreach (MangaObject manga_object in MangaObjectItems) DownloadManager.Default.Download(manga_object); }
         #endregion
 
-        protected Boolean isLoading;
+        private Boolean isLoading;
         public Boolean IsLoading
         {
             get { return isLoading; }
@@ -185,6 +205,7 @@ namespace myManga_App.ViewModels
         }
 
         public HomeViewModel()
+            : base(SupportsViewTypeChange:true)
         {
             if (!DesignerProperties.GetIsInDesignMode(this))
             {
@@ -203,6 +224,7 @@ namespace myManga_App.ViewModels
                         archive_file.Close();
                     }
                 }
+                this.SelectedMangaObject = this.MangaObjectItems.FirstOrDefault();
                 mangaListView.MoveCurrentToFirst();
 
                 Messenger.Default.RegisterRecipient<FileSystemEventArgs>(this, MangaObjectArchiveWatcher_Event, "MangaObjectArchiveWatcher");
@@ -224,12 +246,14 @@ namespace myManga_App.ViewModels
                     Stream archive_file;
                     if (Singleton<ZipStorage>.Instance.TryRead(e.FullPath, out archive_file, typeof(MangaObject).Name))
                     {
+                        Boolean ViewingSelectedMangaObject = this.SelectedMangaObject != null && this.SelectedMangaObject.Name.Equals(current_manga_object.Name);
                         MangaObject new_manga_object = archive_file.Deserialize<MangaObject>(SaveType: App.UserConfig.SaveType);
                         if (current_manga_object != null)
                             current_manga_object.Merge(new_manga_object);
                         else
                             MangaObjectItems.Add(new_manga_object);
                         archive_file.Close();
+                        if (ViewingSelectedMangaObject) this.SelectedMangaObject = new_manga_object;
                     }
                     break;
 
@@ -239,7 +263,7 @@ namespace myManga_App.ViewModels
             }
         }
 
-        protected void ConfigureSearchFilter()
+        private void ConfigureSearchFilter()
         {
             mangaListView = CollectionViewSource.GetDefaultView(MangaObjectItems);
             mangaListView.Filter = mangaObject => String.IsNullOrWhiteSpace(SearchFilter) ? true : (mangaObject as MangaObject).IsNameMatch(SearchFilter);
@@ -252,7 +276,7 @@ namespace myManga_App.ViewModels
             Stream bookmark_file;
             if (Singleton<ZipStorage>.Instance.TryRead(Path.Combine(App.MANGA_ARCHIVE_DIRECTORY, this.SelectedMangaObject.MangaArchiveName(App.MANGA_ARCHIVE_EXTENSION)), out bookmark_file, typeof(BookmarkObject).Name))
             { using (bookmark_file) this.BookmarkObject = bookmark_file.Deserialize<BookmarkObject>(SaveType: App.UserConfig.SaveType); }
-            if (this.BookmarkObject != null) { this.SelectedChapter = this.SelectedMangaObject.ChapterObjectOfBookmarkObject(this.BookmarkObject); }
+            if (this.SelectedMangaObject != null && this.BookmarkObject != null) { this.SelectedChapter = this.SelectedMangaObject.ChapterObjectOfBookmarkObject(this.BookmarkObject); }
         }
     }
 }

@@ -247,6 +247,7 @@ namespace myManga_App.ViewModels
                 this.BookmarkObject.Volume = this.ChapterObject.Volume;
                 this.BookmarkObject.Chapter = this.ChapterObject.Chapter;
                 this.BookmarkObject.SubChapter = this.ChapterObject.SubChapter;
+                this.BookmarkObject.Page = this.ChapterObject.Pages.First().PageNumber;
             }
             if (this.SelectedPageObject != null) this.BookmarkObject.Page = this.SelectedPageObject.PageNumber;
             Singleton<ZipStorage>.Instance.Write(

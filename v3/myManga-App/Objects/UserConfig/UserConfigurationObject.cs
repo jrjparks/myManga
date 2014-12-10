@@ -1,12 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Core.IO;
+using myManga_App.Objects.MVVM;
+using System;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
-using System.Xml.Serialization;
-using Core.IO;
 using System.Windows;
+using System.Xml.Serialization;
 
 namespace myManga_App.Objects
 {
@@ -34,8 +35,7 @@ namespace myManga_App.Objects
         [XmlElement]
         public WindowState WindowState
         {
-            get
-            { return windowState; }
+            get { return windowState; }
             set
             {
                 OnPropertyChanging();
@@ -45,20 +45,29 @@ namespace myManga_App.Objects
         }
 
         [XmlIgnore]
-        private Size windowSize;
+        public Double windowSizeWidth;
         [XmlElement]
-        public Size WindowSize
+        public Double WindowSizeWidth
         {
-            get
-            {
-                if (windowSize == null)
-                    windowSize = new Size(640, 480);
-                return windowSize;
-            }
+            get { return windowSizeWidth; }
             set
             {
                 OnPropertyChanging();
-                windowSize = value;
+                windowSizeWidth = value;
+                OnPropertyChanged();
+            }
+        }
+
+        [XmlIgnore]
+        public Double windowSizeHeight;
+        [XmlElement]
+        public Double WindowSizeHeight
+        {
+            get { return windowSizeHeight; }
+            set
+            {
+                OnPropertyChanging();
+                windowSizeHeight = value;
                 OnPropertyChanged();
             }
         }
@@ -68,8 +77,7 @@ namespace myManga_App.Objects
         [XmlElement]
         public SaveType SaveType
         {
-            get
-            { return saveType; }
+            get { return saveType; }
             set
             {
                 OnPropertyChanging();
@@ -79,12 +87,25 @@ namespace myManga_App.Objects
         }
 
         [XmlIgnore]
-        private List<String> enabledSiteExtensions;
-        [XmlArray, XmlArrayItem("SiteExtensionName")]
-        public List<String> EnabledSiteExtensions
+        private ObservableCollection<SerializableViewModelViewType> viewTypes;
+        [XmlArray, XmlArrayItem("ViewType")]
+        public ObservableCollection<SerializableViewModelViewType> ViewTypes
         {
-            get
-            { return enabledSiteExtensions ?? (enabledSiteExtensions = new List<String>()); }
+            get { return viewTypes ?? (viewTypes = new ObservableCollection<SerializableViewModelViewType>()); }
+            set
+            {
+                OnPropertyChanging();
+                viewTypes = value;
+                OnPropertyChanged();
+            }
+        }
+
+        [XmlIgnore]
+        private ObservableCollection<String> enabledSiteExtensions;
+        [XmlArray, XmlArrayItem("SiteExtensionName")]
+        public ObservableCollection<String> EnabledSiteExtensions
+        {
+            get { return enabledSiteExtensions ?? (enabledSiteExtensions = new ObservableCollection<String>()); }
             set
             {
                 OnPropertyChanging();
@@ -94,12 +115,11 @@ namespace myManga_App.Objects
         }
 
         [XmlIgnore]
-        private List<String> enabledDatabaseExtentions;
+        private ObservableCollection<String> enabledDatabaseExtentions;
         [XmlArray, XmlArrayItem("DatabaseExtentionName")]
-        public List<String> EnabledDatabaseExtentions
+        public ObservableCollection<String> EnabledDatabaseExtentions
         {
-            get
-            { return enabledDatabaseExtentions ?? (enabledDatabaseExtentions = new List<String>()); }
+            get { return enabledDatabaseExtentions ?? (enabledDatabaseExtentions = new ObservableCollection<String>()); }
             set
             {
                 OnPropertyChanging();

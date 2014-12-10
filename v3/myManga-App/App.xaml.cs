@@ -9,6 +9,7 @@ using myMangaSiteExtension.Collections;
 using Core.Other.Singleton;
 using myMangaSiteExtension.Interfaces;
 using myManga_App.Objects;
+using Core.IO.Storage.Manager.BaseInterfaceClasses;
 
 namespace myManga_App
 {
@@ -25,9 +26,8 @@ namespace myManga_App
         public FileSystemWatcher ChapterObjectArchiveWatcher
         { get { return chapterObjectArchiveWatcher; } }
 
-        private readonly UserConfigurationObject userConfig;
         public UserConfigurationObject UserConfig
-        { get { return userConfig; } }
+        { get; private set; }
 
         private readonly EmbeddedDLL emdll;
         public DLL_Manager<ISiteExtension, ISiteExtensionCollection> SiteExtensions
@@ -55,7 +55,7 @@ namespace myManga_App
             SiteExtensions.DLLAppDomain.AssemblyResolve += emdll.ResolveAssembly;
             DatabaseExtensions.DLLAppDomain.AssemblyResolve += emdll.ResolveAssembly;
 
-            userConfig = LoadUserConfig();
+            LoadUserConfig();
 
             // Create a File System Watcher for Manga Objects
             mangaObjectArchiveWatcher = new FileSystemWatcher(MANGA_ARCHIVE_DIRECTORY, MANGA_ARCHIVE_FILTER);
@@ -66,7 +66,7 @@ namespace myManga_App
             chapterObjectArchiveWatcher.IncludeSubdirectories = true;
             chapterObjectArchiveWatcher.EnableRaisingEvents = true;
 
-            Settings.Default.PropertyChanged += Default_PropertyChanged;
+            UserConfig.PropertyChanged += (s, e) => SaveUserConfig();
 
             Startup += App_Startup;
 
@@ -79,30 +79,23 @@ namespace myManga_App
             DatabaseExtensions.LoadDLL(PLUGIN_DIRECTORY, Filter: "*.mymanga.dll");
         }
 
-        private void Default_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-        { Settings.Default.Save(); SaveUserConfig(); }
-
-        private UserConfigurationObject LoadUserConfig()
+        private void LoadUserConfig()
         {
-            UserConfigurationObject config = new UserConfigurationObject();
-            if (File.Exists(USER_CONFIG_PATH))
-                config = config.LoadObject(USER_CONFIG_PATH, SaveType.XML);
+            Stream UserConfigStream;
+            if (Singleton<FileStorage>.Instance.TryRead(this.USER_CONFIG_PATH, out UserConfigStream))
+            { using (UserConfigStream) this.UserConfig = UserConfigStream.Deserialize<UserConfigurationObject>(SaveType: SaveType.XML); }
             else
-                config.SaveObject(USER_CONFIG_PATH, SaveType.XML);
-            Settings.Default.WindowWidth = (Int32)config.WindowSize.Width;
-            Settings.Default.WindowHeight = (Int32)config.WindowSize.Height;
-            Settings.Default.WindowState = config.WindowState;
-            Settings.Default.SaveType = config.SaveType;
-            return config;
+            {
+                this.UserConfig = new UserConfigurationObject();
+                this.UserConfig.WindowSizeWidth = 640;
+                this.UserConfig.WindowSizeHeight = 480;
+                this.UserConfig.WindowState = WindowState.Normal;
+                this.UserConfig.SaveType = SaveType.XML;
+                SaveUserConfig();
+            }
         }
 
         public void SaveUserConfig()
-        {
-            String configPath = PathSafety.SafeFileName(USER_CONFIG_FILENAME);
-            UserConfig.WindowSize = new Size(Settings.Default.WindowWidth, Settings.Default.WindowHeight);
-            UserConfig.WindowState = Settings.Default.WindowState;
-            UserConfig.SaveType = Settings.Default.SaveType;
-            UserConfig.SaveObject(configPath, SaveType.XML);
-        }
+        { Singleton<FileStorage>.Instance.Write(this.USER_CONFIG_PATH, this.UserConfig.Serialize(SaveType: SaveType.XML)); }
     }
 }

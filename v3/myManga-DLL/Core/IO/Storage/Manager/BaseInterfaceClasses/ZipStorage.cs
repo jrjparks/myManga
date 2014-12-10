@@ -139,7 +139,7 @@ namespace Core.IO.Storage.Manager.BaseInterfaceClasses
                             ZipEntry zipEntry = zipFile.UpdateEntry(write_item.Filename, write_item.Stream);
                             zipEntry.Comment = String.Format("Last updated at: {0} - {1}", write_item.CreatedTime.ToLongDateString(), write_item.CreatedTime.ToLongTimeString());
 
-                            using (Stream fstream = File.Open(write_item.ArchiveFilename, FileMode.Truncate, FileAccess.Write, FileShare.Read))
+                            using (Stream fstream = File.Open(write_item.ArchiveFilename, FileMode.Create, FileAccess.Write, FileShare.Read))
                             { zipFile.Save(fstream); } // Overwrite old zip file with new data.
                         }
                         write_item.Stream.Close();

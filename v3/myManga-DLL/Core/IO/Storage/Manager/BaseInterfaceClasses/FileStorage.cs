@@ -83,7 +83,7 @@ namespace Core.IO.Storage.Manager.BaseInterfaceClasses
                     String FileIOPath = write_item.Filename; // Path.GetTempFileName();
                     try
                     {
-                        using (Stream fstream = File.Open(FileIOPath, FileMode.OpenOrCreate, FileAccess.Write, FileShare.Read))
+                        using (Stream fstream = File.Open(FileIOPath, FileMode.Create, FileAccess.Write, FileShare.Read))
                         {
                             write_item.Stream.Seek(0, SeekOrigin.Begin);
                             Byte[] buffer = new Byte[8 * 1024]; Int32 length; // 8MB buffer

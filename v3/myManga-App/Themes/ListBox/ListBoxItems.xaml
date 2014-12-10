@@ -98,7 +98,7 @@
         </Setter>
     </Style>
 
-    <Style TargetType="{x:Type ListBoxItem}" BasedOn="{StaticResource {x:Type ListBoxItem}}" x:Key="HomeView_MangaListBoxItem">
+    <Style TargetType="{x:Type ListBoxItem}" BasedOn="{StaticResource {x:Type ListBoxItem}}" x:Key="HomeView_List_MangaListBoxItem">
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type ListBoxItem}">
@@ -157,7 +157,7 @@
         </Setter>
     </Style>
 
-    <Style TargetType="{x:Type ListBoxItem}" BasedOn="{StaticResource {x:Type ListBoxItem}}" x:Key="HomeView_ChapterListBoxItem">
+    <Style TargetType="{x:Type ListBoxItem}" BasedOn="{StaticResource {x:Type ListBoxItem}}" x:Key="HomeView_List_ChapterListBoxItem">
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type ListBoxItem}">
@@ -235,6 +235,138 @@
                         <DataTrigger Binding="{Binding IsLocalContent}" Value="True">
                             <!--<Setter TargetName="LocationIcon" Property="Text" Value="{StaticResource fa-hdd-o}"/>-->
                         </DataTrigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="{x:Type ListBoxItem}" BasedOn="{StaticResource {x:Type ListBoxItem}}" x:Key="HomeView_Grid_MangaListBoxItem">
+        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type ListBoxItem}">
+                    <ControlTemplate.Resources>
+                        <converters:BooleanInverter x:Key="BooleanInverter"/>
+                    </ControlTemplate.Resources>
+                    <Border
+                        x:Name="ItemBorder"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="0"
+                        Padding="{TemplateBinding BorderThickness}"
+                        Background="{TemplateBinding Background}"
+                        TextElement.Foreground="{TemplateBinding Foreground}"
+                        MinHeight="32"
+                        MaxHeight="400"
+                        MinWidth="32"
+                        MaxWidth="400"
+                        HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                        VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                        ToolTip="{Binding Name}">
+                        <Grid
+                            x:Name="Content"
+                            Margin="{TemplateBinding Padding}"
+                            SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}">
+                            <Grid.RowDefinitions>
+                                <RowDefinition/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <Image x:Name="CoverImage" Grid.Row="0" Source="{Binding Converter={StaticResource LoadImageFromMangaArchive}}"/>
+                            <TextBlock
+                                Grid.Row="1"
+                                FontSize="18"
+                                Padding="2,0"
+                                Text="{Binding Name, FallbackValue=No-Name}"
+                                Background="{DynamicResource window-theme-secondary}"
+                                Width="{Binding ElementName=CoverImage, Path=ActualWidth, Mode=OneWay}"
+                                TextTrimming="CharacterEllipsis"
+                                TextWrapping="NoWrap"
+                                TextAlignment="Center"/>
+
+                            <button:MetroToggleButton 
+                                x:Name="InformationDropdown"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Top"
+                                Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"
+                                FontFamily="{DynamicResource OpenIconic}"
+                                Content="{DynamicResource oi-info}" 
+                                IsHitTestVisible="{Binding IsOpen, Converter={StaticResource BooleanInverter}, ElementName=InformationPopup, Mode=OneWay}"/>
+                            <Popup
+                                x:Name="InformationPopup"
+                                AllowsTransparency="True"
+			                    PlacementTarget="{Binding ElementName=InformationDropdown}"
+                                PlacementRectangle="{Binding ElementName=InformationDropdown}"
+			                    IsOpen="{Binding IsChecked, ElementName=InformationDropdown}"
+                                PopupAnimation="Fade"
+                                Grid.ColumnSpan="3" 
+                                StaysOpen="False">
+                                <Border
+                                    Background="{DynamicResource window-background}"
+                                    BorderBrush="{DynamicResource window-theme-primary}"
+                                    BorderThickness="3"
+                                    Padding="3">
+                                    <StackPanel
+                                        Orientation="Vertical">
+                                        <Grid>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition/>
+                                                <RowDefinition/>
+                                                <RowDefinition/>
+                                                <RowDefinition/>
+                                                <RowDefinition/>
+                                                <RowDefinition/>
+                                                <RowDefinition/>
+                                                <RowDefinition/>
+                                                <RowDefinition/>
+                                            </Grid.RowDefinitions>
+                                            <StackPanel Grid.Row="0">
+                                                <TextBlock Text="Alternate Titles:" FontWeight="Bold" Foreground="{DynamicResource text-muted}"/>
+                                                <TextBlock Text="{Binding AlternateNames, Converter={StaticResource StringListToCSV}}" ToolTip="{Binding AlternateNames, Converter={StaticResource StringListToCSV}}" FontWeight="Bold" Foreground="{DynamicResource text-muted}" TextTrimming="CharacterEllipsis"/>
+                                            </StackPanel>
+                                            <StackPanel Grid.Row="1">
+                                                <TextBlock Text="Released:" FontWeight="Bold" Foreground="{DynamicResource text-muted}"/>
+                                                <TextBlock Text="{Binding Released, StringFormat=yyyy}" ToolTip="{Binding Released, StringFormat=yyyy}" FontWeight="Bold" Foreground="{DynamicResource text-muted}"/>
+                                            </StackPanel>
+                                            <StackPanel Grid.Row="2">
+                                                <TextBlock Text="Type:" FontWeight="Bold" Foreground="{DynamicResource text-muted}"/>
+                                                <TextBlock Text="{Binding MangaType, StringFormat=\{0\}}" ToolTip="{Binding MangaType, StringFormat=\{0\}}" FontWeight="Bold" Foreground="{DynamicResource text-muted}"/>
+                                            </StackPanel>
+                                            <StackPanel Grid.Row="3">
+                                                <TextBlock Text="Authors:" FontWeight="Bold" Foreground="{DynamicResource text-muted}"/>
+                                                <TextBlock Text="{Binding Authors, Converter={StaticResource StringListToCSV}}" ToolTip="{Binding Authors, Converter={StaticResource StringListToCSV}}" FontWeight="Bold" Foreground="{DynamicResource text-muted}" TextTrimming="CharacterEllipsis"/>
+                                            </StackPanel>
+                                            <StackPanel Grid.Row="4">
+                                                <TextBlock Text="Artists:" FontWeight="Bold" Foreground="{DynamicResource text-muted}"/>
+                                                <TextBlock Text="{Binding Authors, Converter={StaticResource StringListToCSV}}" ToolTip="{Binding Authors, Converter={StaticResource StringListToCSV}}" FontWeight="Bold" Foreground="{DynamicResource text-muted}" TextTrimming="CharacterEllipsis"/>
+                                            </StackPanel>
+                                            <StackPanel Grid.Row="5">
+                                                <TextBlock Text="Genres:" FontWeight="Bold" Foreground="{DynamicResource text-muted}"/>
+                                                <TextBlock Text="{Binding Genres, Converter={StaticResource StringListToCSV}}" ToolTip="{Binding Genres, Converter={StaticResource StringListToCSV}}" FontWeight="Bold" Foreground="{DynamicResource text-muted}" TextTrimming="CharacterEllipsis"/>
+                                            </StackPanel>
+                                            <StackPanel Grid.Row="6" Grid.RowSpan="2">
+                                                <TextBlock Text="Sites:" FontWeight="Bold" Foreground="{DynamicResource text-muted}"/>
+                                                <TextBlock Text="{Binding Locations, Converter={StaticResource LocationListToCSV}}" ToolTip="{Binding Locations, Converter={StaticResource LocationListToCSV}}" FontWeight="Bold" Foreground="{DynamicResource text-muted}" TextTrimming="CharacterEllipsis"/>
+                                                <TextBlock Text="{Binding DatabaseLocations, Converter={StaticResource LocationListToCSV}}" ToolTip="{Binding DatabaseLocations, Converter={StaticResource LocationListToCSV}}" FontWeight="Bold" Foreground="{DynamicResource text-muted}" TextTrimming="CharacterEllipsis"/>
+                                            </StackPanel>
+                                        </Grid>
+                                    </StackPanel>
+                                </Border>
+                            </Popup>
+                        </Grid>
+                        <Border.InputBindings>
+                            <MouseBinding MouseAction="LeftDoubleClick" Command="{Binding Path=DataContext.ResumeReadingCommand, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl}}"/>
+                        </Border.InputBindings>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter TargetName="ItemBorder" Property="BorderThickness" Value="{Binding Path=BorderThickness, RelativeSource={RelativeSource AncestorType={x:Type ListBoxItem}}}"/>
+                            <Setter TargetName="ItemBorder" Property="Padding" Value="0"/>
+                        </Trigger>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="ItemBorder" Property="Background" Value="{DynamicResource window-theme-secondary}"/>
+                            <Setter TargetName="ItemBorder" Property="TextElement.Foreground" Value="{DynamicResource window-theme-primary}"/>
+                        </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>

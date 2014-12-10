@@ -145,6 +145,7 @@ namespace myManga_App.ViewModels
         #endregion
 
         public SearchViewModel()
+            : base()
         {
             if (!DesignerProperties.GetIsInDesignMode(this))
             {

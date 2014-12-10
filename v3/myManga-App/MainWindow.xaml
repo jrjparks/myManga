@@ -1,26 +1,25 @@
-﻿<window:myMangaWindow 
-    x:Class="myManga_App.MainWindow"
+﻿<window:myMangaWindow
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:p="http://schemas.microsoft.com/netfx/2007/xaml/presentation"
     xmlns:window="clr-namespace:myManga_App.Themes.Window"
     xmlns:ViewModels="clr-namespace:myManga_App.ViewModels"
-    xmlns:Properties="clr-namespace:myManga_App.Properties"
-    xmlns:button="clr-namespace:myManga_App.Resources.Theme.Buttons"
+    xmlns:MVVM="clr-namespace:myManga_App.Objects.MVVM"
+    xmlns:App="clr-namespace:myManga_App"
+    xmlns:Button="clr-namespace:myManga_App.Resources.Theme.Buttons"
+    xmlns:Converters="clr-namespace:myManga_App.Converters" 
+    x:Class="myManga_App.MainWindow"
     Title="{DynamicResource AppTitle}"
-    WindowState="{Binding Source={x:Static Properties:Settings.Default}, Path=WindowState, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-    Width="{Binding Source={x:Static Properties:Settings.Default}, Path=WindowWidth, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, FallbackValue=640}"
-    Height="{Binding Source={x:Static Properties:Settings.Default}, Path=WindowHeight, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, FallbackValue=480}"
+    WindowState="{Binding UserConfig.WindowState, Mode=TwoWay, Source={x:Static Application.Current}, UpdateSourceTrigger=PropertyChanged}"
+    Width="{Binding UserConfig.WindowSizeWidth, FallbackValue=640, Mode=TwoWay, Source={x:Static Application.Current}, UpdateSourceTrigger=PropertyChanged}"
+    Height="{Binding UserConfig.WindowSizeHeight, FallbackValue=480, Mode=TwoWay, Source={x:Static Application.Current}, UpdateSourceTrigger=PropertyChanged}"
     x:Name="myMangaMainWindow"
     MinHeight="480"
     MinWidth="640"
     Icon="/myManga;component/Resources/Icon.ico"
     SnapsToDevicePixels="True" 
     Style="{DynamicResource myMangaWindow}">
-    <Window.DataContext>
-        <ViewModels:MainViewModel/>
-    </Window.DataContext>
-    <Window.Resources>
+    <window:myMangaWindow.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="/myManga;component/Themes/Window/myMangaWindow.xaml"/>
@@ -30,9 +29,13 @@
 
                 <ResourceDictionary Source="/myManga;component/Themes/ProgressBar/Spinner.xaml"/>
             </ResourceDictionary.MergedDictionaries>
+            <Converters:EnumToBooleanConverter x:Key="EnumToBooleanConverter"/>
             <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
         </ResourceDictionary>
-    </Window.Resources>
+    </window:myMangaWindow.Resources>
+    <window:myMangaWindow.DataContext>
+        <ViewModels:MainViewModel/>
+    </window:myMangaWindow.DataContext>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -43,89 +46,100 @@
             <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
         <StackPanel
-            Grid.Row="0"
-            Orientation="Horizontal"
-            TextElement.FontSize="20"
-            TextElement.FontFamily="{DynamicResource OpenIconic}">
-            <button:MetroButton
-                Content="{StaticResource oi-home}"
-                ContentStringFormat="{}{0} Home"
-                ToolTip="Home"
-                Command="{Binding HomeCommand}"
-                MinWidth="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}">
-            </button:MetroButton>
+			Grid.Row="0"
+			Orientation="Horizontal"
+			TextElement.FontSize="20"
+			TextElement.FontFamily="{DynamicResource OpenIconic}">
+            <Button:MetroButton
+				Content="{StaticResource oi-home}"
+				ContentStringFormat="{}{0} Home"
+				ToolTip="Home"
+				Command="{Binding HomeCommand}"
+				MinWidth="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"/>
             <TextBlock
-                TextElement.FontFamily="{DynamicResource FontAwesome}"
-                Text="{StaticResource fa-chevron-right}"
-                TextElement.FontSize="14"
-                VerticalAlignment="Center"/>
-            <button:MetroButton
-                Content="{StaticResource oi-magnifying-glass}"
-                ContentStringFormat="{}{0} Search"
-                ToolTip="Reader"
-                Command="{Binding SearchCommand}"
-                MinWidth="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"/>
+				TextElement.FontFamily="{DynamicResource FontAwesome}"
+				Text="{StaticResource fa-chevron-right}"
+				TextElement.FontSize="14"
+				VerticalAlignment="Center"/>
+            <Button:MetroButton
+				Content="{StaticResource oi-magnifying-glass}"
+				ContentStringFormat="{}{0} Search"
+				ToolTip="Reader"
+				Command="{Binding SearchCommand}"
+				MinWidth="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"/>
             <TextBlock
-                TextElement.FontFamily="{DynamicResource FontAwesome}"
-                Text="{StaticResource fa-chevron-right}"
-                TextElement.FontSize="14"
-                VerticalAlignment="Center"/>
-            <button:MetroButton
-                Content="{StaticResource oi-book}"
-                ContentStringFormat="{}{0} Reader"
-                ToolTip="Reader"
-                Command="{Binding ReadCommand}"
-                MinWidth="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"/>
+				TextElement.FontFamily="{DynamicResource FontAwesome}"
+				Text="{StaticResource fa-chevron-right}"
+				TextElement.FontSize="14"
+				VerticalAlignment="Center"/>
+            <Button:MetroButton
+				Content="{StaticResource oi-book}"
+				ContentStringFormat="{}{0} Reader"
+				ToolTip="Reader"
+				Command="{Binding ReadCommand}"
+				MinWidth="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"/>
         </StackPanel>
         <StackPanel
-            Grid.Column="1"
-            Orientation="Horizontal">
+			Grid.Column="1"
+			Orientation="Horizontal">
             <ProgressBar
-                VerticalAlignment="Center"
-                Height="24"
-			    Width="{Binding Height, Mode=OneWay, RelativeSource={RelativeSource Self}}" 
-			    Style="{DynamicResource Spinner}" 
-			    Visibility="{Binding IsLoading, Converter={StaticResource BooleanToVisibilityConverter}}"
-                Foreground="#FF000000"
-                IsHitTestVisible="False"/>
-            <button:MetroButton
-                TextElement.FontSize="20"
-                TextElement.FontFamily="{DynamicResource FontAwesome}"
-                Content="{DynamicResource fa-ellipsis-vertical}"
-                ContentStringFormat="Settings {0}"
-                ToolTip="Settings"
-                Command="{Binding SettingsCommand}"
-                MinWidth="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"/>
+				VerticalAlignment="Center"
+				Height="24"
+				Width="{Binding Height, Mode=OneWay, RelativeSource={RelativeSource Self}}" 
+				Style="{DynamicResource Spinner}" 
+				Visibility="{Binding IsLoading, Converter={StaticResource BooleanToVisibilityConverter}}"
+				Foreground="#FF000000"
+				IsHitTestVisible="False"/>
+            <StackPanel 
+                Orientation="Horizontal" 
+                TextElement.FontFamily="{DynamicResource OpenIconic}"
+                TextElement.FontSize="24"
+                Visibility="{Binding ContentViewModel.SupportsViewTypeChange, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
+                <RadioButton 
+                    Content="{DynamicResource oi-list}" 
+                    IsChecked="{Binding ContentViewModel.ViewType, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static MVVM:ViewModelViewType.Normal}, Mode=TwoWay}"/>
+                <RadioButton 
+                    Content="{DynamicResource oi-grid-three-up}"
+                    IsChecked="{Binding ContentViewModel.ViewType, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static MVVM:ViewModelViewType.Grid}, Mode=TwoWay}"/>
+            </StackPanel>
+            <Button:MetroButton
+				TextElement.FontSize="20"
+				TextElement.FontFamily="{DynamicResource FontAwesome}"
+				Content="{DynamicResource fa-ellipsis-vertical}"
+				ContentStringFormat="Settings {0}"
+				ToolTip="Settings"
+				Command="{Binding SettingsCommand}"
+				MinWidth="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"/>
         </StackPanel>
         <ContentPresenter
-            Grid.Row="1"
-            Grid.ColumnSpan="2"
-            Content="{Binding ContentViewModel}" 
-            Margin="5,0,5,5"/>
+			Grid.Row="1"
+			Grid.ColumnSpan="2"
+			Content="{Binding ContentViewModel}" 
+			Margin="5,0,5,5"/>
         <StackPanel
-            x:Name="Watermark"
-            Grid.ZIndex="99"
-            Grid.RowSpan="2"
-            IsHitTestVisible="False"
-            VerticalAlignment="Center"
-            HorizontalAlignment="Center">
+			x:Name="Watermark"
+			Panel.ZIndex="99"
+			Grid.RowSpan="2"
+			IsHitTestVisible="False"
+			VerticalAlignment="Center"
+			HorizontalAlignment="Center">
             <StackPanel.Triggers>
-                <EventTrigger RoutedEvent="Grid.Loaded">
+                <EventTrigger RoutedEvent="FrameworkElement.Loaded">
                     <BeginStoryboard>
                         <Storyboard>
                             <DoubleAnimation 
-                                Storyboard.TargetName="Watermark"
-                                Storyboard.TargetProperty="Opacity"
-                                BeginTime="0:0:2"
-                                Duration="0:0:4"
-                                From="1"
-                                To="0"/>
+								Storyboard.TargetName="Watermark"
+								Storyboard.TargetProperty="Opacity"
+								BeginTime="0:0:2"
+								Duration="0:0:4"
+								From="1"
+								To="0"/>
                             <ObjectAnimationUsingKeyFrames 
-                                Storyboard.TargetName="Watermark"
-                                Storyboard.TargetProperty="Visibility">
+								Storyboard.TargetName="Watermark"
+								Storyboard.TargetProperty="Visibility">
                                 <DiscreteObjectKeyFrame
-                                    KeyTime="0:0:6.5"
-                                    Value="{x:Static Visibility.Hidden}"/>
+									KeyTime="0:0:6.5"
+									Value="{x:Static Visibility.Hidden}"/>
                             </ObjectAnimationUsingKeyFrames>
                         </Storyboard>
                     </BeginStoryboard>
@@ -137,12 +151,12 @@
             <StackPanel HorizontalAlignment="Center">
                 <Grid Margin="5,0,0,-20" TextElement.FontSize="16" TextElement.FontWeight="Bold">
                     <TextBlock Text="{DynamicResource ProjectURL}" HorizontalAlignment="Left" />
-                    <TextBlock Text="{Binding Path=AboutViewModel.AssemblyVersion, StringFormat=v{0}}" HorizontalAlignment="Right" />
+                    <TextBlock Text="{Binding AboutViewModel.AssemblyVersion, StringFormat=v\{0\}}" HorizontalAlignment="Right" />
                 </Grid>
                 <TextBlock 
-                    Text="{DynamicResource AppTitle}"
-                    FontSize="50"
-                    Margin="0,0,0,0"/>
+					Text="{DynamicResource AppTitle}"
+					FontSize="50"
+					Margin="0,0,0,0"/>
             </StackPanel>
         </StackPanel>
     </Grid>

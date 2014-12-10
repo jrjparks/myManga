@@ -2,17 +2,38 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:ViewModels="clr-namespace:myManga_App.ViewModels"
-    xmlns:Views="clr-namespace:myManga_App.Views">
-    
-    <DataTemplate DataType="{x:Type ViewModels:HomeViewModel}">
-        <Views:HomeView/>
+    xmlns:Views="clr-namespace:myManga_App.Views"
+    xmlns:mvvm="clr-namespace:myManga_App.Objects.MVVM">
+
+    <DataTemplate x:Key="HomeView_List" DataType="{x:Type ViewModels:HomeViewModel}">
+        <Views:HomeView_List/>
     </DataTemplate>
+    <DataTemplate x:Key="HomeView_Grid" DataType="{x:Type ViewModels:HomeViewModel}">
+        <Views:HomeView_Grid/>
+    </DataTemplate>
+    <DataTemplate DataType="{x:Type ViewModels:HomeViewModel}">
+        <ContentControl Content="{Binding}">
+            <ContentControl.Style>
+                <Style TargetType="{x:Type ContentControl}">
+                    <Setter Property="ContentTemplate" Value="{StaticResource HomeView_List}"/>
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding ViewType}" Value="{x:Static mvvm:ViewModelViewType.Grid}">
+                            <Setter Property="ContentTemplate" Value="{StaticResource HomeView_Grid}"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </ContentControl.Style>
+        </ContentControl>
+    </DataTemplate>
+    
     <DataTemplate DataType="{x:Type ViewModels:SettingsViewModel}">
         <Views:SettingsView/>
     </DataTemplate>
+    
     <DataTemplate DataType="{x:Type ViewModels:SearchViewModel}">
         <Views:SearchView/>
     </DataTemplate>
+    
     <DataTemplate DataType="{x:Type ViewModels:ReaderViewModel}">
         <Views:ReaderView/>
     </DataTemplate>

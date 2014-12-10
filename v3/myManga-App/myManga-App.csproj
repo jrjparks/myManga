@@ -117,6 +117,7 @@
     </ApplicationDefinition>
     <Compile Include="Converters\BooleanInverter.cs" />
     <Compile Include="Converters\CommandParameterStringFormat.cs" />
+    <Compile Include="Converters\EnumToBooleanConverter.cs" />
     <Compile Include="Converters\LoadImageFromChapterArchive.cs" />
     <Compile Include="Converters\LoadImageFromMangaArchive.cs" />
     <Compile Include="Converters\LocationListToCSV.cs" />
@@ -128,10 +129,11 @@
     <Compile Include="IO\Network\SmartSearch.cs" />
     <Compile Include="IO\SmartGroupObject.cs" />
     <Compile Include="IO\ViewModel\Messenger.cs" />
-    <Compile Include="Objects\DatabaseExtensionInformationObject.cs" />
-    <Compile Include="Objects\ReadChapterRequestObject.cs" />
-    <Compile Include="Objects\SiteExtentionInformationObject.cs" />
-    <Compile Include="Objects\UserConfigurationObject.cs" />
+    <Compile Include="Objects\UserInterface\DatabaseExtensionInformationObject.cs" />
+    <Compile Include="Objects\MVVM\ViewModelViewType.cs" />
+    <Compile Include="Objects\UserInterface\ReadChapterRequestObject.cs" />
+    <Compile Include="Objects\UserInterface\SiteExtentionInformationObject.cs" />
+    <Compile Include="Objects\UserConfig\UserConfigurationObject.cs" />
     <Compile Include="Themes\Button\MetroButton.cs" />
     <Compile Include="Themes\Window\myMangaWindow.cs" />
     <Compile Include="ViewModels\BaseViewModel.cs" />
@@ -140,8 +142,11 @@
     <Compile Include="ViewModels\ReaderViewModel.cs" />
     <Compile Include="ViewModels\SearchViewModel.cs" />
     <Compile Include="ViewModels\SettingsViewModel.cs" />
-    <Compile Include="Views\HomeView.xaml.cs">
-      <DependentUpon>HomeView.xaml</DependentUpon>
+    <Compile Include="Views\HomeView.Grid.xaml.cs">
+      <DependentUpon>HomeView.Grid.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\HomeView_List.xaml.cs">
+      <DependentUpon>HomeView_List.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\ReaderView.xaml.cs">
       <DependentUpon>ReaderView.xaml</DependentUpon>
@@ -224,7 +229,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\HomeView.xaml">
+    <Page Include="Views\HomeView.Grid.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\HomeView_List.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

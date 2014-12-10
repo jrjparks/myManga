@@ -94,6 +94,7 @@ namespace myManga_App.ViewModels
         #endregion
 
         public MainViewModel()
+            : base()
         {
             ContentViewModel = HomeViewModel;
             if (!DesignerProperties.GetIsInDesignMode(this))

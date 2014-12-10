@@ -84,13 +84,15 @@ namespace MangaHere
                 Chapters.Add(Chapter);
             }
             Chapters.Reverse();
+            String Cover = MangaPropertiesNode.SelectSingleNode(".//img[1]/@src").Attributes["src"].Value;
+            Cover = Cover.Substring(0, Cover.LastIndexOf('?'));
 
             MangaObject MangaObj = new MangaObject()
             {
                 Name = MangaName,
                 Description = HtmlEntity.DeEntitize(Desciption),
                 AlternateNames = AlternateNames.ToList(),
-                Covers = { MangaPropertiesNode.SelectSingleNode(".//img[1]/@src").Attributes["src"].Value },
+                Covers = { Cover },
                 Authors = Authors.ToList(),
                 Artists = Artists.ToList(),
                 Genres = Genres.ToList(),

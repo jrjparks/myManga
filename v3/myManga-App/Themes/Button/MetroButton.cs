@@ -118,4 +118,61 @@ namespace myManga_App.Resources.Theme.Buttons
             set { SetValue(SecondaryDisabledBrushProperty, value); }
         }
     }
+
+    public class MetroRadioButton : RadioButton
+    {
+        static MetroRadioButton()
+        {
+            DefaultStyleKeyProperty.OverrideMetadata(typeof(MetroRadioButton), new FrameworkPropertyMetadata(typeof(MetroRadioButton)));
+        }
+
+        public static readonly DependencyProperty PrimaryBrushProperty =
+        DependencyProperty.RegisterAttached(
+            "PrimaryBrush",
+            typeof(Brush),
+            typeof(MetroRadioButton),
+            new FrameworkPropertyMetadata(Brushes.Black));
+
+        public static readonly DependencyProperty SecondaryBrushProperty =
+        DependencyProperty.RegisterAttached(
+            "SecondaryBrush",
+            typeof(Brush),
+            typeof(MetroRadioButton),
+            new FrameworkPropertyMetadata(Brushes.Black));
+
+        public static readonly DependencyProperty PrimaryDisabledBrushProperty =
+        DependencyProperty.RegisterAttached(
+            "PrimaryDisabledBrush",
+            typeof(Brush),
+            typeof(MetroRadioButton),
+            new FrameworkPropertyMetadata(Brushes.Black));
+
+        public static readonly DependencyProperty SecondaryDisabledBrushProperty =
+        DependencyProperty.RegisterAttached(
+            "SecondaryDisabledBrush",
+            typeof(Brush),
+            typeof(MetroRadioButton),
+            new FrameworkPropertyMetadata(Brushes.Black));
+
+        public Brush PrimaryBrush
+        {
+            get { return (Brush)GetValue(PrimaryBrushProperty); }
+            set { SetValue(PrimaryBrushProperty, value); }
+        }
+        public Brush SecondaryBrush
+        {
+            get { return (Brush)GetValue(SecondaryBrushProperty); }
+            set { SetValue(SecondaryBrushProperty, value); }
+        }
+        public Brush PrimaryDisabledBrush
+        {
+            get { return (Brush)GetValue(PrimaryDisabledBrushProperty); }
+            set { SetValue(PrimaryDisabledBrushProperty, value); }
+        }
+        public Brush SecondaryDisabledBrush
+        {
+            get { return (Brush)GetValue(SecondaryDisabledBrushProperty); }
+            set { SetValue(SecondaryDisabledBrushProperty, value); }
+        }
+    }
 }

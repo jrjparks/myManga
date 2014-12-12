@@ -85,7 +85,7 @@
                 Background="{x:Null}"
                 BorderBrush="{x:Null}"
                 BorderThickness="0" 
-                ItemContainerStyle="{DynamicResource HomeView_MangaListBoxItem}" 
+                ItemContainerStyle="{DynamicResource SearchView_List_MangaListBoxItem}" 
                 SelectedIndex="0"
                 Visibility="{Binding HasItems, Converter={StaticResource BooleanToVisibilityConverter}, RelativeSource={RelativeSource Self}}" 
                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"

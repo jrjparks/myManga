@@ -95,10 +95,10 @@
                 TextElement.FontFamily="{DynamicResource OpenIconic}"
                 TextElement.FontSize="24"
                 Visibility="{Binding ContentViewModel.SupportsViewTypeChange, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
-                <RadioButton 
+                <Button:MetroRadioButton 
                     Content="{DynamicResource oi-list}" 
                     IsChecked="{Binding ContentViewModel.ViewType, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static MVVM:ViewModelViewType.Normal}, Mode=TwoWay}"/>
-                <RadioButton 
+                <Button:MetroRadioButton 
                     Content="{DynamicResource oi-grid-three-up}"
                     IsChecked="{Binding ContentViewModel.ViewType, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static MVVM:ViewModelViewType.Grid}, Mode=TwoWay}"/>
             </StackPanel>

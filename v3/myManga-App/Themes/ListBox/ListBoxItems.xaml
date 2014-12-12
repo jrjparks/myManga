@@ -132,7 +132,7 @@
                                 Margin="6,2" 
                                 Width="48" 
                                 Height="72"
-                                Source="{Binding Converter={StaticResource LoadImageFromMangaArchive}}"/>
+                                Source="{Binding Converter={StaticResource LoadImageFromMangaArchive}, FallbackValue=/myManga;component/Resources/Images/FallbackMangaIcon.png}"/>
                             <TextBlock Grid.Column="1" Grid.Row="0" VerticalAlignment="Center" Foreground="{StaticResource text-dark}" FontWeight="Bold" FontSize="14" TextTrimming="CharacterEllipsis" Text="{Binding Name, FallbackValue=No-Name}"/>
                             <TextBlock Grid.Column="1" Grid.Row="1" VerticalAlignment="Center" Foreground="{StaticResource text-muted}" TextTrimming="CharacterEllipsis" Text="{Binding Locations, Converter={StaticResource LocationListToCSV}, Mode=OneWay, FallbackValue=No-Location}"/>
                             <TextBlock Grid.Column="1" Grid.Row="2" VerticalAlignment="Center" Foreground="{StaticResource text-muted}" TextTrimming="CharacterEllipsis" Text="{Binding DatabaseLocations, Converter={StaticResource LocationListToCSV}, Mode=OneWay, FallbackValue=No-Database}"/>
@@ -156,6 +156,8 @@
             </Setter.Value>
         </Setter>
     </Style>
+
+    <Style TargetType="{x:Type ListBoxItem}" BasedOn="{StaticResource HomeView_List_MangaListBoxItem}" x:Key="SearchView_List_MangaListBoxItem"/>
 
     <Style TargetType="{x:Type ListBoxItem}" BasedOn="{StaticResource {x:Type ListBoxItem}}" x:Key="HomeView_List_ChapterListBoxItem">
         <Setter Property="Template">
@@ -272,7 +274,23 @@
                                 <RowDefinition/>
                                 <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
-                            <Image x:Name="CoverImage" Grid.Row="0" Source="{Binding Converter={StaticResource LoadImageFromMangaArchive}}"/>
+                            <Image 
+                                x:Name="CoverImage" 
+                                Grid.Row="0" 
+                                Source="{Binding Converter={StaticResource LoadImageFromMangaArchive}, FallbackValue=/myManga;component/Resources/Images/FallbackMangaIcon.png}"/>
+                            <button:MetroButton
+                                x:Name="ResumeReadingButton"
+                                Opacity="0"
+                                Visibility="Collapsed"
+                                Width="{Binding ActualWidth, Mode=OneWay, ElementName=CoverImage}"
+                                VerticalAlignment="Bottom"
+                                FontFamily="{DynamicResource OpenIconic}"
+                                Content="{DynamicResource oi-eye}"
+                                ContentStringFormat="{}{0} Resume"
+                                FontSize="18"
+                                Padding="5"
+                                Command="{Binding Path=DataContext.ResumeReadingCommand, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl}}"/>
+                            
                             <TextBlock
                                 Grid.Row="1"
                                 FontSize="18"
@@ -362,6 +380,32 @@
                         <Trigger Property="IsSelected" Value="True">
                             <Setter TargetName="ItemBorder" Property="BorderThickness" Value="{Binding Path=BorderThickness, RelativeSource={RelativeSource AncestorType={x:Type ListBoxItem}}}"/>
                             <Setter TargetName="ItemBorder" Property="Padding" Value="0"/>
+                            <Trigger.EnterActions>
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <DoubleAnimation 
+                                            Storyboard.TargetName="ResumeReadingButton"
+                                            Storyboard.TargetProperty="Opacity"
+                                            To="0.75" Duration="0:0:0.5" BeginTime="0:0:0.01"/>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ResumeReadingButton" Storyboard.TargetProperty="(UIElement.Visibility)">
+                                            <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="{x:Static Visibility.Visible}"/>
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </Trigger.EnterActions>
+                            <Trigger.ExitActions>
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <DoubleAnimation 
+                                            Storyboard.TargetName="ResumeReadingButton"
+                                            Storyboard.TargetProperty="Opacity"
+                                            To="0" Duration="0:0:0.5" BeginTime="0:0:0"/>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ResumeReadingButton" Storyboard.TargetProperty="(UIElement.Visibility)">
+                                            <DiscreteObjectKeyFrame KeyTime="0:0:0.51" Value="{x:Static Visibility.Collapsed}"/>
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </Trigger.ExitActions>
                         </Trigger>
                         <Trigger Property="IsMouseOver" Value="True">
                             <Setter TargetName="ItemBorder" Property="Background" Value="{DynamicResource window-theme-secondary}"/>

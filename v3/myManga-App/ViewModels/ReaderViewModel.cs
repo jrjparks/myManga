@@ -170,7 +170,9 @@ namespace myManga_App.ViewModels
 
         private void OpenChapter(MangaObject MangaObject, ChapterObject ChapterObject)
         {
-            Messenger.Default.Send(this, "FocusRequest");
+            //Messenger.Default.Send(this, "FocusRequest");
+            this.PullFocus();
+
             this.MangaObject = MangaObject;
             this.ChapterObject = ChapterObject;
             this.PrevChapterObject = this.MangaObject.PrevChapterObject(this.ChapterObject);

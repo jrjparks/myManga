@@ -1,4 +1,5 @@
-﻿using myManga_App.Objects.MVVM;
+﻿using myManga_App.IO.ViewModel;
+using myManga_App.Objects.MVVM;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -35,6 +36,9 @@ namespace myManga_App.ViewModels
         public Boolean SupportsViewTypeChange
         { get { return supportsViewTypeChange; } private set { supportsViewTypeChange = value; } }
 
+        public void PullFocus()
+        { Messenger.Default.Send(this, "FocusRequest"); }
+
         protected BaseViewModel(Boolean SupportsViewTypeChange = false)
         {
             if (this.SupportsViewTypeChange = SupportsViewTypeChange)
@@ -52,6 +56,6 @@ namespace myManga_App.ViewModels
             }
         }
 
-        public virtual void Dispose() { }
+        public virtual void Dispose() { Messenger.Default.Send(this, "Dispose"); }
     }
 }

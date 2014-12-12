@@ -17,7 +17,10 @@ namespace myManga_App.ViewModels
     public sealed class MainViewModel : BaseViewModel
     {
         #region Content
-        public static DependencyProperty ContentViewModelProperty = DependencyProperty.Register("ContentViewModel", typeof(BaseViewModel), typeof(BaseViewModel));
+        public static DependencyProperty ContentViewModelProperty = DependencyProperty.Register(
+            "ContentViewModel", 
+            typeof(BaseViewModel), 
+            typeof(MainViewModel));
         public BaseViewModel ContentViewModel
         {
             get { return GetValue(ContentViewModelProperty) as BaseViewModel; }
@@ -44,27 +47,18 @@ namespace myManga_App.ViewModels
         #region Header Buttons
         private DelegateCommand homeCommand;
         public ICommand HomeCommand
-        { get { return homeCommand ?? (homeCommand = new DelegateCommand(OpenHome)); } }
-
-        private void OpenHome()
-        { ContentViewModel = HomeViewModel; }
+        { get { return homeCommand ?? (homeCommand = new DelegateCommand(HomeViewModel.PullFocus)); } }
 
         private DelegateCommand searchCommand;
         public ICommand SearchCommand
-        { get { return searchCommand ?? (searchCommand = new DelegateCommand(OpenSearch, CanOpenSearch)); } }
-
-        private void OpenSearch()
-        { ContentViewModel = SearchViewModel; }
+        { get { return searchCommand ?? (searchCommand = new DelegateCommand(SearchViewModel.PullFocus, CanOpenSearch)); } }
 
         private Boolean CanOpenSearch()
         { return SearchViewModel != null; }
 
         private DelegateCommand readCommand;
         public ICommand ReadCommand
-        { get { return readCommand ?? (readCommand = new DelegateCommand(OpenRead, CanOpenRead)); } }
-
-        private void OpenRead()
-        { ContentViewModel = ReaderViewModel; }
+        { get { return readCommand ?? (readCommand = new DelegateCommand(ReaderViewModel.PullFocus, CanOpenRead)); } }
 
         private Boolean CanOpenRead()
         { return ReaderViewModel != null && ReaderViewModel.MangaObject != null && ReaderViewModel.ChapterObject != null; }
@@ -73,10 +67,7 @@ namespace myManga_App.ViewModels
         #region Settings
         private DelegateCommand settingsCommand;
         public ICommand SettingsCommand
-        { get { return settingsCommand ?? (settingsCommand = new DelegateCommand(OpenSettings)); } }
-
-        private void OpenSettings()
-        { ContentViewModel = SettingsViewModel; }
+        { get { return settingsCommand ?? (settingsCommand = new DelegateCommand(SettingsViewModel.PullFocus)); } }
         #endregion
 
         #region Download Active
@@ -96,12 +87,11 @@ namespace myManga_App.ViewModels
         public MainViewModel()
             : base()
         {
-            ContentViewModel = HomeViewModel;
             if (!DesignerProperties.GetIsInDesignMode(this))
             {
-                Messenger.Default.RegisterRecipient<BaseViewModel>(this, ChangeViewModelFocus, "FocusRequest");
+                Messenger.Default.RegisterRecipient<BaseViewModel>(this, v => this.ContentViewModel = v, "FocusRequest");
 
-                SettingsViewModel.CloseEvent += (s, e) => ContentViewModel = HomeViewModel;
+                SettingsViewModel.CloseEvent += (s, e) => HomeViewModel.PullFocus();
 
                 ServicePointManager.DefaultConnectionLimit = DownloadManager.Default.Concurrency;
                 DownloadManager.Default.StatusChange += (s, e) => { IsLoading = !(s as DownloadManager).IsIdle; };
@@ -115,7 +105,10 @@ namespace myManga_App.ViewModels
                 App.ChapterObjectArchiveWatcher.Created += ChapterObjectArchiveWatcher_Event;
                 App.ChapterObjectArchiveWatcher.Deleted += ChapterObjectArchiveWatcher_Event;
                 App.ChapterObjectArchiveWatcher.Renamed += ChapterObjectArchiveWatcher_Event;
+
+                HomeViewModel.PullFocus();
             }
+            else ContentViewModel = HomeViewModel;
         }
 
         void MangaObjectArchiveWatcher_Event(object sender, FileSystemEventArgs e)
@@ -131,9 +124,6 @@ namespace myManga_App.ViewModels
             { Messenger.Default.Send(e, "ChapterObjectArchiveWatcher"); }
             else App.Dispatcher.Invoke(DispatcherPriority.Send, new System.Action(() => ChapterObjectArchiveWatcher_Event(sender, e)));
         }
-
-        void ChangeViewModelFocus(BaseViewModel ViewModel)
-        { this.ContentViewModel = ViewModel; }
 
         public override void Dispose()
         {

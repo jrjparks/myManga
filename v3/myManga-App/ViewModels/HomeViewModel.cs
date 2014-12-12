@@ -146,26 +146,31 @@ namespace myManga_App.ViewModels
         private void ResumeReading()
         {
             String bookmark_chapter_path = Path.Combine(App.CHAPTER_ARCHIVE_DIRECTORY, this.SelectedMangaObject.MangaFileName());
-            if (this.SelectedMangaObject.ChapterObjectOfBookmarkObject(this.BookmarkObject).IsLocal(bookmark_chapter_path, App.CHAPTER_ARCHIVE_EXTENSION))
-                Messenger.Default.Send(new ReadChapterRequestObject(this.SelectedMangaObject, this.SelectedMangaObject.ChapterObjectOfBookmarkObject(this.BookmarkObject)), "ReadChapterRequest");
+            MangaObject SelectedMangaObject = this.SelectedMangaObject;
+            ChapterObject ResumeChapterObject = (this.BookmarkObject != null) ? 
+                SelectedMangaObject.ChapterObjectOfBookmarkObject(this.BookmarkObject) : 
+                SelectedMangaObject.Chapters.FirstOrDefault();
+            BookmarkObject SelectedBookmarkObject = this.BookmarkObject ?? new myMangaSiteExtension.Objects.BookmarkObject()
+            {
+                Volume = ResumeChapterObject.Volume,
+                Chapter = ResumeChapterObject.Chapter,
+                SubChapter = ResumeChapterObject.SubChapter,
+                Page = 1,
+            };
+            if (ResumeChapterObject.IsLocal(bookmark_chapter_path, App.CHAPTER_ARCHIVE_EXTENSION))
+                Messenger.Default.Send(new ReadChapterRequestObject(SelectedMangaObject, ResumeChapterObject), "ReadChapterRequest");
             else
             {
-                ChapterObject c = this.SelectedMangaObject.Chapters.First();
-                this.BookmarkObject = new myMangaSiteExtension.Objects.BookmarkObject() {
-                    Volume = c.Volume,
-                    Chapter = c.Chapter,
-                    SubChapter = c.SubChapter,
-                    Page = 1
-                };
                 Singleton<ZipStorage>.Instance.Write(
-                Path.Combine(App.MANGA_ARCHIVE_DIRECTORY, this.SelectedMangaObject.MangaArchiveName(App.MANGA_ARCHIVE_EXTENSION)),
-                typeof(BookmarkObject).Name,
-                this.BookmarkObject.Serialize(SaveType: App.UserConfig.SaveType));
-                DownloadManager.Default.Download(this.SelectedMangaObject, this.SelectedMangaObject.ChapterObjectOfBookmarkObject(this.BookmarkObject));
+                    Path.Combine(App.MANGA_ARCHIVE_DIRECTORY, SelectedMangaObject.MangaArchiveName(App.MANGA_ARCHIVE_EXTENSION)),
+                    typeof(BookmarkObject).Name,
+                    SelectedBookmarkObject.Serialize(SaveType: App.UserConfig.SaveType)
+                );
+                DownloadManager.Default.Download(SelectedMangaObject, ResumeChapterObject);
             }
         }
         private Boolean CanResumeReading()
-        { return this.SelectedMangaObject != null && this.SelectedChapter != null; }
+        { return this.SelectedMangaObject != null; }
         #endregion
 
         #region RefreshManga
@@ -276,6 +281,7 @@ namespace myManga_App.ViewModels
             Stream bookmark_file;
             if (Singleton<ZipStorage>.Instance.TryRead(Path.Combine(App.MANGA_ARCHIVE_DIRECTORY, this.SelectedMangaObject.MangaArchiveName(App.MANGA_ARCHIVE_EXTENSION)), out bookmark_file, typeof(BookmarkObject).Name))
             { using (bookmark_file) this.BookmarkObject = bookmark_file.Deserialize<BookmarkObject>(SaveType: App.UserConfig.SaveType); }
+            else { this.BookmarkObject = null; }
             if (this.SelectedMangaObject != null && this.BookmarkObject != null) { this.SelectedChapter = this.SelectedMangaObject.ChapterObjectOfBookmarkObject(this.BookmarkObject); }
         }
     }

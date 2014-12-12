@@ -51,14 +51,15 @@
                         HorizontalScrollBarVisibility="Disabled"
                         HorizontalContentAlignment="Stretch"
                         VirtualizingPanel.IsVirtualizing="True"
-                        VirtualizingPanel.VirtualizationMode="Recycling"
-                        Padding="{TemplateBinding Padding}">
-                        <CoreWPF:BalancedWrapPanel
+                        VirtualizingPanel.VirtualizationMode="Recycling">
+                        <Border Padding="{TemplateBinding Padding}">
+                            <CoreWPF:BalancedWrapPanel
                             IsItemsHost="True" 
                             ItemWidth="224" 
                             ItemHeight="224"
                             HorizontalAlignment="Stretch"
                             AlignLastItems="True"/>
+                        </Border>
                     </ScrollViewer>
                 </ControlTemplate>
             </ListBox.Template>
@@ -66,7 +67,10 @@
         <Border
             Height="32"
             VerticalAlignment="Top"
-            TextElement.FontSize="16">
+            TextElement.FontSize="16" 
+            BorderThickness="1" 
+            BorderBrush="{DynamicResource window-theme-primary}" 
+            Background="{DynamicResource window-background}">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>

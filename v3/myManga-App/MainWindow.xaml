@@ -51,9 +51,8 @@
 			TextElement.FontSize="20"
 			TextElement.FontFamily="{DynamicResource OpenIconic}">
             <Button:MetroButton
-				Content="{StaticResource oi-home}"
-				ContentStringFormat="{}{0} Home"
-				ToolTip="Home"
+                Content="{DynamicResource HomeTabHeaderContent}"
+				ToolTip="{DynamicResource HomeTabHeader}"
 				Command="{Binding HomeCommand}"
 				MinWidth="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"/>
             <TextBlock
@@ -62,9 +61,8 @@
 				TextElement.FontSize="14"
 				VerticalAlignment="Center"/>
             <Button:MetroButton
-				Content="{StaticResource oi-magnifying-glass}"
-				ContentStringFormat="{}{0} Search"
-				ToolTip="Reader"
+				Content="{DynamicResource SearchTabHeaderContent}"
+				ToolTip="{DynamicResource SearchTabHeaderName}"
 				Command="{Binding SearchCommand}"
 				MinWidth="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"/>
             <TextBlock
@@ -73,9 +71,8 @@
 				TextElement.FontSize="14"
 				VerticalAlignment="Center"/>
             <Button:MetroButton
-				Content="{StaticResource oi-book}"
-				ContentStringFormat="{}{0} Reader"
-				ToolTip="Reader"
+				Content="{DynamicResource ReaderTabHeaderContent}"
+				ToolTip="{DynamicResource ReaderTabHeaderName}"
 				Command="{Binding ReadCommand}"
 				MinWidth="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"/>
         </StackPanel>

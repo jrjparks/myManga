@@ -67,8 +67,7 @@
         <Border
             Height="32"
             VerticalAlignment="Top"
-            TextElement.FontSize="16" 
-            BorderThickness="1" 
+            TextElement.FontSize="16"
             BorderBrush="{DynamicResource window-theme-primary}" 
             Background="{DynamicResource window-background}">
             <Grid>

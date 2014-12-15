@@ -34,24 +34,14 @@ namespace myManga_App.ViewModels
         public MangaObject MangaObject
         {
             get { return _MangaObject; }
-            set
-            {
-                OnPropertyChanging();
-                _MangaObject = value;
-                OnPropertyChanged();
-            }
+            set { SetProperty(ref this._MangaObject, value); }
         }
 
         private ChapterObject _ChapterObject;
         public ChapterObject ChapterObject
         {
             get { return _ChapterObject; }
-            set
-            {
-                OnPropertyChanging();
-                _ChapterObject = value;
-                OnPropertyChanged();
-            }
+            set { SetProperty(ref this._ChapterObject, value); }
         }
         private ChapterObject PrevChapterObject { get; set; }
         private ChapterObject NextChapterObject { get; set; }
@@ -62,11 +52,7 @@ namespace myManga_App.ViewModels
             get { return _SelectedPageObject; }
             set
             {
-                OnPropertyChanging();
-                OnPropertyChanging("ChapterTitle");
-                _SelectedPageObject = value;
-                OnPropertyChanged();
-                OnPropertyChanged("ChapterTitle");
+                SetProperty(ref this._SelectedPageObject, value);
                 if (value != null) SaveBookmarkObject();
             }
         }
@@ -75,24 +61,14 @@ namespace myManga_App.ViewModels
         public BookmarkObject BookmarkObject
         {
             get { return _BookmarkObject; }
-            set
-            {
-                OnPropertyChanging();
-                _BookmarkObject = value;
-                OnPropertyChanged();
-            }
+            set { SetProperty(ref this._BookmarkObject, value); }
         }
 
         private String _ArchiveFilePath;
         public String ArchiveFilePath
         {
             get { return _ArchiveFilePath; }
-            set
-            {
-                OnPropertyChanging();
-                _ArchiveFilePath = value;
-                OnPropertyChanged();
-            }
+            set { SetProperty(ref this._ArchiveFilePath, value); }
         }
         private String PrevArchiveFilePath { get; set; }
         private String NextArchiveFilePath { get; set; }
@@ -107,12 +83,7 @@ namespace myManga_App.ViewModels
         public Double PageZoom
         {
             get { return _PageZoom; }
-            set
-            {
-                OnPropertyChanging();
-                _PageZoom = value < 0.5 ? 0.5 : value;
-                OnPropertyChanged();
-            }
+            set { SetProperty(ref this._PageZoom, value < 0.5 ? 0.5 : value); }
         }
         #endregion
 

@@ -9,14 +9,16 @@
     xmlns:system="clr-namespace:System;assembly=mscorlib"
     xmlns:mangaObjects="clr-namespace:myMangaSiteExtension.Objects;assembly=myMangaSiteExtension"
     xmlns:Converters="clr-namespace:myManga_App.Converters"
-    xmlns:controls="clr-namespace:System.Windows.Controls;assembly=Core"
+    xmlns:CoreControls="clr-namespace:System.Windows.Controls;assembly=Core"
+    xmlns:Controls="clr-namespace:myManga_App.Controls"
     x:Name="userControl"
     mc:Ignorable="d" 
     d:DesignHeight="400"
     d:DesignWidth="600"
     Background="{DynamicResource window-background}" 
     Foreground="{DynamicResource window-foreground}"
-    FocusManager.FocusedElement="{Binding ElementName=userControl}">
+    FocusManager.FocusedElement="{Binding ElementName=userControl}"
+    Controls:InputBindingsBehavior.HasInputBindingPrecedence="True">
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -53,8 +55,18 @@
         <button:MetroToggleButton 
             x:Name="PageListDropdown"
             Grid.ColumnSpan="3"
-            Content="{Binding ChapterTitle, Mode=OneWay, FallbackValue=Pages}" 
-            IsHitTestVisible="{Binding IsOpen, Converter={StaticResource BooleanInverter}, ElementName=PageListPopup, Mode=OneWay}"/>
+            IsHitTestVisible="{Binding IsOpen, Converter={StaticResource BooleanInverter}, ElementName=PageListPopup, Mode=OneWay}">
+            <button:MetroToggleButton.Content>
+                <MultiBinding StringFormat="{}{0} / {1} {2}.{3} - {4} - Page {5}" FallbackValue="Error Binding to ViewModel">
+                    <Binding Path="MangaObject.Name" FallbackValue="Un-Named" Mode="OneWay"/>
+                    <Binding Path="ChapterObject.Volume" TargetNullValue="0" FallbackValue="" Mode="OneWay"/>
+                    <Binding Path="ChapterObject.Chapter" FallbackValue="0" Mode="OneWay"/>
+                    <Binding Path="ChapterObject.SubChapter" FallbackValue="0" Mode="OneWay"/>
+                    <Binding Path="ChapterObject.Name" FallbackValue="Un-Named" Mode="OneWay"/>
+                    <Binding Path="SelectedPageObject.PageNumber" FallbackValue="0" Mode="OneWay"/>
+                </MultiBinding>
+            </button:MetroToggleButton.Content>
+        </button:MetroToggleButton>
         <Popup
             x:Name="PageListPopup"
             AllowsTransparency="True"

@@ -115,6 +115,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Controls\InputBindingsBehavior.cs" />
     <Compile Include="Converters\BooleanInverter.cs" />
     <Compile Include="Converters\CommandParameterStringFormat.cs" />
     <Compile Include="Converters\EnumToBooleanConverter.cs" />

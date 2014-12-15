@@ -262,6 +262,7 @@ namespace myManga_App.ViewModels
         #region Event Handlers
         private void ChapterObjectArchiveWatcher_Event(FileSystemEventArgs e)
         {
+            // TODO: This needs to be fixed
             if (e.FullPath.Equals(ArchiveFilePath))
                 switch (e.ChangeType)
                 {

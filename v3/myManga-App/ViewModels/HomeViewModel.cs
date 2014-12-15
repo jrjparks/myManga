@@ -34,27 +34,20 @@ namespace myManga_App.ViewModels
     public sealed class HomeViewModel : BaseViewModel
     {
         #region MangaList
-        private ObservableCollection<MangaObject> mangaObjectItems;
+        private ObservableCollection<MangaObject> _MangaObjectItems;
         public ObservableCollection<MangaObject> MangaObjectItems
         {
-            get { return mangaObjectItems ?? (mangaObjectItems = new ObservableCollection<MangaObject>()); }
-            set
-            {
-                OnPropertyChanging();
-                mangaObjectItems = value;
-                OnPropertyChanged();
-            }
+            get { return _MangaObjectItems ?? (_MangaObjectItems = new ObservableCollection<MangaObject>()); }
+            set { SetProperty(ref this._MangaObjectItems, value); }
         }
 
-        private MangaObject selectedMangaObject;
+        private MangaObject _SelectedMangaObject;
         public MangaObject SelectedMangaObject
         {
-            get { return selectedMangaObject; }
+            get { return _SelectedMangaObject; }
             set
             {
-                OnPropertyChanging();
-                selectedMangaObject = value ?? MangaObjectItems.FirstOrDefault();
-                OnPropertyChanged();
+                SetProperty(ref _SelectedMangaObject, value ?? MangaObjectItems.FirstOrDefault());
                 LoadBookmarkObject();
             }
         }
@@ -63,47 +56,33 @@ namespace myManga_App.ViewModels
         public BookmarkObject BookmarkObject
         {
             get { return _BookmarkObject; }
-            set
-            {
-                OnPropertyChanging();
-                _BookmarkObject = value;
-                OnPropertyChanged();
-            }
+            set { SetProperty(ref this._BookmarkObject, value); }
         }
 
         private ChapterObject _SelectedChapter;
         public ChapterObject SelectedChapter
         {
             get { return _SelectedChapter; }
-            set
-            {
-                OnPropertyChanging();
-                _SelectedChapter = value;
-                OnPropertyChanged();
-            }
+            set { SetProperty(ref this._SelectedChapter, value); }
         }
 
-        private String searchFilter;
+        private String _SearchFilter;
         public String SearchFilter
         {
-            get { return searchFilter; }
+            get { return _SearchFilter; }
             set
             {
-                OnPropertyChanging();
-                searchFilter = value;
+                SetProperty(ref this._SearchFilter, value);
                 mangaListView.Refresh();
                 mangaListView.MoveCurrentToFirst();
-                OnPropertyChanged();
             }
         }
 
         private ICollectionView mangaListView;
 
-        private DelegateCommand clearSearchCommand;
+        private DelegateCommand _ClearSearchCommand;
         public ICommand ClearSearchCommand
-        {
-            get { return clearSearchCommand ?? (clearSearchCommand = new DelegateCommand(ClearSearch, CanClearSearch)); }
-        }
+        { get { return _ClearSearchCommand ?? (_ClearSearchCommand = new DelegateCommand(ClearSearch, CanClearSearch)); } }
         private void ClearSearch()
         { SearchFilter = String.Empty; }
         private Boolean CanClearSearch()
@@ -111,9 +90,9 @@ namespace myManga_App.ViewModels
         #endregion
 
         #region SearchSites
-        private DelegateCommand searchSitesCommand;
+        private DelegateCommand _SearchSiteCommand;
         public ICommand SearchSiteCommand
-        { get { return searchSitesCommand ?? (searchSitesCommand = new DelegateCommand(SearchSites, CanSearchSite)); } }
+        { get { return _SearchSiteCommand ?? (_SearchSiteCommand = new DelegateCommand(SearchSites, CanSearchSite)); } }
 
         private Boolean CanSearchSite()
         { return !String.IsNullOrWhiteSpace(SearchFilter) && (SearchFilter.Trim().Length >= 3); }
@@ -123,25 +102,32 @@ namespace myManga_App.ViewModels
         #endregion
 
         #region DownloadChapter
-        private DelegateCommand<ChapterObject> downloadChapterCommand;
+        private DelegateCommand<ChapterObject> _DownloadChapterCommand;
         public ICommand DownloadChapterCommand
-        { get { return downloadChapterCommand ?? (downloadChapterCommand = new DelegateCommand<ChapterObject>(DownloadChapter)); } }
+        { get { return _DownloadChapterCommand ?? (_DownloadChapterCommand = new DelegateCommand<ChapterObject>(DownloadChapter)); } }
 
         private void DownloadChapter(ChapterObject ChapterObj)
         { DownloadManager.Default.Download(SelectedMangaObject, ChapterObj); }
         #endregion
 
         #region ReadChapter
-        private DelegateCommand<ChapterObject> readChapterCommand;
+        private DelegateCommand<ChapterObject> _ReadChapterCommand;
         public ICommand ReadChapterCommand
-        { get { return readChapterCommand ?? (readChapterCommand = new DelegateCommand<ChapterObject>(ReadChapter)); } }
+        { get { return _ReadChapterCommand ?? (_ReadChapterCommand = new DelegateCommand<ChapterObject>(ReadChapter)); } }
 
         private void ReadChapter(ChapterObject ChapterObj)
-        { Messenger.Default.Send(new ReadChapterRequestObject(this.SelectedMangaObject, ChapterObj), "ReadChapterRequest"); }
+        {
+            String bookmark_chapter_path = Path.Combine(App.CHAPTER_ARCHIVE_DIRECTORY, this.SelectedMangaObject.MangaFileName());
+            MangaObject SelectedMangaObject = this.SelectedMangaObject;
+            if (ChapterObj.IsLocal(bookmark_chapter_path, App.CHAPTER_ARCHIVE_EXTENSION))
+                Messenger.Default.Send(new ReadChapterRequestObject(this.SelectedMangaObject, ChapterObj), "ReadChapterRequest");
+            else
+                DownloadManager.Default.Download(SelectedMangaObject, ChapterObj);
+        }
 
-        private DelegateCommand resumeReadingCommand;
+        private DelegateCommand _ResumeReadingCommand;
         public ICommand ResumeReadingCommand
-        { get { return resumeReadingCommand ?? (resumeReadingCommand = new DelegateCommand(ResumeReading, CanResumeReading)); } }
+        { get { return _ResumeReadingCommand ?? (_ResumeReadingCommand = new DelegateCommand(ResumeReading, CanResumeReading)); } }
 
         private void ResumeReading()
         {
@@ -174,21 +160,21 @@ namespace myManga_App.ViewModels
         #endregion
 
         #region RefreshManga
-        private DelegateCommand refreshMangaCommand;
+        private DelegateCommand _RefreshMangaCommand;
         public ICommand RefreshMangaCommand
-        { get { return refreshMangaCommand ?? (refreshMangaCommand = new DelegateCommand(RefreshManga, CanRefreshManga)); } }
+        { get { return _RefreshMangaCommand ?? (_RefreshMangaCommand = new DelegateCommand(RefreshManga, CanRefreshManga)); } }
 
         private Boolean CanRefreshManga()
         { return SelectedMangaObject != null; }
 
         private void RefreshManga()
-        { DownloadManager.Default.Download(selectedMangaObject); }
+        { DownloadManager.Default.Download(_SelectedMangaObject); }
         #endregion
 
         #region RefreshMangaList
-        private DelegateCommand refreshMangaListCommand;
+        private DelegateCommand _RefreshMangaListCommand;
         public ICommand RefreshMangaListCommand
-        { get { return refreshMangaListCommand ?? (refreshMangaListCommand = new DelegateCommand(RefreshMangaList, CanRefreshMangaList)); } }
+        { get { return _RefreshMangaListCommand ?? (_RefreshMangaListCommand = new DelegateCommand(RefreshMangaList, CanRefreshMangaList)); } }
 
         private Boolean CanRefreshMangaList()
         { return MangaObjectItems.Count > 0; }
@@ -197,16 +183,11 @@ namespace myManga_App.ViewModels
         { foreach (MangaObject manga_object in MangaObjectItems) DownloadManager.Default.Download(manga_object); }
         #endregion
 
-        private Boolean isLoading;
+        private Boolean _IsLoading;
         public Boolean IsLoading
         {
-            get { return isLoading; }
-            set
-            {
-                OnPropertyChanging();
-                isLoading = value;
-                OnPropertyChanged();
-            }
+            get { return _IsLoading; }
+            set { SetProperty(ref this._IsLoading, value); }
         }
 
         public HomeViewModel()

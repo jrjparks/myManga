@@ -27,60 +27,55 @@ namespace myManga_App.ViewModels
             set { SetValue(ContentViewModelProperty, value); }
         }
 
-        private HomeViewModel homeViewModel;
+        private HomeViewModel _HomeViewModel;
         public HomeViewModel HomeViewModel
-        { get { return homeViewModel ?? (homeViewModel = new HomeViewModel()); } }
+        { get { return _HomeViewModel ?? (_HomeViewModel = new HomeViewModel()); } }
 
-        private SettingsViewModel settingsViewModel;
+        private SettingsViewModel _SettingsViewModel;
         public SettingsViewModel SettingsViewModel
-        { get { return settingsViewModel ?? (settingsViewModel = new SettingsViewModel()); } }
+        { get { return _SettingsViewModel ?? (_SettingsViewModel = new SettingsViewModel()); } }
 
-        private SearchViewModel searchViewModel;
+        private SearchViewModel _SearchViewModel;
         public SearchViewModel SearchViewModel
-        { get { return searchViewModel ?? (searchViewModel = new SearchViewModel()); } }
+        { get { return _SearchViewModel ?? (_SearchViewModel = new SearchViewModel()); } }
 
-        private ReaderViewModel readerViewModel;
+        private ReaderViewModel _ReaderViewModel;
         public ReaderViewModel ReaderViewModel
-        { get { return readerViewModel ?? (readerViewModel = new ReaderViewModel()); } }
+        { get { return _ReaderViewModel ?? (_ReaderViewModel = new ReaderViewModel()); } }
         #endregion
 
         #region Header Buttons
-        private DelegateCommand homeCommand;
+        private DelegateCommand _HomeCommand;
         public ICommand HomeCommand
-        { get { return homeCommand ?? (homeCommand = new DelegateCommand(HomeViewModel.PullFocus)); } }
+        { get { return _HomeCommand ?? (_HomeCommand = new DelegateCommand(HomeViewModel.PullFocus)); } }
 
-        private DelegateCommand searchCommand;
+        private DelegateCommand _SearchCommand;
         public ICommand SearchCommand
-        { get { return searchCommand ?? (searchCommand = new DelegateCommand(SearchViewModel.PullFocus, CanOpenSearch)); } }
+        { get { return _SearchCommand ?? (_SearchCommand = new DelegateCommand(SearchViewModel.PullFocus, CanOpenSearch)); } }
 
         private Boolean CanOpenSearch()
         { return SearchViewModel != null; }
 
-        private DelegateCommand readCommand;
+        private DelegateCommand _ReadCommand;
         public ICommand ReadCommand
-        { get { return readCommand ?? (readCommand = new DelegateCommand(ReaderViewModel.PullFocus, CanOpenRead)); } }
+        { get { return _ReadCommand ?? (_ReadCommand = new DelegateCommand(ReaderViewModel.PullFocus, CanOpenRead)); } }
 
         private Boolean CanOpenRead()
         { return ReaderViewModel != null && ReaderViewModel.MangaObject != null && ReaderViewModel.ChapterObject != null; }
         #endregion
 
         #region Settings
-        private DelegateCommand settingsCommand;
+        private DelegateCommand _SettingsCommand;
         public ICommand SettingsCommand
-        { get { return settingsCommand ?? (settingsCommand = new DelegateCommand(SettingsViewModel.PullFocus)); } }
+        { get { return _SettingsCommand ?? (_SettingsCommand = new DelegateCommand(SettingsViewModel.PullFocus)); } }
         #endregion
 
         #region Download Active
-        private Boolean isLoading = false;
+        private Boolean _IsLoading = false;
         public Boolean IsLoading
         {
-            get { return isLoading; }
-            set
-            {
-                OnPropertyChanging();
-                isLoading = value;
-                OnPropertyChanged();
-            }
+            get { return _IsLoading; }
+            set { SetProperty(ref this._IsLoading, value); }
         }
         #endregion
 

@@ -17,12 +17,23 @@ namespace myManga_App.ViewModels
 
         #region NotifyPropertyChange
         public event PropertyChangingEventHandler PropertyChanging;
-        protected void OnPropertyChanging([CallerMemberName] String caller = "")
+        protected void OnPropertyChanging([CallerMemberName] String caller = null)
         { if (PropertyChanging != null)PropertyChanging(this, new PropertyChangingEventArgs(caller)); }
 
         public event PropertyChangedEventHandler PropertyChanged;
-        protected void OnPropertyChanged([CallerMemberName] String caller = "")
+        protected void OnPropertyChanged([CallerMemberName] String caller = null)
         { if (PropertyChanged != null)PropertyChanged(this, new PropertyChangedEventArgs(caller)); }
+
+        protected virtual Boolean SetProperty<T>(ref T storage, T value, [CallerMemberName] String caller = null)
+        {
+            if (Object.Equals(storage, value)) return false;
+
+            this.OnPropertyChanging(caller);
+            storage = value;
+            this.OnPropertyChanged(caller);
+
+            return true;
+        }
         #endregion
 
         protected ViewModelViewType viewType;

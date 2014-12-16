@@ -52,7 +52,7 @@
 			TextElement.FontFamily="{DynamicResource OpenIconic}">
             <Button:MetroButton
                 Content="{DynamicResource HomeTabHeaderContent}"
-				ToolTip="{DynamicResource HomeTabHeader}"
+				ToolTip="{DynamicResource HomeTabHeaderName}"
 				Command="{Binding HomeCommand}"
 				MinWidth="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"/>
             <TextBlock

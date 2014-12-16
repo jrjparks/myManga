@@ -5,7 +5,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
     xmlns:vm="clr-namespace:myManga_App.ViewModels"
-    xmlns:button="clr-namespace:myManga_App.Resources.Theme.Buttons"
+    xmlns:Button="clr-namespace:myManga_App.Resources.Theme.Buttons"
     xmlns:system="clr-namespace:System;assembly=mscorlib"
     xmlns:mangaObjects="clr-namespace:myMangaSiteExtension.Objects;assembly=myMangaSiteExtension"
     xmlns:Converters="clr-namespace:myManga_App.Converters"
@@ -52,21 +52,21 @@
             <ColumnDefinition/>
             <ColumnDefinition Width="48"/>
         </Grid.ColumnDefinitions>
-        <button:MetroToggleButton 
+        <Button:MetroToggleButton 
             x:Name="PageListDropdown"
             Grid.ColumnSpan="3"
             IsHitTestVisible="{Binding IsOpen, Converter={StaticResource BooleanInverter}, ElementName=PageListPopup, Mode=OneWay}">
-            <button:MetroToggleButton.Content>
-                <MultiBinding StringFormat="{}{0} / {1} {2}.{3} - {4} - Page {5}" FallbackValue="Error Binding to ViewModel">
-                    <Binding Path="MangaObject.Name" FallbackValue="Un-Named" Mode="OneWay"/>
-                    <Binding Path="ChapterObject.Volume" TargetNullValue="0" FallbackValue="" Mode="OneWay"/>
-                    <Binding Path="ChapterObject.Chapter" FallbackValue="0" Mode="OneWay"/>
-                    <Binding Path="ChapterObject.SubChapter" FallbackValue="0" Mode="OneWay"/>
-                    <Binding Path="ChapterObject.Name" FallbackValue="Un-Named" Mode="OneWay"/>
-                    <Binding Path="SelectedPageObject.PageNumber" FallbackValue="0" Mode="OneWay"/>
+            <Button:MetroToggleButton.Content>
+                <MultiBinding StringFormat="{}{0} : {1} {2}{3}.{4} : Page {5}">
+                    <Binding Path="MangaObject.Name" FallbackValue="Un-Named" StringFormat="{}{0}"/>
+                    <Binding Path="ChapterObject.Name" FallbackValue="Un-Named" StringFormat="{}{0}"/>
+                    <Binding Path="ChapterObject.Volume" TargetNullValue="0" FallbackValue="" StringFormat="{}{0}"/>
+                    <Binding Path="ChapterObject.Chapter" FallbackValue="0" StringFormat="{}{0}"/>
+                    <Binding Path="ChapterObject.SubChapter" FallbackValue="0" StringFormat="{}{0}"/>
+                    <Binding Path="SelectedPageObject.PageNumber" FallbackValue="0" StringFormat="{}{0}"/>
                 </MultiBinding>
-            </button:MetroToggleButton.Content>
-        </button:MetroToggleButton>
+            </Button:MetroToggleButton.Content>
+        </Button:MetroToggleButton>
         <Popup
             x:Name="PageListPopup"
             AllowsTransparency="True"
@@ -120,7 +120,7 @@
                         SmallChange="0.1" 
                         IsMoveToPointEnabled="True" 
                         IsSnapToTickEnabled="True"/>
-                    <button:MetroButton
+                    <Button:MetroButton
                         Grid.Column="2"
                         Content="Reset"
                         FontSize="14"
@@ -129,7 +129,7 @@
                 </Grid>
             </StackPanel>
         </Popup>
-        <button:MetroButton
+        <Button:MetroButton
             Grid.Column="0"
             Grid.Row="1"
             VerticalContentAlignment="Center"
@@ -174,7 +174,7 @@
                 </Image.LayoutTransform>
             </Image>
         </ScrollViewer>
-        <button:MetroButton
+        <Button:MetroButton
             Grid.Column="2"
             Grid.Row="1"
             VerticalContentAlignment="Center"

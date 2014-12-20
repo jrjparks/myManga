@@ -36,33 +36,54 @@ namespace myManga_App.ViewModels
         }
         #endregion
 
-        protected ViewModelViewType viewType;
+        private static readonly DependencyProperty ViewTypeProperty = DependencyProperty.RegisterAttached(
+            "ViewType",
+            typeof(ViewModelViewType),
+            typeof(BaseViewModel),
+            new PropertyMetadata(ViewModelViewType.Normal, OnViewTypeChenged));
+
         public ViewModelViewType ViewType
         {
-            get { return viewType; }
-            protected set { OnPropertyChanging(); viewType = value; OnPropertyChanged(); SaveViewType(); }
+            get { return (ViewModelViewType)GetValue(ViewTypeProperty); }
+            protected set { SetValue(ViewTypeProperty, value); }
         }
 
-        private Boolean supportsViewTypeChange = false;
+        private static void OnViewTypeChenged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        { (d as BaseViewModel).SaveViewType(); }
+
+
+        private static readonly DependencyProperty SupportsViewTypeChangeProperty = DependencyProperty.RegisterAttached(
+            "SupportsViewTypeChange",
+            typeof(Boolean),
+            typeof(BaseViewModel),
+            new PropertyMetadata(false));
+
         public Boolean SupportsViewTypeChange
-        { get { return supportsViewTypeChange; } private set { supportsViewTypeChange = value; } }
+        {
+            get { return (Boolean)GetValue(SupportsViewTypeChangeProperty); }
+            private set { SetValue(SupportsViewTypeChangeProperty, value); }
+        }
+
+        private Boolean? _IsInDesignMode = null;
+        public Boolean IsInDesignMode { get { return (Boolean)(_IsInDesignMode ?? (_IsInDesignMode = DesignerProperties.GetIsInDesignMode(this))); } }
 
         public void PullFocus()
         { Messenger.Default.Send(this, "FocusRequest"); }
 
         protected BaseViewModel(Boolean SupportsViewTypeChange = false)
         {
-            if (this.SupportsViewTypeChange = SupportsViewTypeChange)
-                try { this.ViewType = App.UserConfig.ViewTypes.FirstOrDefault(vt => vt.ViewModelName.Equals(this.GetType().Name)).ViewType; }
-                catch { App.UserConfig.ViewTypes.Add(new SerializableViewModelViewType() { ViewModelName = this.GetType().Name, ViewType = this.ViewType = ViewModelViewType.Normal }); }
+            if (!IsInDesignMode)
+                if (this.SupportsViewTypeChange = SupportsViewTypeChange)
+                    try { this.ViewType = App.UserConfig.ViewTypes.FirstOrDefault(vt => vt.ViewModelName.Equals(this.GetType().Name)).ViewType; }
+                    catch { App.UserConfig.ViewTypes.Add(new SerializableViewModelViewType() { ViewModelName = this.GetType().Name, ViewType = this.ViewType = ViewModelViewType.Normal }); }
         }
 
         private void SaveViewType()
         {
-            if (this.SupportsViewTypeChange)
+            if (!IsInDesignMode && this.SupportsViewTypeChange)
             {
                 SerializableViewModelViewType CurrentSerializableViewModelViewType = App.UserConfig.ViewTypes.FirstOrDefault(vt => vt.ViewModelName.Equals(this.GetType().Name));
-                if(CurrentSerializableViewModelViewType != null) CurrentSerializableViewModelViewType.ViewType = this.ViewType;
+                if (CurrentSerializableViewModelViewType != null) CurrentSerializableViewModelViewType.ViewType = this.ViewType;
                 App.SaveUserConfig();
             }
         }

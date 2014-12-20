@@ -19,6 +19,8 @@ using System.IO;
 
 namespace myManga_App.ViewModels
 {
+    // TODO: Convert properties to DependencyProperty
+
     public class SettingsViewModel : BaseViewModel
     {
         #region Settings TreeView
@@ -200,40 +202,43 @@ namespace myManga_App.ViewModels
 
         public SettingsViewModel()
         {
-            SiteExtensionInformationObjects = new ObservableCollection<SiteExtensionInformationObject>();
-            foreach (String SiteExtensionName in App.UserConfig.EnabledSiteExtensions)
+            if (!IsInDesignMode)
             {
-                if (App.SiteExtensions.DLLCollection.Contains(SiteExtensionName))
+                SiteExtensionInformationObjects = new ObservableCollection<SiteExtensionInformationObject>();
+                foreach (String SiteExtensionName in App.UserConfig.EnabledSiteExtensions)
                 {
-                    ISiteExtension SiteExtension = App.SiteExtensions.DLLCollection[SiteExtensionName];
-                    ISiteExtensionDescriptionAttribute SiteExtensionDescriptionAttribute = SiteExtension.GetType().GetCustomAttribute<ISiteExtensionDescriptionAttribute>(false);
-                    SiteExtensionInformationObjects.Add(new SiteExtensionInformationObject(SiteExtensionDescriptionAttribute) { Enabled = true });
+                    if (App.SiteExtensions.DLLCollection.Contains(SiteExtensionName))
+                    {
+                        ISiteExtension SiteExtension = App.SiteExtensions.DLLCollection[SiteExtensionName];
+                        ISiteExtensionDescriptionAttribute SiteExtensionDescriptionAttribute = SiteExtension.GetType().GetCustomAttribute<ISiteExtensionDescriptionAttribute>(false);
+                        SiteExtensionInformationObjects.Add(new SiteExtensionInformationObject(SiteExtensionDescriptionAttribute) { Enabled = true });
+                    }
                 }
-            }
-            foreach (ISiteExtension ise in App.SiteExtensions.DLLCollection.Where(se => SiteExtensionInformationObjects.FirstOrDefault(sei => sei.Name == se.GetType().GetCustomAttribute<ISiteExtensionDescriptionAttribute>(false).Name) == null))
-            {
-                ISiteExtensionDescriptionAttribute iseda = ise.GetType().GetCustomAttribute<ISiteExtensionDescriptionAttribute>(false);
-                SiteExtensionInformationObjects.Add(new SiteExtensionInformationObject(iseda) { Enabled = App.UserConfig.EnabledSiteExtensions.Contains(iseda.Name) });
-            }
-
-            DatabaseExtensionInformationObjects = new ObservableCollection<DatabaseExtensionInformationObject>();
-            foreach (String DatabaseExtensionName in App.UserConfig.EnabledDatabaseExtentions)
-            {
-                if (App.DatabaseExtensions.DLLCollection.Contains(DatabaseExtensionName))
+                foreach (ISiteExtension ise in App.SiteExtensions.DLLCollection.Where(se => SiteExtensionInformationObjects.FirstOrDefault(sei => sei.Name == se.GetType().GetCustomAttribute<ISiteExtensionDescriptionAttribute>(false).Name) == null))
                 {
-                    IDatabaseExtension DatabaseExtension = App.DatabaseExtensions.DLLCollection[DatabaseExtensionName];
+                    ISiteExtensionDescriptionAttribute iseda = ise.GetType().GetCustomAttribute<ISiteExtensionDescriptionAttribute>(false);
+                    SiteExtensionInformationObjects.Add(new SiteExtensionInformationObject(iseda) { Enabled = App.UserConfig.EnabledSiteExtensions.Contains(iseda.Name) });
+                }
+
+                DatabaseExtensionInformationObjects = new ObservableCollection<DatabaseExtensionInformationObject>();
+                foreach (String DatabaseExtensionName in App.UserConfig.EnabledDatabaseExtentions)
+                {
+                    if (App.DatabaseExtensions.DLLCollection.Contains(DatabaseExtensionName))
+                    {
+                        IDatabaseExtension DatabaseExtension = App.DatabaseExtensions.DLLCollection[DatabaseExtensionName];
+                        IDatabaseExtensionDescriptionAttribute DatabaseExtensionDescriptionAttribute = DatabaseExtension.GetType().GetCustomAttribute<IDatabaseExtensionDescriptionAttribute>(false);
+                        DatabaseExtensionInformationObjects.Add(new DatabaseExtensionInformationObject(DatabaseExtensionDescriptionAttribute) { Enabled = true });
+                    }
+                }
+
+                foreach (IDatabaseExtension DatabaseExtension in App.DatabaseExtensions.DLLCollection.Where(de => DatabaseExtensionInformationObjects.FirstOrDefault(dei => dei.Name == de.GetType().GetCustomAttribute<IDatabaseExtensionDescriptionAttribute>(false).Name) == null))
+                {
                     IDatabaseExtensionDescriptionAttribute DatabaseExtensionDescriptionAttribute = DatabaseExtension.GetType().GetCustomAttribute<IDatabaseExtensionDescriptionAttribute>(false);
-                    DatabaseExtensionInformationObjects.Add(new DatabaseExtensionInformationObject(DatabaseExtensionDescriptionAttribute) { Enabled = true });
+                    DatabaseExtensionInformationObjects.Add(new DatabaseExtensionInformationObject(DatabaseExtensionDescriptionAttribute) { Enabled = App.UserConfig.EnabledDatabaseExtentions.Contains(DatabaseExtensionDescriptionAttribute.Name) });
                 }
+                SelectedSaveType = App.UserConfig.SaveType;
+                this.DefaultPageZoom = App.UserConfig.DefaultPageZoom;
             }
-
-            foreach (IDatabaseExtension DatabaseExtension in App.DatabaseExtensions.DLLCollection.Where(de => DatabaseExtensionInformationObjects.FirstOrDefault(dei => dei.Name == de.GetType().GetCustomAttribute<IDatabaseExtensionDescriptionAttribute>(false).Name) == null))
-            {
-                IDatabaseExtensionDescriptionAttribute DatabaseExtensionDescriptionAttribute = DatabaseExtension.GetType().GetCustomAttribute<IDatabaseExtensionDescriptionAttribute>(false);
-                DatabaseExtensionInformationObjects.Add(new DatabaseExtensionInformationObject(DatabaseExtensionDescriptionAttribute) { Enabled = App.UserConfig.EnabledDatabaseExtentions.Contains(DatabaseExtensionDescriptionAttribute.Name) });
-            }
-            SelectedSaveType = App.UserConfig.SaveType;
-            this.DefaultPageZoom = App.UserConfig.DefaultPageZoom;
         }
 
         public void SaveUserConfig()

@@ -13,10 +13,12 @@ namespace myManga_App.Objects.MVVM
         Normal,
         Grid,
         Tree,
+        List,
+        Details,
     }
 
     [Serializable, XmlRoot, DebuggerStepThrough]
-    public class SerializableViewModelViewType : SerializableObject
+    public class SerializableViewModelViewType : SerializableObject, INotifyPropertyChanging, INotifyPropertyChanged
     {
         #region NotifyPropertyChange
         public event PropertyChangingEventHandler PropertyChanging;

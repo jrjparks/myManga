@@ -130,6 +130,7 @@
     <Compile Include="IO\ViewModel\Messenger.cs" />
     <Compile Include="Objects\UserInterface\DatabaseExtensionInformationObject.cs" />
     <Compile Include="Objects\MVVM\ViewModelViewType.cs" />
+    <Compile Include="Objects\UserInterface\MangaArchiveInformationObject.cs" />
     <Compile Include="Objects\UserInterface\ReadChapterRequestObject.cs" />
     <Compile Include="Objects\UserInterface\SiteExtentionInformationObject.cs" />
     <Compile Include="Objects\UserConfig\UserConfigurationObject.cs" />

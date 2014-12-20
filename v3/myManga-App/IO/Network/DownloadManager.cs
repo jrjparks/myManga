@@ -2,7 +2,6 @@
 using Core.IO;
 using Core.IO.Storage.Manager.BaseInterfaceClasses;
 using Core.Other.Singleton;
-using myMangaSiteExtension;
 using myMangaSiteExtension.Attributes;
 using myMangaSiteExtension.Interfaces;
 using myMangaSiteExtension.Objects;
@@ -13,9 +12,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Reflection;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Web;
 
 namespace myManga_App.IO.Network
@@ -171,6 +168,7 @@ namespace myManga_App.IO.Network
                     ISiteExtension SiteExtension = App.SiteExtensions.DLLCollection[LocationObj.ExtensionName];
                     ISiteExtensionDescriptionAttribute SiteExtensionDescriptionAttribute = SiteExtension.GetType().GetCustomAttribute<ISiteExtensionDescriptionAttribute>(false);
                     SiteExtensionContent.Add(SiteExtension, Downloader.GetHtmlContent(LocationObj.Url, SiteExtensionDescriptionAttribute.RefererHeader));
+                    Thread.Sleep(2000);
                 }
                 foreach (System.Collections.Generic.KeyValuePair<ISiteExtension, String> Content in SiteExtensionContent)
                 {
@@ -295,13 +293,13 @@ namespace myManga_App.IO.Network
         #endregion
 
         #region Events
-        public event EventHandler StatusChange;
-        private void OnStatusChange(EventArgs e)
+        public event EventHandler<Exception> StatusChange;
+        private void OnStatusChange(Exception e)
         {
             if (StatusChange != null)
             {
                 if (SynchronizationContext == null) { StatusChange(this, e); }
-                else { foreach (EventHandler del in StatusChange.GetInvocationList()) { SynchronizationContext.Post(_e => del(this, _e as EventArgs), e); } }
+                else { foreach (EventHandler<Exception> del in StatusChange.GetInvocationList()) { SynchronizationContext.Post(_e => del(this, _e as Exception), e); } }
             }
         }
         #endregion
@@ -366,7 +364,8 @@ namespace myManga_App.IO.Network
                 Singleton<ZipStorage>.Instance.Write(save_path, e.Result.GetType().Name, e.Result.Serialize(SaveType: App.UserConfig.SaveType));
                 ImageWorker.RunWork(SmartThreadPool, from String url in e.Result.Covers select new ImageDownloadRequest(url, save_path));
             }
-            OnStatusChange(null);
+            else { this.Download(e.Result); }
+            OnStatusChange(e.Exception);
         }
 
         private void ChapterObjectWorker_WorkComplete(object sender, WorkerResult<DownloadManager.ChapterObjectDownloadRequest> e)
@@ -377,7 +376,7 @@ namespace myManga_App.IO.Network
                 Singleton<ZipStorage>.Instance.Write(save_path, e.Result.ChapterObject.GetType().Name, e.Result.ChapterObject.Serialize(SaveType: App.UserConfig.SaveType));
                 PageObjectWorker.RunWork(SmartThreadPool, from PageObject page_object in e.Result.ChapterObject.Pages select new PageObjectDownloadRequest(e.Result.MangaObject, e.Result.ChapterObject, page_object));
             }
-            OnStatusChange(null);
+            OnStatusChange(e.Exception);
         }
 
         private void PageObjectWorker_WorkComplete(object sender, WorkerResult<DownloadManager.PageObjectDownloadRequest> e)
@@ -388,13 +387,13 @@ namespace myManga_App.IO.Network
                 Singleton<ZipStorage>.Instance.Write(save_path, e.Result.ChapterObject.GetType().Name, e.Result.ChapterObject.Serialize(SaveType: App.UserConfig.SaveType));
                 ImageWorker.RunWork(SmartThreadPool, new ImageDownloadRequest(e.Result.PageObject.ImgUrl, save_path));
             }
-            OnStatusChange(null);
+            OnStatusChange(e.Exception);
         }
 
         private void ImageWorker_WorkComplete(object sender, WorkerResult<DownloadManager.ImageDownloadRequest> e)
         {
             if (e.Success) { using (e.Result.Stream) { Singleton<ZipStorage>.Instance.Write(e.Result.LocalPath, e.Result.Filename, e.Result.Stream); } }
-            OnStatusChange(null);
+            OnStatusChange(e.Exception);
         }
         #endregion
     }

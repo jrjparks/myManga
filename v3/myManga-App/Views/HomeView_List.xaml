@@ -59,9 +59,9 @@
                     </Grid.InputBindings>
                     <button:MetroButton
 						Grid.Column="0"
-						Content="{DynamicResource fa-search}"
+						FontFamily="{DynamicResource OpenIconic}"
+						Content="{DynamicResource oi-magnifying-glass}"
 						Command="{Binding SearchSiteCommand}"
-						FontFamily="{DynamicResource FontAwesome}"
 						ToolTip="Search Sites"
 						Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"/>
                     <TextBox
@@ -155,9 +155,9 @@
                     </Popup>
                     <button:MetroButton
 						Grid.Column="3"
-						Content="{DynamicResource fa-times}"
+					    FontFamily="{DynamicResource OpenIconic}"
+					    Content="{DynamicResource oi-delete}"
 						Command="{Binding ClearSearchCommand}"
-						FontFamily="{DynamicResource FontAwesome}"
 						ToolTip="Clear Search"
 						Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"/>
                 </Grid>
@@ -172,8 +172,8 @@
 				Visibility="{Binding HasItems, Converter={StaticResource BooleanToVisibilityConverter}, RelativeSource={RelativeSource Self}}" 
 				ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                 IsSynchronizedWithCurrentItem="True"
-				SelectedItem="{Binding SelectedMangaObject}"
-				ItemsSource="{Binding MangaObjectItems}"/>
+				SelectedItem="{Binding SelectedMangaArchive}"
+				ItemsSource="{Binding MangaArchiveCollection}"/>
             <ProgressBar 
 				Grid.Row="1" 
 				HorizontalAlignment="Center" 
@@ -185,8 +185,8 @@
             <button:MetroButton
 				Grid.Row="3"
 				FontSize="16"
-				FontFamily="{DynamicResource FontAwesome}"
-				Content="{DynamicResource fa-refresh}"
+				FontFamily="{DynamicResource OpenIconic}"
+				Content="{DynamicResource oi-reload}"
 				ContentStringFormat="{}{0} Refresh"
 				Command="{Binding RefreshMangaListCommand}"/>
         </Grid>
@@ -197,13 +197,13 @@
 			x:Name="MangaObjectDescription"
 			Grid.Column="2" 
 			DataContext="{Binding SelectedItem, ElementName=MangaObjectItems}"
-			Background="{DynamicResource window-background}"
-            Visibility="{Binding TargetNullValue=Collapsed}">
+			Background="{DynamicResource window-background}">
+            <!--Visibility="{Binding TargetNullValue=Collapsed}">-->
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="3*"/>
                 <ColumnDefinition MinWidth="100" MaxWidth="300"/>
             </Grid.ColumnDefinitions>
-            <Grid>
+            <Grid DataContext="{Binding MangaObject}">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="332"/>
                     <RowDefinition Height="32"/>
@@ -236,7 +236,7 @@
                             MinWidth="150"
                             VerticalAlignment="Bottom"
                             FontFamily="{DynamicResource OpenIconic}"
-                            Content="{DynamicResource oi-eye}"
+                            Content="{DynamicResource oi-bookmark}"
                             ContentStringFormat="{}{0} Resume Reading"
                             FontSize="18"
                             Opacity="0.75"
@@ -285,8 +285,8 @@
             </Grid>
             <ListBox 
 				Grid.Column="1"
-				ItemsSource="{Binding Chapters}"
-                SelectedItem="{Binding DataContext.SelectedChapter, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl}}"
+				ItemsSource="{Binding MangaObject.Chapters}"
+                SelectedItem="{Binding ResumeChapterObject, Mode=OneWay}"
                 SelectedIndex="0"
                 IsSynchronizedWithCurrentItem="True"
 				ItemContainerStyle="{DynamicResource HomeView_List_ChapterListBoxItem}"

@@ -34,7 +34,7 @@
     </UserControl.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition MinWidth="100" MaxWidth="300"/>
+            <ColumnDefinition Width="2*" MinWidth="200" MaxWidth="500"/>
             <ColumnDefinition Width="15"/>
             <ColumnDefinition Width="3*"/>
         </Grid.ColumnDefinitions>
@@ -42,8 +42,8 @@
 			x:Name="MangaObjectItems"
             Grid.ColumnSpan="3"
 			ItemContainerStyle="{DynamicResource HomeView_Grid_MangaListBoxItem}" 
-			SelectedItem="{Binding SelectedMangaObject}"
-			ItemsSource="{Binding MangaObjectItems}"
+			SelectedItem="{Binding SelectedMangaArchive}"
+			ItemsSource="{Binding MangaArchiveCollection}"
             Padding="0,34,0,0">
             <ListBox.Template>
                 <ControlTemplate TargetType="{x:Type ListBox}">
@@ -65,6 +65,7 @@
             </ListBox.Template>
         </ListBox>
         <Border
+            Grid.ColumnSpan="2"
             Height="32"
             VerticalAlignment="Top"
             TextElement.FontSize="16"
@@ -76,6 +77,7 @@
                     <ColumnDefinition Width="1*"/>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
                 <Grid.InputBindings>
                     <KeyBinding Command="{Binding SearchSiteCommand}" Key="Return"/>
@@ -83,9 +85,9 @@
                 </Grid.InputBindings>
                 <button:MetroButton
 						Grid.Column="0"
-						Content="{DynamicResource fa-search}"
+						FontFamily="{DynamicResource OpenIconic}"
+						Content="{DynamicResource oi-magnifying-glass}"
 						Command="{Binding SearchSiteCommand}"
-						FontFamily="{DynamicResource FontAwesome}"
 						ToolTip="Search Sites"
 						Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"/>
                 <TextBox
@@ -178,12 +180,19 @@
                     </Border>
                 </Popup>
                 <button:MetroButton
-						Grid.Column="3"
-						Content="{DynamicResource fa-times}"
-						Command="{Binding ClearSearchCommand}"
-						FontFamily="{DynamicResource FontAwesome}"
-						ToolTip="Clear Search"
-						Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"/>
+					Grid.Column="3"
+					FontFamily="{DynamicResource OpenIconic}"
+					Content="{DynamicResource oi-delete}"
+					Command="{Binding ClearSearchCommand}"
+					ToolTip="Clear Search"
+					Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"/>
+                <button:MetroButton
+					Grid.Column="4"
+			        FontFamily="{DynamicResource OpenIconic}"
+			        Content="{DynamicResource oi-reload}"
+				    ContentStringFormat="{}Refresh {0}"
+                    VerticalContentAlignment="Center"
+			        Command="{Binding RefreshMangaListCommand}"/>
             </Grid>
         </Border>
     </Grid>

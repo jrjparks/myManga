@@ -69,7 +69,7 @@
                             </MultiBinding>
                         </TextBlock.Text>
                     </TextBlock>
-                    <TextBlock Text="{Binding SelectedPageObject.PageNumber, FallbackValue={}\ Page: 0, StringFormat=Page: {0}}" Margin="1,0"/>
+                    <TextBlock Text="{Binding SelectedPageObject.PageNumber, FallbackValue={}\ Page: 0, StringFormat={}\ Page: {0}}" Margin="1,0"/>
                 </StackPanel>
             </Button:MetroToggleButton.Content>
         </Button:MetroToggleButton>
@@ -88,8 +88,8 @@
                 Background="{DynamicResource window-background}">
                 <ListBox
                     x:Name="PageList"
-                    ItemsSource="{Binding ChapterObject.Pages, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}"
-                    SelectedItem="{Binding SelectedPageObject, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}" 
+                    ItemsSource="{Binding ChapterObject.Pages}"
+                    SelectedItem="{Binding SelectedPageObject}" 
                     IsSynchronizedWithCurrentItem="True" 
                     ItemContainerStyle="{DynamicResource ReaderView_PageListBoxItem}" 
                     ScrollViewer.VerticalScrollBarVisibility="Disabled"

@@ -73,8 +73,8 @@
                                     </Rectangle.Fill>
                                 </Rectangle>
                                 <TextBlock
-                                    Text="{DynamicResource fa-icon-ok}"
-                                    FontFamily="{DynamicResource FontAwesome}" 
+                                    Text="{DynamicResource oi-check}"
+                                    FontFamily="{DynamicResource OpenIconic}" 
                                     FontSize="14" 
                                     Foreground="{DynamicResource window-background}" 
                                     Grid.Column="1"
@@ -132,11 +132,11 @@
                                 Margin="6,2" 
                                 Width="48" 
                                 Height="72"
-                                Source="{Binding Converter={StaticResource LoadImageFromMangaArchive}, FallbackValue=/myManga;component/Resources/Images/FallbackMangaIcon.png}"/>
-                            <TextBlock Grid.Column="1" Grid.Row="0" VerticalAlignment="Center" Foreground="{StaticResource text-dark}" FontWeight="Bold" FontSize="14" TextTrimming="CharacterEllipsis" Text="{Binding Name, FallbackValue=No-Name}"/>
-                            <TextBlock Grid.Column="1" Grid.Row="1" VerticalAlignment="Center" Foreground="{StaticResource text-muted}" TextTrimming="CharacterEllipsis" Text="{Binding Locations, Converter={StaticResource LocationListToCSV}, Mode=OneWay, FallbackValue=No-Location}"/>
-                            <TextBlock Grid.Column="1" Grid.Row="2" VerticalAlignment="Center" Foreground="{StaticResource text-muted}" TextTrimming="CharacterEllipsis" Text="{Binding DatabaseLocations, Converter={StaticResource LocationListToCSV}, Mode=OneWay, FallbackValue=No-Database}"/>
-                            <TextBlock Grid.Column="1" Grid.Row="3" VerticalAlignment="Center" Foreground="{StaticResource text-muted}" TextTrimming="CharacterEllipsis" Text="{Binding Genres, Converter={StaticResource StringListToCSV}, Mode=OneWay, FallbackValue=No-Genre}"/>
+                                Source="{Binding MangaObject, Converter={StaticResource LoadImageFromMangaArchive}, FallbackValue=/myManga;component/Resources/Images/FallbackMangaIcon.png}"/>
+                            <TextBlock Grid.Column="1" Grid.Row="0" VerticalAlignment="Center" Foreground="{StaticResource text-dark}" FontWeight="Bold" FontSize="14" TextTrimming="CharacterEllipsis" Text="{Binding MangaObject.Name, FallbackValue=No-Name}"/>
+                            <TextBlock Grid.Column="1" Grid.Row="1" VerticalAlignment="Center" Foreground="{StaticResource text-muted}" TextTrimming="CharacterEllipsis" Text="{Binding MangaObject.Locations, Converter={StaticResource LocationListToCSV}, Mode=OneWay, FallbackValue=No-Location}"/>
+                            <TextBlock Grid.Column="1" Grid.Row="2" VerticalAlignment="Center" Foreground="{StaticResource text-muted}" TextTrimming="CharacterEllipsis" Text="{Binding MangaObject.DatabaseLocations, Converter={StaticResource LocationListToCSV}, Mode=OneWay, FallbackValue=No-Database}"/>
+                            <TextBlock Grid.Column="1" Grid.Row="3" VerticalAlignment="Center" Foreground="{StaticResource text-muted}" TextTrimming="CharacterEllipsis" Text="{Binding MangaObject.Genres, Converter={StaticResource StringListToCSV}, Mode=OneWay, FallbackValue=No-Genre}"/>
                         </Grid>
                         <Border.InputBindings>
                             <MouseBinding MouseAction="LeftDoubleClick" Command="{Binding Path=DataContext.ResumeReadingCommand, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl}}"/>
@@ -215,8 +215,8 @@
                                 x:Name="DownloadButton"
                                 Grid.Row="1"
                                 Grid.Column="1"
-                                FontFamily="{DynamicResource FontAwesome}"
-                                Content="{StaticResource fa-download}"
+                                FontFamily="{DynamicResource OpenIconic}"
+                                Content="{StaticResource oi-data-transfer-download}"
                                 Command="{Binding Path=DataContext.DownloadChapterCommand, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl}}"
                                 CommandParameter="{Binding}"/>
                         </Grid>
@@ -265,7 +265,7 @@
                         MaxWidth="400"
                         HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                         VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                        ToolTip="{Binding Name}">
+                        ToolTip="{Binding MangaObject.Name}">
                         <Grid
                             x:Name="Content"
                             Margin="{TemplateBinding Padding}"
@@ -277,7 +277,7 @@
                             <Image 
                                 x:Name="CoverImage" 
                                 Grid.Row="0" 
-                                Source="{Binding Converter={StaticResource LoadImageFromMangaArchive}, FallbackValue=/myManga;component/Resources/Images/FallbackMangaIcon.png}"/>
+                                Source="{Binding MangaObject, Converter={StaticResource LoadImageFromMangaArchive}, FallbackValue=/myManga;component/Resources/Images/FallbackMangaIcon.png}"/>
                             <button:MetroButton
                                 x:Name="ResumeReadingButton"
                                 Opacity="0"
@@ -285,7 +285,7 @@
                                 Width="{Binding ActualWidth, Mode=OneWay, ElementName=CoverImage}"
                                 VerticalAlignment="Bottom"
                                 FontFamily="{DynamicResource OpenIconic}"
-                                Content="{DynamicResource oi-eye}"
+                                Content="{DynamicResource oi-bookmark}"
                                 ContentStringFormat="{}{0} Resume"
                                 FontSize="18"
                                 Padding="5"
@@ -295,7 +295,7 @@
                                 Grid.Row="1"
                                 FontSize="18"
                                 Padding="2,0"
-                                Text="{Binding Name, FallbackValue=No-Name}"
+                                Text="{Binding MangaObject.Name, FallbackValue=No-Name}"
                                 Background="{DynamicResource window-theme-secondary}"
                                 Width="{Binding ElementName=CoverImage, Path=ActualWidth, Mode=OneWay}"
                                 TextTrimming="CharacterEllipsis"
@@ -340,32 +340,32 @@
                                             </Grid.RowDefinitions>
                                             <StackPanel Grid.Row="0">
                                                 <TextBlock Text="Alternate Titles:" FontWeight="Bold" Foreground="{DynamicResource text-muted}"/>
-                                                <TextBlock Text="{Binding AlternateNames, Converter={StaticResource StringListToCSV}}" ToolTip="{Binding AlternateNames, Converter={StaticResource StringListToCSV}}" FontWeight="Bold" Foreground="{DynamicResource text-muted}" TextTrimming="CharacterEllipsis"/>
+                                                <TextBlock Text="{Binding MangaObject.AlternateNames, Converter={StaticResource StringListToCSV}}" ToolTip="{Binding AlternateNames, Converter={StaticResource StringListToCSV}}" FontWeight="Bold" Foreground="{DynamicResource text-muted}" TextTrimming="CharacterEllipsis"/>
                                             </StackPanel>
                                             <StackPanel Grid.Row="1">
                                                 <TextBlock Text="Released:" FontWeight="Bold" Foreground="{DynamicResource text-muted}"/>
-                                                <TextBlock Text="{Binding Released, StringFormat=yyyy}" ToolTip="{Binding Released, StringFormat=yyyy}" FontWeight="Bold" Foreground="{DynamicResource text-muted}"/>
+                                                <TextBlock Text="{Binding MangaObject.Released, StringFormat=yyyy}" ToolTip="{Binding Released, StringFormat=yyyy}" FontWeight="Bold" Foreground="{DynamicResource text-muted}"/>
                                             </StackPanel>
                                             <StackPanel Grid.Row="2">
                                                 <TextBlock Text="Type:" FontWeight="Bold" Foreground="{DynamicResource text-muted}"/>
-                                                <TextBlock Text="{Binding MangaType, StringFormat=\{0\}}" ToolTip="{Binding MangaType, StringFormat=\{0\}}" FontWeight="Bold" Foreground="{DynamicResource text-muted}"/>
+                                                <TextBlock Text="{Binding MangaObject.MangaType, StringFormat=\{0\}}" ToolTip="{Binding MangaType, StringFormat=\{0\}}" FontWeight="Bold" Foreground="{DynamicResource text-muted}"/>
                                             </StackPanel>
                                             <StackPanel Grid.Row="3">
                                                 <TextBlock Text="Authors:" FontWeight="Bold" Foreground="{DynamicResource text-muted}"/>
-                                                <TextBlock Text="{Binding Authors, Converter={StaticResource StringListToCSV}}" ToolTip="{Binding Authors, Converter={StaticResource StringListToCSV}}" FontWeight="Bold" Foreground="{DynamicResource text-muted}" TextTrimming="CharacterEllipsis"/>
+                                                <TextBlock Text="{Binding MangaObject.Authors, Converter={StaticResource StringListToCSV}}" ToolTip="{Binding Authors, Converter={StaticResource StringListToCSV}}" FontWeight="Bold" Foreground="{DynamicResource text-muted}" TextTrimming="CharacterEllipsis"/>
                                             </StackPanel>
                                             <StackPanel Grid.Row="4">
                                                 <TextBlock Text="Artists:" FontWeight="Bold" Foreground="{DynamicResource text-muted}"/>
-                                                <TextBlock Text="{Binding Authors, Converter={StaticResource StringListToCSV}}" ToolTip="{Binding Authors, Converter={StaticResource StringListToCSV}}" FontWeight="Bold" Foreground="{DynamicResource text-muted}" TextTrimming="CharacterEllipsis"/>
+                                                <TextBlock Text="{Binding MangaObject.Authors, Converter={StaticResource StringListToCSV}}" ToolTip="{Binding Authors, Converter={StaticResource StringListToCSV}}" FontWeight="Bold" Foreground="{DynamicResource text-muted}" TextTrimming="CharacterEllipsis"/>
                                             </StackPanel>
                                             <StackPanel Grid.Row="5">
                                                 <TextBlock Text="Genres:" FontWeight="Bold" Foreground="{DynamicResource text-muted}"/>
-                                                <TextBlock Text="{Binding Genres, Converter={StaticResource StringListToCSV}}" ToolTip="{Binding Genres, Converter={StaticResource StringListToCSV}}" FontWeight="Bold" Foreground="{DynamicResource text-muted}" TextTrimming="CharacterEllipsis"/>
+                                                <TextBlock Text="{Binding MangaObject.Genres, Converter={StaticResource StringListToCSV}}" ToolTip="{Binding Genres, Converter={StaticResource StringListToCSV}}" FontWeight="Bold" Foreground="{DynamicResource text-muted}" TextTrimming="CharacterEllipsis"/>
                                             </StackPanel>
                                             <StackPanel Grid.Row="6" Grid.RowSpan="2">
                                                 <TextBlock Text="Sites:" FontWeight="Bold" Foreground="{DynamicResource text-muted}"/>
-                                                <TextBlock Text="{Binding Locations, Converter={StaticResource LocationListToCSV}}" ToolTip="{Binding Locations, Converter={StaticResource LocationListToCSV}}" FontWeight="Bold" Foreground="{DynamicResource text-muted}" TextTrimming="CharacterEllipsis"/>
-                                                <TextBlock Text="{Binding DatabaseLocations, Converter={StaticResource LocationListToCSV}}" ToolTip="{Binding DatabaseLocations, Converter={StaticResource LocationListToCSV}}" FontWeight="Bold" Foreground="{DynamicResource text-muted}" TextTrimming="CharacterEllipsis"/>
+                                                <TextBlock Text="{Binding MangaObject.Locations, Converter={StaticResource LocationListToCSV}}" ToolTip="{Binding Locations, Converter={StaticResource LocationListToCSV}}" FontWeight="Bold" Foreground="{DynamicResource text-muted}" TextTrimming="CharacterEllipsis"/>
+                                                <TextBlock Text="{Binding MangaObject.DatabaseLocations, Converter={StaticResource LocationListToCSV}}" ToolTip="{Binding DatabaseLocations, Converter={StaticResource LocationListToCSV}}" FontWeight="Bold" Foreground="{DynamicResource text-muted}" TextTrimming="CharacterEllipsis"/>
                                             </StackPanel>
                                         </Grid>
                                     </StackPanel>

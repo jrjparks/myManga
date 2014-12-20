@@ -147,7 +147,7 @@ namespace myManga_App.ViewModels
         public SearchViewModel()
             : base()
         {
-            if (!DesignerProperties.GetIsInDesignMode(this))
+            if (!IsInDesignMode)
             {
                 ConfigureSearchFilter();
                 Singleton<myManga_App.IO.Network.SmartSearch>.Instance.SearchComplete += Instance_SearchComplete;

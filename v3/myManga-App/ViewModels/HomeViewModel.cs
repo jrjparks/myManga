@@ -28,43 +28,34 @@ using myManga_App.IO.ViewModel;
 using myManga_App.Objects;
 using myManga_App.IO.Network;
 using myManga_App.Objects.MVVM;
+using myManga_App.Objects.UserInterface;
 
 namespace myManga_App.ViewModels
 {
     public sealed class HomeViewModel : BaseViewModel
     {
         #region MangaList
-        private ObservableCollection<MangaObject> _MangaObjectItems;
-        public ObservableCollection<MangaObject> MangaObjectItems
+        private static readonly DependencyProperty MangaArchiveCollectionProperty = DependencyProperty.RegisterAttached(
+            "MangaArchiveCollection",
+            typeof(ObservableCollection<MangaArchiveInformationObject>),
+            typeof(HomeViewModel),
+            new PropertyMetadata(new ObservableCollection<MangaArchiveInformationObject>()));
+        public ObservableCollection<MangaArchiveInformationObject> MangaArchiveCollection
         {
-            get { return _MangaObjectItems ?? (_MangaObjectItems = new ObservableCollection<MangaObject>()); }
-            set { SetProperty(ref this._MangaObjectItems, value); }
+            get { return (ObservableCollection<MangaArchiveInformationObject>)GetValue(MangaArchiveCollectionProperty); }
+            set { SetValue(MangaArchiveCollectionProperty, value); }
         }
 
-        private MangaObject _SelectedMangaObject;
-        public MangaObject SelectedMangaObject
+        private static readonly DependencyProperty SelectedMangaArchiveProperty = DependencyProperty.RegisterAttached(
+            "SelectedMangaArchive",
+            typeof(MangaArchiveInformationObject),
+            typeof(HomeViewModel));
+        public MangaArchiveInformationObject SelectedMangaArchive
         {
-            get { return _SelectedMangaObject; }
-            set
-            {
-                SetProperty(ref _SelectedMangaObject, value ?? MangaObjectItems.FirstOrDefault());
-                LoadBookmarkObject();
-            }
+            get { return (MangaArchiveInformationObject)GetValue(SelectedMangaArchiveProperty); }
+            set { SetValue(SelectedMangaArchiveProperty, value); }
         }
-
-        private BookmarkObject _BookmarkObject;
-        public BookmarkObject BookmarkObject
-        {
-            get { return _BookmarkObject; }
-            set { SetProperty(ref this._BookmarkObject, value); }
-        }
-
-        private ChapterObject _SelectedChapter;
-        public ChapterObject SelectedChapter
-        {
-            get { return _SelectedChapter; }
-            set { SetProperty(ref this._SelectedChapter, value); }
-        }
+        #endregion
 
         private String _SearchFilter;
         public String SearchFilter
@@ -87,7 +78,6 @@ namespace myManga_App.ViewModels
         { SearchFilter = String.Empty; }
         private Boolean CanClearSearch()
         { return !String.IsNullOrWhiteSpace(SearchFilter); }
-        #endregion
 
         #region SearchSites
         private DelegateCommand _SearchSiteCommand;
@@ -107,7 +97,7 @@ namespace myManga_App.ViewModels
         { get { return _DownloadChapterCommand ?? (_DownloadChapterCommand = new DelegateCommand<ChapterObject>(DownloadChapter)); } }
 
         private void DownloadChapter(ChapterObject ChapterObj)
-        { DownloadManager.Default.Download(SelectedMangaObject, ChapterObj); }
+        { DownloadManager.Default.Download(SelectedMangaArchive.MangaObject, ChapterObj); }
         #endregion
 
         #region ReadChapter
@@ -117,10 +107,10 @@ namespace myManga_App.ViewModels
 
         private void ReadChapter(ChapterObject ChapterObj)
         {
-            String bookmark_chapter_path = Path.Combine(App.CHAPTER_ARCHIVE_DIRECTORY, this.SelectedMangaObject.MangaFileName());
-            MangaObject SelectedMangaObject = this.SelectedMangaObject;
+            String bookmark_chapter_path = Path.Combine(App.CHAPTER_ARCHIVE_DIRECTORY, this.SelectedMangaArchive.MangaObject.MangaFileName());
+            MangaObject SelectedMangaObject = this.SelectedMangaArchive.MangaObject;
             if (ChapterObj.IsLocal(bookmark_chapter_path, App.CHAPTER_ARCHIVE_EXTENSION))
-                Messenger.Default.Send(new ReadChapterRequestObject(this.SelectedMangaObject, ChapterObj), "ReadChapterRequest");
+                Messenger.Default.Send(new ReadChapterRequestObject(this.SelectedMangaArchive.MangaObject, ChapterObj), "ReadChapterRequest");
             else
                 DownloadManager.Default.Download(SelectedMangaObject, ChapterObj);
         }
@@ -131,12 +121,12 @@ namespace myManga_App.ViewModels
 
         private void ResumeReading()
         {
-            String bookmark_chapter_path = Path.Combine(App.CHAPTER_ARCHIVE_DIRECTORY, this.SelectedMangaObject.MangaFileName());
-            MangaObject SelectedMangaObject = this.SelectedMangaObject;
-            ChapterObject ResumeChapterObject = (this.BookmarkObject != null) ? 
-                SelectedMangaObject.ChapterObjectOfBookmarkObject(this.BookmarkObject) : 
+            String bookmark_chapter_path = Path.Combine(App.CHAPTER_ARCHIVE_DIRECTORY, this.SelectedMangaArchive.MangaObject.MangaFileName());
+            MangaObject SelectedMangaObject = this.SelectedMangaArchive.MangaObject;
+            ChapterObject ResumeChapterObject = (this.SelectedMangaArchive.BookmarkObject != null) ?
+                SelectedMangaObject.ChapterObjectOfBookmarkObject(this.SelectedMangaArchive.BookmarkObject) : 
                 SelectedMangaObject.Chapters.FirstOrDefault();
-            BookmarkObject SelectedBookmarkObject = this.BookmarkObject ?? new myMangaSiteExtension.Objects.BookmarkObject()
+            BookmarkObject SelectedBookmarkObject = this.SelectedMangaArchive.BookmarkObject ?? new myMangaSiteExtension.Objects.BookmarkObject()
             {
                 Volume = ResumeChapterObject.Volume,
                 Chapter = ResumeChapterObject.Chapter,
@@ -156,7 +146,7 @@ namespace myManga_App.ViewModels
             }
         }
         private Boolean CanResumeReading()
-        { return this.SelectedMangaObject != null; }
+        { return this.SelectedMangaArchive.MangaObject != null; }
         #endregion
 
         #region RefreshManga
@@ -165,10 +155,10 @@ namespace myManga_App.ViewModels
         { get { return _RefreshMangaCommand ?? (_RefreshMangaCommand = new DelegateCommand(RefreshManga, CanRefreshManga)); } }
 
         private Boolean CanRefreshManga()
-        { return SelectedMangaObject != null; }
+        { return SelectedMangaArchive.MangaObject != null; }
 
         private void RefreshManga()
-        { DownloadManager.Default.Download(_SelectedMangaObject); }
+        { DownloadManager.Default.Download(SelectedMangaArchive.MangaObject); }
         #endregion
 
         #region RefreshMangaList
@@ -177,10 +167,10 @@ namespace myManga_App.ViewModels
         { get { return _RefreshMangaListCommand ?? (_RefreshMangaListCommand = new DelegateCommand(RefreshMangaList, CanRefreshMangaList)); } }
 
         private Boolean CanRefreshMangaList()
-        { return MangaObjectItems.Count > 0; }
+        { return MangaArchiveCollection.Count > 0; }
 
         private void RefreshMangaList()
-        { foreach (MangaObject manga_object in MangaObjectItems) DownloadManager.Default.Download(manga_object); }
+        { foreach (MangaArchiveInformationObject manga_archive in MangaArchiveCollection) DownloadManager.Default.Download(manga_archive.MangaObject); }
         #endregion
 
         private Boolean _IsLoading;
@@ -193,24 +183,15 @@ namespace myManga_App.ViewModels
         public HomeViewModel()
             : base(SupportsViewTypeChange:true)
         {
-            if (!DesignerProperties.GetIsInDesignMode(this))
+            if (!IsInDesignMode)
             {
                 ConfigureSearchFilter();
                 foreach (String MangaArchiveFilePath in Directory.GetFiles(App.MANGA_ARCHIVE_DIRECTORY, App.MANGA_ARCHIVE_FILTER, SearchOption.AllDirectories))
                 {
-                    Stream archive_file;
-                    if (Singleton<ZipStorage>.Instance.TryRead(MangaArchiveFilePath, out archive_file, typeof(MangaObject).Name))
-                    {
-                        try
-                        {
-                            if (archive_file.CanRead && archive_file.Length > 0)
-                            { MangaObjectItems.Add(archive_file.Deserialize<MangaObject>(SaveType: App.UserConfig.SaveType)); }
-                        }
-                        catch { }
-                        archive_file.Close();
-                    }
+                    MangaArchiveInformationObject manga_archive = LoadMangaArchiveInformationObject(MangaArchiveFilePath);
+                    if (!manga_archive.Empty()) MangaArchiveCollection.Add(manga_archive);
                 }
-                this.SelectedMangaObject = this.MangaObjectItems.FirstOrDefault();
+                this.SelectedMangaArchive = this.MangaArchiveCollection.FirstOrDefault();
                 mangaListView.MoveCurrentToFirst();
 
                 Messenger.Default.RegisterRecipient<FileSystemEventArgs>(this, MangaObjectArchiveWatcher_Event, "MangaObjectArchiveWatcher");
@@ -219,51 +200,74 @@ namespace myManga_App.ViewModels
 #endif
         }
 
-        void MangaObjectArchiveWatcher_Event(FileSystemEventArgs e)
+        private void MangaObjectArchiveWatcher_Event(FileSystemEventArgs e)
         {
-            MangaObject current_manga_object = MangaObjectItems.FirstOrDefault(o => o.MangaArchiveName(App.MANGA_ARCHIVE_EXTENSION) == e.Name);
+            MangaArchiveInformationObject current_manga_archive = MangaArchiveCollection.FirstOrDefault(
+                o => o.MangaObject.MangaArchiveName(App.MANGA_ARCHIVE_EXTENSION) == e.Name);
+            Boolean ViewingSelectedMangaObject = this.SelectedMangaArchive != null && this.SelectedMangaArchive.Equals(current_manga_archive);
             switch (e.ChangeType)
             {
-                default:
-                    break;
-
                 case WatcherChangeTypes.Changed:
                 case WatcherChangeTypes.Created:
-                    Stream archive_file;
-                    if (Singleton<ZipStorage>.Instance.TryRead(e.FullPath, out archive_file, typeof(MangaObject).Name))
+                    MangaArchiveInformationObject new_manga_archive = LoadMangaArchiveInformationObject(e.FullPath);
+                    if (!new_manga_archive.Empty())
                     {
-                        Boolean ViewingSelectedMangaObject = this.SelectedMangaObject != null && this.SelectedMangaObject.Name.Equals(current_manga_object.Name);
-                        MangaObject new_manga_object = archive_file.Deserialize<MangaObject>(SaveType: App.UserConfig.SaveType);
-                        if (current_manga_object != null)
-                            current_manga_object.Merge(new_manga_object);
+                        if (current_manga_archive.Empty())
+                            MangaArchiveCollection.Add(new_manga_archive);
                         else
-                            MangaObjectItems.Add(new_manga_object);
-                        archive_file.Close();
-                        if (ViewingSelectedMangaObject) this.SelectedMangaObject = new_manga_object;
+                            current_manga_archive.Merge(new_manga_archive);
+                        if (ViewingSelectedMangaObject) this.SelectedMangaArchive = new_manga_archive;
                     }
                     break;
 
                 case WatcherChangeTypes.Deleted:
-                    MangaObjectItems.Remove(current_manga_object);
+                    MangaArchiveCollection.Remove(current_manga_archive);
+                    break;
+
+                default:
                     break;
             }
         }
 
-        private void ConfigureSearchFilter()
+        private MangaArchiveInformationObject LoadMangaArchiveInformationObject(String ArchivePath)
         {
-            mangaListView = CollectionViewSource.GetDefaultView(MangaObjectItems);
-            mangaListView.Filter = mangaObject => String.IsNullOrWhiteSpace(SearchFilter) ? true : (mangaObject as MangaObject).IsNameMatch(SearchFilter);
-            if (mangaListView.CanSort)
-                mangaListView.SortDescriptions.Add(new SortDescription("Name", ListSortDirection.Ascending));
+            Stream archive_file;
+            MangaObject manga_object = null;
+            BookmarkObject bookmark_object = null;
+            if (Singleton<ZipStorage>.Instance.TryRead(ArchivePath, out archive_file, typeof(MangaObject).Name))
+            {
+                try
+                {
+                    if (archive_file.CanRead && archive_file.Length > 0)
+                    { manga_object = archive_file.Deserialize<MangaObject>(SaveType: App.UserConfig.SaveType); }
+                }
+                catch { }
+                archive_file.Close();
+            }
+            if (Singleton<ZipStorage>.Instance.TryRead(ArchivePath, out archive_file, typeof(BookmarkObject).Name))
+            {
+                try
+                {
+                    if (archive_file.CanRead && archive_file.Length > 0)
+                    { bookmark_object = archive_file.Deserialize<BookmarkObject>(SaveType: App.UserConfig.SaveType); }
+                }
+                catch { }
+                archive_file.Close();
+            }
+            return new MangaArchiveInformationObject(manga_object, bookmark_object);
         }
 
-        private void LoadBookmarkObject()
+        private void ConfigureSearchFilter()
         {
-            Stream bookmark_file;
-            if (Singleton<ZipStorage>.Instance.TryRead(Path.Combine(App.MANGA_ARCHIVE_DIRECTORY, this.SelectedMangaObject.MangaArchiveName(App.MANGA_ARCHIVE_EXTENSION)), out bookmark_file, typeof(BookmarkObject).Name))
-            { using (bookmark_file) this.BookmarkObject = bookmark_file.Deserialize<BookmarkObject>(SaveType: App.UserConfig.SaveType); }
-            else { this.BookmarkObject = null; }
-            if (this.SelectedMangaObject != null && this.BookmarkObject != null) { this.SelectedChapter = this.SelectedMangaObject.ChapterObjectOfBookmarkObject(this.BookmarkObject); }
+            mangaListView = CollectionViewSource.GetDefaultView(MangaArchiveCollection);
+            mangaListView.Filter = mangaArchive =>
+            {
+                // Show all items if search is empty
+                if (String.IsNullOrWhiteSpace(SearchFilter)) return true;
+                return (mangaArchive as MangaArchiveInformationObject).MangaObject.IsNameMatch(SearchFilter);
+            };
+            if (mangaListView.CanSort)
+                mangaListView.SortDescriptions.Add(new SortDescription("MangaObject.Name", ListSortDirection.Ascending));
         }
     }
 }

@@ -26,62 +26,94 @@ namespace myManga_App.ViewModels
     {
         #region Variables
         private Boolean ContinueReading { get; set; }
+        private String ArchiveFilePath { get; set; }
+        private String NextArchiveFilePath { get; set; }
+        private String PrevArchiveFilePath { get; set; }
 
-        private Boolean PreloadingNext { get; set; }
-        private Boolean PreloadingPrev { get; set; }
 
-        private MangaObject _MangaObject;
+        private static readonly DependencyPropertyKey ChapterObjectPreloadsPropertyKey = DependencyProperty.RegisterAttachedReadOnly(
+            "ChapterObjectPreloads",
+            typeof(Dictionary<String, ChapterObject>),
+            typeof(ReaderViewModel),
+            new PropertyMetadata(new Dictionary<String, ChapterObject>()));
+        private static readonly DependencyProperty ChapterObjectPreloadsProperty = ChapterObjectPreloadsPropertyKey.DependencyProperty;
+        public Dictionary<String, ChapterObject> ChapterObjectPreloads
+        { get { return (Dictionary<String, ChapterObject>)GetValue(ChapterObjectPreloadsProperty); } }
+
+        #region MangaObjectProperty
+        private static readonly DependencyProperty MangaObjectProperty = DependencyProperty.RegisterAttached(
+            "MangaObject",
+            typeof(MangaObject),
+            typeof(ReaderViewModel));
         public MangaObject MangaObject
         {
-            get { return _MangaObject; }
-            set { SetProperty(ref this._MangaObject, value); }
+            get { return (MangaObject)GetValue(MangaObjectProperty); }
+            set { SetValue(MangaObjectProperty, value); }
         }
+        #endregion
 
-        private ChapterObject _ChapterObject;
+        #region ChapterObjectProperty
+        private static readonly DependencyProperty ChapterObjectProperty = DependencyProperty.RegisterAttached(
+            "ChapterObject",
+            typeof(ChapterObject),
+            typeof(ReaderViewModel));
         public ChapterObject ChapterObject
         {
-            get { return _ChapterObject; }
-            set { SetProperty(ref this._ChapterObject, value); }
+            get { return (ChapterObject)GetValue(ChapterObjectProperty); }
+            set { SetValue(ChapterObjectProperty, value); }
         }
-        private ChapterObject PrevChapterObject { get; set; }
-        private ChapterObject NextChapterObject { get; set; }
+        #endregion
 
-        private PageObject _SelectedPageObject;
+        #region PageObjectProperty
+        private static readonly DependencyProperty SelectedPageObjectProperty = DependencyProperty.RegisterAttached(
+            "SelectedPageObject",
+            typeof(PageObject),
+            typeof(ReaderViewModel),
+            new PropertyMetadata(OnPageObjectChanged));
         public PageObject SelectedPageObject
         {
-            get { return _SelectedPageObject; }
-            set
-            {
-                SetProperty(ref this._SelectedPageObject, value);
-                if (value != null) SaveBookmarkObject();
-            }
+            get { return (PageObject)GetValue(SelectedPageObjectProperty); }
+            set { SetValue(SelectedPageObjectProperty, value); }
         }
 
-        private BookmarkObject _BookmarkObject;
+        private static void OnPageObjectChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ReaderViewModel _this = (d as ReaderViewModel);
+            _this.SaveBookmarkObject();
+            _this.PreloadChapters();
+        }
+        #endregion
+
+        #region BookmarkObjectProperty
+        private static readonly DependencyProperty BookmarkObjectProperty = DependencyProperty.RegisterAttached(
+            "BookmarkObject",
+            typeof(BookmarkObject),
+            typeof(ReaderViewModel));
         public BookmarkObject BookmarkObject
         {
-            get { return _BookmarkObject; }
-            set { SetProperty(ref this._BookmarkObject, value); }
+            get { return (BookmarkObject)GetValue(BookmarkObjectProperty); }
+            set { SetValue(BookmarkObjectProperty, value); }
         }
+        #endregion
 
-        private String _ArchiveFilePath;
-        public String ArchiveFilePath
-        {
-            get { return _ArchiveFilePath; }
-            set { SetProperty(ref this._ArchiveFilePath, value); }
-        }
-        private String PrevArchiveFilePath { get; set; }
-        private String NextArchiveFilePath { get; set; }
-
-        public String ArchiveImageURL
-        { get { return this.SelectedPageObject.ImgUrl; } }
-
-        private Double _PageZoom;
+        #region PageZoomProperty
+        private static readonly DependencyProperty PageZoomProperty = DependencyProperty.RegisterAttached(
+            "PageZoom",
+            typeof(Double),
+            typeof(ReaderViewModel),
+            new PropertyMetadata(1D, OnPageZoomChanged, OnPageZoomCoerce));
         public Double PageZoom
         {
-            get { return _PageZoom; }
-            set { SetProperty(ref this._PageZoom, value < 0.5 ? 0.5 : value); }
+            get { return (Double)GetValue(PageZoomProperty); }
+            set { SetValue(PageZoomProperty, value); }
         }
+
+        private static void OnPageZoomChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        { d.CoerceValue(PageZoomProperty); }
+
+        private static object OnPageZoomCoerce(DependencyObject d, Object baseValue)
+        { Double value = (Double)baseValue; return value < 0.5 ? 0.5 : value; }
+        #endregion
         #endregion
 
         #region Commands
@@ -93,7 +125,7 @@ namespace myManga_App.ViewModels
         private void NextPage()
         {
             if (this.BookmarkObject.Page < this.ChapterObject.Pages.Last().PageNumber) ++this.BookmarkObject.Page;
-            else { this.ContinueReading = true; OpenChapter(this.MangaObject, this.NextChapterObject); }
+            else { this.ContinueReading = true; OpenChapter(this.MangaObject, ChapterObjectPreloads[this.NextArchiveFilePath]); }
             this.SelectedPageObject = this.ChapterObject.PageObjectOfBookmarkObject(this.BookmarkObject);
         }
         private Boolean CanNextPage()
@@ -112,7 +144,7 @@ namespace myManga_App.ViewModels
         private void PrevPage()
         {
             if (this.BookmarkObject.Page > this.ChapterObject.Pages.First().PageNumber) --this.BookmarkObject.Page;
-            else { this.ContinueReading = true; OpenChapter(this.MangaObject, this.PrevChapterObject); }
+            else { this.ContinueReading = true; OpenChapter(this.MangaObject, ChapterObjectPreloads[this.PrevArchiveFilePath]); }
             this.SelectedPageObject = this.ChapterObject.PageObjectOfBookmarkObject(this.BookmarkObject);
         }
         private Boolean CanPrevPage()
@@ -138,24 +170,27 @@ namespace myManga_App.ViewModels
 
         private void OpenChapter(MangaObject MangaObject, ChapterObject ChapterObject)
         {
-            //Messenger.Default.Send(this, "FocusRequest");
             this.PullFocus();
 
             this.MangaObject = MangaObject;
             this.ChapterObject = ChapterObject;
-            this.PrevChapterObject = this.MangaObject.PrevChapterObject(this.ChapterObject);
-            this.NextChapterObject = this.MangaObject.NextChapterObject(this.ChapterObject);
 
             String base_path = Path.Combine(App.CHAPTER_ARCHIVE_DIRECTORY, MangaObject.MangaFileName());
             this.ArchiveFilePath = Path.Combine(base_path, ChapterObject.ChapterArchiveName(App.CHAPTER_ARCHIVE_EXTENSION));
-            try { this.PrevArchiveFilePath = Path.Combine(base_path, PrevChapterObject.ChapterArchiveName(App.CHAPTER_ARCHIVE_EXTENSION)); }
-            catch { this.PrevArchiveFilePath = null; }
-            try { this.NextArchiveFilePath = Path.Combine(base_path, NextChapterObject.ChapterArchiveName(App.CHAPTER_ARCHIVE_EXTENSION)); }
-            catch { this.NextArchiveFilePath = null; }
+            ChapterObjectPreloads.Clear();
+            try
+            {
+                ChapterObject PrevChapter = this.MangaObject.PrevChapterObject(this.ChapterObject);
+                ChapterObjectPreloads.Add(this.PrevArchiveFilePath = Path.Combine(base_path, PrevChapter.ChapterArchiveName(App.CHAPTER_ARCHIVE_EXTENSION)), PrevChapter);
+            }
+            catch { }
+            try
+            {
+                ChapterObject NextChapter = this.MangaObject.NextChapterObject(this.ChapterObject);
+                ChapterObjectPreloads.Add(this.NextArchiveFilePath = Path.Combine(base_path, NextChapter.ChapterArchiveName(App.CHAPTER_ARCHIVE_EXTENSION)), NextChapter);
+            }
+            catch { }
 
-            PreloadingPrev = PreloadingNext = false;
-
-            PreloadChapters();
             LoadChapterObject();
             LoadBookmarkObject();
             this.ContinueReading = false;
@@ -165,25 +200,24 @@ namespace myManga_App.ViewModels
             : base()
         {
             this.ContinueReading = false;
-            if (!DesignerProperties.GetIsInDesignMode(this))
+            if (!IsInDesignMode)
             {
                 this.PageZoom = App.UserConfig.DefaultPageZoom;
                 Messenger.Default.RegisterRecipient<FileSystemEventArgs>(this, ChapterObjectArchiveWatcher_Event, "ChapterObjectArchiveWatcher");
                 Messenger.Default.RegisterRecipient<ReadChapterRequestObject>(this, OpenChapter, "ReadChapterRequest");
-            }
-            else
-            {
-                this.PageZoom = 1;
             }
         }
 
         #region Methods
         public void PreloadChapters()
         {
-            if (!PreloadingPrev && !File.Exists(this.PrevArchiveFilePath))
-            { DownloadManager.Default.Download(this.MangaObject, this.PrevChapterObject); this.PreloadingPrev = true; }
-            if (!PreloadingNext && !File.Exists(this.NextArchiveFilePath))
-            { DownloadManager.Default.Download(this.MangaObject, this.NextChapterObject); this.PreloadingNext = true; }
+            foreach(System.Collections.Generic.KeyValuePair<String, ChapterObject> chapter_object_preload in ChapterObjectPreloads)
+                if (!String.Equals(chapter_object_preload.Key, null) && !File.Exists(chapter_object_preload.Key))
+                {
+                    using (File.Open(chapter_object_preload.Key, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite))
+                    { /* Touch Next Chapter File*/ }
+                    DownloadManager.Default.Download(this.MangaObject, chapter_object_preload.Value);
+                }
         }
 
         private void LoadChapterObject()
@@ -217,7 +251,7 @@ namespace myManga_App.ViewModels
                 this.BookmarkObject.Volume = this.ChapterObject.Volume;
                 this.BookmarkObject.Chapter = this.ChapterObject.Chapter;
                 this.BookmarkObject.SubChapter = this.ChapterObject.SubChapter;
-                this.BookmarkObject.Page = this.ChapterObject.Pages.First().PageNumber;
+                this.BookmarkObject.Page = this.ChapterObject.Pages.Count > 0 ? this.ChapterObject.Pages.First().PageNumber : 0;
             }
             if (this.SelectedPageObject != null) this.BookmarkObject.Page = this.SelectedPageObject.PageNumber;
             Singleton<ZipStorage>.Instance.Write(

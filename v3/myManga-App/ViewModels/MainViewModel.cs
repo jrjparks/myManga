@@ -17,7 +17,7 @@ namespace myManga_App.ViewModels
     public sealed class MainViewModel : BaseViewModel
     {
         #region Content
-        public static DependencyProperty ContentViewModelProperty = DependencyProperty.Register(
+        private static readonly DependencyProperty ContentViewModelProperty = DependencyProperty.RegisterAttached(
             "ContentViewModel", 
             typeof(BaseViewModel), 
             typeof(MainViewModel));
@@ -27,21 +27,49 @@ namespace myManga_App.ViewModels
             set { SetValue(ContentViewModelProperty, value); }
         }
 
-        private HomeViewModel _HomeViewModel;
+        #region HomeViewModelProperty
+        private static readonly DependencyPropertyKey HomeViewModelPropertyKey = DependencyProperty.RegisterAttachedReadOnly(
+            "HomeViewModel",
+            typeof(HomeViewModel),
+            typeof(MainViewModel),
+            null);
+        private static readonly DependencyProperty HomeViewModelProperty = HomeViewModelPropertyKey.DependencyProperty;
         public HomeViewModel HomeViewModel
-        { get { return _HomeViewModel ?? (_HomeViewModel = new HomeViewModel()); } }
+        { get { return (HomeViewModel)GetValue(HomeViewModelProperty); } }
+        #endregion
 
-        private SettingsViewModel _SettingsViewModel;
-        public SettingsViewModel SettingsViewModel
-        { get { return _SettingsViewModel ?? (_SettingsViewModel = new SettingsViewModel()); } }
-
-        private SearchViewModel _SearchViewModel;
-        public SearchViewModel SearchViewModel
-        { get { return _SearchViewModel ?? (_SearchViewModel = new SearchViewModel()); } }
-
-        private ReaderViewModel _ReaderViewModel;
+        #region ReaderViewModelProperty
+        private static readonly DependencyPropertyKey ReaderViewModelPropertyKey = DependencyProperty.RegisterAttachedReadOnly(
+            "ReaderViewModel",
+            typeof(ReaderViewModel),
+            typeof(MainViewModel),
+            null);
+        private static readonly DependencyProperty ReaderViewModelProperty = ReaderViewModelPropertyKey.DependencyProperty;
         public ReaderViewModel ReaderViewModel
-        { get { return _ReaderViewModel ?? (_ReaderViewModel = new ReaderViewModel()); } }
+        { get { return (ReaderViewModel)GetValue(ReaderViewModelProperty); } }
+        #endregion
+
+        #region SearchViewModelProperty
+        private static readonly DependencyPropertyKey SearchViewModelPropertyKey = DependencyProperty.RegisterAttachedReadOnly(
+            "SearchViewModel",
+            typeof(SearchViewModel),
+            typeof(MainViewModel),
+            null);
+        private static readonly DependencyProperty SearchViewModelProperty = SearchViewModelPropertyKey.DependencyProperty;
+        public SearchViewModel SearchViewModel
+        { get { return (SearchViewModel)GetValue(SearchViewModelProperty); } }
+        #endregion
+
+        #region SettingsViewModelProperty
+        private static readonly DependencyPropertyKey SettingsViewModelPropertyKey = DependencyProperty.RegisterAttachedReadOnly(
+            "SettingsViewModel",
+            typeof(SettingsViewModel),
+            typeof(MainViewModel),
+            null);
+        private static readonly DependencyProperty SettingsViewModelProperty = SettingsViewModelPropertyKey.DependencyProperty;
+        public SettingsViewModel SettingsViewModel
+        { get { return (SettingsViewModel)GetValue(SettingsViewModelProperty); } }
+        #endregion
         #endregion
 
         #region Header Buttons
@@ -82,7 +110,12 @@ namespace myManga_App.ViewModels
         public MainViewModel()
             : base()
         {
-            if (!DesignerProperties.GetIsInDesignMode(this))
+            SetValue(HomeViewModelPropertyKey, new HomeViewModel());
+            SetValue(ReaderViewModelPropertyKey, new ReaderViewModel());
+            SetValue(SearchViewModelPropertyKey, new SearchViewModel());
+            SetValue(SettingsViewModelPropertyKey, new SettingsViewModel());
+
+            if (!IsInDesignMode)
             {
                 Messenger.Default.RegisterRecipient<BaseViewModel>(this, v => this.ContentViewModel = v, "FocusRequest");
 

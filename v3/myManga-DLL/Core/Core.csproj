@@ -110,9 +110,7 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Other\Singleton\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>echo F|xcopy /F /R /Y /I "$(TargetPath)" "$(ProjectDir)..\$(ConfigurationName)\$(TargetFileName)"</PostBuildEvent>

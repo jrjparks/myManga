@@ -155,7 +155,7 @@ namespace myManga_App.ViewModels
         { get { return _RefreshMangaCommand ?? (_RefreshMangaCommand = new DelegateCommand(RefreshManga, CanRefreshManga)); } }
 
         private Boolean CanRefreshManga()
-        { return SelectedMangaArchive.MangaObject != null; }
+        { return !MangaArchiveInformationObject.Equals(this.SelectedMangaArchive, null) && !this.SelectedMangaArchive.Empty(); }
 
         private void RefreshManga()
         { DownloadManager.Default.Download(SelectedMangaArchive.MangaObject); }

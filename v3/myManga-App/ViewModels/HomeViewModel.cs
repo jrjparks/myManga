@@ -146,7 +146,7 @@ namespace myManga_App.ViewModels
             }
         }
         private Boolean CanResumeReading()
-        { return this.SelectedMangaArchive.MangaObject != null; }
+        { return !MangaArchiveInformationObject.Equals(this.SelectedMangaArchive, null) && !this.SelectedMangaArchive.Empty(); }
         #endregion
 
         #region RefreshManga

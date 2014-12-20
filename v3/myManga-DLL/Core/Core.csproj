@@ -75,7 +75,7 @@
     </Compile>
     <Compile Include="Other\Extensions.cs" />
     <Compile Include="Other\Parse.cs" />
-    <Compile Include="Other\Singleton\Singleton.cs" />
+    <Compile Include="Other\Singleton.cs" />
     <Compile Include="Other\WPFExtentions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="WPF Controls\BalancedWrapPanel\BalancedWrapPanel.cs" />
@@ -109,6 +109,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Other\Singleton\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

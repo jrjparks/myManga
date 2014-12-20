@@ -124,11 +124,9 @@
     <Compile Include="Converters\LocationListToCSV.cs" />
     <Compile Include="Converters\ObjectIsLocal.cs" />
     <Compile Include="Converters\StringArrayToCSV.cs" />
-    <Compile Include="IO\AccessPriority.cs" />
     <Compile Include="IO\Network\DownloadManager.cs" />
     <Compile Include="IO\Network\SmartDownloader.cs" />
     <Compile Include="IO\Network\SmartSearch.cs" />
-    <Compile Include="IO\SmartGroupObject.cs" />
     <Compile Include="IO\ViewModel\Messenger.cs" />
     <Compile Include="Objects\UserInterface\DatabaseExtensionInformationObject.cs" />
     <Compile Include="Objects\MVVM\ViewModelViewType.cs" />

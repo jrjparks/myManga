@@ -76,9 +76,6 @@ namespace myManga_App.ViewModels
         public String ArchiveImageURL
         { get { return this.SelectedPageObject.ImgUrl; } }
 
-        public String ChapterTitle
-        { get { return String.Format("{0} / {1} - Page: {2} of {3}", this.MangaObject.Name, this.ChapterObject.Name, this.SelectedPageObject != null ? this.SelectedPageObject.PageNumber : 0, this.ChapterObject.Pages.Count > 0 ? this.ChapterObject.Pages.Last().PageNumber : 0); } }
-
         private Double _PageZoom;
         public Double PageZoom
         {

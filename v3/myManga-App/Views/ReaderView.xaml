@@ -57,14 +57,20 @@
             Grid.ColumnSpan="3"
             IsHitTestVisible="{Binding IsOpen, Converter={StaticResource BooleanInverter}, ElementName=PageListPopup, Mode=OneWay}">
             <Button:MetroToggleButton.Content>
-                <MultiBinding StringFormat="{}{0} : {1} {2}{3}.{4} : Page {5}">
-                    <Binding Path="MangaObject.Name" FallbackValue="Un-Named" StringFormat="{}{0}"/>
-                    <Binding Path="ChapterObject.Name" FallbackValue="Un-Named" StringFormat="{}{0}"/>
-                    <Binding Path="ChapterObject.Volume" TargetNullValue="0" FallbackValue="" StringFormat="{}{0}"/>
-                    <Binding Path="ChapterObject.Chapter" FallbackValue="0" StringFormat="{}{0}"/>
-                    <Binding Path="ChapterObject.SubChapter" FallbackValue="0" StringFormat="{}{0}"/>
-                    <Binding Path="SelectedPageObject.PageNumber" FallbackValue="0" StringFormat="{}{0}"/>
-                </MultiBinding>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="{Binding MangaObject.Name, FallbackValue=Un-Named Manga}" FontWeight="Bold"/>
+                    <TextBlock Text="{Binding ChapterObject.Name, StringFormat={}\ {0}}" Visibility="{Binding Text, TargetNullValue=Collapsed, RelativeSource={RelativeSource Self}}"/>
+                    <TextBlock Text="{Binding ChapterObject.Volume, StringFormat={}\ Vol.{0}}" Visibility="{Binding Text, TargetNullValue=Collapsed, RelativeSource={RelativeSource Self}}"/>
+                    <TextBlock>
+                        <TextBlock.Text>
+                            <MultiBinding StringFormat=" Ch.{0}.{1}">
+                                <Binding Path="ChapterObject.Chapter" FallbackValue="0"/>
+                                <Binding Path="ChapterObject.SubChapter" FallbackValue="0"/>
+                            </MultiBinding>
+                        </TextBlock.Text>
+                    </TextBlock>
+                    <TextBlock Text="{Binding SelectedPageObject.PageNumber, FallbackValue={}\ Page: 0, StringFormat=Page: {0}}" Margin="1,0"/>
+                </StackPanel>
             </Button:MetroToggleButton.Content>
         </Button:MetroToggleButton>
         <Popup

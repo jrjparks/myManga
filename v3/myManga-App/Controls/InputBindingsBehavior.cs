@@ -1,13 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 
 namespace myManga_App.Controls
 {
+    /// <summary>
+    /// Allow InputBinding Precedence
+    /// </summary>
+    [DebuggerStepThrough]
     public class InputBindingsBehavior
     {
         public static readonly DependencyProperty HasInputBindingPrecedenceProperty =
@@ -36,9 +38,8 @@ namespace myManga_App.Controls
 
             if (foundBinding != null)
             {
-                e.Handled = true;
                 if (foundBinding.Command.CanExecute(foundBinding.CommandParameter))
-                { foundBinding.Command.Execute(foundBinding.CommandParameter); }
+                { e.Handled = true; foundBinding.Command.Execute(foundBinding.CommandParameter); }
             }
         }
     }

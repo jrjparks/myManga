@@ -90,7 +90,8 @@
             <StackPanel 
                 Orientation="Horizontal" 
                 TextElement.FontFamily="{DynamicResource OpenIconic}"
-                TextElement.FontSize="24"
+                TextElement.FontSize="20"
+                VerticalAlignment="Center"
                 Visibility="{Binding ContentViewModel.SupportsViewTypeChange, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
                 <Button:MetroRadioButton 
                     Content="{DynamicResource oi-list}" 

@@ -31,6 +31,10 @@ namespace myMangaSiteExtension.Objects
         #region Protected
         [NonSerialized, XmlIgnore, EditorBrowsable(EditorBrowsableState.Never)]
         protected String name;
+
+        [NonSerialized, XmlIgnore, EditorBrowsable(EditorBrowsableState.Never)]
+        protected String description;
+
         [NonSerialized, XmlIgnore, EditorBrowsable(EditorBrowsableState.Never)]
         protected Int32 id;
         [NonSerialized, XmlIgnore, EditorBrowsable(EditorBrowsableState.Never)]
@@ -58,6 +62,18 @@ namespace myMangaSiteExtension.Objects
             {
                 OnPropertyChanging();
                 name = value;
+                OnPropertyChanged();
+            }
+        }
+
+        [XmlAttribute]
+        public String Description
+        {
+            get { return description; }
+            set
+            {
+                OnPropertyChanging();
+                description = value;
                 OnPropertyChanged();
             }
         }

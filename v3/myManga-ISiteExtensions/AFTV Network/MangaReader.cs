@@ -25,12 +25,13 @@ namespace AFTV_Network
         Language = "English")]
     public class MangaReader : ISiteExtension
     {
-        protected ISiteExtensionDescriptionAttribute isea;
-        protected virtual ISiteExtensionDescriptionAttribute ISEA { get { return isea ?? (isea = GetType().GetCustomAttribute<ISiteExtensionDescriptionAttribute>(false)); } }
+        protected ISiteExtensionDescriptionAttribute _SiteExtensionDescriptionAttribute;
+        public ISiteExtensionDescriptionAttribute SiteExtensionDescriptionAttribute 
+        { get { return _SiteExtensionDescriptionAttribute ?? (_SiteExtensionDescriptionAttribute = GetType().GetCustomAttribute<ISiteExtensionDescriptionAttribute>(false)); } }
 
         public SearchRequestObject GetSearchRequestObject(String searchTerm)
         {
-            return new SearchRequestObject() { Url = String.Format("{0}/search/?w={1}", ISEA.RootUrl, Uri.EscapeUriString(searchTerm)), Method = SearchMethod.GET, Referer = ISEA.RefererHeader };
+            return new SearchRequestObject() { Url = String.Format("{0}/search/?w={1}", SiteExtensionDescriptionAttribute.RootUrl, Uri.EscapeUriString(searchTerm)), Method = SearchMethod.GET, Referer = SiteExtensionDescriptionAttribute.RefererHeader };
         }
 
         public MangaObject ParseMangaObject(String content)
@@ -87,8 +88,8 @@ namespace AFTV_Network
                                             Chapter = UInt32.Parse(ChapterNode.SelectSingleNode(".//td[1]/a").InnerText.Substring(ChapterNode.SelectSingleNode(".//td[1]/a").InnerText.LastIndexOf(' ') + 1)),
                                             Locations = { 
                                                     new LocationObject() { 
-                                                        ExtensionName = ISEA.Name, 
-                                                        Url = String.Format("{0}{1}", ISEA.RootUrl, ChapterNode.SelectSingleNode(".//td[1]/a").Attributes["href"].Value) } 
+                                                        ExtensionName = SiteExtensionDescriptionAttribute.Name, 
+                                                        Url = String.Format("{0}{1}", SiteExtensionDescriptionAttribute.RootUrl, ChapterNode.SelectSingleNode(".//td[1]/a").Attributes["href"].Value) } 
                                                 },
                                             Released = DateTime.Parse(ChapterNode.SelectSingleNode(".//td[2]").InnerText)
                                         }).ToArray();
@@ -118,7 +119,7 @@ namespace AFTV_Network
                 Pages = (from HtmlNode PageNode in ChapterObjectDocument.GetElementbyId("pageMenu").SelectNodes(".//option")
                          select new PageObject()
                          {
-                             Url = String.Format("{0}{1}", ISEA.RootUrl, PageNode.Attributes["value"].Value),
+                             Url = String.Format("{0}{1}", SiteExtensionDescriptionAttribute.RootUrl, PageNode.Attributes["value"].Value),
                              PageNumber = UInt32.Parse(PageNode.NextSibling.InnerText)
                          }).ToList()
             };
@@ -140,9 +141,9 @@ namespace AFTV_Network
             {
                 Name = Name,
                 PageNumber = UInt32.Parse(PageNode.NextSibling.InnerText),
-                Url = String.Format("{0}{1}", ISEA.RootUrl, PageNode.Attributes["value"].Value),
-                NextUrl = (NextNode != null) ? String.Format("{0}{1}", ISEA.RootUrl, NextNode.Attributes["value"].Value) : null,
-                PrevUrl = (PrevNode != null) ? String.Format("{0}{1}", ISEA.RootUrl, PrevNode.Attributes["value"].Value) : null,
+                Url = String.Format("{0}{1}", SiteExtensionDescriptionAttribute.RootUrl, PageNode.Attributes["value"].Value),
+                NextUrl = (NextNode != null) ? String.Format("{0}{1}", SiteExtensionDescriptionAttribute.RootUrl, NextNode.Attributes["value"].Value) : null,
+                PrevUrl = (PrevNode != null) ? String.Format("{0}{1}", SiteExtensionDescriptionAttribute.RootUrl, PrevNode.Attributes["value"].Value) : null,
                 ImgUrl = ImageLink.ToString()
             };
         }
@@ -165,9 +166,9 @@ namespace AFTV_Network
                     SearchResults.Add(new SearchResultObject()
                     {
                         CoverUrl = new Regex(@"r(\d+)\.jpg").Replace(CoverUrl, "l$1.jpg"),
-                        ExtensionName = ISEA.Name,
+                        ExtensionName = SiteExtensionDescriptionAttribute.Name,
                         Name = Name,
-                        Url = String.Format("{0}{1}", ISEA.RootUrl, Link),
+                        Url = String.Format("{0}{1}", SiteExtensionDescriptionAttribute.RootUrl, Link),
                         Id = Id,
                         Rating = -1,
                         Artists = null,

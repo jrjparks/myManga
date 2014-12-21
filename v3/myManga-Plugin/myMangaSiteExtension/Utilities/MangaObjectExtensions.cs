@@ -131,8 +131,9 @@ namespace myMangaSiteExtension.Utilities
                 if (AlternateName != null && !value.AlternateNames.Any(o => o.ToLower() == AlternateName.ToLower()))
                     value.AlternateNames.Add(AlternateName);
 
-            if (databaseAsMaster || value.Description == null || value.Description.Equals(String.Empty))
-                value.Description = databaseObject.Description;
+            if (databaseAsMaster || String.Equals(value.Description, null) || String.Equals(value.Description, String.Empty))
+                if(String.Equals(databaseObject.Description, null) && String.Equals(databaseObject.Description, String.Empty))
+                    value.Description = databaseObject.Description;
 
             // Genres
             foreach (String Genre in databaseObject.Genres)

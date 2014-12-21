@@ -57,19 +57,25 @@ namespace myManga_App.ViewModels
         }
         #endregion
 
-        private String _SearchFilter;
+        private static readonly DependencyProperty SearchFilterProperty = DependencyProperty.RegisterAttached(
+            "SearchFilter",
+            typeof(String),
+            typeof(HomeViewModel),
+            new PropertyMetadata(OnSearchFilterChanged));
         public String SearchFilter
         {
-            get { return _SearchFilter; }
-            set
-            {
-                SetProperty(ref this._SearchFilter, value);
-                mangaListView.Refresh();
-                mangaListView.MoveCurrentToFirst();
-            }
+            get { return (String)GetValue(SearchFilterProperty); }
+            set { SetValue(SearchFilterProperty, value); }
         }
 
-        private ICollectionView mangaListView;
+        private static void OnSearchFilterChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            HomeViewModel _this = (d as HomeViewModel);
+            _this.MangaListView.Refresh();
+            _this.MangaListView.MoveCurrentToFirst();
+        }
+
+        private ICollectionView MangaListView;
 
         private DelegateCommand _ClearSearchCommand;
         public ICommand ClearSearchCommand
@@ -192,7 +198,7 @@ namespace myManga_App.ViewModels
                     if (!manga_archive.Empty()) MangaArchiveCollection.Add(manga_archive);
                 }
                 this.SelectedMangaArchive = this.MangaArchiveCollection.FirstOrDefault();
-                mangaListView.MoveCurrentToFirst();
+                MangaListView.MoveCurrentToFirst();
 
                 Messenger.Default.RegisterRecipient<FileSystemEventArgs>(this, MangaObjectArchiveWatcher_Event, "MangaObjectArchiveWatcher");
             }
@@ -259,15 +265,15 @@ namespace myManga_App.ViewModels
 
         private void ConfigureSearchFilter()
         {
-            mangaListView = CollectionViewSource.GetDefaultView(MangaArchiveCollection);
-            mangaListView.Filter = mangaArchive =>
+            MangaListView = CollectionViewSource.GetDefaultView(MangaArchiveCollection);
+            MangaListView.Filter = mangaArchive =>
             {
                 // Show all items if search is empty
                 if (String.IsNullOrWhiteSpace(SearchFilter)) return true;
                 return (mangaArchive as MangaArchiveInformationObject).MangaObject.IsNameMatch(SearchFilter);
             };
-            if (mangaListView.CanSort)
-                mangaListView.SortDescriptions.Add(new SortDescription("MangaObject.Name", ListSortDirection.Ascending));
+            if (MangaListView.CanSort)
+                MangaListView.SortDescriptions.Add(new SortDescription("MangaObject.Name", ListSortDirection.Ascending));
         }
     }
 }

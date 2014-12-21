@@ -2,6 +2,8 @@
 using Core.IO;
 using Core.IO.Storage.Manager.BaseInterfaceClasses;
 using Core.Other.Singleton;
+using myManga_App.IO.ViewModel;
+using myMangaSiteExtension;
 using myMangaSiteExtension.Attributes;
 using myMangaSiteExtension.Interfaces;
 using myMangaSiteExtension.Objects;
@@ -12,6 +14,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Reflection;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Web;
 
@@ -129,9 +132,9 @@ namespace myManga_App.IO.Network
 
             public T Data { get; private set; }
 
-            public WorkerItem(T Data)
+            public WorkerItem(T Data, Guid? Id = null)
             {
-                this.Id = Guid.NewGuid(); ;
+                this.Id = Id ?? Guid.NewGuid(); ;
                 this.Data = Data;
             }
         }
@@ -145,16 +148,16 @@ namespace myManga_App.IO.Network
 
             public R Result { get; private set; }
 
-            public WorkerResult(R Result, Boolean Success = true, Exception Exception = null)
+            public WorkerResult(R Result, Boolean Success = true, Exception Exception = null, Guid? Id = null)
             {
-                this.Id = Guid.NewGuid(); ;
+                this.Id = Id ?? Guid.NewGuid(); ;
                 this.Success = Success;
                 this.Exception = Exception;
                 this.Result = Result;
             }
         }
 
-        #region Worker Classes
+        #region Item Worker Classes
         private class MangaObjectWorkerClass : WorkerClass<MangaObject, MangaObject>
         {
             public MangaObjectWorkerClass() : base(null) { }
@@ -175,7 +178,7 @@ namespace myManga_App.IO.Network
                     try
                     {
                         MangaObject DownloadedMangaObject = Content.Key.ParseMangaObject(Content.Value);
-                        if (DownloadedMangaObject != null) Value.Merge(DownloadedMangaObject);
+                        if (!MangaObject.Equals(DownloadedMangaObject, null)) Value.Merge(DownloadedMangaObject);
                     }
                     catch (Exception ex) { return new WorkerResult<MangaObject>(Value, false, ex); }
                 }
@@ -290,11 +293,91 @@ namespace myManga_App.IO.Network
             }
         }
         #endregion
+
+        #region Search Worker Classes
+        private sealed class SearchWorkerClass : WorkerClass<WorkerItem<String>, List<MangaObject>>
+        {
+            private readonly Regex SafeAlphaNumeric = new Regex("[^a-z0-9]", RegexOptions.IgnoreCase);
+
+            public SearchWorkerClass() : base(null) { }
+            public SearchWorkerClass(SynchronizationContext SynchronizationContext) : base(SynchronizationContext) { }
+
+            public override WorkerResult<List<MangaObject>> WorkerMethod(WorkerItem<String> Value)
+            {
+                List<MangaObject> SearchResultItems = new List<MangaObject>();
+
+                Dictionary<ISiteExtension, String> SiteExtensionSearchContents = new Dictionary<ISiteExtension, String>(App.UserConfig.EnabledSiteExtensions.Count);
+                Dictionary<IDatabaseExtension, String> DatabaseExtensionSearchContents = new Dictionary<IDatabaseExtension, String>(App.UserConfig.EnabledDatabaseExtentions.Count);
+                foreach (ISiteExtension SiteExtension in App.SiteExtensions.DLLCollection)
+                {
+                    if (SiteExtension.SiteExtensionDescriptionAttribute.SupportedObjects.HasFlag(SupportedObjects.Search) && 
+                        App.UserConfig.EnabledSiteExtensions.Contains(SiteExtension.SiteExtensionDescriptionAttribute.Name))
+                        SiteExtensionSearchContents.Add(SiteExtension, ProcessSearchResult(SiteExtension.GetSearchRequestObject(searchTerm: Value.Data)));
+                }
+                foreach (IDatabaseExtension DatabaseExtension in App.DatabaseExtensions.DLLCollection)
+                {
+                    if (DatabaseExtension.DatabaseExtensionDescriptionAttribute.SupportedObjects.HasFlag(SupportedObjects.Search) && 
+                        App.UserConfig.EnabledDatabaseExtentions.Contains(DatabaseExtension.DatabaseExtensionDescriptionAttribute.Name))
+                        DatabaseExtensionSearchContents.Add(DatabaseExtension, ProcessSearchResult(DatabaseExtension.GetSearchRequestObject(searchTerm: Value.Data)));
+                }
+
+                foreach (System.Collections.Generic.KeyValuePair<ISiteExtension, String> SiteExtensionSearchContent in SiteExtensionSearchContents)
+                {
+                    foreach (SearchResultObject SearchResult in SiteExtensionSearchContent.Key.ParseSearch(SiteExtensionSearchContent.Value))
+                    {
+                        MangaObject manga_object = SearchResult.ConvertToMangaObject(),
+                            existing_manga_object = SearchResultItems.FirstOrDefault(
+                            mo => SafeAlphaNumeric.Replace(mo.Name.ToLower(), String.Empty).Equals(SafeAlphaNumeric.Replace(manga_object.Name.ToLower(), String.Empty)));
+                        if (MangaObject.Equals(existing_manga_object, null))
+                            SearchResultItems.Add(manga_object);
+                        else
+                            existing_manga_object.Merge(manga_object);
+                    }
+                }
+                Boolean DatabaseAsMaster = true;
+                foreach (System.Collections.Generic.KeyValuePair<IDatabaseExtension, String> DatabaseExtensionSearchContent in DatabaseExtensionSearchContents)
+                {
+                    foreach (DatabaseObject SearchResult in DatabaseExtensionSearchContent.Key.ParseSearch(DatabaseExtensionSearchContent.Value))
+                    {
+                        MangaObject existing_manga_object = SearchResultItems.FirstOrDefault(
+                            mo => SafeAlphaNumeric.Replace(mo.Name.ToLower(), String.Empty).Equals(SafeAlphaNumeric.Replace(SearchResult.Name.ToLower(), String.Empty)));
+                        if (!MangaObject.Equals(existing_manga_object, null))
+                            existing_manga_object.AttachDatabase(SearchResult, databaseAsMaster: DatabaseAsMaster);
+                    }
+                    DatabaseAsMaster = false;
+                }
+
+                return new WorkerResult<List<MangaObject>>(SearchResultItems, Id: Value.Id);
+            }
+
+            private String ProcessSearchResult(SearchRequestObject RequestObject)
+            {
+                HttpWebRequest request = WebRequest.Create(RequestObject.Url) as HttpWebRequest;
+                request.Referer = RequestObject.Referer ?? request.Host;
+                request.AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip;
+                switch (RequestObject.Method)
+                {
+                    default:
+                    case myMangaSiteExtension.Enums.SearchMethod.GET:
+                        request.Method = "GET";
+                        break;
+
+                    case myMangaSiteExtension.Enums.SearchMethod.POST:
+                        request.Method = "POST";
+                        request.ContentType = "application/x-www-form-urlencoded";
+                        using (var requestWriter = new StreamWriter(request.GetRequestStream()))
+                        { requestWriter.Write(RequestObject.RequestContent); }
+                        break;
+                }
+                return Downloader.GetResponseString(request);
+            }
+        }
+        #endregion
         #endregion
 
         #region Events
         public event EventHandler<Exception> StatusChange;
-        private void OnStatusChange(Exception e)
+        private void OnStatusChange(Exception e = null)
         {
             if (StatusChange != null)
             {
@@ -314,6 +397,7 @@ namespace myManga_App.IO.Network
         private readonly ChapterObjectWorkerClass ChapterObjectWorker;
         private readonly PageObjectWorkerClass PageObjectWorker;
         private readonly ImageWorkerClass ImageWorker;
+        private readonly SearchWorkerClass SearchWorker;
 
         public DownloadManager() : this(null) { }
         public DownloadManager(STPStartInfo STPStartInfo, SynchronizationContext SynchronizationContext = null)
@@ -337,26 +421,37 @@ namespace myManga_App.IO.Network
             this.ChapterObjectWorker = new ChapterObjectWorkerClass(this.SynchronizationContext);
             this.PageObjectWorker = new PageObjectWorkerClass(this.SynchronizationContext);
             this.ImageWorker = new ImageWorkerClass(this.SynchronizationContext);
+            this.SearchWorker = new SearchWorkerClass(this.SynchronizationContext);
 
             this.MangaObjectWorker.WorkComplete += MangaObjectWorker_WorkComplete;
             this.ChapterObjectWorker.WorkComplete += ChapterObjectWorker_WorkComplete;
             this.PageObjectWorker.WorkComplete += PageObjectWorker_WorkComplete;
             this.ImageWorker.WorkComplete += ImageWorker_WorkComplete;
+            this.SearchWorker.WorkComplete += SearchWorker_WorkComplete;
         }
 
         #region Download Methods
         public void Download(MangaObject MangaObject)
-        { MangaObjectWorker.RunWork(SmartThreadPool, MangaObject); OnStatusChange(null); }
+        { MangaObjectWorker.RunWork(SmartThreadPool, MangaObject); OnStatusChange(); }
         public void Download(MangaObject MangaObject, ChapterObject ChapterObject)
-        { ChapterObjectWorker.RunWork(SmartThreadPool, new ChapterObjectDownloadRequest(MangaObject, ChapterObject)); OnStatusChange(null); }
+        { ChapterObjectWorker.RunWork(SmartThreadPool, new ChapterObjectDownloadRequest(MangaObject, ChapterObject)); OnStatusChange(); }
         public void Download(MangaObject MangaObject, ChapterObject ChapterObject, PageObject PageObject)
-        { PageObjectWorker.RunWork(SmartThreadPool, new PageObjectDownloadRequest(MangaObject, ChapterObject, PageObject)); OnStatusChange(null); }
+        { PageObjectWorker.RunWork(SmartThreadPool, new PageObjectDownloadRequest(MangaObject, ChapterObject, PageObject)); OnStatusChange(); }
         public void Download(String url, String local_path, String referer = null, String filename = null)
-        { ImageWorker.RunWork(SmartThreadPool, new ImageDownloadRequest(url, local_path, referer, filename)); OnStatusChange(null); }
+        { ImageWorker.RunWork(SmartThreadPool, new ImageDownloadRequest(url, local_path, referer, filename)); OnStatusChange(); }
+        #endregion
+
+        #region Search Methods
+        public Guid Search(String SearchTerm)
+        {
+            WorkerItem<String> SearchItem = new WorkerItem<String>(SearchTerm);
+            SearchWorker.RunWork(SmartThreadPool, SearchItem); OnStatusChange();
+            return SearchItem.Id;
+        }
         #endregion
 
         #region Event Handlers
-        private void MangaObjectWorker_WorkComplete(object sender, WorkerResult<MangaObject> e)
+        private void MangaObjectWorker_WorkComplete(object sender, DownloadManager.WorkerResult<MangaObject> e)
         {
             if (e.Success)
             {
@@ -368,7 +463,7 @@ namespace myManga_App.IO.Network
             OnStatusChange(e.Exception);
         }
 
-        private void ChapterObjectWorker_WorkComplete(object sender, WorkerResult<DownloadManager.ChapterObjectDownloadRequest> e)
+        private void ChapterObjectWorker_WorkComplete(object sender, DownloadManager.WorkerResult<DownloadManager.ChapterObjectDownloadRequest> e)
         {
             if (e.Success)
             {
@@ -379,7 +474,7 @@ namespace myManga_App.IO.Network
             OnStatusChange(e.Exception);
         }
 
-        private void PageObjectWorker_WorkComplete(object sender, WorkerResult<DownloadManager.PageObjectDownloadRequest> e)
+        private void PageObjectWorker_WorkComplete(object sender, DownloadManager.WorkerResult<DownloadManager.PageObjectDownloadRequest> e)
         {
             if (e.Success)
             {
@@ -390,9 +485,15 @@ namespace myManga_App.IO.Network
             OnStatusChange(e.Exception);
         }
 
-        private void ImageWorker_WorkComplete(object sender, WorkerResult<DownloadManager.ImageDownloadRequest> e)
+        private void ImageWorker_WorkComplete(object sender, DownloadManager.WorkerResult<DownloadManager.ImageDownloadRequest> e)
         {
             if (e.Success) { using (e.Result.Stream) { Singleton<ZipStorage>.Instance.Write(e.Result.LocalPath, e.Result.Filename, e.Result.Stream); } }
+            OnStatusChange(e.Exception);
+        }
+
+        private void SearchWorker_WorkComplete(object sender, DownloadManager.WorkerResult<List<MangaObject>> e)
+        {
+            if (e.Success) { Messenger.Default.Send(e.Result, String.Format("SearchResult-{0}", e.Id.ToString())); }
             OnStatusChange(e.Exception);
         }
         #endregion

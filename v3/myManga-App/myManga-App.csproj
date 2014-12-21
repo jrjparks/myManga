@@ -81,13 +81,12 @@
       <HintPath>Resources\DLL\fastJSON.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="HtmlAgilityPack, Version=1.4.6.0, Culture=neutral, PublicKeyToken=bd319b19eaf3b43a, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\HtmlAgilityPack.1.4.6\lib\Net45\HtmlAgilityPack.dll</HintPath>
+    <Reference Include="HtmlAgilityPack">
+      <HintPath>..\packages\HtmlAgilityPack.1.4.9\lib\Net45\HtmlAgilityPack.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="Ionic.Zip, Version=1.9.1.8, Culture=neutral, PublicKeyToken=edbe51ad942a3f5c, processorArchitecture=MSIL">
-      <HintPath>..\packages\DotNetZip.1.9.1.8\lib\net20\Ionic.Zip.dll</HintPath>
+    <Reference Include="Ionic.Zip">
+      <HintPath>..\packages\DotNetZip.1.9.3\lib\net20\Ionic.Zip.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="SmartThreadPool">
@@ -125,8 +124,6 @@
     <Compile Include="Converters\ObjectIsLocal.cs" />
     <Compile Include="Converters\StringArrayToCSV.cs" />
     <Compile Include="IO\Network\DownloadManager.cs" />
-    <Compile Include="IO\Network\SmartDownloader.cs" />
-    <Compile Include="IO\Network\SmartSearch.cs" />
     <Compile Include="IO\ViewModel\Messenger.cs" />
     <Compile Include="Objects\UserInterface\DatabaseExtensionInformationObject.cs" />
     <Compile Include="Objects\MVVM\ViewModelViewType.cs" />

@@ -9,6 +9,7 @@ using myMangaSiteExtension.Attributes;
 using myMangaSiteExtension.Objects;
 using HtmlAgilityPack;
 using myMangaSiteExtension;
+using myMangaSiteExtension.Enums;
 
 namespace AnimeNewsNetwork
 {
@@ -23,12 +24,18 @@ namespace AnimeNewsNetwork
         Language = "English")]
     public class AnimeNewsNetwork : IDatabaseExtension
     {
-        protected IDatabaseExtensionDescriptionAttribute idea;
-        protected virtual IDatabaseExtensionDescriptionAttribute IDEA { get { return idea ?? (idea = GetType().GetCustomAttribute<IDatabaseExtensionDescriptionAttribute>(false)); } }
+        protected IDatabaseExtensionDescriptionAttribute _DatabaseExtensionDescriptionAttribute;
+        public IDatabaseExtensionDescriptionAttribute DatabaseExtensionDescriptionAttribute
+        { get { return _DatabaseExtensionDescriptionAttribute ?? (_DatabaseExtensionDescriptionAttribute = GetType().GetCustomAttribute<IDatabaseExtensionDescriptionAttribute>(false)); } }
 
-        public string GetSearchUri(string searchTerm)
+        public SearchRequestObject GetSearchRequestObject(string searchTerm)
         {
-            return String.Format("{0}/encyclopedia/api.xml?manga=~{1}", IDEA.RootUrl, searchTerm);
+            return new SearchRequestObject()
+            {
+                Url = String.Format("{0}/encyclopedia/api.xml?manga=~{1}", DatabaseExtensionDescriptionAttribute.RootUrl, Uri.EscapeUriString(searchTerm)),
+                Method = SearchMethod.GET,
+                Referer = DatabaseExtensionDescriptionAttribute.RefererHeader,
+            };
         }
 
         public DatabaseObject ParseDatabaseObject(string content)
@@ -54,8 +61,8 @@ namespace AnimeNewsNetwork
                 AlternateNames = (AlternateNameNodes != null) ? (from HtmlNode InfoNode in AlternateNameNodes select HtmlEntity.DeEntitize(InfoNode.InnerText.Trim())).ToList() : new List<String>(),
                 Genres = (GenreNodes != null) ? (from HtmlNode InfoNode in GenreNodes select HtmlEntity.DeEntitize(InfoNode.InnerText.Trim())).ToList() : new List<String>(),
                 Locations = { new LocationObject() { 
-                    ExtensionName = IDEA.Name, 
-                    Url = String.Format("{0}/encyclopedia/api.xml?manga={1}", IDEA.RootUrl, DatabaseObjectDocument.DocumentNode.SelectSingleNode("//manga[@id]").Attributes["id"].Value) } },
+                    ExtensionName = DatabaseExtensionDescriptionAttribute.Name, 
+                    Url = String.Format("{0}/encyclopedia/api.xml?manga={1}", DatabaseExtensionDescriptionAttribute.RootUrl, DatabaseObjectDocument.DocumentNode.SelectSingleNode("//manga[@id]").Attributes["id"].Value) } },
                 Staff = (StaffNodes != null) ? (from HtmlNode InfoNode in StaffNodes select HtmlEntity.DeEntitize(InfoNode.InnerText.Trim())).ToList() : new List<String>(),
                 Description = (DescriptionNode != null) ? HtmlEntity.DeEntitize(DescriptionNode.InnerText.Trim()) : String.Empty,
                 ReleaseYear = Int32.Parse(ReleaseNode.FirstChild.InnerText.Substring(0,4))

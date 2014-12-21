@@ -26,16 +26,17 @@ namespace Batoto
         Language = "English")]
     public class Batoto : ISiteExtension
     {
-        protected ISiteExtensionDescriptionAttribute isea;
-        protected virtual ISiteExtensionDescriptionAttribute ISEA { get { return isea ?? (isea = GetType().GetCustomAttribute<ISiteExtensionDescriptionAttribute>(false)); } }
+        protected ISiteExtensionDescriptionAttribute _SiteExtensionDescriptionAttribute;
+        public ISiteExtensionDescriptionAttribute SiteExtensionDescriptionAttribute
+        { get { return _SiteExtensionDescriptionAttribute ?? (_SiteExtensionDescriptionAttribute = GetType().GetCustomAttribute<ISiteExtensionDescriptionAttribute>(false)); } }
 
         public SearchRequestObject GetSearchRequestObject(string searchTerm)
         {
             return new SearchRequestObject()
             {
-                Url = String.Format("{0}/search?name={1}", ISEA.RootUrl, Uri.EscapeUriString(searchTerm)),
+                Url = String.Format("{0}/search?name={1}", SiteExtensionDescriptionAttribute.RootUrl, Uri.EscapeUriString(searchTerm)),
                 Method = SearchMethod.GET,
-                Referer = ISEA.RefererHeader
+                Referer = SiteExtensionDescriptionAttribute.RefererHeader
             };
         }
 
@@ -90,7 +91,7 @@ namespace Batoto
                 Genres = (from HtmlNode GenreNode in GenreNodes select HtmlEntity.DeEntitize(GenreNode.InnerText.Trim())).ToArray();
 
             List<ChapterObject> Chapters = new List<ChapterObject>();
-            HtmlNodeCollection ChapterNodes = ChapterListing.SelectNodes(String.Format(".//tr[contains(@class,'lang_{0} chapter_row')]", ISEA.Language));
+            HtmlNodeCollection ChapterNodes = ChapterListing.SelectNodes(String.Format(".//tr[contains(@class,'lang_{0} chapter_row')]", SiteExtensionDescriptionAttribute.Language));
             if (ChapterNodes != null && ChapterNodes.Count > 0)
             {
                 foreach (HtmlNode ChapterNode in ChapterNodes)
@@ -121,7 +122,7 @@ namespace Batoto
                         Released = Released,
                         Locations = {
                             new LocationObject() { 
-                                ExtensionName = ISEA.Name,
+                                ExtensionName = SiteExtensionDescriptionAttribute.Name,
                                 Url = VolChapNameNode.Attributes["href"].Value }
                         }
                     };
@@ -203,9 +204,10 @@ namespace Batoto
         public List<SearchResultObject> ParseSearch(string content)
         {
             List<SearchResultObject> SearchResults = new List<SearchResultObject>();
-
+            Regex IdMatch = new Regex(@"r\d+");
             HtmlDocument SearchResultDocument = new HtmlDocument();
             SearchResultDocument.LoadHtml(content);
+            HtmlWeb HtmlWeb = new HtmlWeb();
             HtmlNodeCollection HtmlSearchResults = SearchResultDocument.DocumentNode.SelectNodes("//table[contains(@class,'ipb_table chapters_list')]/tbody/tr[not(contains(@class,'header'))]");
             if (HtmlSearchResults != null)
                 foreach (HtmlNode SearchResultNode in HtmlSearchResults)
@@ -213,16 +215,28 @@ namespace Batoto
                     HtmlNode NameLink = SearchResultNode.SelectSingleNode(".//td[1]/strong/a");
                     if (NameLink != null)
                     {
+                        Int32 Id = -1;
                         String Name = HtmlEntity.DeEntitize(NameLink.InnerText).Trim(),
-                            Link = NameLink.Attributes["href"].Value;
+                            Link = NameLink.Attributes["href"].Value,
+                            Cover = null,
+                            Description = null;
+                        if (Int32.TryParse(IdMatch.Match(Link).Value.Substring(1), out Id))
+                        {
+                            HtmlDocument PopDocument = HtmlWeb.Load(String.Format("{0}/comic_pop?id={1}", SiteExtensionDescriptionAttribute.RootUrl, Id));
+                            HtmlNode CoverNode = PopDocument.DocumentNode.SelectSingleNode("//img"),
+                                DescriptionNode = PopDocument.DocumentNode.SelectSingleNode("//table/tbody/tr[6]/td[2]");
+                            if (!HtmlNode.Equals(CoverNode, null)) Cover = CoverNode.Attributes["src"].Value;
+                            if (!HtmlNode.Equals(DescriptionNode, null)) Description = DescriptionNode.InnerText.Trim();
+                        }
                         String[] Author_Artists = { SearchResultNode.SelectSingleNode(".//td[2]").InnerText.Trim() };
                         SearchResults.Add(new SearchResultObject()
                         {
-                            CoverUrl = null,
-                            ExtensionName = ISEA.Name,
+                            CoverUrl = Cover,
+                            Description = Description,
+                            ExtensionName = SiteExtensionDescriptionAttribute.Name,
                             Name = Name,
                             Url = Link,
-                            Id = -1,
+                            Id = Id,
                             Rating = Double.Parse(SearchResultNode.SelectSingleNode(".//td[3]/div").Attributes["title"].Value.Substring(0, 4)),
                             Artists = Author_Artists.ToList(),
                             Authors = Author_Artists.ToList()

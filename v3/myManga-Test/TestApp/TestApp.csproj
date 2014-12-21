@@ -49,12 +49,13 @@
     <OutputPath>bin\Release\</OutputPath>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="HtmlAgilityPack">
-      <HintPath>..\..\packages\HtmlAgilityPack.1.4.6\lib\Net45\HtmlAgilityPack.dll</HintPath>
-    </Reference>
-    <Reference Include="Ionic.Zip, Version=1.9.1.8, Culture=neutral, PublicKeyToken=edbe51ad942a3f5c, processorArchitecture=MSIL">
+    <Reference Include="HtmlAgilityPack, Version=1.4.9.0, Culture=neutral, PublicKeyToken=bd319b19eaf3b43a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\DotNetZip.1.9.1.8\lib\net20\Ionic.Zip.dll</HintPath>
+      <HintPath>..\..\packages\HtmlAgilityPack.1.4.9\lib\Net45\HtmlAgilityPack.dll</HintPath>
+    </Reference>
+    <Reference Include="Ionic.Zip, Version=1.9.3.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\DotNetZip.1.9.3\lib\net20\Ionic.Zip.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -78,6 +79,10 @@
     <ProjectReference Include="..\..\myManga-IDatabaseExtensions\AnimeNewsNetwork\AnimeNewsNetwork.csproj">
       <Project>{58e9513e-d3cc-42e7-9eb7-7fcf222f6670}</Project>
       <Name>AnimeNewsNetwork</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\myManga-IDatabaseExtensions\MangaHelpers\MangaHelpers.csproj">
+      <Project>{9d1ac8d3-24f3-47de-a950-3f48d20dd017}</Project>
+      <Name>MangaHelpers</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\myManga-IDatabaseExtensions\MangaUpdatesBakaUpdates\MangaUpdatesBakaUpdates.csproj">
       <Project>{490a4004-2340-414a-9f03-fefff81577ac}</Project>

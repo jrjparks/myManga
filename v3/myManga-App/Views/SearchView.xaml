@@ -57,9 +57,9 @@
                     </Grid.InputBindings>
                     <button:MetroButton
                         Grid.Column="0"
-                        Content="{DynamicResource fa-search}"
+						FontFamily="{DynamicResource OpenIconic}"
+						Content="{DynamicResource oi-magnifying-glass}"
                         Command="{Binding SearchSiteCommand}"
-                        FontFamily="{DynamicResource FontAwesome}"
                         ToolTip="Search Sites"
                         Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"/>
                     <TextBox
@@ -72,9 +72,9 @@
                         Text="{Binding SearchFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
                     <button:MetroButton
                         Grid.Column="3"
-                        Content="{DynamicResource fa-times}"
+					    FontFamily="{DynamicResource OpenIconic}"
+					    Content="{DynamicResource oi-delete}"
                         Command="{Binding ClearSearchCommand}"
-                        FontFamily="{DynamicResource FontAwesome}"
                         ToolTip="Clear Search"
                         Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"/>
                 </Grid>
@@ -89,8 +89,8 @@
                 SelectedIndex="0"
                 Visibility="{Binding HasItems, Converter={StaticResource BooleanToVisibilityConverter}, RelativeSource={RelativeSource Self}}" 
                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                SelectedItem="{Binding MangaObj}"
-                ItemsSource="{Binding MangaList}"/>
+                SelectedItem="{Binding SelectedMangaObject}"
+                ItemsSource="{Binding MangaCollection}"/>
             <ProgressBar 
                 Grid.Row="1" 
                 HorizontalAlignment="Center" 
@@ -105,7 +105,8 @@
             </ProgressBar>
         </Grid>
         <Grid
-            Grid.Column="2">
+            Grid.Column="2"
+            Visibility="{Binding DataContext, ElementName=MangaObjectDescription, TargetNullValue=Collapsed}">
             <Grid.RowDefinitions>
                 <RowDefinition/>
                 <RowDefinition Height="8"/>
@@ -114,17 +115,18 @@
             </Grid.RowDefinitions>
             <button:MetroButton
                 Grid.Row="2"
-                Content="Start Reading"
+                FontFamily="{DynamicResource OpenIconic}"
+                Content="{DynamicResource oi-data-transfer-download}"
+                ContentStringFormat="{}{0} Add to Library {0}"
                 FontSize="18"
                 Command="{Binding StoreMangaInfoCommand}"/>
             <Grid
                 x:Name="MangaObjectDescription"
                 DataContext="{Binding SelectedItem, ElementName=MangaList}"
-                Background="{DynamicResource window-background}"
-                Visibility="{Binding TargetNullValue=Collapsed}">
+                Background="{DynamicResource window-background}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="3*"/>
-                    <ColumnDefinition MinWidth="100" MaxWidth="300"/>
+                    <!--<ColumnDefinition MinWidth="100" MaxWidth="300"/>-->
                 </Grid.ColumnDefinitions>
                 <Grid>
                     <Grid.RowDefinitions>
@@ -195,12 +197,12 @@
                             MinHeight="100"/>
                     </ScrollViewer>
                 </Grid>
-                <ListBox 
+                <!--<ListBox 
 				    Grid.Column="1"
 				    ItemsSource="{Binding Chapters}" 
 				    ItemContainerStyle="{DynamicResource SearchView_ChapterListBoxItem}"
 				    Visibility="{Binding HasItems, Converter={StaticResource BooleanToVisibilityConverter}, RelativeSource={RelativeSource Self}}" 
-				    ScrollViewer.HorizontalScrollBarVisibility="Disabled" HorizontalContentAlignment="Stretch"/>
+				    ScrollViewer.HorizontalScrollBarVisibility="Disabled" HorizontalContentAlignment="Stretch"/>-->
 
             </Grid>
         </Grid>

@@ -197,8 +197,8 @@
 			x:Name="MangaObjectDescription"
 			Grid.Column="2" 
 			DataContext="{Binding SelectedItem, ElementName=MangaObjectItems}"
-			Background="{DynamicResource window-background}">
-            <!--Visibility="{Binding TargetNullValue=Collapsed}">-->
+			Background="{DynamicResource window-background}"
+            Visibility="{Binding TargetNullValue=Collapsed}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="3*"/>
                 <ColumnDefinition MinWidth="100" MaxWidth="300"/>

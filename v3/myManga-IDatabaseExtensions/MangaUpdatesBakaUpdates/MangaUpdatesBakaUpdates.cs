@@ -1,15 +1,14 @@
-﻿using System;
+﻿using HtmlAgilityPack;
+using myMangaSiteExtension;
+using myMangaSiteExtension.Attributes;
+using myMangaSiteExtension.Enums;
+using myMangaSiteExtension.Interfaces;
+using myMangaSiteExtension.Objects;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Reflection;
-using System.Threading.Tasks;
 using System.Text.RegularExpressions;
-using myMangaSiteExtension.Interfaces;
-using myMangaSiteExtension.Attributes;
-using myMangaSiteExtension.Objects;
-using HtmlAgilityPack;
-using myMangaSiteExtension;
 
 namespace MangaUpdatesBakaUpdates
 {
@@ -25,12 +24,18 @@ namespace MangaUpdatesBakaUpdates
     public class MangaUpdatesBakaUpdates : IDatabaseExtension
     {
         protected Int32 PageCount = 30;
-        protected IDatabaseExtensionDescriptionAttribute idea;
-        protected virtual IDatabaseExtensionDescriptionAttribute IDEA { get { return idea ?? (idea = GetType().GetCustomAttribute<IDatabaseExtensionDescriptionAttribute>(false)); } }
+        protected IDatabaseExtensionDescriptionAttribute _DatabaseExtensionDescriptionAttribute;
+        public IDatabaseExtensionDescriptionAttribute DatabaseExtensionDescriptionAttribute
+        { get { return _DatabaseExtensionDescriptionAttribute ?? (_DatabaseExtensionDescriptionAttribute = GetType().GetCustomAttribute<IDatabaseExtensionDescriptionAttribute>(false)); } }
 
-        public string GetSearchUri(string searchTerm)
+        public SearchRequestObject GetSearchRequestObject(string searchTerm)
         {
-            return String.Format("{0}/series.html?stype=title&search={1}&perpage={2}", IDEA.RootUrl, searchTerm, PageCount);
+            return new SearchRequestObject()
+            {
+                Url = String.Format("{0}/series.html?stype=title&search={1}&perpage={2}", DatabaseExtensionDescriptionAttribute.RootUrl, Uri.EscapeUriString(searchTerm), PageCount),
+                Method = SearchMethod.GET,
+                Referer = DatabaseExtensionDescriptionAttribute.RefererHeader,
+            };
         }
 
         public DatabaseObject ParseDatabaseObject(string content)
@@ -65,8 +70,8 @@ namespace MangaUpdatesBakaUpdates
                 AlternateNames = AssociatedNames,
                 Description = HtmlEntity.DeEntitize(ContentNodes.FirstOrDefault(item => item.Key.Equals("Description")).Value.InnerText.Trim()),
                 Locations = { new LocationObject() { 
-                    ExtensionName = IDEA.Name,
-                    Url = String.Format("{0}/series.html?id={1}", IDEA.RootUrl, DatabaseObjectId) } },
+                    ExtensionName = DatabaseExtensionDescriptionAttribute.Name,
+                    Url = String.Format("{0}/series.html?id={1}", DatabaseExtensionDescriptionAttribute.RootUrl, DatabaseObjectId) } },
                 ReleaseYear = ReleaseYear
             };
         }

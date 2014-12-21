@@ -4000,14 +4000,31 @@
              <param name="password">The password to use for decrypting the entry.</param>
              <returns>The Stream for reading.</returns>
         </member>
-        <member name="M:Ionic.Zip.ZipEntry.ValidateOutput(System.String,System.IO.Stream,System.String@)">
+        <member name="M:Ionic.Zip.ZipEntry.InternalExtractToBaseDir(System.String,System.String,Ionic.Zip.ZipContainer,Ionic.Zip.ZipEntrySource,System.String)">
             <summary>
-            Validates that the args are consistent.
+            Pass in either basedir or s, but not both.
+            In other words, you can extract to a stream or to a directory (filesystem), but not both!
+            The Password param is required for encrypted entries.
             </summary>
-            <remarks>
-            Only one of {baseDir, outStream} can be non-null.
-            If baseDir is non-null, then the outputFile is created.
-            </remarks>
+        </member>
+        <member name="M:Ionic.Zip.ZipEntry.InternalExtractToStream(System.IO.Stream,System.String,Ionic.Zip.ZipContainer,Ionic.Zip.ZipEntrySource,System.String)">
+            <summary>
+            Extract to a stream
+            In other words, you can extract to a stream or to a directory (filesystem), but not both!
+            The Password param is required for encrypted entries.
+            </summary>
+        </member>
+        <member name="M:Ionic.Zip.ZipEntry.IsDoneWithOutputToBaseDir(System.String,System.String@)">
+            <summary>
+            Validates that the args are consistent; returning whether the caller can return
+            because it's done, or not (caller should continue)
+            </summary>
+        </member>
+        <member name="M:Ionic.Zip.ZipEntry.IsDoneWithOutputToStream">
+            <summary>
+            Validates that the args are consistent; returning whether the caller can return
+            because it's done, or not (caller should continue)
+            </summary>
         </member>
         <member name="M:Ionic.Zip.ZipEntry.ReadEntry(Ionic.Zip.ZipContainer,System.Boolean)">
             <summary>

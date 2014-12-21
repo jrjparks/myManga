@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -13,6 +14,7 @@ namespace myManga_App.IO.ViewModel
     /// Based on Messenger by: Ciesix
     /// https://stackoverflow.com/questions/23798425/wpf-mvvm-communication-between-view-model
     /// </summary>
+    [DebuggerStepThrough]
     public class Messenger
     {
         public static Messenger Default
@@ -31,6 +33,9 @@ namespace myManga_App.IO.ViewModel
         public Boolean RegisterRecipient<T>(Object Recipient, Action<T> Action, Object Context)
         { return Dictionary.TryAdd(new MessengerKey(Recipient, Context), Action); }
 
+        public Boolean RegisterRecipient<T>(Object Recipient, Action<T, Object> Action, Object Context)
+        { return Dictionary.TryAdd(new MessengerKey(Recipient, Context), Action); }
+
         public Boolean UnregisterRecipient(Object Recipient)
         { return UnregisterRecipient(Recipient, null); }
 
@@ -47,6 +52,8 @@ namespace myManga_App.IO.ViewModel
             else Results = from Result in Dictionary where Result.Key.Context != null && Result.Key.Context.Equals(Context) select Result;
             foreach (Action<T> Action in Results.Select(x => x.Value).OfType<Action<T>>())
             { this.SynchronizationContext.Post(delegate { Action.Invoke(Message); }, null); }
+            foreach (Action<T, Object> Action in Results.Select(x => x.Value).OfType<Action<T, Object>>())
+            { this.SynchronizationContext.Post(delegate { Action.Invoke(Message, Context); }, null); }
         }
 
         protected class MessengerKey

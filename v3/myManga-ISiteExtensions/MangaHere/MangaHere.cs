@@ -8,6 +8,7 @@ using myMangaSiteExtension.Attributes;
 using myMangaSiteExtension.Enums;
 using myMangaSiteExtension.Interfaces;
 using myMangaSiteExtension.Objects;
+using System.Text;
 
 namespace MangaHere
 {
@@ -22,12 +23,18 @@ namespace MangaHere
         Language = "English")]
     public class MangaHere : ISiteExtension
     {
-        protected ISiteExtensionDescriptionAttribute isea;
-        protected virtual ISiteExtensionDescriptionAttribute ISEA { get { return isea ?? (isea = GetType().GetCustomAttribute<ISiteExtensionDescriptionAttribute>(false)); } }
+        protected ISiteExtensionDescriptionAttribute _SiteExtensionDescriptionAttribute;
+        public ISiteExtensionDescriptionAttribute SiteExtensionDescriptionAttribute
+        { get { return _SiteExtensionDescriptionAttribute ?? (_SiteExtensionDescriptionAttribute = GetType().GetCustomAttribute<ISiteExtensionDescriptionAttribute>(false)); } }
 
         public SearchRequestObject GetSearchRequestObject(String searchTerm)
         {
-            return new SearchRequestObject() { Url = String.Format("{0}/search.php?name={1}", ISEA.RootUrl, Uri.EscapeUriString(searchTerm)), Method = SearchMethod.GET, Referer = ISEA.RefererHeader };
+            return new SearchRequestObject()
+            {
+                Url = String.Format("{0}/search.php?name={1}", SiteExtensionDescriptionAttribute.RootUrl, Uri.EscapeUriString(searchTerm)),
+                Method = SearchMethod.GET,
+                Referer = SiteExtensionDescriptionAttribute.RefererHeader
+            };
         }
 
         public MangaObject ParseMangaObject(string content)
@@ -74,7 +81,7 @@ namespace MangaHere
                     Chapter = UInt32.Parse(volChapSub[1]),
                     Locations = { 
                         new LocationObject() { 
-                                ExtensionName = ISEA.Name, 
+                                ExtensionName = SiteExtensionDescriptionAttribute.Name, 
                                 Url = ChapterNode.SelectSingleNode(".//span[1]/a").Attributes["href"].Value } 
                         },
                     Released = ChapterNode.SelectSingleNode(".//span[2]").InnerText.ToLower().Equals("today") ? DateTime.Today : (ChapterNode.SelectSingleNode(".//span[2]").InnerText.ToLower().Equals("yesterday") ? DateTime.Today.AddDays(-1) : DateTime.Parse(ChapterNode.SelectSingleNode(".//span[2]").InnerText))
@@ -151,18 +158,45 @@ namespace MangaHere
 
             HtmlDocument SearchResultDocument = new HtmlDocument();
             SearchResultDocument.LoadHtml(content);
-
+            HtmlWeb HtmlWeb = new HtmlWeb();
             HtmlNodeCollection HtmlSearchResults = SearchResultDocument.DocumentNode.SelectNodes(".//div[contains(@class,'result_search')]/dl");
             if (HtmlSearchResults != null && !HtmlSearchResults[0].InnerText.ToLower().Equals("No Manga Series".ToLower()))
             {
                 foreach (HtmlNode SearchResultNode in HtmlSearchResults)
                 {
+                    String Name = SearchResultNode.SelectSingleNode(".//dt/a[1]").Attributes["rel"].Value,
+                        Url = SearchResultNode.SelectSingleNode(".//dt/a[1]").Attributes["href"].Value;
+                    HtmlWeb.PreRequest = new HtmlAgilityPack.HtmlWeb.PreRequestHandler(req =>
+                    {
+                        req.Method = "POST";
+                        req.ContentType = "application/x-www-form-urlencoded";
+                        String PayloadContent = String.Format("name={0}", Uri.EscapeDataString(Name));
+                        Byte[] PayloadBuffer = Encoding.UTF8.GetBytes(PayloadContent.ToCharArray());
+                        req.ContentLength = PayloadBuffer.Length;
+                        req.GetRequestStream().Write(PayloadBuffer, 0, PayloadBuffer.Length);
+
+                        return true;
+                    });
+                    String[] Details = HtmlWeb.Load(
+                        String.Format("{0}/ajax/series.php", SiteExtensionDescriptionAttribute.RootUrl)
+                        ).DocumentNode.InnerText.Replace("\\/","/").Split(new String[]{"\",\""}, StringSplitOptions.None);
+                    String CoverUrl = Details[1].Substring(0, Details[1].LastIndexOf('?'));
+                    Double Rating = 0;
+                    Double.TryParse(Details[3], out Rating);
+
                     SearchResults.Add(new SearchResultObject()
                     {
-                        Name = SearchResultNode.SelectSingleNode(".//dt/a[1]").Attributes["rel"].Value,
-                        Url = SearchResultNode.SelectSingleNode(".//dt/a[1]").Attributes["href"].Value,
-                        ExtensionName = ISEA.Name
+                        Name = Name,
+                        Rating = Rating,
+                        Description = Details[8],
+                        Artists = (from String Staff in Details[5].Split(new String[] { ", " }, StringSplitOptions.RemoveEmptyEntries) select Staff.Trim()).ToList(),
+                        Authors = (from String Staff in Details[5].Split(new String[] { ", " }, StringSplitOptions.RemoveEmptyEntries) select Staff.Trim()).ToList(),
+                        CoverUrl = CoverUrl,
+                        Url = Url,
+                        ExtensionName = SiteExtensionDescriptionAttribute.Name
                     });
+
+                    HtmlWeb.PreRequest = null;
                 }
             }
 

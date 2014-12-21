@@ -42,6 +42,7 @@ namespace TestApp
             //SiteExtentions.Add("Batoto-Spanish", new Batoto.Batoto_Spanish());
             //SiteExtentions.Add("Batoto-German", new Batoto.Batoto_German());
             //SiteExtentions.Add("Batoto-French", new Batoto.Batoto_French());
+            DatabaseExtentions.Add("MangaHelpers", new MangaHelpers.MangaHelpers());
             DatabaseExtentions.Add("AnimeNewsNetwork", new AnimeNewsNetwork.AnimeNewsNetwork());
             DatabaseExtentions.Add("MangaUpdatesBakaUpdates", new MangaUpdatesBakaUpdates.MangaUpdatesBakaUpdates());
             foreach (ISiteExtension ise in SiteExtentions.Values)
@@ -54,9 +55,9 @@ namespace TestApp
                 IDatabaseExtensionDescriptionAttribute isea = ise.GetType().GetCustomAttribute<IDatabaseExtensionDescriptionAttribute>(false);
                 Console.WriteLine("Loaded Database Extention {0}", isea.Name);
             }
-            LoadManga();
-            //Search();
-            zip_storage.Destroy();
+            //LoadManga();
+            Search();
+            //zip_storage.Destroy();
         }
 
         static void Search()
@@ -148,10 +149,10 @@ namespace TestApp
                     foreach (IDatabaseExtension ide in DatabaseExtentions.Values)
                     {
                         IDatabaseExtensionDescriptionAttribute idea = ide.GetType().GetCustomAttribute<IDatabaseExtensionDescriptionAttribute>(false);
-                        String SearchURL = ide.GetSearchUri(searchTerm: SearchTerm);
+                        SearchRequestObject SearchRequestObject = ide.GetSearchRequestObject(searchTerm: SearchTerm);
                         Console.Write("Searching {0}...", idea.Name);
 
-                        HttpWebRequest request = WebRequest.Create(SearchURL) as HttpWebRequest;
+                        HttpWebRequest request = WebRequest.Create(SearchRequestObject.Url) as HttpWebRequest;
                         request.Referer = idea.RefererHeader ?? request.Host;
                         request.AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip;
                         try

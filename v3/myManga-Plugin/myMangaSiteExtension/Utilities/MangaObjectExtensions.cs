@@ -151,10 +151,8 @@ namespace myMangaSiteExtension.Utilities
                     value.Covers.Insert(0, Cover);
 
             // Released
-            if (value.Released.Equals(DateTime.MinValue))
-            {
-                value.Released = new DateTime(databaseObject.ReleaseYear, 1, 1);
-            }
+            if (value.Released.Equals(DateTime.MinValue) && databaseObject.ReleaseYear > 0)
+            { value.Released = new DateTime(databaseObject.ReleaseYear, 1, 1); }
         }
 
         public static void SortChapters(this MangaObject value)

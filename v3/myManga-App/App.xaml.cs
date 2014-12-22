@@ -10,6 +10,7 @@ using Core.Other.Singleton;
 using myMangaSiteExtension.Interfaces;
 using myManga_App.Objects;
 using Core.IO.Storage.Manager.BaseInterfaceClasses;
+using myManga_App.Objects.About;
 
 namespace myManga_App
 {
@@ -45,6 +46,8 @@ namespace myManga_App
             CHAPTER_ARCHIVE_FILTER = "*.ca.zip",
             USER_CONFIG_FILENAME = "mymanga.conf",
             USER_CONFIG_PATH = Path.Combine(Environment.CurrentDirectory, "mymanga.conf");
+
+        public AssemblyInformation AssemblyInfo { get { return AssemblyInformation.Default; } }
 
         public App()
         {

@@ -308,19 +308,24 @@ namespace myManga_App.IO.Network
 
                 Dictionary<ISiteExtension, String> SiteExtensionSearchContents = new Dictionary<ISiteExtension, String>(App.UserConfig.EnabledSiteExtensions.Count);
                 Dictionary<IDatabaseExtension, String> DatabaseExtensionSearchContents = new Dictionary<IDatabaseExtension, String>(App.UserConfig.EnabledDatabaseExtentions.Count);
-                foreach (ISiteExtension SiteExtension in App.SiteExtensions.DLLCollection)
-                {
-                    if (SiteExtension.SiteExtensionDescriptionAttribute.SupportedObjects.HasFlag(SupportedObjects.Search) && 
-                        App.UserConfig.EnabledSiteExtensions.Contains(SiteExtension.SiteExtensionDescriptionAttribute.Name))
-                        SiteExtensionSearchContents.Add(SiteExtension, ProcessSearchResult(SiteExtension.GetSearchRequestObject(searchTerm: Value.Data)));
-                }
-                foreach (IDatabaseExtension DatabaseExtension in App.DatabaseExtensions.DLLCollection)
-                {
-                    if (DatabaseExtension.DatabaseExtensionDescriptionAttribute.SupportedObjects.HasFlag(SupportedObjects.Search) && 
-                        App.UserConfig.EnabledDatabaseExtentions.Contains(DatabaseExtension.DatabaseExtensionDescriptionAttribute.Name))
-                        DatabaseExtensionSearchContents.Add(DatabaseExtension, ProcessSearchResult(DatabaseExtension.GetSearchRequestObject(searchTerm: Value.Data)));
-                }
 
+                // Search Enabled SiteExtensions for searchTerm: Value.Data
+                foreach (ISiteExtension SiteExtension in App.SiteExtensions.DLLCollection.Where(SiteExtension => {
+                    if (!SiteExtension.SiteExtensionDescriptionAttribute.SupportedObjects.HasFlag(SupportedObjects.Search)) return false;
+                    if (!App.UserConfig.EnabledSiteExtensions.Contains(SiteExtension.SiteExtensionDescriptionAttribute.Name)) return false;
+                    return true;
+                }))
+                { SiteExtensionSearchContents.Add(SiteExtension, ProcessSearchResult(SiteExtension.GetSearchRequestObject(searchTerm: Value.Data))); }
+
+                // Search Enabled DatabaseExtensions for searchTerm: Value.Data
+                foreach (IDatabaseExtension DatabaseExtension in App.DatabaseExtensions.DLLCollection.Where(DatabaseExtension => {
+                    if (!DatabaseExtension.DatabaseExtensionDescriptionAttribute.SupportedObjects.HasFlag(SupportedObjects.Search)) return false;
+                    if (!App.UserConfig.EnabledDatabaseExtentions.Contains(DatabaseExtension.DatabaseExtensionDescriptionAttribute.Name)) return false;
+                    return true;
+                }))
+                { DatabaseExtensionSearchContents.Add(DatabaseExtension, ProcessSearchResult(DatabaseExtension.GetSearchRequestObject(searchTerm: Value.Data))); }
+
+                // Convert SearchResultObjects from SiteExtensions to MangaObjects and add/merge into SearchResultItems
                 foreach (System.Collections.Generic.KeyValuePair<ISiteExtension, String> SiteExtensionSearchContent in SiteExtensionSearchContents)
                 {
                     foreach (SearchResultObject SearchResult in SiteExtensionSearchContent.Key.ParseSearch(SiteExtensionSearchContent.Value))
@@ -328,13 +333,14 @@ namespace myManga_App.IO.Network
                         MangaObject manga_object = SearchResult.ConvertToMangaObject(),
                             existing_manga_object = SearchResultItems.FirstOrDefault(
                             mo => SafeAlphaNumeric.Replace(mo.Name.ToLower(), String.Empty).Equals(SafeAlphaNumeric.Replace(manga_object.Name.ToLower(), String.Empty)));
-                        if (MangaObject.Equals(existing_manga_object, null))
-                            SearchResultItems.Add(manga_object);
-                        else
-                            existing_manga_object.Merge(manga_object);
+
+                        // Add new manga_object or merge into existing_manga_object
+                        if (MangaObject.Equals(existing_manga_object, null)) SearchResultItems.Add(manga_object);
+                        else existing_manga_object.Merge(manga_object);
                     }
                 }
-                Boolean DatabaseAsMaster = true;
+
+                // Attach SearchResultObjects from DatabaseExtensions to MangaObjects in SearchResultItems
                 foreach (System.Collections.Generic.KeyValuePair<IDatabaseExtension, String> DatabaseExtensionSearchContent in DatabaseExtensionSearchContents)
                 {
                     foreach (DatabaseObject SearchResult in DatabaseExtensionSearchContent.Key.ParseSearch(DatabaseExtensionSearchContent.Value))
@@ -342,9 +348,8 @@ namespace myManga_App.IO.Network
                         MangaObject existing_manga_object = SearchResultItems.FirstOrDefault(
                             mo => SafeAlphaNumeric.Replace(mo.Name.ToLower(), String.Empty).Equals(SafeAlphaNumeric.Replace(SearchResult.Name.ToLower(), String.Empty)));
                         if (!MangaObject.Equals(existing_manga_object, null))
-                            existing_manga_object.AttachDatabase(SearchResult, databaseAsMaster: DatabaseAsMaster);
+                        { existing_manga_object.AttachDatabase(SearchResult); }
                     }
-                    DatabaseAsMaster = false;
                 }
 
                 return new WorkerResult<List<MangaObject>>(SearchResultItems, Id: Value.Id);

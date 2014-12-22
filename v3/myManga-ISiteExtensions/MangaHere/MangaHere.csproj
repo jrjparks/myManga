@@ -68,7 +68,7 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>copy /Y "$(TargetPath)" "$(SolutionDir)myManga-ISiteExtensions\$(TargetName).$(ConfigurationName).mymanga$(TargetExt)"</PostBuildEvent>
+    <PostBuildEvent>echo F|xcopy /F /R /Y /I "$(TargetPath)" "$(ProjectDir)..\$(ConfigurationName)\$(TargetName).mymanga$(TargetExt)"</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

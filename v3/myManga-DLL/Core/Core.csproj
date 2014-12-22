@@ -69,6 +69,7 @@
     <Compile Include="IO\PathSafety.cs" />
     <Compile Include="IO\SerializableObject.cs" />
     <Compile Include="MVVM\DelegateCommand.cs" />
+    <Compile Include="MVVM\Messenger.cs" />
     <Compile Include="MVVM\NotifyPropertyChange.cs" />
     <Compile Include="NET\AdvWebClient.cs">
       <SubType>Component</SubType>

@@ -124,7 +124,7 @@
     <Compile Include="Converters\ObjectIsLocal.cs" />
     <Compile Include="Converters\StringArrayToCSV.cs" />
     <Compile Include="IO\Network\DownloadManager.cs" />
-    <Compile Include="IO\ViewModel\Messenger.cs" />
+    <Compile Include="Objects\About\AssemblyInformation.cs" />
     <Compile Include="Objects\UserInterface\DatabaseExtensionInformationObject.cs" />
     <Compile Include="Objects\MVVM\ViewModelViewType.cs" />
     <Compile Include="Objects\UserInterface\MangaArchiveInformationObject.cs" />
@@ -321,8 +321,8 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>xcopy "$(SolutionDir)myManga-ISiteExtensions\*.$(ConfigurationName).mymanga.dll" "$(TargetDir)Plugins\" /F /R /Y /I
-xcopy "$(SolutionDir)myManga-IDatabaseExtensions\*.$(ConfigurationName).mymanga.dll" "$(TargetDir)Plugins\" /F /R /Y /I</PostBuildEvent>
+    <PostBuildEvent>xcopy "$(SolutionDir)myManga-ISiteExtensions\$(ConfigurationName)\*.mymanga.dll" "$(TargetDir)Plugins\" /F /R /Y /I
+xcopy "$(SolutionDir)myManga-IDatabaseExtensions\$(ConfigurationName)\*.mymanga.dll" "$(TargetDir)Plugins\" /F /R /Y /I</PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
     <PreBuildEvent>

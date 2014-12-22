@@ -3,8 +3,8 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-    xmlns:button="clr-namespace:myManga_App.Resources.Theme.Buttons"
-    xmlns:Converters="clr-namespace:myManga_App.Converters" 
+    xmlns:Button="clr-namespace:myManga_App.Resources.Theme.Buttons"
+    xmlns:Converters="clr-namespace:myManga_App.Converters"
     x:Class="myManga_App.Views.SettingsView"
     mc:Ignorable="d" 
     d:DesignHeight="400"
@@ -13,6 +13,7 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="/myManga;component/Themes/ScrollBar/ScrollBar.xaml"/>
+                <ResourceDictionary Source="/myManga;component/Themes/ListBox/ListBoxItems.xaml"/>
                 <ResourceDictionary Source="/myManga;component/Themes/Slider/Slider.xaml"/>
             </ResourceDictionary.MergedDictionaries>
             <Converters:CommandParameterStringFormat x:Key="CommandParameterStringFormat"/>
@@ -40,68 +41,16 @@
             <StackPanel>
                 <TextBlock Text="Site Extentions"/>
                 <ListBox
-					Background="{x:Null}"
+					Background="{DynamicResource window-background}"
+                    ItemContainerStyle="{DynamicResource SettingsView_SiteExtensionInformationObjectListBoxItem}"
 					ItemsSource="{Binding SiteExtensionInformationObjects}"
-					HorizontalContentAlignment="Stretch">
-                    <ListBox.ItemTemplate>
-                        <DataTemplate>
-                            <Grid>
-                                <StackPanel Orientation="Horizontal">
-                                    <CheckBox IsChecked="{Binding Enabled, Mode=TwoWay}"/>
-                                    <TextBlock Text="{Binding Name}"/>
-                                </StackPanel>
-                                <!-- Start -->
-                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                                    <Button 
-										FontFamily="{DynamicResource FontAwesome}" 
-										Content="{DynamicResource fa-arrow-up}"
-										Margin="1,0"
-										Command="{Binding DataContext.MoveUpCommand, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ItemsControl}}}"
-										CommandParameter="{Binding Name, ConverterParameter=Site:\{0\}, Converter={StaticResource CommandParameterStringFormat}}"/>
-                                    <Button
-										FontFamily="{DynamicResource FontAwesome}" 
-										Content="{DynamicResource fa-arrow-down}"
-										Margin="1,0"
-										Command="{Binding DataContext.MoveDownCommand, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ItemsControl}}}"
-										CommandParameter="{Binding Name, ConverterParameter=Site:\{0\}, Converter={StaticResource CommandParameterStringFormat}}"/>
-                                </StackPanel>
-                                <!-- End -->
-                            </Grid>
-                        </DataTemplate>
-                    </ListBox.ItemTemplate>
-                </ListBox>
+					HorizontalContentAlignment="Stretch"/>
                 <TextBlock Text="Database Extentions"/>
                 <ListBox
-					Background="{x:Null}"
+					Background="{DynamicResource window-background}"
+                    ItemContainerStyle="{DynamicResource SettingsView_DatabaseExtensionInformationObjectListBoxItem}"
 					ItemsSource="{Binding DatabaseExtensionInformationObjects}"
-					HorizontalContentAlignment="Stretch">
-                    <ListBox.ItemTemplate>
-                        <DataTemplate>
-                            <Grid>
-                                <StackPanel Orientation="Horizontal">
-                                    <CheckBox IsChecked="{Binding Enabled, Mode=TwoWay}"/>
-                                    <TextBlock Text="{Binding Name}"/>
-                                </StackPanel>
-                                <!-- Start -->
-                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                                    <Button 
-										FontFamily="{DynamicResource FontAwesome}" 
-										Content="{DynamicResource fa-arrow-up}"
-										Margin="1,0"
-										Command="{Binding DataContext.MoveUpCommand, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ItemsControl}}}"
-										CommandParameter="{Binding Name, ConverterParameter=Database:\{0\}, Converter={StaticResource CommandParameterStringFormat}}"/>
-                                    <Button
-										FontFamily="{DynamicResource FontAwesome}" 
-										Content="{DynamicResource fa-arrow-down}"
-										Margin="1,0"
-										Command="{Binding DataContext.MoveDownCommand, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ItemsControl}}}"
-										CommandParameter="{Binding Name, ConverterParameter=Database:\{0\}, Converter={StaticResource CommandParameterStringFormat}}"/>
-                                </StackPanel>
-                                <!-- End -->
-                            </Grid>
-                        </DataTemplate>
-                    </ListBox.ItemTemplate>
-                </ListBox>
+					HorizontalContentAlignment="Stretch"/>
                 <TextBlock Text="Storage Serialization"/>
                 <ComboBox
                     ItemsSource="{Binding SaveTypes}"
@@ -135,11 +84,11 @@
 			Orientation="Horizontal"
 			TextElement.FontSize="20"
 			TextElement.FontFamily="{DynamicResource FontAwesome}">
-            <button:MetroButton                
+            <Button:MetroButton                
 				Content="{StaticResource fa-save}"
 				ContentStringFormat="{}{0} Save"
 				Command="{Binding SaveCommand}"/>
-            <button:MetroButton
+            <Button:MetroButton
 				Content="{StaticResource fa-times}"
 				ContentStringFormat="{}{0} Close"
 				Command="{Binding CloseCommand}"/>

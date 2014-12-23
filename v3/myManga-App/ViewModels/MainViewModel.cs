@@ -10,7 +10,7 @@ using System.Runtime.CompilerServices;
 using System.IO;
 using System.Threading;
 using System.Windows.Threading;
-using myManga_App.IO.ViewModel;
+using Core.MVVM;
 
 namespace myManga_App.ViewModels
 {

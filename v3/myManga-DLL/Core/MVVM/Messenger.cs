@@ -6,7 +6,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 
-namespace myManga_App.IO.ViewModel
+namespace Core.MVVM
 {
     /// <summary>
     /// Based on Messenger by: Ciesix

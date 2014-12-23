@@ -1,4 +1,4 @@
-﻿using myManga_App.IO.ViewModel;
+﻿using Core.MVVM;
 using myManga_App.Objects.MVVM;
 using System;
 using System.ComponentModel;

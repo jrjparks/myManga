@@ -72,10 +72,10 @@ namespace Core.IO.Storage.Manager.BaseInterfaceClasses
                 {
                     using (ZipFile zipFile = ZipFile.Read(fstream, this.ZipReadOptions))
                     {
-                        if (zipFile.ContainsEntry((String)args[0]))
+                        if (zipFile.ContainsEntry(EntryName))
                             using (Stream ZipData = new MemoryStream())
                             {
-                                zipFile[(String)args[0]].Extract(ZipData);
+                                zipFile[EntryName].Extract(ZipData);
                                 ZipData.Seek(0, SeekOrigin.Begin);
 
                                 stream = new MemoryStream();

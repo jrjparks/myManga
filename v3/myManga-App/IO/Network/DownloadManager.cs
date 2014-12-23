@@ -2,7 +2,7 @@
 using Core.IO;
 using Core.IO.Storage.Manager.BaseInterfaceClasses;
 using Core.Other.Singleton;
-using myManga_App.IO.ViewModel;
+using Core.MVVM;
 using myMangaSiteExtension;
 using myMangaSiteExtension.Attributes;
 using myMangaSiteExtension.Interfaces;

@@ -24,7 +24,7 @@ using myMangaSiteExtension.Objects;
 using myMangaSiteExtension.Utilities;
 using myManga_App.Properties;
 using myManga_App.IO.Network;
-using myManga_App.IO.ViewModel;
+using Core.MVVM;
 
 namespace myManga_App.ViewModels
 {

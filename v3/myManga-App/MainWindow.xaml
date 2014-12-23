@@ -140,13 +140,13 @@
 								Storyboard.TargetName="WatermarkScale"
 								Storyboard.TargetProperty="ScaleX"
 								BeginTime="0:0:2"
-								Duration="0:0:4"
+								Duration="0:0:4.5"
 								From="1" To="0"/>
                             <DoubleAnimation 
 								Storyboard.TargetName="WatermarkScale"
 								Storyboard.TargetProperty="ScaleY"
 								BeginTime="0:0:2"
-								Duration="0:0:4"
+								Duration="0:0:4.5"
 								From="1" To="0"/>
                             <ObjectAnimationUsingKeyFrames 
 								Storyboard.TargetName="Watermark"

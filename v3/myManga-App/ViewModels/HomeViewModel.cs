@@ -24,7 +24,7 @@ using myMangaSiteExtension.Objects;
 using myMangaSiteExtension.Utilities;
 using myManga_App.Properties;
 using Core.IO.Storage.Manager.BaseInterfaceClasses;
-using myManga_App.IO.ViewModel;
+using Core.MVVM;
 using myManga_App.Objects;
 using myManga_App.IO.Network;
 using myManga_App.Objects.MVVM;
@@ -240,6 +240,7 @@ namespace myManga_App.ViewModels
             Stream archive_file;
             MangaObject manga_object = null;
             BookmarkObject bookmark_object = null;
+
             if (Singleton<ZipStorage>.Instance.TryRead(ArchivePath, out archive_file, typeof(MangaObject).Name))
             {
                 try
@@ -260,6 +261,7 @@ namespace myManga_App.ViewModels
                 catch { }
                 archive_file.Close();
             }
+
             return new MangaArchiveInformationObject(manga_object, bookmark_object);
         }
 

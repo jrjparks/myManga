@@ -58,18 +58,31 @@
             IsHitTestVisible="{Binding IsOpen, Converter={StaticResource BooleanInverter}, ElementName=PageListPopup, Mode=OneWay}">
             <Button:MetroToggleButton.Content>
                 <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="{Binding MangaObject.Name, FallbackValue=Un-Named Manga}" FontWeight="Bold"/>
-                    <TextBlock Text="{Binding ChapterObject.Name, StringFormat={}\ {0}}" Visibility="{Binding Text, TargetNullValue=Collapsed, RelativeSource={RelativeSource Self}}"/>
-                    <TextBlock Text="{Binding ChapterObject.Volume, StringFormat={}\ Vol.{0}}" Visibility="{Binding Text, TargetNullValue=Collapsed, RelativeSource={RelativeSource Self}}"/>
+                    <TextBlock 
+                        Text="{Binding MangaObject.Name, StringFormat={}{0}\ :, FallbackValue=Un-Named\ Manga\ :}" 
+                        FontWeight="Bold"/>
+                    <TextBlock Text=" " Visibility="{Binding ChapterObject.Name, TargetNullValue=Collapsed}" />
+                    <TextBlock 
+                        x:Name="ChapterObjectName"
+                        Text="{Binding ChapterObject.Name, StringFormat={}{0}}" 
+                        Visibility="{Binding ChapterObject.Name, TargetNullValue=Collapsed}" 
+                        TextDecorations="Underline"/>
+                    <TextBlock Text=" "/>
+                    <TextBlock 
+                        Text="{Binding ChapterObject.Volume, StringFormat={}Vol.{0}}" 
+                        Visibility="{Binding Text, TargetNullValue=Collapsed, RelativeSource={RelativeSource Self}}"/>
+                    <TextBlock Text=" "/>
                     <TextBlock>
                         <TextBlock.Text>
-                            <MultiBinding StringFormat=" Ch.{0}.{1}">
+                            <MultiBinding StringFormat="Ch.{0}.{1}">
                                 <Binding Path="ChapterObject.Chapter" FallbackValue="0"/>
                                 <Binding Path="ChapterObject.SubChapter" FallbackValue="0"/>
                             </MultiBinding>
                         </TextBlock.Text>
                     </TextBlock>
-                    <TextBlock Text="{Binding SelectedPageObject.PageNumber, FallbackValue={}\ Page: 0, StringFormat={}\ Page: {0}}" Margin="1,0"/>
+                    <TextBlock Text=" "/>
+                    <TextBlock 
+                        Text="{Binding SelectedPageObject.PageNumber, FallbackValue={}Page: 0, StringFormat={}Page: {0}}"/>
                 </StackPanel>
             </Button:MetroToggleButton.Content>
         </Button:MetroToggleButton>
@@ -110,11 +123,12 @@
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
                     <TextBlock 
-                        Text="Zoom:"
+                        Text="{Binding Value, ElementName=PageZoomSlider, StringFormat=Zoom\ Amount:\ {0:0.0}x}"
                         FontSize="14"
                         VerticalAlignment="Center"
                         Margin="0,0,3,0"/>
                     <Slider
+                        x:Name="PageZoomSlider"
                         Grid.Column="1"
                         Orientation="Horizontal"
                         Minimum="0.5"

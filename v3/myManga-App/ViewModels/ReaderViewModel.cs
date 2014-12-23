@@ -3,7 +3,7 @@ using Core.IO.Storage.Manager.BaseInterfaceClasses;
 using Core.MVVM;
 using Core.Other.Singleton;
 using myManga_App.IO.Network;
-using myManga_App.IO.ViewModel;
+using Core.MVVM;
 using myManga_App.Objects;
 using myMangaSiteExtension.Objects;
 using myMangaSiteExtension.Utilities;
@@ -29,16 +29,12 @@ namespace myManga_App.ViewModels
         private String ArchiveFilePath { get; set; }
         private String NextArchiveFilePath { get; set; }
         private String PrevArchiveFilePath { get; set; }
-
-
-        private static readonly DependencyPropertyKey ChapterObjectPreloadsPropertyKey = DependencyProperty.RegisterAttachedReadOnly(
-            "ChapterObjectPreloads",
-            typeof(Dictionary<String, ChapterObject>),
-            typeof(ReaderViewModel),
-            new PropertyMetadata(new Dictionary<String, ChapterObject>()));
-        private static readonly DependencyProperty ChapterObjectPreloadsProperty = ChapterObjectPreloadsPropertyKey.DependencyProperty;
-        public Dictionary<String, ChapterObject> ChapterObjectPreloads
-        { get { return (Dictionary<String, ChapterObject>)GetValue(ChapterObjectPreloadsProperty); } }
+        
+        #region ChapterObjectPreloadDictionary
+        private readonly Dictionary<String, ChapterObject> _ChapterObjectPreloadDictionary = new Dictionary<String, ChapterObject>();
+        private Dictionary<String, ChapterObject> ChapterObjectPreloadDictionary
+        { get { return _ChapterObjectPreloadDictionary; } }
+        #endregion
 
         #region MangaObjectProperty
         private static readonly DependencyProperty MangaObjectProperty = DependencyProperty.RegisterAttached(
@@ -81,6 +77,7 @@ namespace myManga_App.ViewModels
             ReaderViewModel _this = (d as ReaderViewModel);
             _this.SaveBookmarkObject();
             _this.PreloadChapters();
+            
         }
         #endregion
 
@@ -125,7 +122,7 @@ namespace myManga_App.ViewModels
         private void NextPage()
         {
             if (this.BookmarkObject.Page < this.ChapterObject.Pages.Last().PageNumber) ++this.BookmarkObject.Page;
-            else { this.ContinueReading = true; OpenChapter(this.MangaObject, ChapterObjectPreloads[this.NextArchiveFilePath]); }
+            else { this.ContinueReading = true; OpenChapter(this.MangaObject, ChapterObjectPreloadDictionary[this.NextArchiveFilePath]); }
             this.SelectedPageObject = this.ChapterObject.PageObjectOfBookmarkObject(this.BookmarkObject);
         }
         private Boolean CanNextPage()
@@ -144,7 +141,7 @@ namespace myManga_App.ViewModels
         private void PrevPage()
         {
             if (this.BookmarkObject.Page > this.ChapterObject.Pages.First().PageNumber) --this.BookmarkObject.Page;
-            else { this.ContinueReading = true; OpenChapter(this.MangaObject, ChapterObjectPreloads[this.PrevArchiveFilePath]); }
+            else { this.ContinueReading = true; OpenChapter(this.MangaObject, ChapterObjectPreloadDictionary[this.PrevArchiveFilePath]); }
             this.SelectedPageObject = this.ChapterObject.PageObjectOfBookmarkObject(this.BookmarkObject);
         }
         private Boolean CanPrevPage()
@@ -170,30 +167,30 @@ namespace myManga_App.ViewModels
 
         private void OpenChapter(MangaObject MangaObject, ChapterObject ChapterObject)
         {
-            this.PullFocus();
-
             this.MangaObject = MangaObject;
             this.ChapterObject = ChapterObject;
 
             String base_path = Path.Combine(App.CHAPTER_ARCHIVE_DIRECTORY, MangaObject.MangaFileName());
             this.ArchiveFilePath = Path.Combine(base_path, ChapterObject.ChapterArchiveName(App.CHAPTER_ARCHIVE_EXTENSION));
-            ChapterObjectPreloads.Clear();
+            ChapterObjectPreloadDictionary.Clear();
             try
             {
                 ChapterObject PrevChapter = this.MangaObject.PrevChapterObject(this.ChapterObject);
-                ChapterObjectPreloads.Add(this.PrevArchiveFilePath = Path.Combine(base_path, PrevChapter.ChapterArchiveName(App.CHAPTER_ARCHIVE_EXTENSION)), PrevChapter);
+                ChapterObjectPreloadDictionary.Add(this.PrevArchiveFilePath = Path.Combine(base_path, PrevChapter.ChapterArchiveName(App.CHAPTER_ARCHIVE_EXTENSION)), PrevChapter);
             }
             catch { }
             try
             {
                 ChapterObject NextChapter = this.MangaObject.NextChapterObject(this.ChapterObject);
-                ChapterObjectPreloads.Add(this.NextArchiveFilePath = Path.Combine(base_path, NextChapter.ChapterArchiveName(App.CHAPTER_ARCHIVE_EXTENSION)), NextChapter);
+                ChapterObjectPreloadDictionary.Add(this.NextArchiveFilePath = Path.Combine(base_path, NextChapter.ChapterArchiveName(App.CHAPTER_ARCHIVE_EXTENSION)), NextChapter);
             }
             catch { }
 
             LoadChapterObject();
             LoadBookmarkObject();
             this.ContinueReading = false;
+
+            this.PullFocus();
         }
 
         public ReaderViewModel()
@@ -211,12 +208,12 @@ namespace myManga_App.ViewModels
         #region Methods
         public void PreloadChapters()
         {
-            foreach(System.Collections.Generic.KeyValuePair<String, ChapterObject> chapter_object_preload in ChapterObjectPreloads)
-                if (!String.Equals(chapter_object_preload.Key, null) && !File.Exists(chapter_object_preload.Key))
+            foreach (System.Collections.Generic.KeyValuePair<String, ChapterObject> ChapterObjectPreload in ChapterObjectPreloadDictionary)
+                if (!String.Equals(ChapterObjectPreload.Key, null) && !File.Exists(ChapterObjectPreload.Key))
                 {
-                    using (File.Open(chapter_object_preload.Key, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite))
-                    { /* Touch Next Chapter File*/ }
-                    DownloadManager.Default.Download(this.MangaObject, chapter_object_preload.Value);
+                    using (File.Open(ChapterObjectPreload.Key, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite))
+                    { /* Touch Chapter File*/ }
+                    DownloadManager.Default.Download(this.MangaObject, ChapterObjectPreload.Value);
                 }
         }
 

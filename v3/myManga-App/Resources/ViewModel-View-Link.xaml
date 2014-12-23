@@ -3,7 +3,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:ViewModels="clr-namespace:myManga_App.ViewModels"
     xmlns:Views="clr-namespace:myManga_App.Views"
-    xmlns:mvvm="clr-namespace:myManga_App.Objects.MVVM">
+    xmlns:MVVM="clr-namespace:myManga_App.Objects.MVVM">
 
     <DataTemplate x:Key="HomeView_List" DataType="{x:Type ViewModels:HomeViewModel}">
         <Views:HomeView_List/>
@@ -17,7 +17,7 @@
                 <Style TargetType="{x:Type ContentControl}">
                     <Setter Property="ContentTemplate" Value="{StaticResource HomeView_List}"/>
                     <Style.Triggers>
-                        <DataTrigger Binding="{Binding ViewType}" Value="{x:Static mvvm:ViewModelViewType.Grid}">
+                        <DataTrigger Binding="{Binding ViewType}" Value="{x:Static MVVM:ViewModelViewType.Grid}">
                             <Setter Property="ContentTemplate" Value="{StaticResource HomeView_Grid}"/>
                         </DataTrigger>
                     </Style.Triggers>

@@ -277,7 +277,7 @@
                                 Command="{Binding Path=DataContext.DownloadChapterCommand, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl}}"
                                 CommandParameter="{Binding}"/>-->
                             <button:MetroButton
-                                x:Name="ReadChapterButton"
+                                x:Name="ChapterActionButton"
                                 Margin="0,2"
                                 Grid.RowSpan="2"
                                 Grid.Column="1"
@@ -294,8 +294,7 @@
                             <Setter TargetName="ItemBorder" Property="Padding" Value="0"/>
                         </Trigger>
                         <Trigger Property="IsMouseOver" Value="True">
-                            <!--<Setter TargetName="DownloadButton" Property="Background" Value="{DynamicResource window-theme-secondary}"/>-->
-                            <Setter TargetName="ReadChapterButton" Property="Background" Value="{DynamicResource window-theme-secondary}"/>
+                            <Setter TargetName="ChapterActionButton" Property="Background" Value="{DynamicResource window-theme-secondary}"/>
                             <Setter TargetName="ItemBorder" Property="Background" Value="{DynamicResource window-theme-secondary}"/>
                             <Setter TargetName="ItemBorder" Property="TextElement.Foreground" Value="{DynamicResource window-theme-primary}"/>
                         </Trigger>

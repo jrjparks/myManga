@@ -44,6 +44,10 @@ namespace myMangaSiteExtension.Utilities
                     foreach (LocationObject Location in Locations)
                         if (!chapterObject.Locations.Any(o => o.ExtensionName == Location.ExtensionName))
                             chapterObject.Locations.Add(Location);
+
+                // Pages
+                if (Int32.Equals(chapterObject.Pages.Count, 0))
+                    chapterObject.Pages.AddRange(list.First().Pages);
             }
         }
 

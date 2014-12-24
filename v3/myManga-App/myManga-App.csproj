@@ -290,7 +290,6 @@
   <ItemGroup>
     <Resource Include="Resources\Icon.ico" />
     <Resource Include="License.txt" />
-    <EmbeddedResource Include="Resources\DLL\fastJSON.dll" />
     <EmbeddedResource Include="Resources\DLL\HtmlAgilityPack.dll" />
     <EmbeddedResource Include="Resources\DLL\Ionic.Zip.dll" />
     <EmbeddedResource Include="Resources\DLL\Microsoft.Windows.Shell.dll" />

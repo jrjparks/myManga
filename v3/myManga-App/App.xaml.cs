@@ -58,19 +58,15 @@ namespace myManga_App
             SiteExtensions.DLLAppDomain.AssemblyResolve += emdll.ResolveAssembly;
             DatabaseExtensions.DLLAppDomain.AssemblyResolve += emdll.ResolveAssembly;
 
-            LoadUserConfig();
-
             // Create a File System Watcher for Manga Objects
             mangaObjectArchiveWatcher = new FileSystemWatcher(MANGA_ARCHIVE_DIRECTORY, MANGA_ARCHIVE_FILTER);
-            mangaObjectArchiveWatcher.EnableRaisingEvents = true;
+            mangaObjectArchiveWatcher.EnableRaisingEvents = false;
 
             // Create a File System Watcher for Manga Chapter Objects
             chapterObjectArchiveWatcher = new FileSystemWatcher(CHAPTER_ARCHIVE_DIRECTORY, CHAPTER_ARCHIVE_FILTER);
             chapterObjectArchiveWatcher.IncludeSubdirectories = true;
-            chapterObjectArchiveWatcher.EnableRaisingEvents = true;
-
-            UserConfig.PropertyChanged += (s, e) => SaveUserConfig();
-
+            chapterObjectArchiveWatcher.EnableRaisingEvents = false;
+            
             Startup += App_Startup;
 
             InitializeComponent();
@@ -80,6 +76,13 @@ namespace myManga_App
         {
             SiteExtensions.LoadDLL(PLUGIN_DIRECTORY, Filter: "*.mymanga.dll");
             DatabaseExtensions.LoadDLL(PLUGIN_DIRECTORY, Filter: "*.mymanga.dll");
+
+            LoadUserConfig();
+            UserConfig.UserConfigurationUpdated += (_s, _e) => SaveUserConfig();
+
+            // Enable FileSystemWatchers
+            mangaObjectArchiveWatcher.EnableRaisingEvents = true;
+            chapterObjectArchiveWatcher.EnableRaisingEvents = true;
         }
 
         private void LoadUserConfig()
@@ -89,6 +92,7 @@ namespace myManga_App
             { using (UserConfigStream) this.UserConfig = UserConfigStream.Deserialize<UserConfigurationObject>(SaveType: SaveType.XML); }
             else
             {
+                // Generate a default User Configuration
                 this.UserConfig = new UserConfigurationObject();
                 this.UserConfig.WindowSizeWidth = 640;
                 this.UserConfig.WindowSizeHeight = 480;
@@ -99,6 +103,6 @@ namespace myManga_App
         }
 
         public void SaveUserConfig()
-        { Singleton<FileStorage>.Instance.Write(this.USER_CONFIG_PATH, this.UserConfig.Serialize(SaveType: SaveType.XML)); }
+        { if(!UserConfigurationObject.Equals(this.UserConfig, null)) Singleton<FileStorage>.Instance.Write(this.USER_CONFIG_PATH, this.UserConfig.Serialize(SaveType: SaveType.XML)); }
     }
 }

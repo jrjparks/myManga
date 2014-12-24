@@ -256,7 +256,7 @@ namespace myManga_App.ViewModels
             App.UserConfig.DefaultPageZoom = this.DefaultPageZoom;
             if (App.UserConfig.SaveType != SelectedSaveType) ConvertStoredFiles();
             App.UserConfig.SaveType = SelectedSaveType;
-            App.SaveUserConfig();
+            // App.SaveUserConfig();
         }
 
         private void ConvertStoredFiles()

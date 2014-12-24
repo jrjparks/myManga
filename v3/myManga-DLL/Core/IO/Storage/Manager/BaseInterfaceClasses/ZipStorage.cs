@@ -35,7 +35,6 @@ namespace Core.IO.Storage.Manager.BaseInterfaceClasses
         protected readonly ReadOptions ZipReadOptions = new ReadOptions();
         protected readonly Task write_consumer_task;
         protected Boolean run_queue = true;
-        protected readonly UInt16 retry_count;
 
         public ZipStorage()
             : base()

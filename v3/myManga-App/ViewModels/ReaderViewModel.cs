@@ -178,13 +178,13 @@ namespace myManga_App.ViewModels
                 ChapterObject PrevChapter = this.MangaObject.PrevChapterObject(this.ChapterObject);
                 ChapterObjectPreloadDictionary.Add(this.PrevArchiveFilePath = Path.Combine(base_path, PrevChapter.ChapterArchiveName(App.CHAPTER_ARCHIVE_EXTENSION)), PrevChapter);
             }
-            catch { }
+            catch { this.PrevArchiveFilePath = null; }
             try
             {
                 ChapterObject NextChapter = this.MangaObject.NextChapterObject(this.ChapterObject);
                 ChapterObjectPreloadDictionary.Add(this.NextArchiveFilePath = Path.Combine(base_path, NextChapter.ChapterArchiveName(App.CHAPTER_ARCHIVE_EXTENSION)), NextChapter);
             }
-            catch { }
+            catch { this.NextArchiveFilePath = null; }
 
             LoadChapterObject();
             LoadBookmarkObject();

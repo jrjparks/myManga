@@ -36,7 +36,7 @@ namespace myMangaSiteExtension.Utilities
 
                 // SubChapter
                 foreach (UInt32 SubChapter in (from ChapterObject obj in list where obj != null select obj.SubChapter))
-                    if (chapterObject.SubChapter <= 0 && SubChapter >= 0)
+                    if (chapterObject.SubChapter < 0 && SubChapter >= 0)
                         chapterObject.SubChapter = SubChapter;
 
                 // Locations

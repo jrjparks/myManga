@@ -55,6 +55,8 @@ namespace myManga_App.ViewModels
             get { return (MangaArchiveInformationObject)GetValue(SelectedMangaArchiveProperty); }
             set { SetValue(SelectedMangaArchiveProperty, value); }
         }
+
+        private ICollectionView MangaListView;
         #endregion
 
         private static readonly DependencyProperty SearchFilterProperty = DependencyProperty.RegisterAttached(
@@ -74,8 +76,6 @@ namespace myManga_App.ViewModels
             _this.MangaListView.Refresh();
             _this.MangaListView.MoveCurrentToFirst();
         }
-
-        private ICollectionView MangaListView;
 
         private DelegateCommand _ClearSearchCommand;
         public ICommand ClearSearchCommand
@@ -201,6 +201,7 @@ namespace myManga_App.ViewModels
                 MangaListView.MoveCurrentToFirst();
 
                 Messenger.Default.RegisterRecipient<FileSystemEventArgs>(this, MangaObjectArchiveWatcher_Event, "MangaObjectArchiveWatcher");
+                Messenger.Default.RegisterRecipient<FileSystemEventArgs>(this, ChapterObjectArchiveWatcher_Event, "ChapterObjectArchiveWatcher");
             }
 #if DEBUG
 #endif
@@ -208,8 +209,9 @@ namespace myManga_App.ViewModels
 
         private void MangaObjectArchiveWatcher_Event(FileSystemEventArgs e)
         {
-            MangaArchiveInformationObject current_manga_archive = MangaArchiveCollection.FirstOrDefault(
-                o => o.MangaObject.MangaArchiveName(App.MANGA_ARCHIVE_EXTENSION) == e.Name);
+            MangaArchiveInformationObject current_manga_archive = MangaArchiveCollection.FirstOrDefault(o =>{
+                return o.MangaObject.MangaArchiveName(App.MANGA_ARCHIVE_EXTENSION) == e.Name;
+            });
             Boolean ViewingSelectedMangaObject = this.SelectedMangaArchive != null && this.SelectedMangaArchive.Equals(current_manga_archive);
             switch (e.ChangeType)
             {
@@ -222,7 +224,7 @@ namespace myManga_App.ViewModels
                             MangaArchiveCollection.Add(new_manga_archive);
                         else
                             current_manga_archive.Merge(new_manga_archive);
-                        if (ViewingSelectedMangaObject) this.SelectedMangaArchive = new_manga_archive;
+                        if (ViewingSelectedMangaObject) this.SelectedMangaArchive = current_manga_archive;
                     }
                     break;
 
@@ -231,6 +233,20 @@ namespace myManga_App.ViewModels
                     break;
 
                 default:
+                    break;
+            }
+        }
+
+        private void ChapterObjectArchiveWatcher_Event(FileSystemEventArgs e)
+        {
+            MangaArchiveInformationObject current_manga_archive = MangaArchiveCollection.FirstOrDefault(o =>
+            { return e.FullPath.StartsWith(Path.Combine(App.CHAPTER_ARCHIVE_DIRECTORY, o.MangaObject.MangaFileName())); });
+            switch (e.ChangeType)
+            {
+                case WatcherChangeTypes.Created:
+                case WatcherChangeTypes.Deleted:
+                    if (!MangaArchiveInformationObject.Equals(current_manga_archive, null))
+                        current_manga_archive.UpdateLastUpdate();
                     break;
             }
         }

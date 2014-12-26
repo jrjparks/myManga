@@ -11,24 +11,8 @@ using System.Windows;
 
 namespace myManga_App.Objects.UserInterface
 {
-    public class MangaArchiveInformationObject : DependencyObject, INotifyPropertyChanging, INotifyPropertyChanged
+    public class MangaArchiveInformationObject : DependencyObject
     {
-        #region NotifyPropertyChange
-        public event PropertyChangingEventHandler PropertyChanging;
-        protected void OnPropertyChanging([CallerMemberName] String caller = "")
-        {
-            if (PropertyChanging != null)
-                PropertyChanging(this, new PropertyChangingEventArgs(caller));
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-        protected void OnPropertyChanged([CallerMemberName] String caller = "")
-        {
-            if (PropertyChanged != null)
-                PropertyChanged(this, new PropertyChangedEventArgs(caller));
-        }
-        #endregion
-
         #region MangaObjectProperty
         private static readonly DependencyProperty MangaObjectProperty = DependencyProperty.RegisterAttached(
             "MangaObject",
@@ -77,6 +61,22 @@ namespace myManga_App.Objects.UserInterface
         { get { return (ChapterObject)GetValue(ResumeChapterObjectProperty); } }
         #endregion
 
+        #region LastUpdateProperty
+        private static readonly DependencyProperty LastUpdateProperty = DependencyProperty.RegisterAttached(
+            "LastUpdate",
+            typeof(DateTime),
+            typeof(MangaArchiveInformationObject));
+
+        public DateTime LastUpdate
+        {
+            get { return (DateTime)GetValue(LastUpdateProperty); }
+            set { SetValue(LastUpdateProperty, value); }
+        }
+
+        public void UpdateLastUpdate()
+        { this.LastUpdate = DateTime.Now; }
+        #endregion
+
         #region Constructors
         public MangaArchiveInformationObject() : base() { }
         public MangaArchiveInformationObject(MangaObject MangaObject, BookmarkObject BookmarkObject)
@@ -84,6 +84,8 @@ namespace myManga_App.Objects.UserInterface
         {
             this.MangaObject = MangaObject;
             this.BookmarkObject = BookmarkObject;
+            if(!this.Empty())
+                this.SetValue(ResumeChapterObjectPropertyKey, BookmarkObject.Equals(this.BookmarkObject, null) ? null : this.MangaObject.ChapterObjectOfBookmarkObject(this.BookmarkObject));
         }
         #endregion
     }

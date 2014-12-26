@@ -8,17 +8,11 @@
     xmlns:utils="clr-namespace:myMangaSiteExtension.Utilities;assembly=myMangaSiteExtension">
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="/myManga;component/Themes/CoreResourceDictionary.xaml"/>
-        <ResourceDictionary>
-            <ObjectDataProvider ObjectType="{x:Type utils:MangaObjectExtensions}" MethodName="IsLocal" x:Key="IsLocalContent">
-                <ObjectDataProvider.MethodParameters>
-                    <objects:MangaObject></objects:MangaObject>
-                    <system:String>C:\</system:String>
-                </ObjectDataProvider.MethodParameters>
-            </ObjectDataProvider>
-        </ResourceDictionary>
     </ResourceDictionary.MergedDictionaries>
     <converters:LoadImageFromMangaArchive x:Key="LoadImageFromMangaArchive"/>
     <converters:LoadImageFromChapterArchive x:Key="LoadImageFromChapterArchive"/>
+    <converters:ObjectIsLocal x:Key="ObjectIsLocal"/>
+    <converters:EqualsConverter x:Key="EqualsConverter"/>
 
     <converters:StringListToCSV x:Key="StringListToCSV"/>
     <converters:LocationListToCSV x:Key="LocationListToCSV"/>
@@ -84,7 +78,7 @@
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsSelected" Value="True">
-                            <Setter TargetName="ItemBorder" Property="BorderThickness" Value="{Binding Path=BorderThickness, RelativeSource={RelativeSource AncestorType={x:Type ListBoxItem}}}"/>
+                            <Setter TargetName="ItemBorder" Property="BorderThickness" Value="{Binding Path=BorderThickness, RelativeSource={RelativeSource TemplatedParent}}"/>
                             <Setter TargetName="ItemBorder" Property="Padding" Value="0"/>
                             <Setter TargetName="TRCornerTick" Property="Visibility" Value="Visible"/>
                         </Trigger>
@@ -144,7 +138,7 @@
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsSelected" Value="True">
-                            <Setter TargetName="ItemBorder" Property="BorderThickness" Value="{Binding Path=BorderThickness, RelativeSource={RelativeSource AncestorType={x:Type ListBoxItem}}}"/>
+                            <Setter TargetName="ItemBorder" Property="BorderThickness" Value="{Binding Path=BorderThickness, RelativeSource={RelativeSource TemplatedParent}}"/>
                             <Setter TargetName="ItemBorder" Property="Padding" Value="0"/>
                         </Trigger>
                         <Trigger Property="IsMouseOver" Value="True">
@@ -197,13 +191,10 @@
                             <TextBlock Grid.Column="1" Grid.Row="2" VerticalAlignment="Center" Foreground="{StaticResource text-muted}" TextTrimming="CharacterEllipsis" Text="{Binding DatabaseLocations, Converter={StaticResource LocationListToCSV}, Mode=OneWay, FallbackValue=No-Database}"/>
                             <TextBlock Grid.Column="1" Grid.Row="3" VerticalAlignment="Center" Foreground="{StaticResource text-muted}" TextTrimming="CharacterEllipsis" Text="{Binding Genres, Converter={StaticResource StringListToCSV}, Mode=OneWay, FallbackValue=No-Genre}"/>
                         </Grid>
-                        <Border.InputBindings>
-                            <MouseBinding MouseAction="LeftDoubleClick" Command="{Binding Path=DataContext.ResumeReadingCommand, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl}}"/>
-                        </Border.InputBindings>
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsSelected" Value="True">
-                            <Setter TargetName="ItemBorder" Property="BorderThickness" Value="{Binding Path=BorderThickness, RelativeSource={RelativeSource AncestorType={x:Type ListBoxItem}}}"/>
+                            <Setter TargetName="ItemBorder" Property="BorderThickness" Value="{Binding Path=BorderThickness, RelativeSource={RelativeSource TemplatedParent}}"/>
                             <Setter TargetName="ItemBorder" Property="Padding" Value="0"/>
                         </Trigger>
                         <Trigger Property="IsMouseOver" Value="True">
@@ -242,8 +233,18 @@
                                 <ColumnDefinition/>
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
-                            <TextBlock Grid.Row="0" VerticalAlignment="Center" Foreground="{StaticResource text-dark}" FontWeight="Bold" FontSize="14" TextTrimming="CharacterEllipsis" Text="{Binding Name}"/>
-                            <TextBlock Grid.Row="1" VerticalAlignment="Center" Foreground="{StaticResource text-muted}" TextTrimming="CharacterEllipsis">
+                            <TextBlock 
+                                Grid.Row="0" 
+                                VerticalAlignment="Center" 
+                                Foreground="{StaticResource text-dark}" 
+                                FontWeight="Bold" FontSize="14" 
+                                TextTrimming="CharacterEllipsis" 
+                                Text="{Binding Name}"/>
+                            <TextBlock 
+                                Grid.Row="1" 
+                                VerticalAlignment="Center" 
+                                Foreground="{StaticResource text-muted}" 
+                                TextTrimming="CharacterEllipsis">
                                 <TextBlock.Text>
                                     <MultiBinding StringFormat="Vol {0} Chap {1}.{2}">
                                         <Binding Path="Volume"/>
@@ -290,7 +291,7 @@
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsSelected" Value="True">
-                            <Setter TargetName="ItemBorder" Property="BorderThickness" Value="{Binding Path=BorderThickness, RelativeSource={RelativeSource AncestorType={x:Type ListBoxItem}}}"/>
+                            <Setter TargetName="ItemBorder" Property="BorderThickness" Value="{Binding Path=BorderThickness, RelativeSource={RelativeSource TemplatedParent}}"/>
                             <Setter TargetName="ItemBorder" Property="Padding" Value="0"/>
                         </Trigger>
                         <Trigger Property="IsMouseOver" Value="True">
@@ -298,11 +299,33 @@
                             <Setter TargetName="ItemBorder" Property="Background" Value="{DynamicResource window-theme-secondary}"/>
                             <Setter TargetName="ItemBorder" Property="TextElement.Foreground" Value="{DynamicResource window-theme-primary}"/>
                         </Trigger>
+                        <DataTrigger Value="True">
+                            <DataTrigger.Binding>
+                                <MultiBinding Converter="{StaticResource EqualsConverter}">
+                                    <Binding/>
+                                    <Binding Path="DataContext.ResumeChapterObject" RelativeSource="{RelativeSource FindAncestor, AncestorType={x:Type ItemsControl}}"/>
+                                </MultiBinding>
+                            </DataTrigger.Binding>
+                            <DataTrigger.Setters>
+                                <Setter TargetName="ItemBorder" Property="BorderThickness" Value="{Binding Path=BorderThickness, RelativeSource={RelativeSource TemplatedParent}}"/>
+                                <Setter TargetName="ItemBorder" Property="Padding" Value="0"/>
+                                <Setter TargetName="ItemBorder" Property="BorderBrush" Value="{DynamicResource window-theme-primary-disabled}"/>
+                                <Setter TargetName="ItemBorder" Property="TextElement.Foreground" Value="{DynamicResource window-theme-primary}"/>
+                            </DataTrigger.Setters>
+                        </DataTrigger>
                         <DataTrigger Binding="{Binding Read}" Value="True">
 
                         </DataTrigger>
-                        <DataTrigger Binding="{Binding IsLocalContent}" Value="True">
-                            <!--<Setter TargetName="LocationIcon" Property="Text" Value="{StaticResource fa-hdd-o}"/>-->
+                        <DataTrigger Value="False">
+                            <DataTrigger.Binding>
+                                <MultiBinding Converter="{StaticResource ObjectIsLocal}">
+                                    <Binding/>
+                                    <Binding Path="DataContext.MangaObject" RelativeSource="{RelativeSource FindAncestor, AncestorType={x:Type ItemsControl}}"/>
+                                    <Binding Path="DataContext.LastUpdate" RelativeSource="{RelativeSource FindAncestor, AncestorType={x:Type ItemsControl}}"/>
+                                </MultiBinding>
+                            </DataTrigger.Binding>
+                            <Setter TargetName="ChapterActionButton" Property="Content" Value="{StaticResource oi-cloud-download}"/>
+                            <Setter TargetName="ChapterActionButton" Property="Command" Value="{Binding Path=DataContext.DownloadChapterCommand, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl}}"/>
                         </DataTrigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>

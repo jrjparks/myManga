@@ -39,7 +39,7 @@ namespace myManga_App.Objects
         #endregion
 
         [XmlIgnore]
-        private WindowState windowState;
+        private WindowState windowState = WindowState.Normal;
         [XmlElement]
         public WindowState WindowState
         {
@@ -53,7 +53,7 @@ namespace myManga_App.Objects
         }
 
         [XmlIgnore]
-        public Double windowSizeWidth;
+        public Double windowSizeWidth = 640D;
         [XmlElement]
         public Double WindowSizeWidth
         {
@@ -67,7 +67,7 @@ namespace myManga_App.Objects
         }
 
         [XmlIgnore]
-        public Double windowSizeHeight;
+        public Double windowSizeHeight = 480D;
         [XmlElement]
         public Double WindowSizeHeight
         {
@@ -81,7 +81,7 @@ namespace myManga_App.Objects
         }
 
         [XmlIgnore]
-        private SaveType saveType;
+        private SaveType saveType = SaveType.XML;
         [XmlElement]
         public SaveType SaveType
         {
@@ -137,7 +137,7 @@ namespace myManga_App.Objects
         }
 
         [XmlIgnore]
-        private Double defaultPageZoom;
+        private Double defaultPageZoom = 1D;
         [XmlElement]
         public Double DefaultPageZoom
         {

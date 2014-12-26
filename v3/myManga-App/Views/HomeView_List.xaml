@@ -165,14 +165,11 @@
             <ListBox
 				x:Name="MangaObjectItems"
 				Grid.Row="1"
-				Background="{x:Null}"
-				BorderBrush="{x:Null}"
 				BorderThickness="0" 
 				ItemContainerStyle="{DynamicResource HomeView_List_MangaListBoxItem}"
-				Visibility="{Binding HasItems, Converter={StaticResource BooleanToVisibilityConverter}, RelativeSource={RelativeSource Self}}" 
 				ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                IsSynchronizedWithCurrentItem="True"
 				SelectedItem="{Binding SelectedMangaArchive}"
+                SelectedIndex="0"
 				ItemsSource="{Binding MangaArchiveCollection}"/>
             <ProgressBar 
 				Grid.Row="1" 
@@ -232,6 +229,7 @@
 						Margin="0,0,3,0">
                         <Image x:Name="CoverImage" Source="{Binding Converter={StaticResource LoadImageFromMangaArchive}}"/>
                         <button:MetroButton
+                            Visibility="{Binding BookmarkObject, TargetNullValue=Collapsed}"
                             Width="{Binding ActualWidth, Mode=OneWay, ElementName=CoverImage}"
                             MinWidth="150"
                             VerticalAlignment="Bottom"
@@ -288,7 +286,6 @@
 				ItemsSource="{Binding MangaObject.Chapters}"
                 SelectedItem="{Binding ResumeChapterObject, Mode=OneWay}"
                 SelectedIndex="0"
-                IsSynchronizedWithCurrentItem="True"
 				ItemContainerStyle="{DynamicResource HomeView_List_ChapterListBoxItem}"
 				Visibility="{Binding HasItems, Converter={StaticResource BooleanToVisibilityConverter}, RelativeSource={RelativeSource Self}}" 
 				ScrollViewer.HorizontalScrollBarVisibility="Disabled" HorizontalContentAlignment="Stretch"/>

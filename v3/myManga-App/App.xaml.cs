@@ -89,15 +89,18 @@ namespace myManga_App
         {
             Stream UserConfigStream;
             if (Singleton<FileStorage>.Instance.TryRead(this.USER_CONFIG_PATH, out UserConfigStream))
-            { using (UserConfigStream) this.UserConfig = UserConfigStream.Deserialize<UserConfigurationObject>(SaveType: SaveType.XML); }
-            else
+            { using (UserConfigStream) { try { this.UserConfig = UserConfigStream.Deserialize<UserConfigurationObject>(SaveType: SaveType.XML); } catch { } } }
+            if (UserConfigurationObject.Equals(this.UserConfig, null))
             {
-                // Generate a default User Configuration
                 this.UserConfig = new UserConfigurationObject();
-                this.UserConfig.WindowSizeWidth = 640;
-                this.UserConfig.WindowSizeHeight = 480;
-                this.UserConfig.WindowState = WindowState.Normal;
-                this.UserConfig.SaveType = SaveType.XML;
+
+                // Enable all available Database Extentions
+                foreach (IDatabaseExtension DatabaseExtension in DatabaseExtensions.DLLCollection)
+                    this.UserConfig.EnabledDatabaseExtentions.Add(DatabaseExtension.DatabaseExtensionDescriptionAttribute.Name);
+
+                // Enable the first Site Extention if available
+                if (SiteExtensions.DLLCollection.Count > 0)
+                    this.UserConfig.EnabledSiteExtensions.Add(SiteExtensions.DLLCollection[0].SiteExtensionDescriptionAttribute.Name);
                 SaveUserConfig();
             }
         }

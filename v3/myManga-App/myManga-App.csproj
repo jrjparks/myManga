@@ -118,6 +118,7 @@
     <Compile Include="Converters\BooleanInverter.cs" />
     <Compile Include="Converters\CommandParameterStringFormat.cs" />
     <Compile Include="Converters\EnumToBooleanConverter.cs" />
+    <Compile Include="Converters\EqualsConverter.cs" />
     <Compile Include="Converters\LoadImageFromChapterArchive.cs" />
     <Compile Include="Converters\LoadImageFromMangaArchive.cs" />
     <Compile Include="Converters\LocationListToCSV.cs" />

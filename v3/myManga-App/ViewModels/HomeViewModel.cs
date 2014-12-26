@@ -209,9 +209,8 @@ namespace myManga_App.ViewModels
 
         private void MangaObjectArchiveWatcher_Event(FileSystemEventArgs e)
         {
-            MangaArchiveInformationObject current_manga_archive = MangaArchiveCollection.FirstOrDefault(o =>{
-                return o.MangaObject.MangaArchiveName(App.MANGA_ARCHIVE_EXTENSION) == e.Name;
-            });
+            MangaArchiveInformationObject current_manga_archive = MangaArchiveCollection.FirstOrDefault(o =>
+            { return String.Equals(o.MangaObject.MangaArchiveName(App.MANGA_ARCHIVE_EXTENSION), e.Name); });
             Boolean ViewingSelectedMangaObject = this.SelectedMangaArchive != null && this.SelectedMangaArchive.Equals(current_manga_archive);
             switch (e.ChangeType)
             {
@@ -239,14 +238,15 @@ namespace myManga_App.ViewModels
 
         private void ChapterObjectArchiveWatcher_Event(FileSystemEventArgs e)
         {
+            FileInfo fileInfo = new FileInfo(e.FullPath);
             MangaArchiveInformationObject current_manga_archive = MangaArchiveCollection.FirstOrDefault(o =>
-            { return e.FullPath.StartsWith(Path.Combine(App.CHAPTER_ARCHIVE_DIRECTORY, o.MangaObject.MangaFileName())); });
+            { return String.Equals(fileInfo.Directory.FullName, Path.Combine(App.CHAPTER_ARCHIVE_DIRECTORY, o.MangaObject.MangaFileName())); });
             switch (e.ChangeType)
             {
                 case WatcherChangeTypes.Created:
                 case WatcherChangeTypes.Deleted:
                     if (!MangaArchiveInformationObject.Equals(current_manga_archive, null))
-                        current_manga_archive.UpdateLastUpdate();
+                        current_manga_archive.LastUpdate = fileInfo.LastAccessTime;
                     break;
             }
         }

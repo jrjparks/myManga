@@ -86,7 +86,7 @@ namespace myManga_App.IO.Network
             where R : class
         {
             protected readonly App App = App.Current as App;
-            protected readonly SynchronizationContext SynchronizationContext;
+            private readonly SynchronizationContext SynchronizationContext;
             public event EventHandler<WorkerResult<R>> WorkComplete;
             private void OnWorkComplete(WorkerResult<R> e)
             {
@@ -108,16 +108,11 @@ namespace myManga_App.IO.Network
                 List<IWorkItemResult> Results = new List<IWorkItemResult>(Values.Count());
                 foreach (T Value in Values)
                     Results.Add(SmartThreadPool.QueueWorkItem(new WorkItemCallback(WorkerMethod), Value, new PostExecuteWorkItemCallback(WorkerCallback)));
-                return Results;
+                return Results.AsEnumerable();
             }
 
             public IEnumerable<IWorkItemResult> RunWork(SmartThreadPool SmartThreadPool, params T[] Values)
-            {
-                List<IWorkItemResult> Results = new List<IWorkItemResult>(Values.Count());
-                foreach (T Value in Values)
-                    Results.Add(SmartThreadPool.QueueWorkItem(new WorkItemCallback(WorkerMethod), Value, new PostExecuteWorkItemCallback(WorkerCallback)));
-                return Results;
-            }
+            { return RunWork(SmartThreadPool: SmartThreadPool, Values: Values.AsEnumerable()); }
 
             private void WorkerCallback(IWorkItemResult WorkItemResult) { WorkerCallback(WorkItemResult.Result as WorkerResult<R>); }
             public virtual void WorkerCallback(WorkerResult<R> WorkItemResult) { OnWorkComplete(WorkItemResult); }
@@ -315,7 +310,7 @@ namespace myManga_App.IO.Network
                     if (!App.UserConfig.EnabledSiteExtensions.Contains(SiteExtension.SiteExtensionDescriptionAttribute.Name)) return false;
                     return true;
                 }))
-                { SiteExtensionSearchContents.Add(SiteExtension, ProcessSearchResult(SiteExtension.GetSearchRequestObject(searchTerm: Value.Data))); }
+                { SiteExtensionSearchContents.Add(SiteExtension, ProcessSearchRequest(SiteExtension.GetSearchRequestObject(searchTerm: Value.Data))); }
 
                 // Search Enabled DatabaseExtensions for searchTerm: Value.Data
                 foreach (IDatabaseExtension DatabaseExtension in App.DatabaseExtensions.DLLCollection.Where(DatabaseExtension => {
@@ -323,39 +318,47 @@ namespace myManga_App.IO.Network
                     if (!App.UserConfig.EnabledDatabaseExtentions.Contains(DatabaseExtension.DatabaseExtensionDescriptionAttribute.Name)) return false;
                     return true;
                 }))
-                { DatabaseExtensionSearchContents.Add(DatabaseExtension, ProcessSearchResult(DatabaseExtension.GetSearchRequestObject(searchTerm: Value.Data))); }
+                { DatabaseExtensionSearchContents.Add(DatabaseExtension, ProcessSearchRequest(DatabaseExtension.GetSearchRequestObject(searchTerm: Value.Data))); }
 
                 // Convert SearchResultObjects from SiteExtensions to MangaObjects and add/merge into SearchResultItems
                 foreach (System.Collections.Generic.KeyValuePair<ISiteExtension, String> SiteExtensionSearchContent in SiteExtensionSearchContents)
                 {
-                    foreach (SearchResultObject SearchResult in SiteExtensionSearchContent.Key.ParseSearch(SiteExtensionSearchContent.Value))
+                    try
                     {
-                        MangaObject manga_object = SearchResult.ConvertToMangaObject(),
-                            existing_manga_object = SearchResultItems.FirstOrDefault(
-                            mo => SafeAlphaNumeric.Replace(mo.Name.ToLower(), String.Empty).Equals(SafeAlphaNumeric.Replace(manga_object.Name.ToLower(), String.Empty)));
+                        foreach (SearchResultObject SearchResult in SiteExtensionSearchContent.Key.ParseSearch(SiteExtensionSearchContent.Value))
+                        {
+                            MangaObject manga_object = SearchResult.ConvertToMangaObject(),
+                                existing_manga_object = SearchResultItems.FirstOrDefault(
+                                mo => SafeAlphaNumeric.Replace(mo.Name.ToLower(), String.Empty).Equals(SafeAlphaNumeric.Replace(manga_object.Name.ToLower(), String.Empty)));
 
-                        // Add new manga_object or merge into existing_manga_object
-                        if (MangaObject.Equals(existing_manga_object, null)) SearchResultItems.Add(manga_object);
-                        else existing_manga_object.Merge(manga_object);
+                            // Add new manga_object or merge into existing_manga_object
+                            if (MangaObject.Equals(existing_manga_object, null)) SearchResultItems.Add(manga_object);
+                            else existing_manga_object.Merge(manga_object);
+                        }
                     }
+                    catch { }
                 }
 
                 // Attach SearchResultObjects from DatabaseExtensions to MangaObjects in SearchResultItems
                 foreach (System.Collections.Generic.KeyValuePair<IDatabaseExtension, String> DatabaseExtensionSearchContent in DatabaseExtensionSearchContents)
                 {
-                    foreach (DatabaseObject SearchResult in DatabaseExtensionSearchContent.Key.ParseSearch(DatabaseExtensionSearchContent.Value))
+                    try
                     {
-                        MangaObject existing_manga_object = SearchResultItems.FirstOrDefault(
-                            mo => SafeAlphaNumeric.Replace(mo.Name.ToLower(), String.Empty).Equals(SafeAlphaNumeric.Replace(SearchResult.Name.ToLower(), String.Empty)));
-                        if (!MangaObject.Equals(existing_manga_object, null))
-                        { existing_manga_object.AttachDatabase(SearchResult); }
+                        foreach (DatabaseObject SearchResult in DatabaseExtensionSearchContent.Key.ParseSearch(DatabaseExtensionSearchContent.Value))
+                        {
+                            MangaObject existing_manga_object = SearchResultItems.FirstOrDefault(
+                                mo => SafeAlphaNumeric.Replace(mo.Name.ToLower(), String.Empty).Equals(SafeAlphaNumeric.Replace(SearchResult.Name.ToLower(), String.Empty)));
+                            if (!MangaObject.Equals(existing_manga_object, null))
+                            { existing_manga_object.AttachDatabase(SearchResult); }
+                        }
                     }
+                    catch { }
                 }
 
                 return new WorkerResult<List<MangaObject>>(SearchResultItems, Id: Value.Id);
             }
 
-            private String ProcessSearchResult(SearchRequestObject RequestObject)
+            private String ProcessSearchRequest(SearchRequestObject RequestObject)
             {
                 HttpWebRequest request = WebRequest.Create(RequestObject.Url) as HttpWebRequest;
                 request.Referer = RequestObject.Referer ?? request.Host;
@@ -498,7 +501,7 @@ namespace myManga_App.IO.Network
 
         private void SearchWorker_WorkComplete(object sender, DownloadManager.WorkerResult<List<MangaObject>> e)
         {
-            if (e.Success) { Messenger.Default.Send(e.Result, String.Format("SearchResult-{0}", e.Id.ToString())); }
+            Messenger.Default.Send(e.Result, String.Format("SearchResult-{0}", e.Id.ToString()));
             OnStatusChange(e.Exception);
         }
         #endregion

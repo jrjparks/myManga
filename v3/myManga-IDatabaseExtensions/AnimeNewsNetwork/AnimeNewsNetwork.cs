@@ -72,7 +72,7 @@ namespace AnimeNewsNetwork
         public List<DatabaseObject> ParseSearch(string content)
         {
             HtmlDocument DatabaseObjectDocument = new HtmlDocument();
-            if (!content.Contains("warning"))
+            if (content.StartsWith("<ann>") && !content.Contains("warning"))
             {
                 DatabaseObjectDocument.LoadHtml(content);
                 return (from HtmlNode MangaNode in DatabaseObjectDocument.DocumentNode.SelectNodes("//manga") select ParseDatabaseObject(MangaNode.OuterHtml)).ToList();

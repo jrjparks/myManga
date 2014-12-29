@@ -83,6 +83,9 @@
                     <TextBlock Text=" "/>
                     <TextBlock 
                         Text="{Binding SelectedPageObject.PageNumber, FallbackValue={}Page: 0, StringFormat={}Page: {0}}"/>
+                    <TextBlock Text=" of "/>
+                    <TextBlock 
+                        Text="{Binding ChapterObject.Pages.Count, FallbackValue={}0, StringFormat={}{0}}"/>
                 </StackPanel>
             </Button:MetroToggleButton.Content>
         </Button:MetroToggleButton>

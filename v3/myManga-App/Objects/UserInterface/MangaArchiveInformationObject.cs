@@ -37,9 +37,20 @@ namespace myManga_App.Objects.UserInterface
         {
             MangaArchiveInformationObject _this = (d as MangaArchiveInformationObject);
             if (!_this.Empty())
-                d.SetValue(
-                    ResumeChapterObjectPropertyKey, 
-                    BookmarkObject.Equals(_this.BookmarkObject, null) ? null : _this.MangaObject.ChapterObjectOfBookmarkObject(_this.BookmarkObject));
+            {
+                if (BookmarkObject.Equals(_this.BookmarkObject, null))
+                { d.SetValue(ResumeChapterObjectPropertyKey, null); }
+                else
+                { d.SetValue(ResumeChapterObjectPropertyKey, _this.MangaObject.ChapterObjectOfBookmarkObject(_this.BookmarkObject)); }
+
+                if (ChapterObject.Equals(_this.ResumeChapterObject, null))
+                { d.SetValue(HasMoreToReadPropertyKey, false); }
+                else
+                {
+                    Int32 ResumeChapterObjectIndex = _this.MangaObject.IndexOfChapterObject(_this.ResumeChapterObject) + 1;
+                    d.SetValue(HasMoreToReadPropertyKey, ResumeChapterObjectIndex < _this.MangaObject.Chapters.Count);
+                }
+            }
         }
 
         public BookmarkObject BookmarkObject
@@ -59,6 +70,18 @@ namespace myManga_App.Objects.UserInterface
 
         public ChapterObject ResumeChapterObject
         { get { return (ChapterObject)GetValue(ResumeChapterObjectProperty); } }
+        #endregion
+
+        #region HasMoreToReadProperty
+        private static readonly DependencyPropertyKey HasMoreToReadPropertyKey = DependencyProperty.RegisterAttachedReadOnly(
+            "HasMoreToRead",
+            typeof(Boolean),
+            typeof(MangaArchiveInformationObject),
+            null);
+        private static readonly DependencyProperty HasMoreToReadProperty = HasMoreToReadPropertyKey.DependencyProperty;
+
+        public Boolean HasMoreToRead
+        { get { return (Boolean)GetValue(HasMoreToReadProperty); } }
         #endregion
 
         #region LastUpdateProperty

@@ -131,6 +131,19 @@
                             <TextBlock Grid.Column="1" Grid.Row="1" VerticalAlignment="Center" Foreground="{StaticResource text-muted}" TextTrimming="CharacterEllipsis" Text="{Binding MangaObject.Locations, Converter={StaticResource LocationListToCSV}, Mode=OneWay, FallbackValue=No-Location}"/>
                             <TextBlock Grid.Column="1" Grid.Row="2" VerticalAlignment="Center" Foreground="{StaticResource text-muted}" TextTrimming="CharacterEllipsis" Text="{Binding MangaObject.DatabaseLocations, Converter={StaticResource LocationListToCSV}, Mode=OneWay, FallbackValue=No-Database}"/>
                             <TextBlock Grid.Column="1" Grid.Row="3" VerticalAlignment="Center" Foreground="{StaticResource text-muted}" TextTrimming="CharacterEllipsis" Text="{Binding MangaObject.Genres, Converter={StaticResource StringListToCSV}, Mode=OneWay, FallbackValue=No-Genre}"/>
+                            
+                            <TextBlock
+                                x:Name="HasMoreToRead"
+                                Visibility="Collapsed"
+                                Grid.Column="0"
+                                Grid.Row="0"
+                                FontFamily="{DynamicResource OpenIconic}"
+                                FontSize="20"
+                                Text="{DynamicResource oi-badge}">
+                                <TextBlock.Effect>
+                                    <DropShadowEffect Color="{DynamicResource window-background-color}" ShadowDepth="0"/>
+                                </TextBlock.Effect>
+                            </TextBlock>
                         </Grid>
                         <Border.InputBindings>
                             <MouseBinding MouseAction="LeftDoubleClick" Command="{Binding Path=DataContext.ResumeReadingCommand, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl}}"/>
@@ -145,6 +158,9 @@
                             <Setter TargetName="ItemBorder" Property="Background" Value="{DynamicResource window-theme-secondary}"/>
                             <Setter TargetName="ItemBorder" Property="TextElement.Foreground" Value="{DynamicResource window-theme-primary}"/>
                         </Trigger>
+                        <DataTrigger Binding="{Binding HasMoreToRead}" Value="True">
+                            <Setter TargetName="HasMoreToRead" Property="Visibility" Value="Visible"/>
+                        </DataTrigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
@@ -392,6 +408,19 @@
                                 TextWrapping="NoWrap"
                                 TextAlignment="Center"/>
 
+                            <TextBlock
+                                x:Name="HasMoreToRead"
+                                Visibility="Collapsed"
+                                Grid.Column="0"
+                                Grid.Row="0"
+                                FontFamily="{DynamicResource OpenIconic}"
+                                FontSize="28"
+                                Text="{DynamicResource oi-badge}">
+                                <TextBlock.Effect>
+                                    <DropShadowEffect Color="{DynamicResource window-background-color}" ShadowDepth="0"/>
+                                </TextBlock.Effect>
+                            </TextBlock>
+
                             <button:MetroToggleButton 
                                 x:Name="InformationDropdown"
                                 HorizontalAlignment="Right"
@@ -501,6 +530,9 @@
                             <Setter TargetName="ItemBorder" Property="Background" Value="{DynamicResource window-theme-secondary}"/>
                             <Setter TargetName="ItemBorder" Property="TextElement.Foreground" Value="{DynamicResource window-theme-primary}"/>
                         </Trigger>
+                        <DataTrigger Binding="{Binding HasMoreToRead}" Value="True">
+                            <Setter TargetName="HasMoreToRead" Property="Visibility" Value="Visible"/>
+                        </DataTrigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>

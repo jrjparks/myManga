@@ -166,7 +166,6 @@ namespace myManga_App.IO.Network
                     ISiteExtension SiteExtension = App.SiteExtensions.DLLCollection[LocationObj.ExtensionName];
                     ISiteExtensionDescriptionAttribute SiteExtensionDescriptionAttribute = SiteExtension.GetType().GetCustomAttribute<ISiteExtensionDescriptionAttribute>(false);
                     SiteExtensionContent.Add(SiteExtension, Downloader.GetHtmlContent(LocationObj.Url, SiteExtensionDescriptionAttribute.RefererHeader));
-                    Thread.Sleep(2000);
                 }
                 foreach (System.Collections.Generic.KeyValuePair<ISiteExtension, String> Content in SiteExtensionContent)
                 {
@@ -175,7 +174,7 @@ namespace myManga_App.IO.Network
                         MangaObject DownloadedMangaObject = Content.Key.ParseMangaObject(Content.Value);
                         if (!MangaObject.Equals(DownloadedMangaObject, null)) Value.Merge(DownloadedMangaObject);
                     }
-                    catch (Exception ex) { return new WorkerResult<MangaObject>(Value, false, ex); }
+                    catch { }
                 }
                 return new WorkerResult<MangaObject>(Value);
             }
@@ -467,7 +466,6 @@ namespace myManga_App.IO.Network
                 Singleton<ZipStorage>.Instance.Write(save_path, e.Result.GetType().Name, e.Result.Serialize(SaveType: App.UserConfig.SaveType));
                 ImageWorker.RunWork(SmartThreadPool, from String url in e.Result.Covers select new ImageDownloadRequest(url, save_path));
             }
-            else { this.Download(e.Result); }
             OnStatusChange(e.Exception);
         }
 

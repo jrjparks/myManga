@@ -172,30 +172,40 @@
             VerticalScrollBarVisibility="Auto"
             VerticalContentAlignment="Center"
             HorizontalContentAlignment="Center">
-            <Image
-                x:Name="ImageContent"
-                Stretch="UniformToFill" 
-                IsHitTestVisible="False"
-                Binding.SourceUpdated="ImageContent_SourceUpdated"
-                Binding.TargetUpdated="ImageContent_SourceUpdated" 
-                Height="{Binding Source.PixelHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"
-                Width="{Binding Source.PixelWidth, Mode=OneWay, RelativeSource={RelativeSource Self}}">
-                <Image.Source>
-                    <MultiBinding 
+            <Grid HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,5">
+                <Image
+                    x:Name="ImageContent"
+                    Stretch="UniformToFill" 
+                    IsHitTestVisible="False"
+                    Binding.SourceUpdated="ImageContent_SourceUpdated"
+                    Binding.TargetUpdated="ImageContent_SourceUpdated" 
+                    Height="{Binding Source.PixelHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"
+                    Width="{Binding Source.PixelWidth, Mode=OneWay, RelativeSource={RelativeSource Self}}"
+                    Margin="3">
+                    <Image.Source>
+                        <MultiBinding 
                         Converter="{StaticResource LoadImageFromChapterArchive}"
                         NotifyOnSourceUpdated="True"
                         NotifyOnTargetUpdated="True">
-                        <Binding Path="MangaObject"/>
-                        <Binding Path="ChapterObject"/>
-                        <Binding Path="SelectedPageObject"/>
-                    </MultiBinding>
-                </Image.Source>
-                <Image.LayoutTransform>
-                    <ScaleTransform 
+                            <Binding Path="MangaObject"/>
+                            <Binding Path="ChapterObject"/>
+                            <Binding Path="SelectedPageObject"/>
+                        </MultiBinding>
+                    </Image.Source>
+                    <Image.LayoutTransform>
+                        <ScaleTransform 
                         ScaleX="{Binding Path=PageZoom, Mode=OneWay, FallbackValue=1}" 
                         ScaleY="{Binding Path=PageZoom, Mode=OneWay, FallbackValue=1}"/>
-                </Image.LayoutTransform>
-            </Image>
+                    </Image.LayoutTransform>
+                </Image>
+                <Border
+                    BorderBrush="{DynamicResource window-background}"
+                    BorderThickness="5">
+                    <Border.Effect>
+                        <BlurEffect Radius="3"/>
+                    </Border.Effect>
+                </Border>
+            </Grid>
         </ScrollViewer>
         <Button:MetroButton
             Grid.Column="2"

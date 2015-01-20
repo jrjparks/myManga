@@ -150,14 +150,45 @@ namespace myManga_App.Objects
             }
         }
 
+        [XmlIgnore]
+        private Boolean removeBackChapters = false;
+        [XmlElement]
+        public Boolean RemoveBackChapters
+        {
+            get { return removeBackChapters; }
+            set
+            {
+                OnPropertyChanging();
+                removeBackChapters = value;
+                OnPropertyChanged();
+            }
+        }
+
+        [XmlIgnore]
+        private Int32 backChaptersToKeep = 3;
+        [XmlElement]
+        public Int32 BackChaptersToKeep
+        {
+            get { return backChaptersToKeep; }
+            set
+            {
+                OnPropertyChanging();
+                backChaptersToKeep = value;
+                OnPropertyChanged();
+            }
+        }
+
         public UserConfigurationObject() : base() { CreateEventLinks(); }
         public UserConfigurationObject(SerializationInfo info, StreamingContext context) : base(info, context) { CreateEventLinks(); }
 
         private void CreateEventLinks()
         {
             ViewTypes.CollectionChanged += (s, e) => OnUserConfigurationUpdated("ViewTypes");
+            ViewTypes.CollectionChanged += (s, e) => OnPropertyChanged("ViewTypes");
             EnabledSiteExtensions.CollectionChanged += (s, e) => OnUserConfigurationUpdated("EnabledSiteExtensions");
+            EnabledSiteExtensions.CollectionChanged += (s, e) => OnPropertyChanged("EnabledSiteExtensions");
             EnabledDatabaseExtentions.CollectionChanged += (s, e) => OnUserConfigurationUpdated("EnabledDatabaseExtentions");
+            EnabledDatabaseExtentions.CollectionChanged += (s, e) => OnPropertyChanged("EnabledDatabaseExtentions");
         }
     }
 }

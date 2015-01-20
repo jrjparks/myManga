@@ -29,7 +29,7 @@ namespace myManga_App.ViewModels
         private String ArchiveFilePath { get; set; }
         private String NextArchiveFilePath { get; set; }
         private String PrevArchiveFilePath { get; set; }
-        
+
         #region ChapterObjectPreloadDictionary
         private readonly Dictionary<String, ChapterObject> _ChapterObjectPreloadDictionary = new Dictionary<String, ChapterObject>();
         private Dictionary<String, ChapterObject> ChapterObjectPreloadDictionary
@@ -77,7 +77,7 @@ namespace myManga_App.ViewModels
             ReaderViewModel _this = (d as ReaderViewModel);
             _this.SaveBookmarkObject();
             _this.PreloadChapters();
-            
+
         }
         #endregion
 
@@ -163,7 +163,10 @@ namespace myManga_App.ViewModels
         #endregion
 
         private void OpenChapter(ReadChapterRequestObject ReadChapterRequest)
-        { this.PageZoom = App.UserConfig.DefaultPageZoom; OpenChapter(ReadChapterRequest.MangaObject, ReadChapterRequest.ChapterObject); }
+        {
+            this.PageZoom = App.UserConfig.DefaultPageZoom;
+            OpenChapter(ReadChapterRequest.MangaObject, ReadChapterRequest.ChapterObject);
+        }
 
         private void OpenChapter(MangaObject MangaObject, ChapterObject ChapterObject)
         {
@@ -190,6 +193,7 @@ namespace myManga_App.ViewModels
             LoadBookmarkObject();
             this.ContinueReading = false;
 
+            ChapterGarbageCollector();
             this.PullFocus();
         }
 
@@ -255,6 +259,26 @@ namespace myManga_App.ViewModels
                 Path.Combine(App.MANGA_ARCHIVE_DIRECTORY, this.MangaObject.MangaArchiveName(App.MANGA_ARCHIVE_EXTENSION)),
                 typeof(BookmarkObject).Name,
                 this.BookmarkObject.Serialize(SaveType: App.UserConfig.SaveType));
+        }
+
+        private void ChapterGarbageCollector()
+        {
+            // TODO: Add more about bookmarks
+            if (App.UserConfig.RemoveBackChapters)
+            {
+                Int32 index = this.MangaObject.IndexOfChapterObject(this.ChapterObject);
+                index -= this.App.UserConfig.BackChaptersToKeep;
+                if (--index > 0)
+                {
+                    for (; index >= 0; --index)
+                    {
+                        ChapterObject co = this.MangaObject.Chapters[index];
+                        String save_path = Path.Combine(App.CHAPTER_ARCHIVE_DIRECTORY, this.MangaObject.MangaFileName(), co.ChapterArchiveName(App.CHAPTER_ARCHIVE_EXTENSION));
+                        if (File.Exists(save_path))
+                            File.Delete(save_path);
+                    }
+                }
+            }
         }
         #endregion
 

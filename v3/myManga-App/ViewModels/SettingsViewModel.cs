@@ -200,6 +200,32 @@ namespace myManga_App.ViewModels
         }
         #endregion
 
+        #region BackChapters
+        private Boolean removeBackChapters;
+        public Boolean RemoveBackChapters
+        {
+            get { return removeBackChapters; }
+            set
+            {
+                OnPropertyChanging();
+                removeBackChapters = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private Int32 backChaptersToKeep;
+        public Int32 BackChaptersToKeep
+        {
+            get { return backChaptersToKeep; }
+            set
+            {
+                OnPropertyChanging();
+                backChaptersToKeep = value;
+                OnPropertyChanged();
+            }
+        }
+        #endregion
+
         public SettingsViewModel()
         {
             if (!IsInDesignMode)
@@ -236,8 +262,10 @@ namespace myManga_App.ViewModels
                     IDatabaseExtensionDescriptionAttribute DatabaseExtensionDescriptionAttribute = DatabaseExtension.GetType().GetCustomAttribute<IDatabaseExtensionDescriptionAttribute>(false);
                     DatabaseExtensionInformationObjects.Add(new DatabaseExtensionInformationObject(DatabaseExtensionDescriptionAttribute) { Enabled = App.UserConfig.EnabledDatabaseExtentions.Contains(DatabaseExtensionDescriptionAttribute.Name) });
                 }
-                SelectedSaveType = App.UserConfig.SaveType;
+                this.SelectedSaveType = App.UserConfig.SaveType;
                 this.DefaultPageZoom = App.UserConfig.DefaultPageZoom;
+                this.RemoveBackChapters = App.UserConfig.RemoveBackChapters;
+                this.BackChaptersToKeep = App.UserConfig.BackChaptersToKeep;
             }
         }
 
@@ -256,7 +284,8 @@ namespace myManga_App.ViewModels
             App.UserConfig.DefaultPageZoom = this.DefaultPageZoom;
             if (App.UserConfig.SaveType != SelectedSaveType) ConvertStoredFiles();
             App.UserConfig.SaveType = SelectedSaveType;
-            // App.SaveUserConfig();
+            App.UserConfig.RemoveBackChapters = this.RemoveBackChapters;
+            App.UserConfig.BackChaptersToKeep = this.BackChaptersToKeep;
         }
 
         private void ConvertStoredFiles()

@@ -43,7 +43,7 @@
             Grid.ColumnSpan="3"
 			ItemContainerStyle="{DynamicResource HomeView_Grid_MangaListBoxItem}" 
 			SelectedItem="{Binding SelectedMangaArchive}"
-			ItemsSource="{Binding MangaArchiveCollection}"
+            ItemsSource="{Binding Path=MangaArchiveCacheCollection, Mode=OneWay, Source={x:Static Application.Current}, UpdateSourceTrigger=PropertyChanged}"
             Padding="0,34,0,0">
             <ListBox.Template>
                 <ControlTemplate TargetType="{x:Type ListBox}">

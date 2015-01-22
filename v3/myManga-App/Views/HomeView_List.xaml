@@ -170,7 +170,7 @@
 				ScrollViewer.HorizontalScrollBarVisibility="Disabled"
 				SelectedItem="{Binding SelectedMangaArchive}"
                 SelectedIndex="0"
-				ItemsSource="{Binding MangaArchiveCollection}"/>
+                ItemsSource="{Binding Path=MangaArchiveCacheCollection, Mode=OneWay, Source={x:Static Application.Current}, UpdateSourceTrigger=PropertyChanged}"/>
             <ProgressBar 
 				Grid.Row="1" 
 				HorizontalAlignment="Center" 

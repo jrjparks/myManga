@@ -11,6 +11,8 @@ using myMangaSiteExtension.Interfaces;
 using myManga_App.Objects;
 using Core.IO.Storage.Manager.BaseInterfaceClasses;
 using myManga_App.Objects.About;
+using System.Collections.ObjectModel;
+using myManga_App.Objects.Cache;
 
 namespace myManga_App
 {
@@ -36,6 +38,10 @@ namespace myManga_App
         public DLL_Manager<IDatabaseExtension, IDatabaseExtensionCollection> DatabaseExtensions
         { get { return Singleton<DLL_Manager<IDatabaseExtension, IDatabaseExtensionCollection>>.Instance; } }
 
+        private readonly ObservableCollection<MangaArchiveCacheObject> mangaArchiveCacheCollection;
+        public ObservableCollection<MangaArchiveCacheObject> MangaArchiveCacheCollection
+        { get { return this.mangaArchiveCacheCollection; } }
+
         public readonly String
             PLUGIN_DIRECTORY = Path.Combine(Environment.CurrentDirectory, "Plugins").SafeFolder(),
             MANGA_ARCHIVE_DIRECTORY = Path.Combine(Environment.CurrentDirectory, "Manga Archives").SafeFolder(),
@@ -58,6 +64,9 @@ namespace myManga_App
             SiteExtensions.DLLAppDomain.AssemblyResolve += emdll.ResolveAssembly;
             DatabaseExtensions.DLLAppDomain.AssemblyResolve += emdll.ResolveAssembly;
 
+            // Initialize Collections
+            mangaArchiveCacheCollection = new ObservableCollection<MangaArchiveCacheObject>();
+
             // Create a File System Watcher for Manga Objects
             mangaObjectArchiveWatcher = new FileSystemWatcher(MANGA_ARCHIVE_DIRECTORY, MANGA_ARCHIVE_FILTER);
             mangaObjectArchiveWatcher.EnableRaisingEvents = false;
@@ -66,7 +75,7 @@ namespace myManga_App
             chapterObjectArchiveWatcher = new FileSystemWatcher(CHAPTER_ARCHIVE_DIRECTORY, CHAPTER_ARCHIVE_FILTER);
             chapterObjectArchiveWatcher.IncludeSubdirectories = true;
             chapterObjectArchiveWatcher.EnableRaisingEvents = false;
-            
+
             Startup += App_Startup;
 
             InitializeComponent();
@@ -106,6 +115,6 @@ namespace myManga_App
         }
 
         public void SaveUserConfig()
-        { if(!UserConfigurationObject.Equals(this.UserConfig, null)) Singleton<FileStorage>.Instance.Write(this.USER_CONFIG_PATH, this.UserConfig.Serialize(SaveType: SaveType.XML)); }
+        { if (!UserConfigurationObject.Equals(this.UserConfig, null)) Singleton<FileStorage>.Instance.Write(this.USER_CONFIG_PATH, this.UserConfig.Serialize(SaveType: SaveType.XML)); }
     }
 }

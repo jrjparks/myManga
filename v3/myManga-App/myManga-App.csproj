@@ -126,6 +126,7 @@
     <Compile Include="Converters\StringArrayToCSV.cs" />
     <Compile Include="IO\Network\DownloadManager.cs" />
     <Compile Include="Objects\About\AssemblyInformation.cs" />
+    <Compile Include="Objects\Cache\MangaArchiveCacheObject.cs" />
     <Compile Include="Objects\UserInterface\DatabaseExtensionInformationObject.cs" />
     <Compile Include="Objects\MVVM\ViewModelViewType.cs" />
     <Compile Include="Objects\UserInterface\MangaArchiveInformationObject.cs" />

@@ -17,6 +17,7 @@ namespace myManga_App.ViewModels
     public sealed class MainViewModel : BaseViewModel
     {
         #region Content
+        private BaseViewModel PreviousContentViewModel;
         private static readonly DependencyProperty ContentViewModelProperty = DependencyProperty.RegisterAttached(
             "ContentViewModel", 
             typeof(BaseViewModel), 
@@ -24,7 +25,7 @@ namespace myManga_App.ViewModels
         public BaseViewModel ContentViewModel
         {
             get { return GetValue(ContentViewModelProperty) as BaseViewModel; }
-            set { SetValue(ContentViewModelProperty, value); }
+            set { PreviousContentViewModel = ContentViewModel; SetValue(ContentViewModelProperty, value); }
         }
 
         #region HomeViewModelProperty
@@ -119,7 +120,7 @@ namespace myManga_App.ViewModels
             {
                 Messenger.Default.RegisterRecipient<BaseViewModel>(this, v => this.ContentViewModel = v, "FocusRequest");
 
-                SettingsViewModel.CloseEvent += (s, e) => HomeViewModel.PullFocus();
+                SettingsViewModel.CloseEvent += (s, e) => this.PreviousContentViewModel.PullFocus();
 
                 ServicePointManager.DefaultConnectionLimit = DownloadManager.Default.Concurrency;
                 DownloadManager.Default.StatusChange += (s, e) => { IsLoading = !(s as DownloadManager).IsIdle; };

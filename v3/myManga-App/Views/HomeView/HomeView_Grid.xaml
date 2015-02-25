@@ -84,35 +84,35 @@
                     <KeyBinding Command="{Binding ClearSearchCommand}" Key="Esc"/>
                 </Grid.InputBindings>
                 <button:MetroButton
-						Grid.Column="0"
-						FontFamily="{DynamicResource OpenIconic}"
-						Content="{DynamicResource oi-magnifying-glass}"
-						Command="{Binding SearchSiteCommand}"
-						ToolTip="Search Sites"
-						Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"/>
+					Grid.Column="0"
+					FontFamily="{DynamicResource OpenIconic}"
+					Content="{DynamicResource oi-magnifying-glass}"
+					Command="{Binding SearchSiteCommand}"
+					ToolTip="Search Sites"
+					Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"/>
                 <TextBox
-						x:Name="SearchBox"
-						Grid.Column="1" 
-						BorderBrush="{x:Null}" 
-						BorderThickness="0" 
-						Background="{x:Null}"
-						VerticalContentAlignment="Center"
-						Text="{Binding SearchFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+					x:Name="SearchBox"
+					Grid.Column="1" 
+					BorderBrush="{x:Null}" 
+					BorderThickness="0" 
+					Background="{x:Null}"
+					VerticalContentAlignment="Center"
+					Text="{Binding SearchFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
                 <button:MetroToggleButton 
-						x:Name="AdvSrchBtn"
-						Grid.Column="2"
-						Content="{DynamicResource fa-sort-down}"
-						FontFamily="{DynamicResource FontAwesome}"
-						ToolTip="Advanced Search" Visibility="Collapsed"/>
+					x:Name="AdvSrchBtn"
+					Grid.Column="2"
+					Content="{DynamicResource fa-sort-down}"
+					FontFamily="{DynamicResource FontAwesome}"
+					ToolTip="Advanced Search" Visibility="Collapsed"/>
                 <Popup 
-						PopupAnimation="Slide" 
-						PlacementTarget="{Binding ElementName=AdvSrchBtn}"
-						IsOpen="{Binding IsChecked, ElementName=AdvSrchBtn}"
-						StaysOpen="False">
+					PopupAnimation="Slide" 
+					PlacementTarget="{Binding ElementName=AdvSrchBtn}"
+					IsOpen="{Binding IsChecked, ElementName=AdvSrchBtn}"
+					StaysOpen="False">
                     <Border
-							BorderThickness="1" 
-							BorderBrush="{DynamicResource window-theme-primary}" 
-							Background="{DynamicResource window-background}">
+						BorderThickness="1" 
+						BorderBrush="{DynamicResource window-theme-primary}" 
+						Background="{DynamicResource window-background}">
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition/>

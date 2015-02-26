@@ -10,7 +10,7 @@ namespace Core.IO.Storage.Manager
     /// <summary>
     /// Generic interface for storage
     /// </summary>
-    public interface StorageInterface
+    public interface StorageInterface<T> where T: Object
     {
         /// <summary>
         /// Generic method to handel a write request
@@ -37,6 +37,14 @@ namespace Core.IO.Storage.Manager
         /// <param name="args">Additional arguments</param>
         /// <returns></returns>
         Boolean TryRead(String filename, out Stream stream, params Object[] args);
+
+        /// <summary>
+        /// Return information about file.
+        /// </summary>
+        /// <param name="filename">Target file name</param>
+        /// <param name="args">Additional arguments</param>
+        /// <returns></returns>
+        T GetInformation(String filename, params Object[] args);
         
         /// <summary>
         /// Method to clean anything up

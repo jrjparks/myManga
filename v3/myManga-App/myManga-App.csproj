@@ -124,6 +124,7 @@
     <Compile Include="Converters\LocationListToCSV.cs" />
     <Compile Include="Converters\ObjectIsLocal.cs" />
     <Compile Include="Converters\StringArrayToCSV.cs" />
+    <Compile Include="IO\Local\VerifyArchiveFile.cs" />
     <Compile Include="IO\Network\DownloadManager.cs" />
     <Compile Include="Objects\About\AssemblyInformation.cs" />
     <Compile Include="Objects\Cache\MangaArchiveCacheObject.cs" />

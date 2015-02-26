@@ -11,7 +11,16 @@ using Core.IO;
 
 namespace Core.IO.Storage.Manager.BaseInterfaceClasses
 {
-    public class ZipStorage : StorageInterface
+    public sealed class ZipStorageInformationObject : FileStorageInformationObject
+    {
+        public List<ZipEntry> ArchiveEntries { get; set; }
+
+        public ZipStorageInformationObject()
+            : base()
+        { this.ArchiveEntries = new List<ZipEntry>(); }
+    }
+
+    public class ZipStorage : StorageInterface<ZipStorageInformationObject>
     {
         protected class ZipStorageObject
         {
@@ -95,6 +104,29 @@ namespace Core.IO.Storage.Manager.BaseInterfaceClasses
         {
             try { stream = Read(filename, args); return stream != null; }
             catch { stream = null; return false; }
+        }
+
+        public ZipStorageInformationObject GetInformation(string filename, params object[] args)
+        {
+            FileInfo fi = new FileInfo(filename);
+            ZipStorageInformationObject zip_storage_information_object = new ZipStorageInformationObject();
+            zip_storage_information_object.Name = Path.GetFileName(filename);
+            zip_storage_information_object.FullPath = filename;
+            zip_storage_information_object.Size = fi.Length;
+            zip_storage_information_object.LastAccess = fi.LastAccessTime;
+            zip_storage_information_object.LastWrite = fi.LastWriteTime;
+            if (args.Length > 0)
+            {
+                String EntryName = args[0] as String;
+                using (Stream fstream = File.Open(filename, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+                {
+                    using (ZipFile zipFile = ZipFile.Read(fstream, this.ZipReadOptions))
+                    {
+                        zip_storage_information_object.ArchiveEntries = zipFile.EntriesSorted.ToList();
+                    }
+                }
+            }
+            return zip_storage_information_object;
         }
 
         public void Destroy()

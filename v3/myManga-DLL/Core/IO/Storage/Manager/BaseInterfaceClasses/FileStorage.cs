@@ -9,7 +9,7 @@ using System.Threading;
 
 namespace Core.IO.Storage.Manager.BaseInterfaceClasses
 {
-    public class FileStorage : StorageInterface
+    public class FileStorage : StorageInterface<FileStorageInformationObject>
     {
         protected class FileStorageObject
         {
@@ -61,6 +61,18 @@ namespace Core.IO.Storage.Manager.BaseInterfaceClasses
         {
             try { stream = Read(filename, args); return true; }
             catch { stream = null; return false; }
+        }
+
+        public FileStorageInformationObject GetInformation(string filename, params object[] args)
+        {
+            FileInfo fi = new FileInfo(filename);
+            FileStorageInformationObject file_storage_information_object = new FileStorageInformationObject();
+            file_storage_information_object.Name = Path.GetFileName(filename);
+            file_storage_information_object.FullPath = filename;
+            file_storage_information_object.Size = fi.Length;
+            file_storage_information_object.LastAccess = fi.LastAccessTime;
+            file_storage_information_object.LastWrite = fi.LastWriteTime;
+            return file_storage_information_object;
         }
 
         public void Destroy()

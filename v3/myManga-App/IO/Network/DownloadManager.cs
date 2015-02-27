@@ -97,28 +97,36 @@ namespace myManga_App.IO.Network
                 }
             }
 
-            public WorkerClass(SynchronizationContext SynchronizationContext) 
+            public WorkerClass(SynchronizationContext SynchronizationContext)
             { this.SynchronizationContext = SynchronizationContext ?? SynchronizationContext.Current ?? new SynchronizationContext(); }
 
-            public IWorkItemResult RunWork(SmartThreadPool SmartThreadPool, T Value)
-            { return SmartThreadPool.QueueWorkItem(new WorkItemCallback(WorkerMethod), Value, new PostExecuteWorkItemCallback(WorkerCallback)); }
+            public IWorkItemResult RunWork(SmartThreadPool SmartThreadPool, T Value, Guid? Id = null, params Core.IO.KeyValuePair<String, Object>[] Args)
+            { return SmartThreadPool.QueueWorkItem(new WorkItemCallback(WorkerMethod), new WorkerItem<T>(Value, Id, Args), new PostExecuteWorkItemCallback(WorkerCallback)); }
 
-            public IEnumerable<IWorkItemResult> RunWork(SmartThreadPool SmartThreadPool, IEnumerable<T> Values)
+            public IEnumerable<IWorkItemResult> RunWork(SmartThreadPool SmartThreadPool, IEnumerable<T> Values, IEnumerable<Guid?> Ids = null, params Core.IO.KeyValuePair<String, Object>[] Args)
             {
                 List<IWorkItemResult> Results = new List<IWorkItemResult>(Values.Count());
+                List<Guid?> ResultIds = new List<Guid?>(Values.Count());
+                if (Ids != null)
+                    ResultIds.AddRange(Ids);
+                if (ResultIds.Count < Values.Count())
+                    ResultIds.AddRange(Enumerable.Repeat<Guid?>(null, Values.Count() - ResultIds.Count));
+                Int32 value_index = 0;
                 foreach (T Value in Values)
-                    Results.Add(SmartThreadPool.QueueWorkItem(new WorkItemCallback(WorkerMethod), Value, new PostExecuteWorkItemCallback(WorkerCallback)));
+                    Results.Add(SmartThreadPool.QueueWorkItem(new WorkItemCallback(WorkerMethod), new WorkerItem<T>(Value, ResultIds[value_index++], Args), new PostExecuteWorkItemCallback(WorkerCallback)));
                 return Results.AsEnumerable();
             }
 
+            /*//
             public IEnumerable<IWorkItemResult> RunWork(SmartThreadPool SmartThreadPool, params T[] Values)
             { return RunWork(SmartThreadPool: SmartThreadPool, Values: Values.AsEnumerable()); }
+            //*/
 
             private void WorkerCallback(IWorkItemResult WorkItemResult) { WorkerCallback(WorkItemResult.Result as WorkerResult<R>); }
             public virtual void WorkerCallback(WorkerResult<R> WorkItemResult) { OnWorkComplete(WorkItemResult); }
 
-            private object WorkerMethod(object state) { return WorkerMethod(state as T); }
-            public virtual WorkerResult<R> WorkerMethod(T Value) { return null; }
+            private object WorkerMethod(object state) { return WorkerMethod(state as WorkerItem<T>); }
+            public virtual WorkerResult<R> WorkerMethod(WorkerItem<T> Value) { return null; }
         }
 
         private sealed class WorkerItem<T> where T : class
@@ -127,10 +135,13 @@ namespace myManga_App.IO.Network
 
             public T Data { get; private set; }
 
-            public WorkerItem(T Data, Guid? Id = null)
+            public Core.IO.KeyValuePair<String, Object>[] Args { get; private set; }
+
+            public WorkerItem(T Data, Guid? Id = null, params Core.IO.KeyValuePair<String, Object>[] Args)
             {
                 this.Id = Id ?? Guid.NewGuid(); ;
                 this.Data = Data;
+                this.Args = Args;
             }
         }
 
@@ -141,14 +152,17 @@ namespace myManga_App.IO.Network
             public Boolean Success { get; private set; }
             public Exception Exception { get; private set; }
 
+            public Core.IO.KeyValuePair<String, Object>[] Args { get; private set; }
+
             public R Result { get; private set; }
 
-            public WorkerResult(R Result, Boolean Success = true, Exception Exception = null, Guid? Id = null)
+            public WorkerResult(R Result, Boolean Success = true, Exception Exception = null, Guid? Id = null, params Core.IO.KeyValuePair<String, Object>[] Args)
             {
                 this.Id = Id ?? Guid.NewGuid(); ;
                 this.Success = Success;
                 this.Exception = Exception;
                 this.Result = Result;
+                this.Args = Args;
             }
         }
 
@@ -158,10 +172,10 @@ namespace myManga_App.IO.Network
             public MangaObjectWorkerClass() : base(null) { }
             public MangaObjectWorkerClass(SynchronizationContext SynchronizationContext) : base(SynchronizationContext) { }
 
-            public override WorkerResult<MangaObject> WorkerMethod(MangaObject Value)
+            public override WorkerResult<MangaObject> WorkerMethod(WorkerItem<MangaObject> Value)
             {
-                Dictionary<ISiteExtension, String> SiteExtensionContent = new Dictionary<ISiteExtension, String>(Value.Locations.Count);
-                foreach (LocationObject LocationObj in Value.Locations.FindAll(l => l.Enabled))
+                Dictionary<ISiteExtension, String> SiteExtensionContent = new Dictionary<ISiteExtension, String>(Value.Data.Locations.Count);
+                foreach (LocationObject LocationObj in Value.Data.Locations.FindAll(l => l.Enabled))
                 {
                     ISiteExtension SiteExtension = App.SiteExtensions.DLLCollection[LocationObj.ExtensionName];
                     ISiteExtensionDescriptionAttribute SiteExtensionDescriptionAttribute = SiteExtension.GetType().GetCustomAttribute<ISiteExtensionDescriptionAttribute>(false);
@@ -172,11 +186,11 @@ namespace myManga_App.IO.Network
                     try
                     {
                         MangaObject DownloadedMangaObject = Content.Key.ParseMangaObject(Content.Value);
-                        if (!MangaObject.Equals(DownloadedMangaObject, null)) Value.Merge(DownloadedMangaObject);
+                        if (!MangaObject.Equals(DownloadedMangaObject, null)) Value.Data.Merge(DownloadedMangaObject);
                     }
                     catch { }
                 }
-                return new WorkerResult<MangaObject>(Value);
+                return new WorkerResult<MangaObject>(Result: Value.Data, Id: Value.Id, Args: Value.Args);
             }
         }
 
@@ -192,7 +206,7 @@ namespace myManga_App.IO.Network
             public ChapterObjectWorkerClass() : base(null) { }
             public ChapterObjectWorkerClass(SynchronizationContext SynchronizationContext) : base(SynchronizationContext) { }
 
-            public override WorkerResult<ChapterObjectDownloadRequest> WorkerMethod(ChapterObjectDownloadRequest Value)
+            public override WorkerResult<ChapterObjectDownloadRequest> WorkerMethod(WorkerItem<ChapterObjectDownloadRequest> Value)
             {
                 try
                 {
@@ -200,23 +214,23 @@ namespace myManga_App.IO.Network
                     LocationObject LocationObj = null;
                     foreach (String ExtentionName in App.UserConfig.EnabledSiteExtensions)
                     {
-                        LocationObj = Value.ChapterObject.Locations.FirstOrDefault((l) => l.ExtensionName == ExtentionName);
+                        LocationObj = Value.Data.ChapterObject.Locations.FirstOrDefault((l) => l.ExtensionName == ExtentionName);
                         if (LocationObj != null)
                         { SiteExtension = App.SiteExtensions.DLLCollection[LocationObj.ExtensionName]; break; }
                     }
                     if (SiteExtension == null)
                     {
-                        LocationObj = Value.ChapterObject.Locations.First();
+                        LocationObj = Value.Data.ChapterObject.Locations.First();
                         SiteExtension = App.SiteExtensions.DLLCollection[LocationObj.ExtensionName];
                     }
                     ISiteExtensionDescriptionAttribute SiteExtensionDescriptionAttribute = SiteExtension.GetType().GetCustomAttribute<ISiteExtensionDescriptionAttribute>(false);
 
                     ChapterObject DownloadedChapterObject = SiteExtension.ParseChapterObject(Downloader.GetHtmlContent(LocationObj.Url, SiteExtensionDescriptionAttribute.RefererHeader));
-                    Value.ChapterObject.Merge(DownloadedChapterObject);
-                    Value.ChapterObject.Pages = DownloadedChapterObject.Pages;
+                    Value.Data.ChapterObject.Merge(DownloadedChapterObject);
+                    Value.Data.ChapterObject.Pages = DownloadedChapterObject.Pages;
                 }
-                catch (Exception ex) { return new WorkerResult<ChapterObjectDownloadRequest>(Value, false, ex); }
-                return new WorkerResult<ChapterObjectDownloadRequest>(Value);
+                catch (Exception ex) { return new WorkerResult<ChapterObjectDownloadRequest>(Result: Value.Data, Id: Value.Id, Args: Value.Args, Success: false, Exception: ex); }
+                return new WorkerResult<ChapterObjectDownloadRequest>(Result: Value.Data, Id: Value.Id, Args: Value.Args);
             }
         }
 
@@ -233,17 +247,17 @@ namespace myManga_App.IO.Network
             public PageObjectWorkerClass() : base(null) { }
             public PageObjectWorkerClass(SynchronizationContext SynchronizationContext) : base(SynchronizationContext) { }
 
-            public override WorkerResult<PageObjectDownloadRequest> WorkerMethod(PageObjectDownloadRequest Value)
+            public override WorkerResult<PageObjectDownloadRequest> WorkerMethod(WorkerItem<PageObjectDownloadRequest> Value)
             {
                 try
                 {
-                    ISiteExtension SiteExtension = App.SiteExtensions.DLLCollection.First(_SiteExtension => Value.PageObject.Url.Contains(_SiteExtension.GetType().GetCustomAttribute<ISiteExtensionDescriptionAttribute>(false).URLFormat));
-                    PageObject DownloadedPageObject = SiteExtension.ParsePageObject(Downloader.GetHtmlContent(Value.PageObject.Url, Value.PageObject.Url));
-                    Int32 index = Value.ChapterObject.Pages.FindIndex((po) => po.Url == DownloadedPageObject.Url);
-                    Value.ChapterObject.Pages[index] = DownloadedPageObject;
-                    return new WorkerResult<PageObjectDownloadRequest>(new PageObjectDownloadRequest(Value.MangaObject, Value.ChapterObject, DownloadedPageObject));
+                    ISiteExtension SiteExtension = App.SiteExtensions.DLLCollection.First(_SiteExtension => Value.Data.PageObject.Url.Contains(_SiteExtension.GetType().GetCustomAttribute<ISiteExtensionDescriptionAttribute>(false).URLFormat));
+                    PageObject DownloadedPageObject = SiteExtension.ParsePageObject(Downloader.GetHtmlContent(Value.Data.PageObject.Url, Value.Data.PageObject.Url));
+                    Int32 index = Value.Data.ChapterObject.Pages.FindIndex((po) => po.Url == DownloadedPageObject.Url);
+                    Value.Data.ChapterObject.Pages[index] = DownloadedPageObject;
+                    return new WorkerResult<PageObjectDownloadRequest>(new PageObjectDownloadRequest(Value.Data.MangaObject, Value.Data.ChapterObject, DownloadedPageObject));
                 }
-                catch (Exception ex) { return new WorkerResult<PageObjectDownloadRequest>(Value, false, ex); }
+                catch (Exception ex) { return new WorkerResult<PageObjectDownloadRequest>(Result: Value.Data, Id: Value.Id, Args: Value.Args, Success: false, Exception: ex); }
             }
         }
 
@@ -271,25 +285,25 @@ namespace myManga_App.IO.Network
             public ImageWorkerClass() : base(null) { }
             public ImageWorkerClass(SynchronizationContext SynchronizationContext) : base(SynchronizationContext) { }
 
-            public override WorkerResult<ImageDownloadRequest> WorkerMethod(ImageDownloadRequest Value)
+            public override WorkerResult<ImageDownloadRequest> WorkerMethod(WorkerItem<ImageDownloadRequest> Value)
             {
                 try
                 {
-                    using (Stream image_stream = Downloader.GetRawContent(Value.URL, Value.Referer))
+                    using (Stream image_stream = Downloader.GetRawContent(Value.Data.URL, Value.Data.Referer))
                     {
                         image_stream.Seek(0, SeekOrigin.Begin);
-                        image_stream.CopyTo(Value.Stream);
-                        Value.Stream.Seek(0, SeekOrigin.Begin);
+                        image_stream.CopyTo(Value.Data.Stream);
+                        Value.Data.Stream.Seek(0, SeekOrigin.Begin);
                     }
                 }
-                catch (Exception ex) { return new WorkerResult<ImageDownloadRequest>(Value, false, ex); }
-                return new WorkerResult<ImageDownloadRequest>(Value);
+                catch (Exception ex) { return new WorkerResult<ImageDownloadRequest>(Result: Value.Data, Id: Value.Id, Args: Value.Args, Success: false, Exception: ex); }
+                return new WorkerResult<ImageDownloadRequest>(Result: Value.Data, Id: Value.Id, Args: Value.Args);
             }
         }
         #endregion
 
         #region Search Worker Classes
-        private sealed class SearchWorkerClass : WorkerClass<WorkerItem<String>, List<MangaObject>>
+        private sealed class SearchWorkerClass : WorkerClass<String, List<MangaObject>>
         {
             private readonly Regex SafeAlphaNumeric = new Regex("[^a-z0-9]", RegexOptions.IgnoreCase);
 
@@ -304,7 +318,8 @@ namespace myManga_App.IO.Network
                 Dictionary<IDatabaseExtension, String> DatabaseExtensionSearchContents = new Dictionary<IDatabaseExtension, String>(App.UserConfig.EnabledDatabaseExtentions.Count);
 
                 // Search Enabled SiteExtensions for searchTerm: Value.Data
-                foreach (ISiteExtension SiteExtension in App.SiteExtensions.DLLCollection.Where(SiteExtension => {
+                foreach (ISiteExtension SiteExtension in App.SiteExtensions.DLLCollection.Where(SiteExtension =>
+                {
                     if (!SiteExtension.SiteExtensionDescriptionAttribute.SupportedObjects.HasFlag(SupportedObjects.Search)) return false;
                     if (!App.UserConfig.EnabledSiteExtensions.Contains(SiteExtension.SiteExtensionDescriptionAttribute.Name)) return false;
                     return true;
@@ -312,7 +327,8 @@ namespace myManga_App.IO.Network
                 { SiteExtensionSearchContents.Add(SiteExtension, ProcessSearchRequest(SiteExtension.GetSearchRequestObject(searchTerm: Value.Data))); }
 
                 // Search Enabled DatabaseExtensions for searchTerm: Value.Data
-                foreach (IDatabaseExtension DatabaseExtension in App.DatabaseExtensions.DLLCollection.Where(DatabaseExtension => {
+                foreach (IDatabaseExtension DatabaseExtension in App.DatabaseExtensions.DLLCollection.Where(DatabaseExtension =>
+                {
                     if (!DatabaseExtension.DatabaseExtensionDescriptionAttribute.SupportedObjects.HasFlag(SupportedObjects.Search)) return false;
                     if (!App.UserConfig.EnabledDatabaseExtentions.Contains(DatabaseExtension.DatabaseExtensionDescriptionAttribute.Name)) return false;
                     return true;
@@ -438,21 +454,21 @@ namespace myManga_App.IO.Network
         }
 
         #region Download Methods
-        public void Download(MangaObject MangaObject)
-        { MangaObjectWorker.RunWork(SmartThreadPool, MangaObject); OnStatusChange(); }
-        public void Download(MangaObject MangaObject, ChapterObject ChapterObject)
-        { ChapterObjectWorker.RunWork(SmartThreadPool, new ChapterObjectDownloadRequest(MangaObject, ChapterObject)); OnStatusChange(); }
-        public void Download(MangaObject MangaObject, ChapterObject ChapterObject, PageObject PageObject)
-        { PageObjectWorker.RunWork(SmartThreadPool, new PageObjectDownloadRequest(MangaObject, ChapterObject, PageObject)); OnStatusChange(); }
-        public void Download(String url, String local_path, String referer = null, String filename = null)
-        { ImageWorker.RunWork(SmartThreadPool, new ImageDownloadRequest(url, local_path, referer, filename)); OnStatusChange(); }
+        public void Download(MangaObject MangaObject, params Core.IO.KeyValuePair<String, Object>[] Args)
+        { MangaObjectWorker.RunWork(SmartThreadPool, MangaObject, Args: Args); OnStatusChange(); }
+        public void Download(MangaObject MangaObject, ChapterObject ChapterObject, params Core.IO.KeyValuePair<String, Object>[] Args)
+        { ChapterObjectWorker.RunWork(SmartThreadPool, new ChapterObjectDownloadRequest(MangaObject, ChapterObject), Args: Args); OnStatusChange(); }
+        public void Download(MangaObject MangaObject, ChapterObject ChapterObject, PageObject PageObject, params Core.IO.KeyValuePair<String, Object>[] Args)
+        { PageObjectWorker.RunWork(SmartThreadPool, new PageObjectDownloadRequest(MangaObject, ChapterObject, PageObject), Args: Args); OnStatusChange(); }
+        public void Download(String url, String local_path, String referer = null, String filename = null, params Core.IO.KeyValuePair<String, Object>[] Args)
+        { ImageWorker.RunWork(SmartThreadPool, new ImageDownloadRequest(url, local_path, referer, filename), Args: Args); OnStatusChange(); }
         #endregion
 
         #region Search Methods
         public Guid Search(String SearchTerm)
         {
             WorkerItem<String> SearchItem = new WorkerItem<String>(SearchTerm);
-            SearchWorker.RunWork(SmartThreadPool, SearchItem); OnStatusChange();
+            SearchWorker.RunWork(SmartThreadPool, SearchItem.Data, SearchItem.Id, SearchItem.Args); OnStatusChange();
             return SearchItem.Id;
         }
         #endregion
@@ -464,7 +480,9 @@ namespace myManga_App.IO.Network
             {
                 String save_path = Path.Combine(App.MANGA_ARCHIVE_DIRECTORY, e.Result.MangaArchiveName(App.MANGA_ARCHIVE_EXTENSION));
                 Singleton<ZipStorage>.Instance.Write(save_path, e.Result.GetType().Name, e.Result.Serialize(SaveType: App.UserConfig.SaveType));
-                ImageWorker.RunWork(SmartThreadPool, from String url in e.Result.Covers select new ImageDownloadRequest(url, save_path));
+                Core.IO.KeyValuePair<String, Object> IsRefresh = e.Args.FirstOrDefault(x => x.Key.Equals("IsRefresh"));
+                if (IsRefresh != null && (IsRefresh.Value is Boolean && (Boolean)IsRefresh.Value == false))
+                    ImageWorker.RunWork(SmartThreadPool, (from String url in e.Result.Covers select new ImageDownloadRequest(url, save_path)).AsEnumerable());
             }
             OnStatusChange(e.Exception);
         }

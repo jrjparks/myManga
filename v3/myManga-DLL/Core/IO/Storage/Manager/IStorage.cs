@@ -10,7 +10,7 @@ namespace Core.IO.Storage.Manager
     /// <summary>
     /// Generic interface for storage
     /// </summary>
-    public interface StorageInterface<T> where T: Object
+    public interface IStorage<T> where T: FileStorageInformationObject
     {
         /// <summary>
         /// Generic method to handel a write request

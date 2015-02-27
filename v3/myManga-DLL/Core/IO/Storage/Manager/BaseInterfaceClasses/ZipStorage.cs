@@ -20,7 +20,7 @@ namespace Core.IO.Storage.Manager.BaseInterfaceClasses
         { this.ArchiveEntries = new List<ZipEntry>(); }
     }
 
-    public class ZipStorage : StorageInterface<ZipStorageInformationObject>
+    public class ZipStorage : IStorage<ZipStorageInformationObject>
     {
         protected class ZipStorageObject
         {

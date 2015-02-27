@@ -9,7 +9,7 @@ using System.Threading;
 
 namespace Core.IO.Storage.Manager.BaseInterfaceClasses
 {
-    public class FileStorage : StorageInterface<FileStorageInformationObject>
+    public class FileStorage : IStorage<FileStorageInformationObject>
     {
         protected class FileStorageObject
         {

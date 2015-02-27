@@ -62,7 +62,7 @@
     <Compile Include="IO\Storage\Manager\BaseInterfaceClasses\FileStorage.cs" />
     <Compile Include="IO\Storage\Manager\BaseInterfaceClasses\ZipStorage.cs" />
     <Compile Include="IO\Storage\Manager\FileStorageInformationObject.cs" />
-    <Compile Include="IO\Storage\Manager\StorageInterface.cs" />
+    <Compile Include="IO\Storage\Manager\IStorage.cs" />
     <Compile Include="IO\Storage\Manager\StorageManager.cs" />
     <Compile Include="IO\Storage\Manager\SyncedCache.cs" />
     <Compile Include="IO\Storage\ObjectArchive.cs" />

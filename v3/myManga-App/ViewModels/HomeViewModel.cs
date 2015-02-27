@@ -154,7 +154,7 @@ namespace myManga_App.ViewModels
         { return !MangaArchiveInformationObject.Equals(this.SelectedMangaArchive, null) && !this.SelectedMangaArchive.Empty(); }
 
         private void RefreshManga()
-        { DownloadManager.Default.Download(SelectedMangaArchive.MangaObject); }
+        { DownloadManager.Default.Download(SelectedMangaArchive.MangaObject, new Core.IO.KeyValuePair<String, Object>("IsRefresh", true)); }
         #endregion
 
         #region RefreshMangaList
@@ -166,7 +166,9 @@ namespace myManga_App.ViewModels
         { return App.MangaArchiveCacheCollection.Count > 0; }
 
         private void RefreshMangaList()
-        { foreach (MangaArchiveCacheObject manga_archive in App.MangaArchiveCacheCollection) DownloadManager.Default.Download(manga_archive.MangaObject); }
+        { foreach (MangaArchiveCacheObject manga_archive in App.MangaArchiveCacheCollection)
+            DownloadManager.Default.Download(manga_archive.MangaObject, new Core.IO.KeyValuePair<String, Object>("IsRefresh", true));
+        }
         #endregion
 
         private Boolean _IsLoading;

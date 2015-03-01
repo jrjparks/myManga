@@ -115,15 +115,11 @@ namespace Core.IO.Storage.Manager.BaseInterfaceClasses
             zip_storage_information_object.Size = fi.Length;
             zip_storage_information_object.LastAccess = fi.LastAccessTime;
             zip_storage_information_object.LastWrite = fi.LastWriteTime;
-            if (args.Length > 0)
+            using (Stream fstream = File.Open(filename, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
             {
-                String EntryName = args[0] as String;
-                using (Stream fstream = File.Open(filename, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+                using (ZipFile zipFile = ZipFile.Read(fstream, this.ZipReadOptions))
                 {
-                    using (ZipFile zipFile = ZipFile.Read(fstream, this.ZipReadOptions))
-                    {
-                        zip_storage_information_object.ArchiveEntries = zipFile.EntriesSorted.ToList();
-                    }
+                    zip_storage_information_object.ArchiveEntries = zipFile.EntriesSorted.ToList();
                 }
             }
             return zip_storage_information_object;

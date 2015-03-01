@@ -465,9 +465,9 @@ namespace myManga_App.IO.Network
         #endregion
 
         #region Search Methods
-        public Guid Search(String SearchTerm)
+        public Guid Search(String SearchTerm, params Core.IO.KeyValuePair<String, Object>[] Args)
         {
-            WorkerItem<String> SearchItem = new WorkerItem<String>(SearchTerm);
+            WorkerItem<String> SearchItem = new WorkerItem<String>(Data: SearchTerm, Args: Args);
             SearchWorker.RunWork(SmartThreadPool, SearchItem.Data, SearchItem.Id, SearchItem.Args); OnStatusChange();
             return SearchItem.Id;
         }
@@ -511,7 +511,11 @@ namespace myManga_App.IO.Network
 
         private void ImageWorker_WorkComplete(object sender, DownloadManager.WorkerResult<DownloadManager.ImageDownloadRequest> e)
         {
-            if (e.Success) { using (e.Result.Stream) { Singleton<ZipStorage>.Instance.Write(e.Result.LocalPath, e.Result.Filename, e.Result.Stream); } }
+            if (e.Success)
+            {
+                using (e.Result.Stream)
+                { Singleton<ZipStorage>.Instance.Write(e.Result.LocalPath, e.Result.Filename, e.Result.Stream); }
+            }
             OnStatusChange(e.Exception);
         }
 

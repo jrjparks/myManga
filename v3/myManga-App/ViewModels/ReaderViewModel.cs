@@ -19,6 +19,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
+using myManga_App.IO.Local;
 
 namespace myManga_App.ViewModels
 {
@@ -195,6 +196,7 @@ namespace myManga_App.ViewModels
 
             ChapterGarbageCollector();
             this.PullFocus();
+            VerifyArchiveFile.VerifyArchive(Singleton<ZipStorage>.Instance, this.ArchiveFilePath);
         }
 
         public ReaderViewModel()

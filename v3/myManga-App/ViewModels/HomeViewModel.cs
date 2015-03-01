@@ -30,6 +30,7 @@ using myManga_App.IO.Network;
 using myManga_App.Objects.MVVM;
 using myManga_App.Objects.UserInterface;
 using myManga_App.Objects.Cache;
+using myManga_App.IO.Local;
 
 namespace myManga_App.ViewModels
 {
@@ -186,6 +187,7 @@ namespace myManga_App.ViewModels
                 ConfigureSearchFilter();
                 foreach (String MangaArchiveFilePath in Directory.GetFiles(App.MANGA_ARCHIVE_DIRECTORY, App.MANGA_ARCHIVE_FILTER, SearchOption.AllDirectories))
                 {
+                    VerifyArchiveFile.VerifyArchive(Singleton<ZipStorage>.Instance, MangaArchiveFilePath);
                     CacheMangaObject(MangaArchiveFilePath);
                 }
                 this.SelectedMangaArchive = App.MangaArchiveCacheCollection.FirstOrDefault();
@@ -279,7 +281,10 @@ namespace myManga_App.ViewModels
                 return (mangaArchive as MangaArchiveInformationObject).MangaObject.IsNameMatch(SearchFilter);
             };
             if (MangaListView.CanSort)
+            {
                 MangaListView.SortDescriptions.Add(new SortDescription("MangaObject.Name", ListSortDirection.Ascending));
+                MangaListView.SortDescriptions.Add(new SortDescription("HasMoreToRead", ListSortDirection.Descending));
+            }
         }
     }
 }

@@ -51,7 +51,8 @@ namespace myManga_App
             MANGA_ARCHIVE_FILTER = "*.ma.zip",
             CHAPTER_ARCHIVE_FILTER = "*.ca.zip",
             USER_CONFIG_FILENAME = "mymanga.conf",
-            USER_CONFIG_PATH = Path.Combine(Environment.CurrentDirectory, "mymanga.conf");
+            USER_CONFIG_PATH = Path.Combine(Environment.CurrentDirectory, "mymanga.conf".SafeFileName()),
+            LOG_FILE_PATH = Path.Combine(Environment.CurrentDirectory, String.Format("mymanga-{0}-{1}.log", DateTime.Now.ToShortDateString(), DateTime.Now.ToShortTimeString()).SafeFileName());
 
         public AssemblyInformation AssemblyInfo { get { return AssemblyInformation.Default; } }
 
@@ -77,8 +78,38 @@ namespace myManga_App
             chapterObjectArchiveWatcher.EnableRaisingEvents = false;
 
             Startup += App_Startup;
+            DispatcherUnhandledException += App_DispatcherUnhandledException;
 
             InitializeComponent();
+        }
+
+        void App_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
+        {
+            using (Stream log_stream = Singleton<FileStorage>.Instance.Read(LOG_FILE_PATH))
+            {
+                using (StreamWriter log_stream_writer = new StreamWriter(log_stream))
+                {
+                    log_stream_writer.WriteLine(String.Format("========== {0} ==========", DateTime.Now.ToShortDateString()));
+
+                    log_stream_writer.WriteLine(String.Format("========== DISPATCHER ==========", DateTime.Now.ToShortDateString()));
+                    log_stream_writer.WriteLine(String.Format("Thread Name: {0}", e.Dispatcher.Thread.Name));
+                    log_stream_writer.WriteLine(String.Format("Is ThreadPool Thread: {0}", e.Dispatcher.Thread.IsThreadPoolThread));
+
+                    Exception ex = e.Exception;
+                    while (ex != null)
+                    {
+                        log_stream_writer.WriteLine(String.Format("========== MESSAGE ==========", DateTime.Now.ToShortDateString()));
+                        log_stream_writer.WriteLine(ex.Message);
+                        log_stream_writer.WriteLine(String.Format("========== STACK TRACE ==========", DateTime.Now.ToShortDateString()));
+                        log_stream_writer.WriteLine(ex.StackTrace);
+                        log_stream_writer.WriteLine(String.Format("========== TARGET SITE ==========", DateTime.Now.ToShortDateString()));
+                        log_stream_writer.WriteLine(ex.TargetSite);
+                        ex = ex.InnerException;
+                        log_stream_writer.WriteLine();
+                    }
+                }
+            }
+            e.Handled = true;
         }
 
         void App_Startup(object sender, StartupEventArgs e)

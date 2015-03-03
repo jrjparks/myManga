@@ -17,6 +17,13 @@ namespace myManga_App.IO.Local
         private static readonly App App = App.Current as App;
         public static Boolean VerifyArchive(ZipStorage zip_storage, String filename)
         {
+            FileInfo fi = new FileInfo(filename);
+            if (fi.Length == 0)
+            {
+                // Delete empty files
+                File.Delete(filename);
+                return false;
+            }
             try
             {
                 String[] index_filenames = { typeof(MangaObject).Name, typeof(ChapterObject).Name };

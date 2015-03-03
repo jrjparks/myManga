@@ -278,12 +278,12 @@ namespace myManga_App.ViewModels
             {
                 // Show all items if search is empty
                 if (String.IsNullOrWhiteSpace(SearchFilter)) return true;
-                return (mangaArchive as MangaArchiveInformationObject).MangaObject.IsNameMatch(SearchFilter);
+                return (mangaArchive as MangaArchiveCacheObject).MangaObject.IsNameMatch(SearchFilter);
             };
             if (MangaListView.CanSort)
             {
                 MangaListView.SortDescriptions.Add(new SortDescription("MangaObject.Name", ListSortDirection.Ascending));
-                MangaListView.SortDescriptions.Add(new SortDescription("HasMoreToRead", ListSortDirection.Descending));
+                MangaListView.SortDescriptions.Add(new SortDescription("HasMoreToRead", ListSortDirection.Ascending));
             }
         }
     }

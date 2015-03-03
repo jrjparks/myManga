@@ -65,6 +65,10 @@ namespace myManga_App
             SiteExtensions.DLLAppDomain.AssemblyResolve += emdll.ResolveAssembly;
             DatabaseExtensions.DLLAppDomain.AssemblyResolve += emdll.ResolveAssembly;
 
+            // Handle unhandled exceptions
+            DispatcherUnhandledException += App_DispatcherUnhandledException;
+            AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+
             // Initialize Collections
             mangaArchiveCacheCollection = new ObservableCollection<MangaArchiveCacheObject>();
 
@@ -78,12 +82,29 @@ namespace myManga_App
             chapterObjectArchiveWatcher.EnableRaisingEvents = false;
 
             Startup += App_Startup;
-            DispatcherUnhandledException += App_DispatcherUnhandledException;
 
             InitializeComponent();
         }
 
+        void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        {
+            Exception ex = e.ExceptionObject as Exception;
+            log_exception(
+                e.ExceptionObject as Exception,
+                String.Format("Is Terminating: {0}", e.IsTerminating));
+        }
+
         void App_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
+        {
+            log_exception(
+                e.Exception,
+                String.Format("========== DISPATCHER ==========", DateTime.Now.ToShortDateString()),
+                String.Format("Thread Name: {0}", e.Dispatcher.Thread.Name),
+                String.Format("Is ThreadPool Thread: {0}", e.Dispatcher.Thread.IsThreadPoolThread));
+            e.Handled = true;
+        }
+
+        void log_exception(Exception e, params String[] extra_lines)
         {
             using (Stream log_stream = Singleton<FileStorage>.Instance.Read(LOG_FILE_PATH))
             {
@@ -91,25 +112,23 @@ namespace myManga_App
                 {
                     log_stream_writer.WriteLine(String.Format("========== {0} ==========", DateTime.Now.ToShortDateString()));
 
-                    log_stream_writer.WriteLine(String.Format("========== DISPATCHER ==========", DateTime.Now.ToShortDateString()));
-                    log_stream_writer.WriteLine(String.Format("Thread Name: {0}", e.Dispatcher.Thread.Name));
-                    log_stream_writer.WriteLine(String.Format("Is ThreadPool Thread: {0}", e.Dispatcher.Thread.IsThreadPoolThread));
-
-                    Exception ex = e.Exception;
-                    while (ex != null)
+                    while (e != null)
                     {
                         log_stream_writer.WriteLine(String.Format("========== MESSAGE ==========", DateTime.Now.ToShortDateString()));
-                        log_stream_writer.WriteLine(ex.Message);
+                        log_stream_writer.WriteLine(e.Message);
                         log_stream_writer.WriteLine(String.Format("========== STACK TRACE ==========", DateTime.Now.ToShortDateString()));
-                        log_stream_writer.WriteLine(ex.StackTrace);
+                        log_stream_writer.WriteLine(e.StackTrace);
                         log_stream_writer.WriteLine(String.Format("========== TARGET SITE ==========", DateTime.Now.ToShortDateString()));
-                        log_stream_writer.WriteLine(ex.TargetSite);
-                        ex = ex.InnerException;
+                        log_stream_writer.WriteLine(e.TargetSite);
+                        e = e.InnerException;
                         log_stream_writer.WriteLine();
                     }
+
+                    foreach (String extra_line in extra_lines)
+                        log_stream_writer.WriteLine(extra_line);
+                    log_stream_writer.WriteLine();
                 }
             }
-            e.Handled = true;
         }
 
         void App_Startup(object sender, StartupEventArgs e)

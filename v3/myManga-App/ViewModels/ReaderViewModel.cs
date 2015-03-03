@@ -196,7 +196,9 @@ namespace myManga_App.ViewModels
 
             ChapterGarbageCollector();
             this.PullFocus();
-            VerifyArchiveFile.VerifyArchive(Singleton<ZipStorage>.Instance, this.ArchiveFilePath);
+
+            // TODO: Fix bug when loading still loading manga...
+            // VerifyArchiveFile.VerifyArchive(Singleton<ZipStorage>.Instance, this.ArchiveFilePath);
         }
 
         public ReaderViewModel()
@@ -295,7 +297,11 @@ namespace myManga_App.ViewModels
                     case WatcherChangeTypes.Changed:
                         Stream archive_file;
                         if (Singleton<ZipStorage>.Instance.TryRead(e.FullPath, out archive_file, typeof(ChapterObject).Name))
-                        { using (archive_file) { this.ChapterObject = archive_file.Deserialize<ChapterObject>(SaveType: App.UserConfig.SaveType); } }
+                        {
+                            UInt32 CurrentPageNumber = SelectedPageObject.PageNumber;
+                            using (archive_file) { this.ChapterObject = archive_file.Deserialize<ChapterObject>(SaveType: App.UserConfig.SaveType); }
+                            SelectedPageObject = this.ChapterObject.Pages.FirstOrDefault(po => po.PageNumber == CurrentPageNumber) ?? this.ChapterObject.Pages.First();
+                        }
                         break;
 
                     case WatcherChangeTypes.Deleted:

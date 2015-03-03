@@ -5,6 +5,7 @@ using System.Text;
 using System.Diagnostics;
 using System.Reflection;
 using System.IO;
+using System.Runtime.Serialization;
 
 namespace Core.DLL
 {
@@ -12,7 +13,7 @@ namespace Core.DLL
     public sealed class EmbeddedDLL
     {
         private readonly Assembly ExecutingAssembly;
-        private readonly List<String> _ManifestResourceNames = new List<String>();
+        private readonly List<String> ManifestResourceNames = new List<String>();
 
         private readonly Dictionary<String, Assembly> _DLLs = new Dictionary<String, Assembly>();
         public Dictionary<String, Assembly> DLLs { get { return _DLLs; } }
@@ -20,49 +21,65 @@ namespace Core.DLL
         public EmbeddedDLL(Assembly ExecutingAssembly = null, Boolean PreLoadDLLs = false)
         {
             this.ExecutingAssembly = ExecutingAssembly ?? Assembly.GetEntryAssembly();
-            _ManifestResourceNames.AddRange(this.ExecutingAssembly.GetManifestResourceNames().Where((rn) => rn.EndsWith(".dll")));
+            this.ManifestResourceNames.AddRange(this.ExecutingAssembly.GetManifestResourceNames().Where((rn) => rn.EndsWith(".dll")));
             if (PreLoadDLLs) this.PreLoadDLLs();
         }
 
         private void PreLoadDLLs()
         {
-            foreach (String ResourceName in this._ManifestResourceNames)
+            foreach (String ResourceName in this.ManifestResourceNames)
+            { LoadDLL(ResourceName); }
+        }
+
+        public Assembly ResolveAssembly(Object Sender, ResolveEventArgs args)
+        {
+            try
             {
-                if (!this.DLLs.ContainsKey(ResourceName))
+                AssemblyName ResourceAssemblyName = new AssemblyName(args.Name);
+                String ResourceName = this.ManifestResourceNames.FirstOrDefault((s) => s.Contains(ResourceAssemblyName.Name));
+                if (ResourceName != null)
                 {
-                    using (Stream stream = ExecutingAssembly.GetManifestResourceStream(ResourceName))
+                    LoadDLL(ResourceName);
+                    if (this.DLLs.ContainsKey(ResourceName))
+                        return this.DLLs[ResourceName];
+                }
+                else { throw new Exception("ResourceName cannot be empty."); }
+            }
+            catch (Exception e)
+            { throw new DynamicLinkLibraryException("Error loading DynamicLinkLibrary.", e); }
+            return null;
+        }
+
+        private void LoadDLL(String ResourceName)
+        {
+            if (!this.DLLs.ContainsKey(ResourceName))
+            {
+                using (Stream stream = this.ExecutingAssembly.GetManifestResourceStream(ResourceName))
+                {
+                    if (stream != null)
                     {
-                        if (stream != null)
-                        {
-                            Byte[] assemblyData = new Byte[stream.Length];
-                            stream.Read(assemblyData, 0, assemblyData.Length);
-                            DLLs.Add(ResourceName, Assembly.Load(assemblyData));
-                        }
+                        Byte[] assemblyData = new Byte[stream.Length];
+                        stream.Read(assemblyData, 0, assemblyData.Length);
+                        this.DLLs.Add(ResourceName, Assembly.Load(assemblyData));
                     }
                 }
             }
         }
 
-        public Assembly ResolveAssembly(Object Sender, ResolveEventArgs args)
+        public sealed class DynamicLinkLibraryException : Exception
         {
-            AssemblyName ResourceAssemblyName = new AssemblyName(args.Name);
-            String ResourceName = _ManifestResourceNames.FirstOrDefault((s) => s.Contains(ResourceAssemblyName.Name));
-            if (ResourceName != null)
-            {
-                if (!DLLs.ContainsKey(ResourceName))
-                    using (Stream stream = ExecutingAssembly.GetManifestResourceStream(ResourceName))
-                    {
-                        if (stream != null)
-                        {
-                            Byte[] assemblyData = new Byte[stream.Length];
-                            stream.Read(assemblyData, 0, assemblyData.Length);
-                            DLLs.Add(ResourceName, Assembly.Load(assemblyData));
-                        }
-                    }
-                if (DLLs.ContainsKey(ResourceName))
-                    return DLLs[ResourceName];
-            }
-            return null;
+            public DynamicLinkLibraryException()
+                : base()
+            { }
+            public DynamicLinkLibraryException(String message)
+                : base(message)
+            { }
+            public DynamicLinkLibraryException(String message, Exception innerException)
+                : base(message, innerException)
+            { }
+            public DynamicLinkLibraryException(SerializationInfo info, StreamingContext context)
+                : base(info, context)
+            { }
         }
     }
 }

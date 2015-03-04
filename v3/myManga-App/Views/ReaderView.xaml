@@ -41,6 +41,15 @@
 
         <KeyBinding Command="{Binding NextPageCommand}" Key="Right"/>
         <KeyBinding Command="{Binding NextPageCommand}" Key="BrowserBack"/>
+
+        <KeyBinding Command="{Binding ReloadPageImageCommand}" Key="F5"/>
+
+        <KeyBinding Command="{Binding ResetPageZoomCommand}" Key="D0" Modifiers="Ctrl"/>
+        <KeyBinding Command="{Binding ResetPageZoomCommand}" Key="NumPad0" Modifiers="Ctrl"/>
+        <KeyBinding Command="{Binding DecreasePageZoomCommand}" Key="OemMinus" Modifiers="Ctrl"/>
+        <KeyBinding Command="{Binding DecreasePageZoomCommand}" Key="Subtract" Modifiers="Ctrl"/>
+        <KeyBinding Command="{Binding IncreasePageZoomCommand}" Key="OemPlus" Modifiers="Ctrl"/>
+        <KeyBinding Command="{Binding IncreasePageZoomCommand}" Key="Add" Modifiers="Ctrl"/>
     </UserControl.InputBindings>
     <Grid>
         <Grid.RowDefinitions>
@@ -172,6 +181,47 @@
             VerticalScrollBarVisibility="Auto"
             VerticalContentAlignment="Center"
             HorizontalContentAlignment="Center">
+            <ScrollViewer.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Command="{Binding ReloadPageImageCommand}" Header="(F5) Reload Page Image">
+                        <MenuItem.Icon>
+                            <TextBlock
+                                Text="{DynamicResource oi-cloud-download}" 
+                                FontFamily="{DynamicResource OpenIconic}" 
+                                HorizontalAlignment="Center" 
+                                VerticalAlignment="Center"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <Separator/>
+                    <MenuItem Command="{Binding IncreasePageZoomCommand}" Header="(Ctrl+=) Zoom In">
+                        <MenuItem.Icon>
+                            <TextBlock
+                                Text="{DynamicResource oi-plus}" 
+                                FontFamily="{DynamicResource OpenIconic}" 
+                                HorizontalAlignment="Center" 
+                                VerticalAlignment="Center"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <MenuItem Command="{Binding DecreasePageZoomCommand}" Header="(Ctrl+-) Zoom Out">
+                        <MenuItem.Icon>
+                            <TextBlock
+                                Text="{DynamicResource oi-minus}" 
+                                FontFamily="{DynamicResource OpenIconic}" 
+                                HorizontalAlignment="Center" 
+                                VerticalAlignment="Center"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <MenuItem Command="{Binding ResetPageZoomCommand}" Header="(Ctrl+0) Reset Zoom">
+                        <MenuItem.Icon>
+                            <TextBlock
+                                Text="{DynamicResource oi-reload}" 
+                                FontFamily="{DynamicResource OpenIconic}" 
+                                HorizontalAlignment="Center" 
+                                VerticalAlignment="Center"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
+                </ContextMenu>
+            </ScrollViewer.ContextMenu>
             <Grid HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,5">
                 <Image
                     x:Name="ImageContent"

@@ -161,6 +161,39 @@ namespace myManga_App.ViewModels
         private void ResetPageZoom()
         { this.PageZoom = App.UserConfig.DefaultPageZoom; }
         #endregion
+
+        #region Increase PageZoom
+        private DelegateCommand _IncreasePageZoomCommand;
+        public ICommand IncreasePageZoomCommand
+        { get { return _IncreasePageZoomCommand ?? (_IncreasePageZoomCommand = new DelegateCommand(IncreasePageZoom, CanIncreasePageZoom)); } }
+
+        private Boolean CanIncreasePageZoom()
+        { return this.PageZoom < 2; }
+
+        private void IncreasePageZoom()
+        { this.PageZoom += 0.1; }
+        #endregion
+
+        #region Decrease PageZoom
+        private DelegateCommand _DecreasePageZoomCommand;
+        public ICommand DecreasePageZoomCommand
+        { get { return _DecreasePageZoomCommand ?? (_DecreasePageZoomCommand = new DelegateCommand(DecreasePageZoom, CanDecreasePageZoom)); } }
+
+        private Boolean CanDecreasePageZoom()
+        { return this.PageZoom > 0.5; }
+
+        private void DecreasePageZoom()
+        { this.PageZoom -= 0.1; }
+        #endregion
+
+        #region ReloadPageImage
+        private DelegateCommand _ReloadPageImageCommand;
+        public ICommand ReloadPageImageCommand
+        { get { return _ReloadPageImageCommand ?? (_ReloadPageImageCommand = new DelegateCommand(ReloadPageImage)); } }
+
+        private void ReloadPageImage()
+        { DownloadManager.Default.Download(this.SelectedPageObject.ImgUrl, this.ArchiveFilePath); }
+        #endregion
         #endregion
 
         private void OpenChapter(ReadChapterRequestObject ReadChapterRequest)

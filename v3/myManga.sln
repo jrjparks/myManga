@@ -40,9 +40,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MangaUpdatesBakaUpdates", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MangaHelpers", "myManga-IDatabaseExtensions\MangaHelpers\MangaHelpers.csproj", "{9D1AC8D3-24F3-47DE-A950-3F48D20DD017}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MangaTraders", "myManga-ISiteExtensions\MangaTraders\MangaTraders.csproj", "{6A91C9A9-1BAD-494F-82EC-047F94C9AAE8}"
+EndProject
 Global
 	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 11
+		SccNumberOfProjects = 12
 		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
 		SccTeamFoundationServer = https://tfs.codeplex.com/tfs/tfs24
 		SccLocalPath0 = .
@@ -85,6 +87,10 @@ Global
 		SccProjectTopLevelParentUniqueName10 = myManga.sln
 		SccProjectName10 = myManga-IDatabaseExtensions/MangaHelpers
 		SccLocalPath10 = myManga-IDatabaseExtensions\\MangaHelpers
+		SccProjectUniqueName11 = myManga-ISiteExtensions\\MangaTraders\\MangaTraders.csproj
+		SccProjectTopLevelParentUniqueName11 = myManga.sln
+		SccProjectName11 = myManga-ISiteExtensions/MangaTraders
+		SccLocalPath11 = myManga-ISiteExtensions\\MangaTraders
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -172,6 +178,14 @@ Global
 		{9D1AC8D3-24F3-47DE-A950-3F48D20DD017}.Release|Any CPU.Build.0 = Release|Any CPU
 		{9D1AC8D3-24F3-47DE-A950-3F48D20DD017}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{9D1AC8D3-24F3-47DE-A950-3F48D20DD017}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{6A91C9A9-1BAD-494F-82EC-047F94C9AAE8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6A91C9A9-1BAD-494F-82EC-047F94C9AAE8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6A91C9A9-1BAD-494F-82EC-047F94C9AAE8}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{6A91C9A9-1BAD-494F-82EC-047F94C9AAE8}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{6A91C9A9-1BAD-494F-82EC-047F94C9AAE8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6A91C9A9-1BAD-494F-82EC-047F94C9AAE8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6A91C9A9-1BAD-494F-82EC-047F94C9AAE8}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{6A91C9A9-1BAD-494F-82EC-047F94C9AAE8}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -186,5 +200,6 @@ Global
 		{58E9513E-D3CC-42E7-9EB7-7FCF222F6670} = {601D4E6B-2166-403C-922C-97F83ED5F945}
 		{490A4004-2340-414A-9F03-FEFFF81577AC} = {601D4E6B-2166-403C-922C-97F83ED5F945}
 		{9D1AC8D3-24F3-47DE-A950-3F48D20DD017} = {601D4E6B-2166-403C-922C-97F83ED5F945}
+		{6A91C9A9-1BAD-494F-82EC-047F94C9AAE8} = {A5464BE9-8F0C-49F8-AFCD-EC17E9B575E1}
 	EndGlobalSection
 EndGlobal

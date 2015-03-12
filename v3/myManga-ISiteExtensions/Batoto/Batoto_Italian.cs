@@ -12,5 +12,5 @@ namespace Batoto
         Version = "0.0.1",
         SupportedObjects = SupportedObjects.All,
         Language = "Italian")]
-    public class Batoto_Italian : Batoto { }
+    public sealed class Batoto_Italian : Batoto { }
 }

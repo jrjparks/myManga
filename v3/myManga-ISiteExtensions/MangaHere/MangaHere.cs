@@ -21,7 +21,7 @@ namespace MangaHere
         Version = "0.0.1",
         SupportedObjects = SupportedObjects.All,
         Language = "English")]
-    public class MangaHere : ISiteExtension
+    public sealed class MangaHere : ISiteExtension
     {
         protected ISiteExtensionDescriptionAttribute _SiteExtensionDescriptionAttribute;
         public ISiteExtensionDescriptionAttribute SiteExtensionDescriptionAttribute

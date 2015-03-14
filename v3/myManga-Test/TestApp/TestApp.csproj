@@ -79,6 +79,10 @@
       <Project>{93cbcb8c-01cf-4dcd-a675-056cf0be047f}</Project>
       <Name>MangaHere</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\myManga-ISiteExtensions\MangaTraders\MangaTraders.csproj">
+      <Project>{6a91c9a9-1bad-494f-82ec-047f94c9aae8}</Project>
+      <Name>MangaTraders</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\myManga-Plugin\myMangaSiteExtension\myMangaSiteExtension.csproj">
       <Project>{088e2638-3bed-4b11-a548-36e3539d86f2}</Project>
       <Name>myMangaSiteExtension</Name>

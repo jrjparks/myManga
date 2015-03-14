@@ -39,6 +39,7 @@ namespace TestApp
             SiteExtentions.Add("MangaPanda", new AFTV_Network.MangaPanda());
             SiteExtentions.Add("MangaHere", new MangaHere.MangaHere());
             SiteExtentions.Add("Batoto", new Batoto.Batoto());
+            SiteExtentions.Add("MangaTraders", new MangaTraders.MangaTraders());
             //SiteExtentions.Add("Batoto-Spanish", new Batoto.Batoto_Spanish());
             //SiteExtentions.Add("Batoto-German", new Batoto.Batoto_German());
             //SiteExtentions.Add("Batoto-French", new Batoto.Batoto_French());
@@ -55,8 +56,8 @@ namespace TestApp
                 IDatabaseExtensionDescriptionAttribute isea = ise.GetType().GetCustomAttribute<IDatabaseExtensionDescriptionAttribute>(false);
                 Console.WriteLine("Loaded Database Extention {0}", isea.Name);
             }
-            //LoadManga();
-            Search();
+            LoadManga();
+            //Search();
             //zip_storage.Destroy();
         }
 
@@ -214,7 +215,7 @@ namespace TestApp
 
         static void LoadManga()
         {
-            MangaObject mObj = LoadMangaObject("http://www.mangahere.co/manga/magi/", SiteExtentions["MangaHere"]);
+            MangaObject mObj = LoadMangaObject("http://mangatraders.org/read-online/ShokugekiNoSoma", SiteExtentions["MangaTraders"]);
             Console.WriteLine("Returned MangaObject:");
             Console.WriteLine("\tName:{0}", mObj.Name);
             Console.WriteLine("\tReleased:{0}", mObj.Released.ToString("yyyy"));

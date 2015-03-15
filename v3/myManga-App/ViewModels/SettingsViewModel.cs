@@ -1,21 +1,18 @@
-﻿using myMangaSiteExtension.Attributes;
+﻿using Core.IO;
+using Core.IO.Storage.Manager.BaseInterfaceClasses;
+using Core.MVVM;
+using Core.Other.Singleton;
+using myManga_App.Objects;
+using myMangaSiteExtension.Attributes;
 using myMangaSiteExtension.Interfaces;
+using myMangaSiteExtension.Objects;
 using System;
-using System.Linq;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Reflection;
-using System.Runtime.CompilerServices;
-using myManga_App.Objects;
-using Core.MVVM;
-using System.Windows.Input;
-using Core.IO;
-using myManga_App.Properties;
-using Core.Other.Singleton;
-using Core.IO.Storage.Manager.BaseInterfaceClasses;
-using myMangaSiteExtension.Objects;
 using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Windows.Input;
 
 namespace myManga_App.ViewModels
 {

@@ -1,16 +1,12 @@
-﻿using System;
-using System.ComponentModel;
-using System.Net;
-using System.Windows;
+﻿using Core.MVVM;
 using myManga_App.IO.Network;
-using Core.Other.Singleton;
-using Core.MVVM;
-using System.Windows.Input;
-using System.Runtime.CompilerServices;
+using System;
 using System.IO;
+using System.Net;
 using System.Threading;
+using System.Windows;
+using System.Windows.Input;
 using System.Windows.Threading;
-using Core.MVVM;
 
 namespace myManga_App.ViewModels
 {
@@ -118,7 +114,10 @@ namespace myManga_App.ViewModels
 
             if (!IsInDesignMode)
             {
-                Messenger.Default.RegisterRecipient<BaseViewModel>(this, v => this.ContentViewModel = v, "FocusRequest");
+                Messenger.Default.RegisterRecipient<BaseViewModel>(this, v => {
+                    if (this.ContentViewModel != v)
+                        this.ContentViewModel = v;
+                }, "FocusRequest");
 
                 SettingsViewModel.CloseEvent += (s, e) => this.PreviousContentViewModel.PullFocus();
 

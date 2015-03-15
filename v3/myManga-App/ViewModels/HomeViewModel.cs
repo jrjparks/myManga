@@ -1,36 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using Core.IO;
+using Core.IO.Storage.Manager.BaseInterfaceClasses;
+using Core.MVVM;
+using Core.Other.Singleton;
+using myManga_App.IO.Local;
+using myManga_App.IO.Network;
+using myManga_App.Objects;
+using myManga_App.Objects.Cache;
+using myManga_App.Objects.UserInterface;
+using myMangaSiteExtension.Objects;
+using myMangaSiteExtension.Utilities;
+using System;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
-using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Text.RegularExpressions;
-using System.Threading;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
-using System.Windows.Threading;
-using Amib.Threading;
-using Core.IO;
-using Core.MVVM;
-using Core.Other.Singleton;
-using myManga_App.IO;
-using myMangaSiteExtension;
-using myMangaSiteExtension.Attributes;
-using myMangaSiteExtension.Interfaces;
-using myMangaSiteExtension.Objects;
-using myMangaSiteExtension.Utilities;
-using myManga_App.Properties;
-using Core.IO.Storage.Manager.BaseInterfaceClasses;
-using Core.MVVM;
-using myManga_App.Objects;
-using myManga_App.IO.Network;
-using myManga_App.Objects.MVVM;
-using myManga_App.Objects.UserInterface;
-using myManga_App.Objects.Cache;
-using myManga_App.IO.Local;
 
 namespace myManga_App.ViewModels
 {
@@ -283,7 +268,7 @@ namespace myManga_App.ViewModels
             if (MangaListView.CanSort)
             {
                 MangaListView.SortDescriptions.Add(new SortDescription("MangaObject.Name", ListSortDirection.Ascending));
-                MangaListView.SortDescriptions.Add(new SortDescription("HasMoreToRead", ListSortDirection.Ascending));
+                //MangaListView.SortDescriptions.Add(new SortDescription("HasMoreToRead", ListSortDirection.Ascending));
             }
         }
     }

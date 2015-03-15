@@ -317,6 +317,7 @@
             HorizontalAlignment="Right"
             Width="200"
             Height="32"
+            Margin="0,0,16,0"
             IsHitTestVisible="{Binding IsOpen, Converter={StaticResource BooleanInverter}, ElementName=MangaObjectPopup, Mode=OneWay}">
             <Button:MetroToggleButton.Content>
                 <TextBlock Text="More Information" FontSize="18"/>

@@ -103,7 +103,7 @@ namespace MangaHere
                 Authors = Authors.ToList(),
                 Artists = Artists.ToList(),
                 Genres = Genres.ToList(),
-                Released = Chapters.Last().Released,
+                Released = Chapters.First().Released,
                 Chapters = Chapters
             };
             MangaObj.AlternateNames.RemoveAll(an => an.ToLower().Equals("none"));
@@ -181,14 +181,14 @@ namespace MangaHere
                         String.Format("{0}/ajax/series.php", SiteExtensionDescriptionAttribute.RootUrl)
                         ).DocumentNode.InnerText.Replace("\\/","/").Split(new String[]{"\",\""}, StringSplitOptions.None);
                     String CoverUrl = Details[1].Substring(0, Details[1].LastIndexOf('?'));
-                    Double Rating = 0;
+                    Double Rating = -1;
                     Double.TryParse(Details[3], out Rating);
 
                     SearchResults.Add(new SearchResultObject()
                     {
                         Name = Name,
                         Rating = Rating,
-                        Description = Details[8],
+                        Description = HtmlEntity.DeEntitize(Details[8]),
                         Artists = (from String Staff in Details[5].Split(new String[] { ", " }, StringSplitOptions.RemoveEmptyEntries) select Staff.Trim()).ToList(),
                         Authors = (from String Staff in Details[5].Split(new String[] { ", " }, StringSplitOptions.RemoveEmptyEntries) select Staff.Trim()).ToList(),
                         CoverUrl = CoverUrl,

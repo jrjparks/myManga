@@ -1,30 +1,16 @@
-﻿using System;
+﻿using Core.MVVM;
+using myManga_App.IO.Network;
+using myMangaSiteExtension.Objects;
+using myMangaSiteExtension.Utilities;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.IO;
 using System.Linq;
-using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
-using System.Windows.Threading;
-using Amib.Threading;
-using Core.IO;
-using Core.MVVM;
-using Core.Other.Singleton;
-using myManga_App.IO;
-using myMangaSiteExtension;
-using myMangaSiteExtension.Attributes;
-using myMangaSiteExtension.Interfaces;
-using myMangaSiteExtension.Objects;
-using myMangaSiteExtension.Utilities;
-using myManga_App.Properties;
-using myManga_App.IO.Network;
-using Core.MVVM;
 
 namespace myManga_App.ViewModels
 {

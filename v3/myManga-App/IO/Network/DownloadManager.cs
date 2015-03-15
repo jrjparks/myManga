@@ -374,8 +374,17 @@ namespace myManga_App.IO.Network
                         foreach (SearchResultObject SearchResult in SiteExtensionSearchContent.Key.ParseSearch(SiteExtensionSearchContent.Value))
                         {
                             MangaObject manga_object = SearchResult.ConvertToMangaObject(),
-                                existing_manga_object = SearchResultItems.FirstOrDefault(
-                                mo => SafeAlphaNumeric.Replace(mo.Name.ToLower(), String.Empty).Equals(SafeAlphaNumeric.Replace(manga_object.Name.ToLower(), String.Empty)));
+                                existing_manga_object = SearchResultItems.FirstOrDefault(mo =>
+                                {
+                                    String existing_manga_object_name = SafeAlphaNumeric.Replace(mo.Name.ToLower(), String.Empty),
+                                        manga_object_name = SafeAlphaNumeric.Replace(manga_object.Name.ToLower(), String.Empty);
+                                    List<String> existing_manga_object_names = new List<String>(mo.AlternateNames),
+                                        manga_object_names = new List<String>(manga_object.AlternateNames);
+                                    existing_manga_object_names.Insert(0, existing_manga_object_name);
+                                    manga_object_names.Insert(0, manga_object_name);
+
+                                    return existing_manga_object_names.Intersect(manga_object_names).Any();
+                                });
 
                             // Add new manga_object or merge into existing_manga_object
                             if (MangaObject.Equals(existing_manga_object, null)) SearchResultItems.Add(manga_object);
@@ -399,6 +408,29 @@ namespace myManga_App.IO.Network
                         }
                     }
                     catch { }
+                }
+
+                // Merge same items
+                for (Int32 index = 0; index < SearchResultItems.Count; ++index)
+                {
+                    MangaObject item = SearchResultItems[index];
+                    for (Int32 sub_index = index + 1; sub_index < SearchResultItems.Count; )
+                    {
+                        MangaObject sub_item = SearchResultItems[sub_index];
+                        String existing_manga_object_name = SafeAlphaNumeric.Replace(item.Name.ToLower(), String.Empty),
+                                        manga_object_name = SafeAlphaNumeric.Replace(sub_item.Name.ToLower(), String.Empty);
+                        List<String> existing_manga_object_names = new List<String>(item.AlternateNames),
+                            manga_object_names = new List<String>(sub_item.AlternateNames);
+                        existing_manga_object_names.Insert(0, existing_manga_object_name);
+                        manga_object_names.Insert(0, manga_object_name);
+
+                        if (existing_manga_object_names.Intersect(manga_object_names).Any())
+                        {
+                            item.Merge(sub_item);
+                            SearchResultItems.RemoveAt(sub_index);
+                        }
+                        else ++sub_index;
+                    }
                 }
 
                 return new WorkerResult<List<MangaObject>>(SearchResultItems, Id: Value.Id);

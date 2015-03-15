@@ -35,17 +35,17 @@ namespace TestApp
 
             zip_storage = Core.Other.Singleton.Singleton<ZipStorage>.Instance;
 
-            SiteExtentions.Add("MangaReader", new AFTV_Network.MangaReader());
-            SiteExtentions.Add("MangaPanda", new AFTV_Network.MangaPanda());
-            SiteExtentions.Add("MangaHere", new MangaHere.MangaHere());
-            SiteExtentions.Add("Batoto", new Batoto.Batoto());
+            //SiteExtentions.Add("MangaReader", new AFTV_Network.MangaReader());
+            //SiteExtentions.Add("MangaPanda", new AFTV_Network.MangaPanda());
+            //SiteExtentions.Add("MangaHere", new MangaHere.MangaHere());
+            //SiteExtentions.Add("Batoto", new Batoto.Batoto());
             SiteExtentions.Add("MangaTraders", new MangaTraders.MangaTraders());
             //SiteExtentions.Add("Batoto-Spanish", new Batoto.Batoto_Spanish());
             //SiteExtentions.Add("Batoto-German", new Batoto.Batoto_German());
             //SiteExtentions.Add("Batoto-French", new Batoto.Batoto_French());
-            DatabaseExtentions.Add("MangaHelpers", new MangaHelpers.MangaHelpers());
-            DatabaseExtentions.Add("AnimeNewsNetwork", new AnimeNewsNetwork.AnimeNewsNetwork());
-            DatabaseExtentions.Add("MangaUpdatesBakaUpdates", new MangaUpdatesBakaUpdates.MangaUpdatesBakaUpdates());
+            //DatabaseExtentions.Add("MangaHelpers", new MangaHelpers.MangaHelpers());
+            //DatabaseExtentions.Add("AnimeNewsNetwork", new AnimeNewsNetwork.AnimeNewsNetwork());
+            //DatabaseExtentions.Add("MangaUpdatesBakaUpdates", new MangaUpdatesBakaUpdates.MangaUpdatesBakaUpdates());
             foreach (ISiteExtension ise in SiteExtentions.Values)
             {
                 ISiteExtensionDescriptionAttribute isea = ise.GetType().GetCustomAttribute<ISiteExtensionDescriptionAttribute>(false);
@@ -56,8 +56,8 @@ namespace TestApp
                 IDatabaseExtensionDescriptionAttribute isea = ise.GetType().GetCustomAttribute<IDatabaseExtensionDescriptionAttribute>(false);
                 Console.WriteLine("Loaded Database Extention {0}", isea.Name);
             }
-            LoadManga();
-            //Search();
+            //LoadManga();
+            Search();
             //zip_storage.Destroy();
         }
 
@@ -74,7 +74,7 @@ namespace TestApp
                     MangaObject mObj = SearchResults[srIndex];
                     mObj.LoadMangaObject();
                     mObj.SortChapters();
-                    zip_storage.Write(String.Format("{0}.ma", mObj.Name).SafeFileName(), "MangaObject", mObj.Serialize(SaveType.XML));
+                    zip_storage.Write(String.Format("{0}/{1}", Environment.CurrentDirectory, String.Format("{0}.ma", mObj.Name).SafeFileName()), "MangaObject", mObj.Serialize(SaveType.XML));
                     //mObj.SaveToArchive(String.Format("{0}.ma", mObj.Name).SafeFileName(), "MangaObject", SaveType.XML);
                 }
                 else
@@ -225,6 +225,7 @@ namespace TestApp
             Console.WriteLine("\tGenres:{0}", String.Join(", ", mObj.Genres));
             Console.WriteLine("\tLocations:{0}", String.Join(", ", mObj.Locations));
             Console.WriteLine("\tNumber of Chapters:{0}", mObj.Chapters.Count);
+            Console.WriteLine("\tDescription:{0}", mObj.Description);
 
             Console.WriteLine();
             Console.Write("Test Chapter Load...(press enter)");

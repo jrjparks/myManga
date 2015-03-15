@@ -98,7 +98,7 @@ namespace MangaHelpers
                 Name = Name,
                 AlternateNames = AlternateNames,
                 Covers = Covers,
-                Description = SummaryNode.InnerText,
+                Description = HtmlEntity.DeEntitize(SummaryNode.InnerText),
                 Genres = Genres,
                 Locations = { Location },
                 Staff = Staff,

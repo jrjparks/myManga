@@ -3,23 +3,15 @@ using Core.IO.Storage.Manager.BaseInterfaceClasses;
 using Core.MVVM;
 using Core.Other.Singleton;
 using myManga_App.IO.Network;
-using Core.MVVM;
 using myManga_App.Objects;
 using myMangaSiteExtension.Objects;
 using myMangaSiteExtension.Utilities;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.IO;
 using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
-using System.Windows.Threading;
-using myManga_App.IO.Local;
 
 namespace myManga_App.ViewModels
 {

@@ -43,9 +43,9 @@ namespace TestApp
             //SiteExtentions.Add("Batoto-Spanish", new Batoto.Batoto_Spanish());
             //SiteExtentions.Add("Batoto-German", new Batoto.Batoto_German());
             //SiteExtentions.Add("Batoto-French", new Batoto.Batoto_French());
-            //DatabaseExtentions.Add("MangaHelpers", new MangaHelpers.MangaHelpers());
-            //DatabaseExtentions.Add("AnimeNewsNetwork", new AnimeNewsNetwork.AnimeNewsNetwork());
-            //DatabaseExtentions.Add("MangaUpdatesBakaUpdates", new MangaUpdatesBakaUpdates.MangaUpdatesBakaUpdates());
+            DatabaseExtentions.Add("MangaHelpers", new MangaHelpers.MangaHelpers());
+            DatabaseExtentions.Add("AnimeNewsNetwork", new AnimeNewsNetwork.AnimeNewsNetwork());
+            DatabaseExtentions.Add("MangaUpdatesBakaUpdates", new MangaUpdatesBakaUpdates.MangaUpdatesBakaUpdates());
             foreach (ISiteExtension ise in SiteExtentions.Values)
             {
                 ISiteExtensionDescriptionAttribute isea = ise.GetType().GetCustomAttribute<ISiteExtensionDescriptionAttribute>(false);
@@ -56,9 +56,9 @@ namespace TestApp
                 IDatabaseExtensionDescriptionAttribute isea = ise.GetType().GetCustomAttribute<IDatabaseExtensionDescriptionAttribute>(false);
                 Console.WriteLine("Loaded Database Extention {0}", isea.Name);
             }
-            //LoadManga();
-            Search();
-            //zip_storage.Destroy();
+            LoadManga();
+            //Search();
+            zip_storage.Destroy();
         }
 
         static void Search()
@@ -215,7 +215,7 @@ namespace TestApp
 
         static void LoadManga()
         {
-            MangaObject mObj = LoadMangaObject("http://mangatraders.org/read-online/ShokugekiNoSoma", SiteExtentions["MangaTraders"]);
+            MangaObject mObj = LoadMangaObject("http://mangatraders.org/read-online/AkaAkatoretachiNoMonogatari", SiteExtentions["MangaTraders"]);
             Console.WriteLine("Returned MangaObject:");
             Console.WriteLine("\tName:{0}", mObj.Name);
             Console.WriteLine("\tReleased:{0}", mObj.Released.ToString("yyyy"));

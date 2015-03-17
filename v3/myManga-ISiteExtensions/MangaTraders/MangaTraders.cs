@@ -168,11 +168,12 @@ namespace MangaTraders
 
             String ChapterUrl = PageObjectDocument.DocumentNode.SelectSingleNode("//meta[@property='og:url']").Attributes["content"].Value;
             ChapterUrl = ChapterUrl.Substring(0, ChapterUrl.LastIndexOf('/') + 1);
+            String[] ChapterUrlSections = ChapterUrl.Substring(SiteExtensionDescriptionAttribute.RootUrl.Length).Split(new char[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
 
             HtmlNode PageNode = PageObjectDocument.GetElementbyId("changePageSelect").SelectSingleNode(".//option[@selected]"),
                 PrevNode = PageNode.SelectSingleNode(".//preceding-sibling::option"),
                 NextNode = PageNode.SelectSingleNode(".//following-sibling::option"),
-                ImgNode = PageObjectDocument.DocumentNode.SelectSingleNode("//img[contains(@src,'.mangasee.co/series/')]");
+                ImgNode = PageObjectDocument.DocumentNode.SelectSingleNode(String.Format("//a[contains(@href, '{0}')]/img", ChapterUrlSections[1]));
 
             String ImgSrc = ImgNode.Attributes["src"].Value;
             String Name = ImgSrc.Split('/').Last();

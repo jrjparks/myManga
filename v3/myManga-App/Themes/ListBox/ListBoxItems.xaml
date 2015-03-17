@@ -212,6 +212,17 @@
                                     TextAlignment="Center"
                                     Text="{Binding MangaObject.Name, FallbackValue=No-Name}"/>
                             </Border>
+                            <Path
+                                x:Name="IconBackground"
+                                Visibility="Collapsed"
+                                Grid.Column="0"
+                                Grid.Row="0"
+                                Data="M 0,0 v 48 L 48,0 Z"
+                                StrokeThickness="1"
+                                Opacity="0.9"
+                                Fill="{DynamicResource window-theme-primary}"
+                                Stroke="{DynamicResource window-theme-secondary}"
+                                SnapsToDevicePixels="True"/>
                             <TextBlock
                                 x:Name="HasMoreToRead"
                                 Visibility="Collapsed"
@@ -219,7 +230,9 @@
                                 Grid.Row="0"
                                 FontFamily="{DynamicResource OpenIconic}"
                                 FontSize="20"
-                                Text="{DynamicResource oi-badge}">
+                                Text="{DynamicResource oi-badge}"
+                                Margin="8,4,0,0"
+                                SnapsToDevicePixels="True">
                                 <TextBlock.Effect>
                                     <DropShadowEffect Color="{DynamicResource window-background-color}" ShadowDepth="0"/>
                                 </TextBlock.Effect>
@@ -237,8 +250,10 @@
                         <Trigger Property="IsMouseOver" Value="True">
                             <Setter TargetName="ItemBorder" Property="Background" Value="{DynamicResource window-theme-secondary}"/>
                             <Setter TargetName="ItemBorder" Property="TextElement.Foreground" Value="{DynamicResource window-theme-primary}"/>
+                            <Setter TargetName="IconBackground" Property="Fill" Value="{DynamicResource window-theme-secondary}"/>
                         </Trigger>
                         <DataTrigger Binding="{Binding HasMoreToRead}" Value="True">
+                            <Setter TargetName="IconBackground" Property="Visibility" Value="Visible"/>
                             <Setter TargetName="HasMoreToRead" Property="Visibility" Value="Visible"/>
                         </DataTrigger>
                     </ControlTemplate.Triggers>

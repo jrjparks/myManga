@@ -184,7 +184,12 @@ namespace myManga_App.ViewModels
         { get { return _ReloadPageImageCommand ?? (_ReloadPageImageCommand = new DelegateCommand(ReloadPageImage)); } }
 
         private void ReloadPageImage()
-        { DownloadManager.Default.Download(this.SelectedPageObject.ImgUrl, this.ArchiveFilePath); }
+        {
+            if (this.SelectedPageObject.ImgUrl != null)
+                DownloadManager.Default.Download(this.SelectedPageObject.ImgUrl, this.ArchiveFilePath);
+            else if (this.SelectedPageObject.Url != null)
+                DownloadManager.Default.Download(this.MangaObject, this.ChapterObject, this.SelectedPageObject);
+        }
         #endregion
         #endregion
 

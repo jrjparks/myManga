@@ -544,7 +544,7 @@ namespace myManga_App.IO.Network
                 String save_path = Path.Combine(App.MANGA_ARCHIVE_DIRECTORY, e.Result.MangaArchiveName(App.MANGA_ARCHIVE_EXTENSION));
                 Singleton<ZipStorage>.Instance.Write(save_path, e.Result.GetType().Name, e.Result.Serialize(SaveType: App.UserConfig.SaveType));
                 Core.IO.KeyValuePair<String, Object> IsRefresh = e.Args.FirstOrDefault(x => x.Key.Equals("IsRefresh"));
-                if (IsRefresh != null && (IsRefresh.Value is Boolean && (Boolean)IsRefresh.Value == false))
+                if (IsRefresh == null || (IsRefresh.Value is Boolean && (Boolean)IsRefresh.Value == false))
                     ImageWorker.RunWork(
                         SmartThreadPool,
                         (from String url in e.Result.Covers select new ImageDownloadRequest(url, save_path)).AsEnumerable(),

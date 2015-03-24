@@ -3,10 +3,11 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-    xmlns:button="clr-namespace:myManga_App.Resources.Theme.Buttons"
+    xmlns:Button="clr-namespace:myManga_App.Resources.Theme.Buttons"
     xmlns:system="clr-namespace:System;assembly=mscorlib"
     xmlns:mangaObjects="clr-namespace:myMangaSiteExtension.Objects;assembly=myMangaSiteExtension"
     xmlns:Converters="clr-namespace:myManga_App.Converters"
+    xmlns:ObjectViews="clr-namespace:myManga_App.Views.ObjectViews"
     x:Class="myManga_App.Views.HomeView_List"
     x:Name="userControl"
     mc:Ignorable="d" 
@@ -57,7 +58,7 @@
                         <KeyBinding Command="{Binding SearchSiteCommand}" Key="Return"/>
                         <KeyBinding Command="{Binding ClearSearchCommand}" Key="Esc"/>
                     </Grid.InputBindings>
-                    <button:MetroButton
+                    <Button:MetroButton
 						Grid.Column="0"
 						FontFamily="{DynamicResource OpenIconic}"
 						Content="{DynamicResource oi-magnifying-glass}"
@@ -72,7 +73,7 @@
 						Background="{x:Null}"
 						VerticalContentAlignment="Center"
 						Text="{Binding SearchFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-                    <button:MetroToggleButton 
+                    <Button:MetroToggleButton 
 						x:Name="AdvSrchBtn"
 						Grid.Column="2"
 						Content="{DynamicResource fa-sort-down}"
@@ -105,55 +106,55 @@
                                     <RowDefinition/>
                                     <RowDefinition/>
                                 </Grid.RowDefinitions>
-                                <button:MetroToggleButton Content="Action" Grid.Column="0" Grid.Row="0"/>
-                                <button:MetroToggleButton Content="Adventure" Grid.Column="1" Grid.Row="0"/>
-                                <button:MetroToggleButton Content="Comedy" Grid.Column="2" Grid.Row="0"/>
-                                <button:MetroToggleButton Content="Demons" Grid.Column="3" Grid.Row="0"/>
-                                <button:MetroToggleButton Content="Drama" Grid.Column="4" Grid.Row="0"/>
+                                <Button:MetroToggleButton Content="Action" Grid.Column="0" Grid.Row="0"/>
+                                <Button:MetroToggleButton Content="Adventure" Grid.Column="1" Grid.Row="0"/>
+                                <Button:MetroToggleButton Content="Comedy" Grid.Column="2" Grid.Row="0"/>
+                                <Button:MetroToggleButton Content="Demons" Grid.Column="3" Grid.Row="0"/>
+                                <Button:MetroToggleButton Content="Drama" Grid.Column="4" Grid.Row="0"/>
 
-                                <button:MetroToggleButton Content="Ecchi" Grid.Column="0" Grid.Row="1"/>
-                                <button:MetroToggleButton Content="Fantasy" Grid.Column="1" Grid.Row="1"/>
-                                <button:MetroToggleButton Content="Gender Bender" Grid.Column="2" Grid.Row="1"/>
-                                <button:MetroToggleButton Content="Harem" Grid.Column="3" Grid.Row="1"/>
-                                <button:MetroToggleButton Content="Historical" Grid.Column="4" Grid.Row="1"/>
+                                <Button:MetroToggleButton Content="Ecchi" Grid.Column="0" Grid.Row="1"/>
+                                <Button:MetroToggleButton Content="Fantasy" Grid.Column="1" Grid.Row="1"/>
+                                <Button:MetroToggleButton Content="Gender Bender" Grid.Column="2" Grid.Row="1"/>
+                                <Button:MetroToggleButton Content="Harem" Grid.Column="3" Grid.Row="1"/>
+                                <Button:MetroToggleButton Content="Historical" Grid.Column="4" Grid.Row="1"/>
 
-                                <button:MetroToggleButton Content="Horror" Grid.Column="0" Grid.Row="2"/>
-                                <button:MetroToggleButton Content="Josei" Grid.Column="1" Grid.Row="2"/>
-                                <button:MetroToggleButton Content="Magic" Grid.Column="2" Grid.Row="2"/>
-                                <button:MetroToggleButton Content="Martial Arts" Grid.Column="3" Grid.Row="2"/>
-                                <button:MetroToggleButton Content="Mature" Grid.Column="4" Grid.Row="2"/>
+                                <Button:MetroToggleButton Content="Horror" Grid.Column="0" Grid.Row="2"/>
+                                <Button:MetroToggleButton Content="Josei" Grid.Column="1" Grid.Row="2"/>
+                                <Button:MetroToggleButton Content="Magic" Grid.Column="2" Grid.Row="2"/>
+                                <Button:MetroToggleButton Content="Martial Arts" Grid.Column="3" Grid.Row="2"/>
+                                <Button:MetroToggleButton Content="Mature" Grid.Column="4" Grid.Row="2"/>
 
-                                <button:MetroToggleButton Content="Mecha" Grid.Column="0" Grid.Row="3"/>
-                                <button:MetroToggleButton Content="Military" Grid.Column="1" Grid.Row="3"/>
-                                <button:MetroToggleButton Content="Mystery" Grid.Column="2" Grid.Row="3"/>
-                                <button:MetroToggleButton Content="One Shot" Grid.Column="3" Grid.Row="3"/>
-                                <button:MetroToggleButton Content="Psychological" Grid.Column="4" Grid.Row="3"/>
+                                <Button:MetroToggleButton Content="Mecha" Grid.Column="0" Grid.Row="3"/>
+                                <Button:MetroToggleButton Content="Military" Grid.Column="1" Grid.Row="3"/>
+                                <Button:MetroToggleButton Content="Mystery" Grid.Column="2" Grid.Row="3"/>
+                                <Button:MetroToggleButton Content="One Shot" Grid.Column="3" Grid.Row="3"/>
+                                <Button:MetroToggleButton Content="Psychological" Grid.Column="4" Grid.Row="3"/>
 
-                                <button:MetroToggleButton Content="Romance" Grid.Column="0" Grid.Row="4"/>
-                                <button:MetroToggleButton Content="School Life" Grid.Column="1" Grid.Row="4"/>
-                                <button:MetroToggleButton Content="Sci-Fi" Grid.Column="2" Grid.Row="4"/>
-                                <button:MetroToggleButton Content="Seinen" Grid.Column="3" Grid.Row="4"/>
-                                <button:MetroToggleButton Content="Shoujo" Grid.Column="4" Grid.Row="4"/>
+                                <Button:MetroToggleButton Content="Romance" Grid.Column="0" Grid.Row="4"/>
+                                <Button:MetroToggleButton Content="School Life" Grid.Column="1" Grid.Row="4"/>
+                                <Button:MetroToggleButton Content="Sci-Fi" Grid.Column="2" Grid.Row="4"/>
+                                <Button:MetroToggleButton Content="Seinen" Grid.Column="3" Grid.Row="4"/>
+                                <Button:MetroToggleButton Content="Shoujo" Grid.Column="4" Grid.Row="4"/>
 
-                                <button:MetroToggleButton Content="Shoujoai" Grid.Column="0" Grid.Row="5"/>
-                                <button:MetroToggleButton Content="Shounen" Grid.Column="1" Grid.Row="5"/>
-                                <button:MetroToggleButton Content="Shounenai" Grid.Column="2" Grid.Row="5"/>
-                                <button:MetroToggleButton Content="Slice of Life" Grid.Column="3" Grid.Row="5"/>
-                                <button:MetroToggleButton Content="Smut" Grid.Column="4" Grid.Row="5"/>
+                                <Button:MetroToggleButton Content="Shoujoai" Grid.Column="0" Grid.Row="5"/>
+                                <Button:MetroToggleButton Content="Shounen" Grid.Column="1" Grid.Row="5"/>
+                                <Button:MetroToggleButton Content="Shounenai" Grid.Column="2" Grid.Row="5"/>
+                                <Button:MetroToggleButton Content="Slice of Life" Grid.Column="3" Grid.Row="5"/>
+                                <Button:MetroToggleButton Content="Smut" Grid.Column="4" Grid.Row="5"/>
 
-                                <button:MetroToggleButton Content="Sports" Grid.Column="0" Grid.Row="6"/>
-                                <button:MetroToggleButton Content="Super Power" Grid.Column="1" Grid.Row="6"/>
-                                <button:MetroToggleButton Content="Supernatural" Grid.Column="2" Grid.Row="6"/>
-                                <button:MetroToggleButton Content="Tragedy" Grid.Column="3" Grid.Row="6"/>
-                                <button:MetroToggleButton Content="Vampire" Grid.Column="4" Grid.Row="6"/>
+                                <Button:MetroToggleButton Content="Sports" Grid.Column="0" Grid.Row="6"/>
+                                <Button:MetroToggleButton Content="Super Power" Grid.Column="1" Grid.Row="6"/>
+                                <Button:MetroToggleButton Content="Supernatural" Grid.Column="2" Grid.Row="6"/>
+                                <Button:MetroToggleButton Content="Tragedy" Grid.Column="3" Grid.Row="6"/>
+                                <Button:MetroToggleButton Content="Vampire" Grid.Column="4" Grid.Row="6"/>
 
-                                <button:MetroToggleButton Content="Yaoi" Grid.Column="0" Grid.Row="7"/>
-                                <button:MetroToggleButton Content="Yuri" Grid.Column="1" Grid.Row="7"/>
-                                <button:MetroButton Content="Clear" Grid.Column="4" Grid.Row="7"/>
+                                <Button:MetroToggleButton Content="Yaoi" Grid.Column="0" Grid.Row="7"/>
+                                <Button:MetroToggleButton Content="Yuri" Grid.Column="1" Grid.Row="7"/>
+                                <Button:MetroButton Content="Clear" Grid.Column="4" Grid.Row="7"/>
                             </Grid>
                         </Border>
                     </Popup>
-                    <button:MetroButton
+                    <Button:MetroButton
 						Grid.Column="3"
 					    FontFamily="{DynamicResource OpenIconic}"
 					    Content="{DynamicResource oi-delete}"
@@ -179,7 +180,7 @@
 				Style="{DynamicResource Spinner}" 
 				Visibility="{Binding IsLoading, Converter={StaticResource BooleanToVisibilityConverter}}"
                 Foreground="#BF000000"/>
-            <button:MetroButton
+            <Button:MetroButton
 				Grid.Row="3"
 				FontSize="16"
 				FontFamily="{DynamicResource OpenIconic}"
@@ -187,117 +188,33 @@
 				ContentStringFormat="{}{0} Refresh"
 				Command="{Binding RefreshMangaListCommand}"/>
         </Grid>
-        <Border Grid.Column="1" Grid.ColumnSpan="2" Margin="9,0,6,0">
-            <Image Source="/myManga;component/Resources/Icon.ico" HorizontalAlignment="Center" VerticalAlignment="Center" Stretch="None"/>
-        </Border>
-        <Grid
+        <ObjectViews:MangaObjectView 
 			x:Name="MangaObjectDescription"
-			Grid.Column="2" 
-			DataContext="{Binding SelectedItem, ElementName=MangaObjectItems}"
-			Background="{DynamicResource window-background}"
-            Visibility="{Binding TargetNullValue=Collapsed}">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="3*"/>
-                <ColumnDefinition MinWidth="100" MaxWidth="300"/>
-            </Grid.ColumnDefinitions>
-            <Grid DataContext="{Binding MangaObject}">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="332"/>
-                    <RowDefinition Height="32"/>
-                    <RowDefinition/>
-                </Grid.RowDefinitions>
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="32"/>
-                        <RowDefinition/>
-                        <RowDefinition/>
-                        <RowDefinition/>
-                        <RowDefinition/>
-                        <RowDefinition/>
-                        <RowDefinition/>
-                        <RowDefinition/>
-                        <RowDefinition/>
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="200"/>
-                        <ColumnDefinition />
-                    </Grid.ColumnDefinitions>
-                    <TextBlock Grid.ColumnSpan="2" Text="{Binding Name}" ToolTip="{Binding Name}" TextTrimming="WordEllipsis" FontWeight="Bold" FontSize="24" Margin="32,0,0,0"/>
-                    <Grid 
-						Grid.Row="1" 
-						Grid.RowSpan="8"
-						Margin="0,0,3,0">
-                        <Image x:Name="CoverImage" Source="{Binding Converter={StaticResource LoadImageFromMangaArchive}}"/>
-                        <button:MetroButton
-                            Visibility="{Binding BookmarkObject, TargetNullValue=Collapsed}"
-                            Width="{Binding ActualWidth, Mode=OneWay, ElementName=CoverImage}"
-                            MinWidth="150"
-                            VerticalAlignment="Bottom"
-                            FontFamily="{DynamicResource OpenIconic}"
-                            Content="{DynamicResource oi-bookmark}"
-                            ContentStringFormat="{}{0} Resume Reading"
-                            FontSize="18"
-                            Opacity="0.75"
-                            Padding="5"
-                            Command="{Binding Path=DataContext.ResumeReadingCommand, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl}}"/>
-                    </Grid>
-                    <StackPanel Grid.Row="1" Grid.Column="1">
-                        <TextBlock Text="Alternate Titles:" FontWeight="Bold" Foreground="{DynamicResource text-muted}"/>
-                        <TextBlock Text="{Binding AlternateNames, Converter={StaticResource StringListToCSV}}" ToolTip="{Binding AlternateNames, Converter={StaticResource StringListToCSV}}" FontWeight="Bold" Foreground="{DynamicResource text-muted}" TextTrimming="CharacterEllipsis"/>
-                    </StackPanel>
-                    <StackPanel Grid.Row="2" Grid.Column="1">
-                        <TextBlock Text="Released:" FontWeight="Bold" Foreground="{DynamicResource text-muted}"/>
-                        <TextBlock Text="{Binding Released, StringFormat=yyyy}" ToolTip="{Binding Released, StringFormat=yyyy}" FontWeight="Bold" Foreground="{DynamicResource text-muted}"/>
-                    </StackPanel>
-                    <StackPanel Grid.Row="3" Grid.Column="1">
-                        <TextBlock Text="Type:" FontWeight="Bold" Foreground="{DynamicResource text-muted}"/>
-                        <TextBlock Text="{Binding MangaType, StringFormat=\{0\}}" ToolTip="{Binding MangaType, StringFormat=\{0\}}" FontWeight="Bold" Foreground="{DynamicResource text-muted}"/>
-                    </StackPanel>
-                    <StackPanel Grid.Row="4" Grid.Column="1">
-                        <TextBlock Text="Authors:" FontWeight="Bold" Foreground="{DynamicResource text-muted}"/>
-                        <TextBlock Text="{Binding Authors, Converter={StaticResource StringListToCSV}}" ToolTip="{Binding Authors, Converter={StaticResource StringListToCSV}}" FontWeight="Bold" Foreground="{DynamicResource text-muted}" TextTrimming="CharacterEllipsis"/>
-                    </StackPanel>
-                    <StackPanel Grid.Row="5" Grid.Column="1">
-                        <TextBlock Text="Artists:" FontWeight="Bold" Foreground="{DynamicResource text-muted}"/>
-                        <TextBlock Text="{Binding Authors, Converter={StaticResource StringListToCSV}}" ToolTip="{Binding Authors, Converter={StaticResource StringListToCSV}}" FontWeight="Bold" Foreground="{DynamicResource text-muted}" TextTrimming="CharacterEllipsis"/>
-                    </StackPanel>
-                    <StackPanel Grid.Row="6" Grid.Column="1">
-                        <TextBlock Text="Genres:" FontWeight="Bold" Foreground="{DynamicResource text-muted}"/>
-                        <TextBlock Text="{Binding Genres, Converter={StaticResource StringListToCSV}}" ToolTip="{Binding Genres, Converter={StaticResource StringListToCSV}}" FontWeight="Bold" Foreground="{DynamicResource text-muted}" TextTrimming="CharacterEllipsis"/>
-                    </StackPanel>
-                    <StackPanel Grid.Row="7" Grid.Column="1" Grid.RowSpan="2">
-                        <TextBlock Text="Sites:" FontWeight="Bold" Foreground="{DynamicResource text-muted}"/>
-                        <TextBlock Text="{Binding Locations, Converter={StaticResource LocationListToCSV}}" ToolTip="{Binding Locations, Converter={StaticResource LocationListToCSV}}" FontWeight="Bold" Foreground="{DynamicResource text-muted}" TextTrimming="CharacterEllipsis"/>
-                        <TextBlock Text="{Binding DatabaseLocations, Converter={StaticResource LocationListToCSV}}" ToolTip="{Binding DatabaseLocations, Converter={StaticResource LocationListToCSV}}" FontWeight="Bold" Foreground="{DynamicResource text-muted}" TextTrimming="CharacterEllipsis"/>
-                    </StackPanel>
-                </Grid>
-                <Grid Grid.Row="1"/>
-                <ScrollViewer Grid.Row="2">
-                    <TextBlock 
-						Text="{Binding Description}"
-						TextWrapping="WrapWithOverflow"
-						TextTrimming="CharacterEllipsis"
-						FontSize="16"
-						MinHeight="100"/>
-                </ScrollViewer>
-            </Grid>
-            <ListBox 
-				Grid.Column="1"
-				ItemsSource="{Binding MangaObject.Chapters}"
-                SelectedItem="{Binding ResumeChapterObject, Mode=OneWay}"
-                SelectedIndex="0"
-				ItemContainerStyle="{DynamicResource HomeView_List_ChapterListBoxItem}"
-				Visibility="{Binding HasItems, Converter={StaticResource BooleanToVisibilityConverter}, RelativeSource={RelativeSource Self}}" 
-				ScrollViewer.HorizontalScrollBarVisibility="Disabled" HorizontalContentAlignment="Stretch"/>
-        </Grid>
-        <button:MetroButton
-			FontFamily="{DynamicResource OpenIconic}"
-			Content="{DynamicResource oi-reload}"
-			Command="{Binding RefreshMangaCommand}"
-			Height="32"
-			Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"
-			Grid.Column="2" 
-			HorizontalAlignment="Left" 
-			VerticalAlignment="Top"/>
+            Grid.Column="2" 
+            DataContext="{Binding SelectedItem, ElementName=MangaObjectItems}"/>
+        <Border
+			HorizontalAlignment="Center" 
+			VerticalAlignment="Top"
+            BorderBrush="{DynamicResource window-theme-primary}"
+            BorderThickness="1,1,1,0"
+            Margin="0,-33,0,0"
+            Grid.ColumnSpan="3">
+            <StackPanel 
+                Orientation="Horizontal"
+			    Grid.Column="2">
+                <Button:MetroButton
+			        FontFamily="{DynamicResource OpenIconic}"
+			        Content="{DynamicResource oi-reload}"
+			        Command="{Binding RefreshMangaCommand}"
+			        Height="32"
+			        Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"/>
+                <Button:MetroButton
+			        FontFamily="{DynamicResource OpenIconic}"
+			        Content="{DynamicResource oi-trash}"
+			        Command="{Binding DeleteMangaCommand}"
+			        Height="32"
+			        Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"/>
+            </StackPanel>
+        </Border>
     </Grid>
 </UserControl>

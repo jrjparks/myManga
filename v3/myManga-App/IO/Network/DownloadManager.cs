@@ -17,6 +17,7 @@ using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Web;
+using myManga_App.IO.Local;
 
 namespace myManga_App.IO.Network
 {
@@ -474,6 +475,7 @@ namespace myManga_App.IO.Network
         #endregion
 
         private readonly SmartThreadPool SmartThreadPool;
+
         private readonly SynchronizationContext SynchronizationContext;
         private readonly App App = App.Current as App;
         public Int32 Concurrency { get { return SmartThreadPool.Concurrency; } }
@@ -549,6 +551,7 @@ namespace myManga_App.IO.Network
                         SmartThreadPool,
                         (from String url in e.Result.Covers select new ImageDownloadRequest(url, save_path)).AsEnumerable(),
                         Enumerable.Repeat<Guid?>(e.Id, e.Result.Covers.Count));
+                else VerifyArchiveFile.VerifyArchive(Singleton<ZipStorage>.Instance, save_path);
             }
             OnStatusChange(e.Exception);
         }

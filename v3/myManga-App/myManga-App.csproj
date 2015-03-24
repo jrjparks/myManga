@@ -127,6 +127,9 @@
     <Compile Include="Views\HomeView\HomeView_List.xaml.cs">
       <DependentUpon>HomeView_List.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\HomeView\ObjectViews\MangaObjectView.xaml.cs">
+      <DependentUpon>MangaObjectView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\ReaderView.xaml.cs">
       <DependentUpon>ReaderView.xaml</DependentUpon>
     </Compile>
@@ -213,6 +216,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\HomeView\HomeView_List.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\HomeView\ObjectViews\MangaObjectView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

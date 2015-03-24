@@ -157,6 +157,23 @@ namespace myManga_App.ViewModels
         }
         #endregion
 
+        #region DeleteManga
+        private DelegateCommand _DeleteMangaCommand;
+        public ICommand DeleteMangaCommand
+        { get { return _DeleteMangaCommand ?? (_DeleteMangaCommand = new DelegateCommand(DeleteManga, CanDeleteManga)); } }
+
+        private Boolean CanDeleteManga()
+        { return !MangaArchiveInformationObject.Equals(this.SelectedMangaArchive, null) && !this.SelectedMangaArchive.Empty(); }
+
+        private void DeleteManga()
+        {
+            String save_path = Path.Combine(App.MANGA_ARCHIVE_DIRECTORY, this.SelectedMangaArchive.MangaObject.MangaArchiveName(App.MANGA_ARCHIVE_EXTENSION));
+            MessageBoxResult msgbox_result = MessageBox.Show("Delete Manga?", String.Format("Are you sure you wish to delete {0}?", this.SelectedMangaArchive.MangaObject.Name), MessageBoxButton.YesNo);
+            if (msgbox_result.HasFlag(MessageBoxResult.Yes))
+                File.Delete(save_path);
+        }
+        #endregion
+
         private Boolean _IsLoading;
         public Boolean IsLoading
         {
@@ -187,12 +204,17 @@ namespace myManga_App.ViewModels
 
         private void MangaObjectArchiveWatcher_Event(FileSystemEventArgs e)
         {
-            MangaArchiveCacheObject current_manga_archive = CacheMangaObject(e.FullPath);
+            // Lookup by filename
+            MangaArchiveCacheObject current_manga_archive = App.MangaArchiveCacheCollection.FirstOrDefault(
+                maco => maco.MangaObject.MangaArchiveName(App.MANGA_ARCHIVE_EXTENSION).Equals(e.Name));
+
             Boolean ViewingSelectedMangaObject = this.SelectedMangaArchive != null && this.SelectedMangaArchive.Equals(current_manga_archive);
             switch (e.ChangeType)
             {
                 case WatcherChangeTypes.Changed:
                 case WatcherChangeTypes.Created:
+                    // Cache if creaded or changed
+                    current_manga_archive = CacheMangaObject(e.FullPath);
                     if (!current_manga_archive.Empty())
                     { if (ViewingSelectedMangaObject) this.SelectedMangaArchive = current_manga_archive; }
                     break;

@@ -1,0 +1,140 @@
+﻿<UserControl
+    x:Class="myManga_App.Views.ObjectViews.MangaObjectView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+    xmlns:Button="clr-namespace:myManga_App.Resources.Theme.Buttons"
+    xmlns:Converters="clr-namespace:myManga_App.Converters"
+    mc:Ignorable="d" 
+    d:DesignHeight="300" d:DesignWidth="300"
+    x:Name="MangaArchiveCacheObject">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/myManga;component/Resources/Localization/Dictionary_en-US.xaml"/>
+                <ResourceDictionary Source="/myManga;component/Themes/CoreResourceDictionary.xaml"/>
+                <ResourceDictionary Source="/myManga;component/Themes/Button/MetroButton.xaml"/>
+
+                <ResourceDictionary Source="/myManga;component/Themes/ListBox/ListBoxes.xaml"/>
+                <ResourceDictionary Source="/myManga;component/Themes/ListBox/ListBoxItems.xaml"/>
+                <ResourceDictionary Source="/myManga;component/Themes/ScrollBar/ScrollBar.xaml"/>
+
+                <ResourceDictionary Source="/myManga;component/Themes/ProgressBar/Spinner.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+            <Converters:LoadImageFromMangaArchive x:Key="LoadImageFromMangaArchive"/>
+            <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+            <Converters:BooleanInverter x:Key="BooleanInverter"/>
+        </ResourceDictionary>
+    </UserControl.Resources>
+    <Grid
+        Background="{DynamicResource window-background}">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="3*"/>
+            <ColumnDefinition MinWidth="100" MaxWidth="300"/>
+        </Grid.ColumnDefinitions>
+        <Grid DataContext="{Binding MangaObject}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="332"/>
+                <RowDefinition Height="32"/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="32"/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="200"/>
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.ColumnSpan="2" Text="{Binding Name}" ToolTip="{Binding Name}" TextTrimming="WordEllipsis" FontWeight="Bold" FontSize="24"/>
+                <Grid 
+					Grid.Row="1" 
+					Grid.RowSpan="8"
+					Margin="0,0,3,0">
+                    <Image x:Name="CoverImage" Source="{Binding Converter={StaticResource LoadImageFromMangaArchive}}">
+                        <Image.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem IsEnabled="False" Header="Change Cover Image">
+                                    <MenuItem.Icon>
+                                        <TextBlock
+                                            Text="{DynamicResource oi-image}" 
+                                            FontFamily="{DynamicResource OpenIconic}" 
+                                            HorizontalAlignment="Center" 
+                                            VerticalAlignment="Center"/>
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                            </ContextMenu>
+                        </Image.ContextMenu>
+                    </Image>
+                    <Button:MetroButton
+                        Width="{Binding ActualWidth, Mode=OneWay, ElementName=CoverImage}"
+                        MinWidth="150"
+                        VerticalAlignment="Bottom"
+                        FontFamily="{DynamicResource OpenIconic}"
+                        Content="{DynamicResource oi-bookmark}"
+                        ContentStringFormat="{}{0} Resume Reading"
+                        FontSize="18"
+                        Opacity="0.75"
+                        Padding="5"
+                        Command="{Binding Path=DataContext.ResumeReadingCommand, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl, AncestorLevel=2}}"/>
+                </Grid>
+                <StackPanel Grid.Row="1" Grid.Column="1">
+                    <TextBlock Text="Alternate Titles:" FontWeight="Bold" Foreground="{DynamicResource text-muted}"/>
+                    <TextBlock Text="{Binding AlternateNames, Converter={StaticResource StringListToCSV}}" ToolTip="{Binding AlternateNames, Converter={StaticResource StringListToCSV}}" FontWeight="Bold" Foreground="{DynamicResource text-muted}" TextTrimming="CharacterEllipsis"/>
+                </StackPanel>
+                <StackPanel Grid.Row="2" Grid.Column="1">
+                    <TextBlock Text="Released:" FontWeight="Bold" Foreground="{DynamicResource text-muted}"/>
+                    <TextBlock Text="{Binding Released, StringFormat=yyyy}" ToolTip="{Binding Released, StringFormat=yyyy}" FontWeight="Bold" Foreground="{DynamicResource text-muted}"/>
+                </StackPanel>
+                <StackPanel Grid.Row="3" Grid.Column="1">
+                    <TextBlock Text="Type:" FontWeight="Bold" Foreground="{DynamicResource text-muted}"/>
+                    <TextBlock Text="{Binding MangaType, StringFormat=\{0\}}" ToolTip="{Binding MangaType, StringFormat=\{0\}}" FontWeight="Bold" Foreground="{DynamicResource text-muted}"/>
+                </StackPanel>
+                <StackPanel Grid.Row="4" Grid.Column="1">
+                    <TextBlock Text="Authors:" FontWeight="Bold" Foreground="{DynamicResource text-muted}"/>
+                    <TextBlock Text="{Binding Authors, Converter={StaticResource StringListToCSV}}" ToolTip="{Binding Authors, Converter={StaticResource StringListToCSV}}" FontWeight="Bold" Foreground="{DynamicResource text-muted}" TextTrimming="CharacterEllipsis"/>
+                </StackPanel>
+                <StackPanel Grid.Row="5" Grid.Column="1">
+                    <TextBlock Text="Artists:" FontWeight="Bold" Foreground="{DynamicResource text-muted}"/>
+                    <TextBlock Text="{Binding Authors, Converter={StaticResource StringListToCSV}}" ToolTip="{Binding Authors, Converter={StaticResource StringListToCSV}}" FontWeight="Bold" Foreground="{DynamicResource text-muted}" TextTrimming="CharacterEllipsis"/>
+                </StackPanel>
+                <StackPanel Grid.Row="6" Grid.Column="1">
+                    <TextBlock Text="Genres:" FontWeight="Bold" Foreground="{DynamicResource text-muted}"/>
+                    <TextBlock Text="{Binding Genres, Converter={StaticResource StringListToCSV}}" ToolTip="{Binding Genres, Converter={StaticResource StringListToCSV}}" FontWeight="Bold" Foreground="{DynamicResource text-muted}" TextTrimming="CharacterEllipsis"/>
+                </StackPanel>
+                <StackPanel Grid.Row="7" Grid.Column="1" Grid.RowSpan="2">
+                    <TextBlock Text="Sites:" FontWeight="Bold" Foreground="{DynamicResource text-muted}"/>
+                    <TextBlock Text="{Binding Locations, Converter={StaticResource LocationListToCSV}}" ToolTip="{Binding Locations, Converter={StaticResource LocationListToCSV}}" FontWeight="Bold" Foreground="{DynamicResource text-muted}" TextTrimming="CharacterEllipsis"/>
+                    <TextBlock Text="{Binding DatabaseLocations, Converter={StaticResource LocationListToCSV}}" ToolTip="{Binding DatabaseLocations, Converter={StaticResource LocationListToCSV}}" FontWeight="Bold" Foreground="{DynamicResource text-muted}" TextTrimming="CharacterEllipsis"/>
+                </StackPanel>
+            </Grid>
+            <Grid Grid.Row="1"/>
+            <ScrollViewer Grid.Row="2">
+                <TextBlock 
+					Text="{Binding Description}"
+					TextWrapping="WrapWithOverflow"
+					TextTrimming="CharacterEllipsis"
+					FontSize="16"
+					MinHeight="100"/>
+            </ScrollViewer>
+        </Grid>
+        <ListBox
+            x:Name="ChapterListBox"
+			Grid.Column="1"
+			ItemsSource="{Binding MangaObject.Chapters}"
+            SelectedItem="{Binding ResumeChapterObject, Mode=OneWay}"
+            SelectedIndex="0"
+			ItemContainerStyle="{DynamicResource HomeView_List_ChapterListBoxItem}"
+			Visibility="{Binding HasItems, Converter={StaticResource BooleanToVisibilityConverter}, RelativeSource={RelativeSource Self}}" 
+			ScrollViewer.HorizontalScrollBarVisibility="Disabled" HorizontalContentAlignment="Stretch" />
+    </Grid>
+</UserControl>

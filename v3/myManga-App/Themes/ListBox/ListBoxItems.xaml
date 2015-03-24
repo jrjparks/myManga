@@ -512,7 +512,7 @@
                                 Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"
                                 FontFamily="{DynamicResource OpenIconic}"
                                 Content="{StaticResource oi-book}"
-                                Command="{Binding Path=DataContext.ReadChapterCommand, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl}}"
+                                Command="{Binding Path=DataContext.ReadChapterCommand, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl, AncestorLevel=2}}"
                                 CommandParameter="{Binding}"/>
                         </Grid>
                     </Border>
@@ -552,7 +552,7 @@
                                 </MultiBinding>
                             </DataTrigger.Binding>
                             <Setter TargetName="ChapterActionButton" Property="Content" Value="{StaticResource oi-cloud-download}"/>
-                            <Setter TargetName="ChapterActionButton" Property="Command" Value="{Binding Path=DataContext.DownloadChapterCommand, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl}}"/>
+                            <Setter TargetName="ChapterActionButton" Property="Command" Value="{Binding Path=DataContext.DownloadChapterCommand, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl, AncestorLevel=2}}"/>
                         </DataTrigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>

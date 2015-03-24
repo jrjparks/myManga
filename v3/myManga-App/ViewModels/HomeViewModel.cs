@@ -168,8 +168,8 @@ namespace myManga_App.ViewModels
         private void DeleteManga()
         {
             String save_path = Path.Combine(App.MANGA_ARCHIVE_DIRECTORY, this.SelectedMangaArchive.MangaObject.MangaArchiveName(App.MANGA_ARCHIVE_EXTENSION));
-            MessageBoxResult msgbox_result = MessageBox.Show("Delete Manga?", String.Format("Are you sure you wish to delete {0}?", this.SelectedMangaArchive.MangaObject.Name), MessageBoxButton.YesNo);
-            if (msgbox_result.HasFlag(MessageBoxResult.Yes))
+            MessageBoxResult msgbox_result = MessageBox.Show(String.Format("Are you sure you wish to delete \"{0}\"?", this.SelectedMangaArchive.MangaObject.Name), "Delete Manga?", MessageBoxButton.YesNo);
+            if (msgbox_result.Equals(MessageBoxResult.Yes))
                 File.Delete(save_path);
         }
         #endregion
@@ -213,14 +213,19 @@ namespace myManga_App.ViewModels
             {
                 case WatcherChangeTypes.Changed:
                 case WatcherChangeTypes.Created:
-                    // Cache if creaded or changed
+                    // (Re)Cache if creaded or changed
                     current_manga_archive = CacheMangaObject(e.FullPath);
-                    if (!current_manga_archive.Empty())
-                    { if (ViewingSelectedMangaObject) this.SelectedMangaArchive = current_manga_archive; }
+                    if (!current_manga_archive.Empty() && ViewingSelectedMangaObject)
+                    { this.SelectedMangaArchive = current_manga_archive; }
                     break;
 
                 case WatcherChangeTypes.Deleted:
+                    // Reselect nearest neighbor after delete
+                    Int32 index = App.MangaArchiveCacheCollection.IndexOf(current_manga_archive);
                     App.MangaArchiveCacheCollection.Remove(current_manga_archive);
+                    // If delete was the last item subtract from index
+                    if (index >= App.MangaArchiveCacheCollection.Count) --index;
+                    this.SelectedMangaArchive = App.MangaArchiveCacheCollection[index];
                     break;
 
                 default:

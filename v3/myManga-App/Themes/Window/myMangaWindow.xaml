@@ -115,6 +115,10 @@
                                         Content="r"
                                         Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"/>
                                 </StackPanel>
+                                <Grid x:Name="RectangleGrid">
+                                    <Rectangle VerticalAlignment="Top" HorizontalAlignment="Right" Width="{Binding ActualWidth, ElementName=CaptionButtons}" Height="3" Fill="#00000000"/>
+                                    <Rectangle VerticalAlignment="Top" HorizontalAlignment="Right" Height="{Binding ActualHeight, ElementName=CaptionButtons}" Width="3" Fill="#00000000"/>
+                                </Grid>
                             </Grid>
                         </AdornerDecorator>
                     </Border>
@@ -126,6 +130,9 @@
                             <Setter TargetName="MaximizeButton" Property="Visibility" Value="Collapsed"/>
                             <Setter TargetName="RestoreButton" Property="Visibility" Value="Visible"/>
                         </Trigger>
+                        <DataTrigger Binding="{Binding ElementName=CaptionButtons, Path=IsMouseOver}" Value="True">
+                            <Setter TargetName="RectangleGrid" Property="Visibility" Value="Collapsed"/>
+                        </DataTrigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>

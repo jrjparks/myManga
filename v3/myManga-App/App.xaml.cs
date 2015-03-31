@@ -106,28 +106,25 @@ namespace myManga_App
 
         void log_exception(Exception e, params String[] extra_lines)
         {
-            using (Stream log_stream = Singleton<FileStorage>.Instance.Read(LOG_FILE_PATH))
+            using (StreamWriter log_stream_writer = new StreamWriter(LOG_FILE_PATH, true))
             {
-                using (StreamWriter log_stream_writer = new StreamWriter(log_stream))
+                log_stream_writer.WriteLine(String.Format("========== {0} ==========", DateTime.Now.ToShortDateString()));
+
+                while (e != null)
                 {
-                    log_stream_writer.WriteLine(String.Format("========== {0} ==========", DateTime.Now.ToShortDateString()));
-
-                    while (e != null)
-                    {
-                        log_stream_writer.WriteLine(String.Format("========== MESSAGE ==========", DateTime.Now.ToShortDateString()));
-                        log_stream_writer.WriteLine(e.Message);
-                        log_stream_writer.WriteLine(String.Format("========== STACK TRACE ==========", DateTime.Now.ToShortDateString()));
-                        log_stream_writer.WriteLine(e.StackTrace);
-                        log_stream_writer.WriteLine(String.Format("========== TARGET SITE ==========", DateTime.Now.ToShortDateString()));
-                        log_stream_writer.WriteLine(e.TargetSite);
-                        e = e.InnerException;
-                        log_stream_writer.WriteLine();
-                    }
-
-                    foreach (String extra_line in extra_lines)
-                        log_stream_writer.WriteLine(extra_line);
+                    log_stream_writer.WriteLine(String.Format("========== MESSAGE ==========", DateTime.Now.ToShortDateString()));
+                    log_stream_writer.WriteLine(e.Message);
+                    log_stream_writer.WriteLine(String.Format("========== STACK TRACE ==========", DateTime.Now.ToShortDateString()));
+                    log_stream_writer.WriteLine(e.StackTrace);
+                    log_stream_writer.WriteLine(String.Format("========== TARGET SITE ==========", DateTime.Now.ToShortDateString()));
+                    log_stream_writer.WriteLine(e.TargetSite);
+                    e = e.InnerException;
                     log_stream_writer.WriteLine();
                 }
+
+                foreach (String extra_line in extra_lines)
+                    log_stream_writer.WriteLine(extra_line);
+                log_stream_writer.WriteLine();
             }
         }
 

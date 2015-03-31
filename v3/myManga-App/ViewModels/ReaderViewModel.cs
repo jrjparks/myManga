@@ -114,9 +114,13 @@ namespace myManga_App.ViewModels
 
         private void NextPage()
         {
-            if (this.BookmarkObject.Page < this.ChapterObject.Pages.Last().PageNumber) ++this.BookmarkObject.Page;
+            if (this.BookmarkObject.Page < this.ChapterObject.Pages.Last().PageNumber)
+            {
+                ++this.BookmarkObject.Page;
+                this.SelectedPageObject = this.ChapterObject.PageObjectOfBookmarkObject(this.BookmarkObject);
+            }
             else { this.ContinueReading = true; OpenChapter(this.MangaObject, ChapterObjectPreloadDictionary[this.NextArchiveFilePath]); }
-            this.SelectedPageObject = this.ChapterObject.PageObjectOfBookmarkObject(this.BookmarkObject);
+            //this.SelectedPageObject = this.ChapterObject.PageObjectOfBookmarkObject(this.BookmarkObject);
         }
         private Boolean CanNextPage()
         {
@@ -133,9 +137,13 @@ namespace myManga_App.ViewModels
 
         private void PrevPage()
         {
-            if (this.BookmarkObject.Page > this.ChapterObject.Pages.First().PageNumber) --this.BookmarkObject.Page;
+            if (this.BookmarkObject.Page > this.ChapterObject.Pages.First().PageNumber)
+            {
+                --this.BookmarkObject.Page;
+                this.SelectedPageObject = this.ChapterObject.PageObjectOfBookmarkObject(this.BookmarkObject);
+            }
             else { this.ContinueReading = true; OpenChapter(this.MangaObject, ChapterObjectPreloadDictionary[this.PrevArchiveFilePath]); }
-            this.SelectedPageObject = this.ChapterObject.PageObjectOfBookmarkObject(this.BookmarkObject);
+            //this.SelectedPageObject = this.ChapterObject.PageObjectOfBookmarkObject(this.BookmarkObject);
         }
         private Boolean CanPrevPage()
         {
@@ -238,6 +246,7 @@ namespace myManga_App.ViewModels
             if (!IsInDesignMode)
             {
                 this.PageZoom = App.UserConfig.DefaultPageZoom;
+                Messenger.Default.RegisterRecipient<FileSystemEventArgs>(this, MangaObjectArchiveWatcher_Event, "MangaObjectArchiveWatcher");
                 Messenger.Default.RegisterRecipient<FileSystemEventArgs>(this, ChapterObjectArchiveWatcher_Event, "ChapterObjectArchiveWatcher");
                 Messenger.Default.RegisterRecipient<ReadChapterRequestObject>(this, OpenChapter, "ReadChapterRequest");
             }
@@ -286,7 +295,20 @@ namespace myManga_App.ViewModels
                 this.BookmarkObject.Volume = this.ChapterObject.Volume;
                 this.BookmarkObject.Chapter = this.ChapterObject.Chapter;
                 this.BookmarkObject.SubChapter = this.ChapterObject.SubChapter;
-                this.BookmarkObject.Page = this.ChapterObject.Pages.Count > 0 ? this.ChapterObject.Pages.First().PageNumber : 0;
+                this.BookmarkObject.Page = this.ChapterObject.Pages.Count > 0 ? this.ChapterObject.Pages.First().PageNumber : 1;
+
+                if (this.MangaObject != null)
+                {
+                    ChapterObject _ChapterObject = this.MangaObject.ChapterObjectOfBookmarkObject(this.BookmarkObject);
+                    if (!_ChapterObject.Read)
+                    {
+                        _ChapterObject.Read = true;
+                        Singleton<ZipStorage>.Instance.Write(
+                            Path.Combine(App.MANGA_ARCHIVE_DIRECTORY, this.MangaObject.MangaArchiveName(App.MANGA_ARCHIVE_EXTENSION)),
+                            typeof(MangaObject).Name,
+                            this.MangaObject.Serialize(SaveType: App.UserConfig.SaveType));
+                    }
+                }
             }
             if (this.SelectedPageObject != null) this.BookmarkObject.Page = this.SelectedPageObject.PageNumber;
             Singleton<ZipStorage>.Instance.Write(
@@ -317,6 +339,17 @@ namespace myManga_App.ViewModels
         #endregion
 
         #region Event Handlers
+        private void MangaObjectArchiveWatcher_Event(FileSystemEventArgs e)
+        {
+            // If current manga has been updated in the background, update it here.
+            if (e.FullPath.Equals(Path.Combine(App.MANGA_ARCHIVE_DIRECTORY, this.MangaObject.MangaArchiveName(App.MANGA_ARCHIVE_EXTENSION))))
+            {
+                Stream manga_file;
+                if (Singleton<ZipStorage>.Instance.TryRead(e.FullPath, out manga_file, typeof(MangaObject).Name))
+                { using (manga_file) { this.MangaObject = manga_file.Deserialize<MangaObject>(SaveType: App.UserConfig.SaveType); } }
+            }
+        }
+
         private void ChapterObjectArchiveWatcher_Event(FileSystemEventArgs e)
         {
             // TODO: This needs to be fixed

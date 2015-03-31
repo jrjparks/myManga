@@ -35,6 +35,7 @@ namespace myManga_App.ViewModels
         private ICollectionView MangaListView;
         #endregion
 
+        #region Search Filter
         private static readonly DependencyProperty SearchFilterProperty = DependencyProperty.RegisterAttached(
             "SearchFilter",
             typeof(String),
@@ -60,6 +61,7 @@ namespace myManga_App.ViewModels
         { SearchFilter = String.Empty; }
         private Boolean CanClearSearch()
         { return !String.IsNullOrWhiteSpace(SearchFilter); }
+        #endregion
 
         #region SearchSites
         private DelegateCommand _SearchSiteCommand;
@@ -182,18 +184,18 @@ namespace myManga_App.ViewModels
         }
 
         public HomeViewModel()
-            : base(SupportsViewTypeChange:true)
+            : base(SupportsViewTypeChange: true)
         {
             if (!IsInDesignMode)
             {
-                ConfigureSearchFilter();
                 foreach (String MangaArchiveFilePath in Directory.GetFiles(App.MANGA_ARCHIVE_DIRECTORY, App.MANGA_ARCHIVE_FILTER, SearchOption.AllDirectories))
                 {
                     VerifyArchiveFile.VerifyArchive(Singleton<ZipStorage>.Instance, MangaArchiveFilePath);
                     CacheMangaObject(MangaArchiveFilePath);
                 }
-                this.SelectedMangaArchive = App.MangaArchiveCacheCollection.FirstOrDefault();
+                ConfigureSearchFilter();
                 MangaListView.MoveCurrentToFirst();
+                this.SelectedMangaArchive = App.MangaArchiveCacheCollection.FirstOrDefault();
 
                 Messenger.Default.RegisterRecipient<FileSystemEventArgs>(this, MangaObjectArchiveWatcher_Event, "MangaObjectArchiveWatcher");
                 Messenger.Default.RegisterRecipient<FileSystemEventArgs>(this, ChapterObjectArchiveWatcher_Event, "ChapterObjectArchiveWatcher");
@@ -285,17 +287,23 @@ namespace myManga_App.ViewModels
 
         private void ConfigureSearchFilter()
         {
-            MangaListView = CollectionViewSource.GetDefaultView(App.MangaArchiveCacheCollection);
+            this.MangaListView = CollectionViewSource.GetDefaultView(App.MangaArchiveCacheCollection);
             MangaListView.Filter = mangaArchive =>
             {
                 // Show all items if search is empty
                 if (String.IsNullOrWhiteSpace(SearchFilter)) return true;
                 return (mangaArchive as MangaArchiveCacheObject).MangaObject.IsNameMatch(SearchFilter);
             };
+            if (MangaListView.CanGroup)
+            {
+                MangaListView.GroupDescriptions.Clear();
+                MangaListView.GroupDescriptions.Add(new PropertyGroupDescription("HasMoreToRead"));
+            }
             if (MangaListView.CanSort)
             {
+                MangaListView.SortDescriptions.Clear();
+                MangaListView.SortDescriptions.Add(new SortDescription("HasMoreToRead", ListSortDirection.Descending));
                 MangaListView.SortDescriptions.Add(new SortDescription("MangaObject.Name", ListSortDirection.Ascending));
-                //MangaListView.SortDescriptions.Add(new SortDescription("HasMoreToRead", ListSortDirection.Ascending));
             }
         }
     }

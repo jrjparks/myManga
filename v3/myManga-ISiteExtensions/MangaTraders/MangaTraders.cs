@@ -9,6 +9,7 @@ using myMangaSiteExtension.Enums;
 using myMangaSiteExtension.Interfaces;
 using myMangaSiteExtension.Objects;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace MangaTraders
 {
@@ -106,7 +107,8 @@ namespace MangaTraders
             {
                 HtmlNode ChapterNumberNode = RawChapterNode.SelectSingleNode(".//div[1]/a"),
                     ReleaseDate = RawChapterNode.SelectSingleNode(".//div[2]/time");
-                String[] ChapterSub = ChapterNumberNode.InnerText.Substring("Chapter".Length).Trim().Split('.');
+                String ChapterNumber = Regex.Match(ChapterNumberNode.InnerText, @"\d+(\.\d+)?").Value;
+                String[] ChapterSub = ChapterNumber.Trim().Split('.');
 
                 ChapterObject Chapter = new ChapterObject()
                 {

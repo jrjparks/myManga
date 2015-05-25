@@ -13,6 +13,7 @@ using Core.IO.Storage.Manager.BaseInterfaceClasses;
 using myManga_App.Objects.About;
 using System.Collections.ObjectModel;
 using myManga_App.Objects.Cache;
+using myManga_App.IO.Network;
 
 namespace myManga_App
 {
@@ -21,6 +22,19 @@ namespace myManga_App
     /// </summary>
     public partial class App : Application
     {
+        #region IO
+        private readonly FileStorage fileStorage;
+        public FileStorage FileStorage
+        { get { return fileStorage; } }
+
+        private readonly ZipStorage zipStorage;
+        public ZipStorage ZipStorage
+        { get { return zipStorage; } }
+
+        private readonly DownloadManager downloadManager;
+        public DownloadManager DownloadManager
+        { get { return downloadManager; } }
+
         private readonly FileSystemWatcher mangaObjectArchiveWatcher;
         public FileSystemWatcher MangaObjectArchiveWatcher
         { get { return mangaObjectArchiveWatcher; } }
@@ -28,20 +42,25 @@ namespace myManga_App
         private readonly FileSystemWatcher chapterObjectArchiveWatcher;
         public FileSystemWatcher ChapterObjectArchiveWatcher
         { get { return chapterObjectArchiveWatcher; } }
+        #endregion
 
-        public UserConfigurationObject UserConfig
-        { get; private set; }
-
+        #region DLL Storage
         private readonly EmbeddedDLL emdll;
+
+        private readonly DLL_Manager<ISiteExtension, ISiteExtensionCollection> siteExtensions;
         public DLL_Manager<ISiteExtension, ISiteExtensionCollection> SiteExtensions
-        { get { return Singleton<DLL_Manager<ISiteExtension, ISiteExtensionCollection>>.Instance; } }
+        { get { return siteExtensions; } }
+
+        private readonly DLL_Manager<IDatabaseExtension, IDatabaseExtensionCollection> databaseExtensions;
         public DLL_Manager<IDatabaseExtension, IDatabaseExtensionCollection> DatabaseExtensions
-        { get { return Singleton<DLL_Manager<IDatabaseExtension, IDatabaseExtensionCollection>>.Instance; } }
+        { get { return databaseExtensions; } }
 
         private readonly ObservableCollection<MangaArchiveCacheObject> mangaArchiveCacheCollection;
         public ObservableCollection<MangaArchiveCacheObject> MangaArchiveCacheCollection
         { get { return this.mangaArchiveCacheCollection; } }
+        #endregion
 
+        #region Configuration
         public readonly String
             PLUGIN_DIRECTORY = Path.Combine(Environment.CurrentDirectory, "Plugins").SafeFolder(),
             MANGA_ARCHIVE_DIRECTORY = Path.Combine(Environment.CurrentDirectory, "Manga Archives").SafeFolder(),
@@ -54,12 +73,21 @@ namespace myManga_App
             USER_CONFIG_PATH = Path.Combine(Environment.CurrentDirectory, "mymanga.conf".SafeFileName()),
             LOG_FILE_PATH = Path.Combine(Environment.CurrentDirectory, String.Format("mymanga-{0}-{1}.log", DateTime.Now.ToShortDateString(), DateTime.Now.ToShortTimeString()).SafeFileName());
 
-        public AssemblyInformation AssemblyInfo { get { return AssemblyInformation.Default; } }
+        public UserConfigurationObject UserConfig
+        { get; private set; }
+        #endregion
+
+        private readonly AssemblyInformation assemblyInfo;
+        public AssemblyInformation AssemblyInfo 
+        { get { return assemblyInfo; } }
 
         public App()
         {
             // Load Embedded DLLs from Resources.
             emdll = new EmbeddedDLL();
+            siteExtensions = new DLL_Manager<ISiteExtension, ISiteExtensionCollection>();
+            databaseExtensions = new DLL_Manager<IDatabaseExtension, IDatabaseExtensionCollection>();
+            assemblyInfo = new AssemblyInformation();
 
             AppDomain.CurrentDomain.AssemblyResolve += emdll.ResolveAssembly;
             SiteExtensions.DLLAppDomain.AssemblyResolve += emdll.ResolveAssembly;
@@ -80,6 +108,11 @@ namespace myManga_App
             chapterObjectArchiveWatcher = new FileSystemWatcher(CHAPTER_ARCHIVE_DIRECTORY, CHAPTER_ARCHIVE_FILTER);
             chapterObjectArchiveWatcher.IncludeSubdirectories = true;
             chapterObjectArchiveWatcher.EnableRaisingEvents = false;
+
+            // Create IO class objects
+            fileStorage = new Core.IO.Storage.Manager.BaseInterfaceClasses.FileStorage();
+            zipStorage = new Core.IO.Storage.Manager.BaseInterfaceClasses.ZipStorage();
+            downloadManager = new IO.Network.DownloadManager();
 
             Startup += App_Startup;
 
@@ -144,7 +177,7 @@ namespace myManga_App
         private void LoadUserConfig()
         {
             Stream UserConfigStream;
-            if (Singleton<FileStorage>.Instance.TryRead(this.USER_CONFIG_PATH, out UserConfigStream))
+            if (this.FileStorage.TryRead(this.USER_CONFIG_PATH, out UserConfigStream))
             { using (UserConfigStream) { try { this.UserConfig = UserConfigStream.Deserialize<UserConfigurationObject>(SaveType: SaveType.XML); } catch { } } }
             if (UserConfigurationObject.Equals(this.UserConfig, null))
             {
@@ -162,6 +195,6 @@ namespace myManga_App
         }
 
         public void SaveUserConfig()
-        { if (!UserConfigurationObject.Equals(this.UserConfig, null)) Singleton<FileStorage>.Instance.Write(this.USER_CONFIG_PATH, this.UserConfig.Serialize(SaveType: SaveType.XML)); }
+        { if (!UserConfigurationObject.Equals(this.UserConfig, null)) this.FileStorage.Write(this.USER_CONFIG_PATH, this.UserConfig.Serialize(SaveType: SaveType.XML)); }
     }
 }

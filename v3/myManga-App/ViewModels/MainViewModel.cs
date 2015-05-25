@@ -121,8 +121,8 @@ namespace myManga_App.ViewModels
 
                 SettingsViewModel.CloseEvent += (s, e) => this.PreviousContentViewModel.PullFocus();
 
-                ServicePointManager.DefaultConnectionLimit = DownloadManager.Default.Concurrency;
-                DownloadManager.Default.StatusChange += (s, e) => { IsLoading = !(s as DownloadManager).IsIdle; };
+                ServicePointManager.DefaultConnectionLimit = App.DownloadManager.Concurrency;
+                App.DownloadManager.StatusChange += (s, e) => { IsLoading = !(s as DownloadManager).IsIdle; };
 
                 App.MangaObjectArchiveWatcher.Changed += MangaObjectArchiveWatcher_Event;
                 App.MangaObjectArchiveWatcher.Created += MangaObjectArchiveWatcher_Event;

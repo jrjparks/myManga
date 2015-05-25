@@ -24,9 +24,9 @@ namespace AnimeNewsNetwork
         Language = "English")]
     public class AnimeNewsNetwork : IDatabaseExtension
     {
-        protected IDatabaseExtensionDescriptionAttribute _DatabaseExtensionDescriptionAttribute;
+        protected IDatabaseExtensionDescriptionAttribute databaseExtensionDescriptionAttribute;
         public IDatabaseExtensionDescriptionAttribute DatabaseExtensionDescriptionAttribute
-        { get { return _DatabaseExtensionDescriptionAttribute ?? (_DatabaseExtensionDescriptionAttribute = GetType().GetCustomAttribute<IDatabaseExtensionDescriptionAttribute>(false)); } }
+        { get { return databaseExtensionDescriptionAttribute ?? (databaseExtensionDescriptionAttribute = GetType().GetCustomAttribute<IDatabaseExtensionDescriptionAttribute>(false)); } }
 
         public SearchRequestObject GetSearchRequestObject(string searchTerm)
         {

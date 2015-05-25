@@ -23,12 +23,6 @@ namespace myManga_App.IO.Network
 {
     public sealed class DownloadManager
     {
-        /// <summary>
-        /// This is the recommended use.
-        /// </summary>
-        public static DownloadManager Default
-        { get { return Singleton<DownloadManager>.Instance; } }
-
         #region Classes
         private sealed class Downloader
         {
@@ -86,6 +80,7 @@ namespace myManga_App.IO.Network
             where T : class
             where R : class
         {
+            protected readonly Random Rand = new Random();
             protected readonly App App = App.Current as App;
             private readonly SynchronizationContext SynchronizationContext;
             public event EventHandler<WorkerResult<R>> WorkComplete;
@@ -185,7 +180,7 @@ namespace myManga_App.IO.Network
                 Core.IO.KeyValuePair<String, Object> RETRY = Value.Args.FirstOrDefault(arg => arg.Key.Equals(String.Format("RETRY-{0}", Value.Id)) && arg.Value is Int32);
                 // Sleep thread if we are retrying the remote url, longer wait each time
                 if (RETRY != null && (Int32)RETRY.Value > 0)
-                    Thread.Sleep((DEFAULT_MS_WAIT * Singleton<Random>.Instance.Next(RANDOM_RETRY_MS_WAIT)) * (Int32)RETRY.Value);
+                    Thread.Sleep((DEFAULT_MS_WAIT * Rand.Next(RANDOM_RETRY_MS_WAIT)) * (Int32)RETRY.Value);
                 else Thread.Sleep(DEFAULT_MS_WAIT);
 
                 Dictionary<ISiteExtension, String> SiteExtensionContent = new Dictionary<ISiteExtension, String>(Value.Data.Locations.Count);
@@ -227,7 +222,7 @@ namespace myManga_App.IO.Network
                 {
                     // Sleep thread if we are retrying the remote url, longer wait each time
                     if (RETRY != null && (Int32)RETRY.Value > 0)
-                        Thread.Sleep((DEFAULT_MS_WAIT * Singleton<Random>.Instance.Next(RANDOM_RETRY_MS_WAIT)) * (Int32)RETRY.Value);
+                        Thread.Sleep((DEFAULT_MS_WAIT * Rand.Next(RANDOM_RETRY_MS_WAIT)) * (Int32)RETRY.Value);
                     else Thread.Sleep(DEFAULT_MS_WAIT);
 
                     ISiteExtension SiteExtension = null;
@@ -274,7 +269,7 @@ namespace myManga_App.IO.Network
                 {
                     // Sleep thread if we are retrying the remote url, longer wait each time
                     if (RETRY != null && (Int32)RETRY.Value > 0)
-                        Thread.Sleep((DEFAULT_MS_WAIT * Singleton<Random>.Instance.Next(RANDOM_RETRY_MS_WAIT)) * (Int32)RETRY.Value);
+                        Thread.Sleep((DEFAULT_MS_WAIT * Rand.Next(RANDOM_RETRY_MS_WAIT)) * (Int32)RETRY.Value);
                     else Thread.Sleep(DEFAULT_MS_WAIT);
 
                     ISiteExtension SiteExtension = App.SiteExtensions.DLLCollection.First(_SiteExtension => Value.Data.PageObject.Url.Contains(_SiteExtension.GetType().GetCustomAttribute<ISiteExtensionDescriptionAttribute>(false).URLFormat));
@@ -318,7 +313,7 @@ namespace myManga_App.IO.Network
                 {
                     // Sleep thread if we are retrying the remote url, longer wait each time
                     if (RETRY != null && (Int32)RETRY.Value > 0)
-                        Thread.Sleep((DEFAULT_MS_WAIT * Singleton<Random>.Instance.Next(RANDOM_RETRY_MS_WAIT)) * (Int32)RETRY.Value);
+                        Thread.Sleep((DEFAULT_MS_WAIT * Rand.Next(RANDOM_RETRY_MS_WAIT)) * (Int32)RETRY.Value);
                     else Thread.Sleep(DEFAULT_MS_WAIT);
 
                     using (Stream image_stream = Downloader.GetRawContent(Value.Data.URL, Value.Data.Referer))
@@ -544,14 +539,14 @@ namespace myManga_App.IO.Network
             if (e.Success)
             {
                 String save_path = Path.Combine(App.MANGA_ARCHIVE_DIRECTORY, e.Result.MangaArchiveName(App.MANGA_ARCHIVE_EXTENSION));
-                Singleton<ZipStorage>.Instance.Write(save_path, e.Result.GetType().Name, e.Result.Serialize(SaveType: App.UserConfig.SaveType));
+                App.ZipStorage.Write(save_path, e.Result.GetType().Name, e.Result.Serialize(SaveType: App.UserConfig.SaveType));
                 Core.IO.KeyValuePair<String, Object> IsRefresh = e.Args.FirstOrDefault(x => x.Key.Equals("IsRefresh"));
                 if (IsRefresh == null || (IsRefresh.Value is Boolean && (Boolean)IsRefresh.Value == false))
                     ImageWorker.RunWork(
                         SmartThreadPool,
                         (from String url in e.Result.Covers select new ImageDownloadRequest(url, save_path)).AsEnumerable(),
                         Enumerable.Repeat<Guid?>(e.Id, e.Result.Covers.Count));
-                else VerifyArchiveFile.VerifyArchive(Singleton<ZipStorage>.Instance, save_path);
+                else VerifyArchiveFile.VerifyArchive(App.ZipStorage, save_path);
             }
             OnStatusChange(e.Exception);
         }
@@ -561,7 +556,7 @@ namespace myManga_App.IO.Network
             if (e.Success)
             {
                 String save_path = Path.Combine(App.CHAPTER_ARCHIVE_DIRECTORY, e.Result.MangaObject.MangaFileName(), e.Result.ChapterObject.ChapterArchiveName(App.CHAPTER_ARCHIVE_EXTENSION));
-                Singleton<ZipStorage>.Instance.Write(save_path, e.Result.ChapterObject.GetType().Name, e.Result.ChapterObject.Serialize(SaveType: App.UserConfig.SaveType));
+                App.ZipStorage.Write(save_path, e.Result.ChapterObject.GetType().Name, e.Result.ChapterObject.Serialize(SaveType: App.UserConfig.SaveType));
                 PageObjectWorker.RunWork(
                     SmartThreadPool,
                     from PageObject page_object in e.Result.ChapterObject.Pages select new PageObjectDownloadRequest(e.Result.MangaObject, e.Result.ChapterObject, page_object),
@@ -577,17 +572,13 @@ namespace myManga_App.IO.Network
             if (e.Success)
             {
                 String save_path = Path.Combine(App.CHAPTER_ARCHIVE_DIRECTORY, e.Result.MangaObject.MangaFileName(), e.Result.ChapterObject.ChapterArchiveName(App.CHAPTER_ARCHIVE_EXTENSION));
-                Singleton<ZipStorage>.Instance.Write(save_path, e.Result.ChapterObject.GetType().Name, e.Result.ChapterObject.Serialize(SaveType: App.UserConfig.SaveType));
+                App.ZipStorage.Write(save_path, e.Result.ChapterObject.GetType().Name, e.Result.ChapterObject.Serialize(SaveType: App.UserConfig.SaveType));
                 ImageWorker.RunWork(SmartThreadPool, new ImageDownloadRequest(e.Result.PageObject.ImgUrl, save_path), e.Id);
             }
             else if (RETRY_index >= 0 && (Int32)e.Args[RETRY_index].Value < 3)
             {
                 e.Args[RETRY_index].Value = (Int32)e.Args[RETRY_index].Value + 1;
                 PageObjectWorker.RunWork(SmartThreadPool, e.Result, e.Id, Args: e.Args);
-            }
-            else
-            {
-                String x = "";
             }
             OnStatusChange(e.Exception);
         }
@@ -598,16 +589,12 @@ namespace myManga_App.IO.Network
             if (e.Success)
             {
                 using (e.Result.Stream)
-                { Singleton<ZipStorage>.Instance.Write(e.Result.LocalPath, e.Result.Filename, e.Result.Stream); }
+                { App.ZipStorage.Write(e.Result.LocalPath, e.Result.Filename, e.Result.Stream); }
             }
             else if (RETRY_index >= 0 && (Int32)e.Args[RETRY_index].Value < 3)
             {
                 e.Args[RETRY_index].Value = (Int32)e.Args[RETRY_index].Value + 1;
                 ImageWorker.RunWork(SmartThreadPool, e.Result, e.Id, Args: e.Args);
-            }
-            else
-            {
-                String x = "";
             }
             OnStatusChange(e.Exception);
         }

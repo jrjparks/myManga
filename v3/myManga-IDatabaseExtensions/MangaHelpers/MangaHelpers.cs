@@ -23,9 +23,9 @@ namespace MangaHelpers
         Language = "English")]
     public class MangaHelpers : IDatabaseExtension
     {
-        protected IDatabaseExtensionDescriptionAttribute _DatabaseExtensionDescriptionAttribute;
+        protected IDatabaseExtensionDescriptionAttribute databaseExtensionDescriptionAttribute;
         public IDatabaseExtensionDescriptionAttribute DatabaseExtensionDescriptionAttribute
-        { get { return _DatabaseExtensionDescriptionAttribute ?? (_DatabaseExtensionDescriptionAttribute = GetType().GetCustomAttribute<IDatabaseExtensionDescriptionAttribute>(false)); } }
+        { get { return databaseExtensionDescriptionAttribute ?? (databaseExtensionDescriptionAttribute = GetType().GetCustomAttribute<IDatabaseExtensionDescriptionAttribute>(false)); } }
 
         public SearchRequestObject GetSearchRequestObject(String searchTerm)
         {

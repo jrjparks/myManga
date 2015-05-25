@@ -26,9 +26,9 @@ namespace Batoto
         Language = "English")]
     public class Batoto : ISiteExtension
     {
-        protected ISiteExtensionDescriptionAttribute _SiteExtensionDescriptionAttribute;
+        protected ISiteExtensionDescriptionAttribute siteExtensionDescriptionAttribute;
         public ISiteExtensionDescriptionAttribute SiteExtensionDescriptionAttribute
-        { get { return _SiteExtensionDescriptionAttribute ?? (_SiteExtensionDescriptionAttribute = GetType().GetCustomAttribute<ISiteExtensionDescriptionAttribute>(false)); } }
+        { get { return siteExtensionDescriptionAttribute ?? (siteExtensionDescriptionAttribute = GetType().GetCustomAttribute<ISiteExtensionDescriptionAttribute>(false)); } }
 
         public SearchRequestObject GetSearchRequestObject(string searchTerm)
         {

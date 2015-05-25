@@ -28,7 +28,7 @@ namespace myManga_App.Converters
                 Stream image_stream;
                 bitmap_image.BeginInit();
 
-                if (Singleton<ZipStorage>.Instance.TryRead(archive_filename, filename, out image_stream) && image_stream.Length > 0)
+                if (App.ZipStorage.TryRead(archive_filename, filename, out image_stream) && image_stream.Length > 0)
                 { bitmap_image.StreamSource = image_stream; }                // Load from local zip
                 else { bitmap_image.UriSource = new Uri(MangaObject.SelectedCover()); } // Load from web
 

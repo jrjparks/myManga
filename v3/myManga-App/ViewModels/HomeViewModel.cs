@@ -81,7 +81,7 @@ namespace myManga_App.ViewModels
         { get { return _DownloadChapterCommand ?? (_DownloadChapterCommand = new DelegateCommand<ChapterObject>(DownloadChapter)); } }
 
         private void DownloadChapter(ChapterObject ChapterObj)
-        { DownloadManager.Default.Download(SelectedMangaArchive.MangaObject, ChapterObj); }
+        { App.DownloadManager.Download(SelectedMangaArchive.MangaObject, ChapterObj); }
         #endregion
 
         #region ReadChapter
@@ -96,7 +96,7 @@ namespace myManga_App.ViewModels
             if (ChapterObj.IsLocal(bookmark_chapter_path, App.CHAPTER_ARCHIVE_EXTENSION))
                 Messenger.Default.Send(new ReadChapterRequestObject(this.SelectedMangaArchive.MangaObject, ChapterObj), "ReadChapterRequest");
             else
-                DownloadManager.Default.Download(SelectedMangaObject, ChapterObj);
+                App.DownloadManager.Download(SelectedMangaObject, ChapterObj);
         }
 
         private DelegateCommand _ResumeReadingCommand;
@@ -121,12 +121,12 @@ namespace myManga_App.ViewModels
                 Messenger.Default.Send(new ReadChapterRequestObject(SelectedMangaObject, ResumeChapterObject), "ReadChapterRequest");
             else
             {
-                Singleton<ZipStorage>.Instance.Write(
+                App.ZipStorage.Write(
                     Path.Combine(App.MANGA_ARCHIVE_DIRECTORY, SelectedMangaObject.MangaArchiveName(App.MANGA_ARCHIVE_EXTENSION)),
                     typeof(BookmarkObject).Name,
                     SelectedBookmarkObject.Serialize(SaveType: App.UserConfig.SaveType)
                 );
-                DownloadManager.Default.Download(SelectedMangaObject, ResumeChapterObject);
+                App.DownloadManager.Download(SelectedMangaObject, ResumeChapterObject);
             }
         }
         private Boolean CanResumeReading()
@@ -142,7 +142,7 @@ namespace myManga_App.ViewModels
         { return !MangaArchiveInformationObject.Equals(this.SelectedMangaArchive, null) && !this.SelectedMangaArchive.Empty(); }
 
         private void RefreshManga()
-        { DownloadManager.Default.Download(SelectedMangaArchive.MangaObject, new Core.IO.KeyValuePair<String, Object>("IsRefresh", true)); }
+        { App.DownloadManager.Download(SelectedMangaArchive.MangaObject, new Core.IO.KeyValuePair<String, Object>("IsRefresh", true)); }
         #endregion
 
         #region RefreshMangaList
@@ -155,7 +155,7 @@ namespace myManga_App.ViewModels
 
         private void RefreshMangaList()
         { foreach (MangaArchiveCacheObject manga_archive in App.MangaArchiveCacheCollection)
-            DownloadManager.Default.Download(manga_archive.MangaObject, new Core.IO.KeyValuePair<String, Object>("IsRefresh", true));
+            App.DownloadManager.Download(manga_archive.MangaObject, new Core.IO.KeyValuePair<String, Object>("IsRefresh", true));
         }
         #endregion
 
@@ -190,7 +190,7 @@ namespace myManga_App.ViewModels
             {
                 foreach (String MangaArchiveFilePath in Directory.GetFiles(App.MANGA_ARCHIVE_DIRECTORY, App.MANGA_ARCHIVE_FILTER, SearchOption.AllDirectories))
                 {
-                    VerifyArchiveFile.VerifyArchive(Singleton<ZipStorage>.Instance, MangaArchiveFilePath);
+                    VerifyArchiveFile.VerifyArchive(App.ZipStorage, MangaArchiveFilePath);
                     CacheMangaObject(MangaArchiveFilePath);
                 }
                 ConfigureSearchFilter();
@@ -254,7 +254,7 @@ namespace myManga_App.ViewModels
         {
             Stream archive_file;
             MangaArchiveCacheObject manga_archive_cache_object = new MangaArchiveCacheObject();
-            if (Singleton<ZipStorage>.Instance.TryRead(ArchivePath, out archive_file, typeof(MangaObject).Name))
+            if (App.ZipStorage.TryRead(ArchivePath, out archive_file, typeof(MangaObject).Name))
             {
                 try
                 {
@@ -264,7 +264,7 @@ namespace myManga_App.ViewModels
                 catch { }
                 archive_file.Close();
             }
-            if (Singleton<ZipStorage>.Instance.TryRead(ArchivePath, out archive_file, typeof(BookmarkObject).Name))
+            if (App.ZipStorage.TryRead(ArchivePath, out archive_file, typeof(BookmarkObject).Name))
             {
                 try
                 {

@@ -194,9 +194,9 @@ namespace myManga_App.ViewModels
         private void ReloadPageImage()
         {
             if (this.SelectedPageObject.ImgUrl != null)
-                DownloadManager.Default.Download(this.SelectedPageObject.ImgUrl, this.ArchiveFilePath);
+                App.DownloadManager.Download(this.SelectedPageObject.ImgUrl, this.ArchiveFilePath);
             else if (this.SelectedPageObject.Url != null)
-                DownloadManager.Default.Download(this.MangaObject, this.ChapterObject, this.SelectedPageObject);
+                App.DownloadManager.Download(this.MangaObject, this.ChapterObject, this.SelectedPageObject);
         }
         #endregion
         #endregion
@@ -236,7 +236,7 @@ namespace myManga_App.ViewModels
             this.PullFocus();
 
             // TODO: Fix bug when loading still loading manga...
-            // VerifyArchiveFile.VerifyArchive(Singleton<ZipStorage>.Instance, this.ArchiveFilePath);
+            // VerifyArchiveFile.VerifyArchive(App.ZipStorage, this.ArchiveFilePath);
         }
 
         public ReaderViewModel()
@@ -260,21 +260,21 @@ namespace myManga_App.ViewModels
                 {
                     using (File.Open(ChapterObjectPreload.Key, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite))
                     { /* Touch Chapter File*/ }
-                    DownloadManager.Default.Download(this.MangaObject, ChapterObjectPreload.Value);
+                    App.DownloadManager.Download(this.MangaObject, ChapterObjectPreload.Value);
                 }
         }
 
         private void LoadChapterObject()
         {
             Stream archive_file;
-            if (Singleton<ZipStorage>.Instance.TryRead(this.ArchiveFilePath, out archive_file, typeof(ChapterObject).Name))
+            if (App.ZipStorage.TryRead(this.ArchiveFilePath, out archive_file, typeof(ChapterObject).Name))
             { using (archive_file) this.ChapterObject = archive_file.Deserialize<ChapterObject>(SaveType: App.UserConfig.SaveType); }
         }
 
         private void LoadBookmarkObject()
         {
             Stream bookmark_file;
-            if (Singleton<ZipStorage>.Instance.TryRead(Path.Combine(App.MANGA_ARCHIVE_DIRECTORY, this.MangaObject.MangaArchiveName(App.MANGA_ARCHIVE_EXTENSION)), out bookmark_file, typeof(BookmarkObject).Name))
+            if (App.ZipStorage.TryRead(Path.Combine(App.MANGA_ARCHIVE_DIRECTORY, this.MangaObject.MangaArchiveName(App.MANGA_ARCHIVE_EXTENSION)), out bookmark_file, typeof(BookmarkObject).Name))
             { using (bookmark_file) this.BookmarkObject = bookmark_file.Deserialize<BookmarkObject>(SaveType: App.UserConfig.SaveType); }
             if (this.BookmarkObject == null) { this.BookmarkObject = new BookmarkObject(); }
             else if (this.BookmarkObject.Volume != this.ChapterObject.Volume || this.BookmarkObject.Chapter != this.ChapterObject.Chapter || this.BookmarkObject.SubChapter != this.ChapterObject.SubChapter)
@@ -303,7 +303,7 @@ namespace myManga_App.ViewModels
                     if (!_ChapterObject.Read)
                     {
                         _ChapterObject.Read = true;
-                        Singleton<ZipStorage>.Instance.Write(
+                        App.ZipStorage.Write(
                             Path.Combine(App.MANGA_ARCHIVE_DIRECTORY, this.MangaObject.MangaArchiveName(App.MANGA_ARCHIVE_EXTENSION)),
                             typeof(MangaObject).Name,
                             this.MangaObject.Serialize(SaveType: App.UserConfig.SaveType));
@@ -311,7 +311,7 @@ namespace myManga_App.ViewModels
                 }
             }
             if (this.SelectedPageObject != null) this.BookmarkObject.Page = this.SelectedPageObject.PageNumber;
-            Singleton<ZipStorage>.Instance.Write(
+            App.ZipStorage.Write(
                 Path.Combine(App.MANGA_ARCHIVE_DIRECTORY, this.MangaObject.MangaArchiveName(App.MANGA_ARCHIVE_EXTENSION)),
                 typeof(BookmarkObject).Name,
                 this.BookmarkObject.Serialize(SaveType: App.UserConfig.SaveType));
@@ -345,7 +345,7 @@ namespace myManga_App.ViewModels
             if (e.FullPath.Equals(Path.Combine(App.MANGA_ARCHIVE_DIRECTORY, this.MangaObject.MangaArchiveName(App.MANGA_ARCHIVE_EXTENSION))))
             {
                 Stream manga_file;
-                if (Singleton<ZipStorage>.Instance.TryRead(e.FullPath, out manga_file, typeof(MangaObject).Name))
+                if (App.ZipStorage.TryRead(e.FullPath, out manga_file, typeof(MangaObject).Name))
                 { using (manga_file) { this.MangaObject = manga_file.Deserialize<MangaObject>(SaveType: App.UserConfig.SaveType); } }
             }
         }
@@ -359,7 +359,7 @@ namespace myManga_App.ViewModels
                     case WatcherChangeTypes.Created:
                     case WatcherChangeTypes.Changed:
                         Stream archive_file;
-                        if (Singleton<ZipStorage>.Instance.TryRead(e.FullPath, out archive_file, typeof(ChapterObject).Name))
+                        if (App.ZipStorage.TryRead(e.FullPath, out archive_file, typeof(ChapterObject).Name))
                         {
                             UInt32 CurrentPageNumber = SelectedPageObject.PageNumber;
                             using (archive_file) { this.ChapterObject = archive_file.Deserialize<ChapterObject>(SaveType: App.UserConfig.SaveType); }
@@ -368,7 +368,7 @@ namespace myManga_App.ViewModels
                         break;
 
                     case WatcherChangeTypes.Deleted:
-                        DownloadManager.Default.Download(this.MangaObject, this.ChapterObject);
+                        App.DownloadManager.Download(this.MangaObject, this.ChapterObject);
                         break;
                 }
         }

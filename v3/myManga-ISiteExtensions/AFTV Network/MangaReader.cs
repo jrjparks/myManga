@@ -25,9 +25,9 @@ namespace AFTV_Network
         Language = "English")]
     public class MangaReader : ISiteExtension
     {
-        protected ISiteExtensionDescriptionAttribute _SiteExtensionDescriptionAttribute;
+        protected ISiteExtensionDescriptionAttribute siteExtensionDescriptionAttribute;
         public ISiteExtensionDescriptionAttribute SiteExtensionDescriptionAttribute 
-        { get { return _SiteExtensionDescriptionAttribute ?? (_SiteExtensionDescriptionAttribute = GetType().GetCustomAttribute<ISiteExtensionDescriptionAttribute>(false)); } }
+        { get { return siteExtensionDescriptionAttribute ?? (siteExtensionDescriptionAttribute = GetType().GetCustomAttribute<ISiteExtensionDescriptionAttribute>(false)); } }
 
         public SearchRequestObject GetSearchRequestObject(String searchTerm)
         {

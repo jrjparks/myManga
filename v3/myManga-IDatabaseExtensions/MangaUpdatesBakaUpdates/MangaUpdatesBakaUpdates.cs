@@ -24,9 +24,9 @@ namespace MangaUpdatesBakaUpdates
     public class MangaUpdatesBakaUpdates : IDatabaseExtension
     {
         protected Int32 PageCount = 30;
-        protected IDatabaseExtensionDescriptionAttribute _DatabaseExtensionDescriptionAttribute;
+        protected IDatabaseExtensionDescriptionAttribute databaseExtensionDescriptionAttribute;
         public IDatabaseExtensionDescriptionAttribute DatabaseExtensionDescriptionAttribute
-        { get { return _DatabaseExtensionDescriptionAttribute ?? (_DatabaseExtensionDescriptionAttribute = GetType().GetCustomAttribute<IDatabaseExtensionDescriptionAttribute>(false)); } }
+        { get { return databaseExtensionDescriptionAttribute ?? (databaseExtensionDescriptionAttribute = GetType().GetCustomAttribute<IDatabaseExtensionDescriptionAttribute>(false)); } }
 
         public SearchRequestObject GetSearchRequestObject(string searchTerm)
         {

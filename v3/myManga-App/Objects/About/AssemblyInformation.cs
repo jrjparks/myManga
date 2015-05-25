@@ -10,9 +10,6 @@ namespace myManga_App.Objects.About
 {
     public sealed class AssemblyInformation
     {
-        public static AssemblyInformation Default
-        { get { return Singleton<AssemblyInformation>.Instance; } }
-
         public String Title { get; private set; }
         public String Product { get; private set; }
         public String Version { get; private set; }
@@ -20,7 +17,7 @@ namespace myManga_App.Objects.About
         public String Copyright { get; private set; }
         public String Company { get; private set; }
 
-        private AssemblyInformation()
+        public AssemblyInformation()
         {
             Object[] Attributes = Assembly.GetExecutingAssembly().GetCustomAttributes(false);
             AssemblyName Name = Assembly.GetExecutingAssembly().GetName();

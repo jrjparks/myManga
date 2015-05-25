@@ -55,7 +55,7 @@ namespace myManga_App.IO.Local
                                 ze => ze.FileName.Equals(Path.GetFileName(c))) == 0).ToArray();
                         foreach (String Cover in MissingCovers)
                         {
-                            if (Cover != null) DownloadManager.Default.Download(Cover, filename);
+                            if (Cover != null) App.DownloadManager.Download(Cover, filename);
                         }
                     }
                     else if (index is ChapterObject)
@@ -65,7 +65,7 @@ namespace myManga_App.IO.Local
                                 ze => ze.FileName.Equals(po.Name)) == 0).ToArray();
                         foreach (PageObject Page in MissingPages)
                         {
-                            if (Page.ImgUrl != null) DownloadManager.Default.Download(Page.ImgUrl, filename);
+                            if (Page.ImgUrl != null) App.DownloadManager.Download(Page.ImgUrl, filename);
                         }
                     }
                     else return true;

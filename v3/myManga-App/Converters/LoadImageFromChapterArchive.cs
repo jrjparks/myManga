@@ -29,14 +29,14 @@ namespace myManga_App.Converters
                 Stream image_stream;
                 bitmap_image.BeginInit();
 
-                if (Singleton<ZipStorage>.Instance.TryRead(archive_path, PageObject.Name, out image_stream) && image_stream.Length > 0)
+                if (App.ZipStorage.TryRead(archive_path, PageObject.Name, out image_stream) && image_stream.Length > 0)
                 { bitmap_image.StreamSource = image_stream; }                   // Load from local zip
                 else { bitmap_image.UriSource = new Uri(PageObject.ImgUrl); }   // Load from web
 
                 bitmap_image.CacheOption = BitmapCacheOption.OnLoad;
                 bitmap_image.EndInit();
-                if (bitmap_image.StreamSource != null) { bitmap_image.StreamSource.Close(); /* Close bitmapImage.StreamSource if used */ }
-                if (image_stream != null) { image_stream.Close(); /* Close image_stream if used */ }
+                if (bitmap_image.StreamSource != null) { bitmap_image.StreamSource.Dispose(); /* Dispose bitmapImage.StreamSource if used */ }
+                if (image_stream != null) { image_stream.Dispose(); /* Dispose image_stream if used */ }
 
                 return bitmap_image;
             }

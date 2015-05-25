@@ -290,15 +290,15 @@ namespace myManga_App.ViewModels
             Stream archive_stream;
             foreach (String filepath in Directory.EnumerateFiles(App.MANGA_ARCHIVE_DIRECTORY, App.MANGA_ARCHIVE_FILTER))
             {
-                if (Singleton<ZipStorage>.Instance.TryRead(filepath, typeof(MangaObject).Name, out archive_stream))
-                { try { Singleton<ZipStorage>.Instance.Write(filepath, typeof(MangaObject).Name, archive_stream.Deserialize<MangaObject>(App.UserConfig.SaveType).Serialize(this.SelectedSaveType)); } catch { } archive_stream.Close(); }
-                if (Singleton<ZipStorage>.Instance.TryRead(filepath, typeof(BookmarkObject).Name, out archive_stream))
-                { try { Singleton<ZipStorage>.Instance.Write(filepath, typeof(BookmarkObject).Name, archive_stream.Deserialize<BookmarkObject>(App.UserConfig.SaveType).Serialize(this.SelectedSaveType)); } catch { } archive_stream.Close(); }
+                if (App.ZipStorage.TryRead(filepath, typeof(MangaObject).Name, out archive_stream))
+                { try { App.ZipStorage.Write(filepath, typeof(MangaObject).Name, archive_stream.Deserialize<MangaObject>(App.UserConfig.SaveType).Serialize(this.SelectedSaveType)); } catch { } archive_stream.Close(); }
+                if (App.ZipStorage.TryRead(filepath, typeof(BookmarkObject).Name, out archive_stream))
+                { try { App.ZipStorage.Write(filepath, typeof(BookmarkObject).Name, archive_stream.Deserialize<BookmarkObject>(App.UserConfig.SaveType).Serialize(this.SelectedSaveType)); } catch { } archive_stream.Close(); }
             }
             foreach (String filepath in Directory.EnumerateFiles(App.CHAPTER_ARCHIVE_DIRECTORY, App.CHAPTER_ARCHIVE_FILTER, SearchOption.AllDirectories))
             {
-                if (Singleton<ZipStorage>.Instance.TryRead(filepath, typeof(ChapterObject).Name, out archive_stream))
-                { try { Singleton<ZipStorage>.Instance.Write(filepath, typeof(ChapterObject).Name, archive_stream.Deserialize<ChapterObject>(App.UserConfig.SaveType).Serialize(this.SelectedSaveType)); } catch { } archive_stream.Close(); }
+                if (App.ZipStorage.TryRead(filepath, typeof(ChapterObject).Name, out archive_stream))
+                { try { App.ZipStorage.Write(filepath, typeof(ChapterObject).Name, archive_stream.Deserialize<ChapterObject>(App.UserConfig.SaveType).Serialize(this.SelectedSaveType)); } catch { } archive_stream.Close(); }
             }
         }
     }

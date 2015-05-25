@@ -35,7 +35,7 @@ namespace myManga_App.ViewModels
         {
             MangaCollection.Clear();
             IsLoading = true;
-            Guid ResultId = DownloadManager.Default.Search(SearchFilter.Trim());
+            Guid ResultId = App.DownloadManager.Search(SearchFilter.Trim());
             Messenger.Default.RegisterRecipient<List<MangaObject>>(
                 this, DisplaySearchResults, 
                 String.Format("SearchResult-{0}", ResultId.ToString()));
@@ -119,7 +119,7 @@ namespace myManga_App.ViewModels
         { return SelectedMangaObject != null; }
 
         private void StoreMangaInfo()
-        { DownloadManager.Default.Download(SelectedMangaObject); }
+        { App.DownloadManager.Download(SelectedMangaObject); }
 
         private delegate void Instance_SearchCompleteInvoke(object sender, List<MangaObject> e);
         private void Instance_SearchComplete(object sender, List<MangaObject> e)

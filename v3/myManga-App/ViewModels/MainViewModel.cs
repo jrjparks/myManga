@@ -70,20 +70,20 @@ namespace myManga_App.ViewModels
         #endregion
 
         #region Header Buttons
-        private DelegateCommand _HomeCommand;
+        private DelegateCommand homeCommand;
         public ICommand HomeCommand
-        { get { return _HomeCommand ?? (_HomeCommand = new DelegateCommand(HomeViewModel.PullFocus)); } }
+        { get { return homeCommand ?? (homeCommand = new DelegateCommand(HomeViewModel.PullFocus)); } }
 
-        private DelegateCommand _SearchCommand;
+        private DelegateCommand searchCommand;
         public ICommand SearchCommand
-        { get { return _SearchCommand ?? (_SearchCommand = new DelegateCommand(SearchViewModel.PullFocus, CanOpenSearch)); } }
+        { get { return searchCommand ?? (searchCommand = new DelegateCommand(SearchViewModel.PullFocus, CanOpenSearch)); } }
 
         private Boolean CanOpenSearch()
         { return SearchViewModel != null; }
 
-        private DelegateCommand _ReadCommand;
+        private DelegateCommand readCommand;
         public ICommand ReadCommand
-        { get { return _ReadCommand ?? (_ReadCommand = new DelegateCommand(ReaderViewModel.PullFocus, CanOpenRead)); } }
+        { get { return readCommand ?? (readCommand = new DelegateCommand(ReaderViewModel.PullFocus, CanOpenRead)); } }
 
         private Boolean CanOpenRead()
         { return ReaderViewModel != null && ReaderViewModel.MangaObject != null && ReaderViewModel.ChapterObject != null; }
@@ -107,13 +107,13 @@ namespace myManga_App.ViewModels
         public MainViewModel()
             : base()
         {
-            SetValue(HomeViewModelPropertyKey, new HomeViewModel());
-            SetValue(ReaderViewModelPropertyKey, new ReaderViewModel());
-            SetValue(SearchViewModelPropertyKey, new SearchViewModel());
-            SetValue(SettingsViewModelPropertyKey, new SettingsViewModel());
-
             if (!IsInDesignMode)
             {
+                SetValue(HomeViewModelPropertyKey, new HomeViewModel());
+                SetValue(ReaderViewModelPropertyKey, new ReaderViewModel());
+                SetValue(SearchViewModelPropertyKey, new SearchViewModel());
+                SetValue(SettingsViewModelPropertyKey, new SettingsViewModel());
+
                 Messenger.Default.RegisterRecipient<BaseViewModel>(this, v => {
                     if (this.ContentViewModel != v)
                         this.ContentViewModel = v;

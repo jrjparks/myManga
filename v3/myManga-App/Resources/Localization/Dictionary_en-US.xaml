@@ -15,4 +15,7 @@
 
     <system:String x:Key="ReaderTabHeaderName">Reader</system:String>
     <system:String x:Key="ReaderTabHeaderContent">&#xe021; Reader</system:String>
+
+    <system:String x:Key="DownloadQueueTabHeaderName">Download Queue</system:String>
+    <system:String x:Key="DownloadQueueTabHeaderContent">&#xe03c; Download Queue</system:String>
 </ResourceDictionary>

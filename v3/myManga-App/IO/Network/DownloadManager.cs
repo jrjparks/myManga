@@ -1,8 +1,7 @@
 ﻿using Amib.Threading;
 using Core.IO;
-using Core.IO.Storage.Manager.BaseInterfaceClasses;
-using Core.Other.Singleton;
 using Core.MVVM;
+using myManga_App.IO.Local;
 using myMangaSiteExtension;
 using myMangaSiteExtension.Attributes;
 using myMangaSiteExtension.Interfaces;
@@ -17,7 +16,6 @@ using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Web;
-using myManga_App.IO.Local;
 
 namespace myManga_App.IO.Network
 {

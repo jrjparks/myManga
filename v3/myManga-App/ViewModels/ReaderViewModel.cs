@@ -1,8 +1,5 @@
 ﻿using Core.IO;
-using Core.IO.Storage.Manager.BaseInterfaceClasses;
 using Core.MVVM;
-using Core.Other.Singleton;
-using myManga_App.IO.Network;
 using myManga_App.Objects;
 using myMangaSiteExtension.Objects;
 using myMangaSiteExtension.Utilities;

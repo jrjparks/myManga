@@ -658,7 +658,7 @@
                             <Image MaxHeight="200" MaxWidth="200" 
                                    RenderOptions.BitmapScalingMode="NearestNeighbor" RenderOptions.EdgeMode="Aliased">
                                 <Image.Source>
-                                    <MultiBinding Converter="{StaticResource LoadImageFromChapterArchive}">
+                                    <MultiBinding Converter="{StaticResource LoadImageFromChapterArchive}" ConverterParameter="200">
                                         <Binding Path="DataContext.MangaObject">
                                             <Binding.RelativeSource>
                                                 <RelativeSource Mode="FindAncestor" AncestorType="UserControl"/>

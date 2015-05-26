@@ -1,6 +1,4 @@
-﻿using Core.IO.Storage.Manager.BaseInterfaceClasses;
-using Core.Other.Singleton;
-using myMangaSiteExtension.Objects;
+﻿using myMangaSiteExtension.Objects;
 using myMangaSiteExtension.Utilities;
 using System;
 using System.IO;
@@ -28,6 +26,13 @@ namespace myManga_App.Converters
 
                 Stream image_stream;
                 bitmap_image.BeginInit();
+
+                if (parameter != null && parameter is String)
+                {
+                    Int32 DecodePixelWidth = 0;
+                    Int32.TryParse(parameter as String, out DecodePixelWidth);
+                    bitmap_image.DecodePixelWidth = DecodePixelWidth;
+                }
 
                 if (App.ZipStorage.TryRead(archive_path, PageObject.Name, out image_stream) && image_stream.Length > 0)
                 { bitmap_image.StreamSource = image_stream; }                   // Load from local zip

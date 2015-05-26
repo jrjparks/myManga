@@ -55,27 +55,20 @@
                 Content="{DynamicResource HomeTabHeaderContent}"
 				ToolTip="{DynamicResource HomeTabHeaderName}"
 				Command="{Binding HomeCommand}"
-				MinWidth="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"/>
-            <TextBlock
-				TextElement.FontFamily="{DynamicResource FontAwesome}"
-				Text="{StaticResource fa-chevron-right}"
-				TextElement.FontSize="14"
-				VerticalAlignment="Center"/>
+				MinWidth="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"
+                Margin="3px 0px"/>
             <Button:MetroButton
 				Content="{DynamicResource SearchTabHeaderContent}"
 				ToolTip="{DynamicResource SearchTabHeaderName}"
 				Command="{Binding SearchCommand}"
-				MinWidth="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"/>
-            <TextBlock
-				TextElement.FontFamily="{DynamicResource FontAwesome}"
-				Text="{StaticResource fa-chevron-right}"
-				TextElement.FontSize="14"
-				VerticalAlignment="Center"/>
+				MinWidth="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"
+                Margin="3px 0px"/>
             <Button:MetroButton
 				Content="{DynamicResource ReaderTabHeaderContent}"
 				ToolTip="{DynamicResource ReaderTabHeaderName}"
 				Command="{Binding ReadCommand}"
-				MinWidth="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"/>
+				MinWidth="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"
+                Margin="3px 0px"/>
         </StackPanel>
         <StackPanel
 			Grid.Column="1"

@@ -1,0 +1,23 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Brush x:Key="window-background">#FFEFEFF2</Brush>
+    <Color x:Key="window-background-color">#FFEFEFF2</Color>
+    <Brush x:Key="window-foreground">#FF1E1E1E</Brush>
+    <Color x:Key="window-foreground-color">#FF1E1E1E</Color>
+    <Brush x:Key="window-foreground-disabled">#FFA9A9A9</Brush>
+    <Color x:Key="window-foreground-disabled-color">#FFA9A9A9</Color>
+
+    <Brush x:Key="window-theme-primary">#FF80326E</Brush>
+    <Color x:Key="window-theme-primary-color">#FF80326E</Color>
+    <Brush x:Key="window-theme-primary-disabled">#FF919191</Brush>
+    <Color x:Key="window-theme-primary-disabled-color">#FF919191</Color>
+
+    <Brush x:Key="window-theme-secondary">#FFD3D3D3</Brush>
+    <Color x:Key="window-theme-secondary-color">#FFD3D3D3</Color>
+    <Brush x:Key="window-theme-secondary-disabled">#FFEFEFF2</Brush>
+    <Color x:Key="window-theme-secondary-disabled-color">#FFEFEFF2</Color>
+
+    <Brush x:Key="text-dark">#333333</Brush>
+    <Brush x:Key="text-muted">#666666</Brush>
+    <Brush x:Key="text-light">#FFFFFF</Brush>
+</ResourceDictionary>

@@ -78,7 +78,7 @@ namespace myManga_App
         #endregion
 
         private readonly AssemblyInformation assemblyInfo;
-        public AssemblyInformation AssemblyInfo 
+        public AssemblyInformation AssemblyInfo
         { get { return assemblyInfo; } }
 
         public App()
@@ -192,6 +192,7 @@ namespace myManga_App
                     this.UserConfig.EnabledSiteExtensions.Add(SiteExtensions.DLLCollection[0].SiteExtensionDescriptionAttribute.Name);
                 SaveUserConfig();
             }
+            //this.Resources.MergedDictionaries[1] = new ResourceDictionary() { Source = new Uri("/myManga;component/Themes/DarkTheme.xaml", UriKind.RelativeOrAbsolute) };
         }
 
         public void SaveUserConfig()

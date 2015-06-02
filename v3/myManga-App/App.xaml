@@ -6,7 +6,11 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="/myManga;component/Themes/CoreResourceDictionary.xaml"/>
-                <ResourceDictionary Source="/myManga;component/Themes/LightTheme.xaml"/>
+                <ResourceDictionary x:Name="ThemeResourceDictionary">
+                    <ResourceDictionary.MergedDictionaries>
+                        <ResourceDictionary Source="/myManga;component/Themes/LightTheme.xaml"/>
+                    </ResourceDictionary.MergedDictionaries>
+                </ResourceDictionary>
                 <ResourceDictionary Source="/myManga;component/Themes/Window/myMangaWindow.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>

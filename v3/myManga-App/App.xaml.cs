@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Windows;
+using System.Linq;
 using Core.DLL;
 using Core.IO;
 using myManga_App.Properties;
@@ -75,6 +76,33 @@ namespace myManga_App
 
         public UserConfigurationObject UserConfig
         { get; private set; }
+        #endregion
+
+        #region Theme Resource Dictionary
+        public ResourceDictionary ThemeResourceDictionary
+        { get { return Resources.MergedDictionaries[1]; } }
+        public void ApplyTheme(ThemeType theme)
+        {
+            ThemeResourceDictionary.Clear();
+            ThemeResourceDictionary.MergedDictionaries.Clear();
+            switch (theme)
+            {
+                default:
+                case ThemeType.Light:
+                    ThemeResourceDictionary.MergedDictionaries.Add(new ResourceDictionary()
+                    {
+                        Source = new Uri("/myManga;component/Themes/LightTheme.xaml", UriKind.RelativeOrAbsolute)
+                    });
+                    break;
+
+                case ThemeType.Dark:
+                    ThemeResourceDictionary.MergedDictionaries.Add(new ResourceDictionary()
+                    {
+                        Source = new Uri("/myManga;component/Themes/DarkTheme.xaml", UriKind.RelativeOrAbsolute)
+                    });
+                    break;
+            }
+        }
         #endregion
 
         private readonly AssemblyInformation assemblyInfo;
@@ -192,6 +220,7 @@ namespace myManga_App
                     this.UserConfig.EnabledSiteExtensions.Add(SiteExtensions.DLLCollection[0].SiteExtensionDescriptionAttribute.Name);
                 SaveUserConfig();
             }
+            ApplyTheme(this.UserConfig.Theme);
             //this.Resources.MergedDictionaries[1] = new ResourceDictionary() { Source = new Uri("/myManga;component/Themes/DarkTheme.xaml", UriKind.RelativeOrAbsolute) };
         }
 

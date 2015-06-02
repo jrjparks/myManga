@@ -158,6 +158,7 @@
 					BorderThickness="0" 
 					Background="{x:Null}"
 					VerticalContentAlignment="Center"
+                    Foreground="{DynamicResource window-foreground}"
 					Text="{Binding SearchFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
                 <Button:MetroToggleButton 
 					x:Name="AdvSrchBtn"

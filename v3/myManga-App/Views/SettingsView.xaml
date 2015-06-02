@@ -6,6 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
     xmlns:Button="clr-namespace:myManga_App.Resources.Theme.Buttons"
     xmlns:Converters="clr-namespace:myManga_App.Converters"
+    xmlns:Objects="clr-namespace:myManga_App.Objects"
     xmlns:System="clr-namespace:System;assembly=mscorlib"
     x:Class="myManga_App.Views.SettingsView"
     mc:Ignorable="d" 
@@ -19,6 +20,7 @@
                 <ResourceDictionary Source="/myManga;component/Themes/Slider/Slider.xaml"/>
             </ResourceDictionary.MergedDictionaries>
             <Converters:CommandParameterStringFormat x:Key="CommandParameterStringFormat"/>
+            <Converters:EnumToBooleanConverter x:Key="EnumToBooleanConverter"/>
             <GridLength x:Key="SettingNameColumnWidth">200</GridLength>
             <System:Double x:Key="SettingNameFontSize">20</System:Double>
         </ResourceDictionary>
@@ -128,6 +130,25 @@
                         Value="{Binding BackChaptersToKeep, FallbackValue=3}"
                         Minimum="2" Maximum="20"/>
                 </Grid>
+                <StackPanel 
+                    Orientation="Horizontal" 
+                    TextElement.FontSize="{StaticResource SettingNameFontSize}"
+                    TextElement.Foreground="{DynamicResource window-foreground}"
+                    TextBlock.Foreground="{DynamicResource window-foreground}">
+                    <TextBlock Text="Theme:" Margin="0,0,5,0"/>
+                    <RadioButton 
+                        Margin="0,0,5,0"
+                        Content="Light" 
+                        GroupName="Theme" 
+                        VerticalContentAlignment="Center"
+                        IsChecked="{Binding Path=Theme, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static Objects:ThemeType.Light}}"/>
+                    <RadioButton 
+                        Margin="0,0,5,0"
+                        Content="Dark" 
+                        GroupName="Theme" 
+                        VerticalContentAlignment="Center"
+                        IsChecked="{Binding Path=Theme, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static Objects:ThemeType.Dark}}"/>
+                </StackPanel>
             </StackPanel>
         </ScrollViewer>
         <StackPanel

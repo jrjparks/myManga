@@ -178,6 +178,20 @@ namespace myManga_App.Objects
             }
         }
 
+        [XmlIgnore]
+        private ThemeType theme = ThemeType.Light;
+        [XmlAttribute]
+        public ThemeType Theme
+        {
+            get { return theme; }
+            set
+            {
+                OnPropertyChanging();
+                theme = value;
+                OnPropertyChanged();
+            }
+        }
+
         public UserConfigurationObject() : base() { CreateEventLinks(); }
         public UserConfigurationObject(SerializationInfo info, StreamingContext context) : base(info, context) { CreateEventLinks(); }
 

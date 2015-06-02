@@ -223,6 +223,21 @@ namespace myManga_App.ViewModels
         }
         #endregion
 
+        #region ThemeType
+        private ThemeType theme = ThemeType.Light;
+        public ThemeType Theme
+        {
+            get { return theme; }
+            set
+            {
+                OnPropertyChanging();
+                theme = value;
+                OnPropertyChanged();
+                App.ApplyTheme(value);
+            }
+        }
+        #endregion
+
         public SettingsViewModel()
         {
             if (!IsInDesignMode)
@@ -263,6 +278,7 @@ namespace myManga_App.ViewModels
                 this.DefaultPageZoom = App.UserConfig.DefaultPageZoom;
                 this.RemoveBackChapters = App.UserConfig.RemoveBackChapters;
                 this.BackChaptersToKeep = App.UserConfig.BackChaptersToKeep;
+                this.Theme = App.UserConfig.Theme;
             }
         }
 
@@ -283,6 +299,7 @@ namespace myManga_App.ViewModels
             App.UserConfig.SaveType = SelectedSaveType;
             App.UserConfig.RemoveBackChapters = this.RemoveBackChapters;
             App.UserConfig.BackChaptersToKeep = this.BackChaptersToKeep;
+            App.UserConfig.Theme = this.Theme;
         }
 
         private void ConvertStoredFiles()

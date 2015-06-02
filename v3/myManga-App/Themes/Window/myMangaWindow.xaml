@@ -129,8 +129,11 @@
                             <!-- Change Restore Button -->
                             <Setter TargetName="MaximizeButton" Property="Visibility" Value="Collapsed"/>
                             <Setter TargetName="RestoreButton" Property="Visibility" Value="Visible"/>
+                            <!-- Hide the resize helper on max view -->
+                            <Setter TargetName="RectangleGrid" Property="Visibility" Value="Collapsed"/>
                         </Trigger>
                         <DataTrigger Binding="{Binding ElementName=CaptionButtons, Path=IsMouseOver}" Value="True">
+                            <!-- Hide the resize helper on mouse over -->
                             <Setter TargetName="RectangleGrid" Property="Visibility" Value="Collapsed"/>
                         </DataTrigger>
                     </ControlTemplate.Triggers>

@@ -11,10 +11,11 @@
     </ResourceDictionary.MergedDictionaries>
 
     <Style TargetType="{x:Type window:myMangaWindow}" x:Key="myMangaWindow">
-        <Setter Property="Foreground" Value="{StaticResource window-foreground}"/>
-        <Setter Property="Background" Value="{StaticResource window-background}"/>
+        <Setter Property="Foreground" Value="{DynamicResource window-foreground}"/>
+        <Setter Property="Background" Value="{DynamicResource window-background}"/>
+        <Setter Property="TextElement.Foreground" Value="{DynamicResource text-dark}"/>
         <Setter Property="BorderThickness" Value="1"/>
-        <Setter Property="BorderBrush" Value="{StaticResource window-theme-primary}"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource window-theme-primary}"/>
         <Setter Property="MinWidth" Value="480"/>
         <Setter Property="MinHeight" Value="234"/>
         <Setter Property="SnapsToDevicePixels" Value="True"/>

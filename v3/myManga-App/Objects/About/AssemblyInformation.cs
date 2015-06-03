@@ -10,6 +10,9 @@ namespace myManga_App.Objects.About
 {
     public sealed class AssemblyInformation
     {
+        public static AssemblyInformation Default
+        { get { return Singleton<AssemblyInformation>.Instance; } }
+
         public String Title { get; private set; }
         public String Product { get; private set; }
         public String Version { get; private set; }

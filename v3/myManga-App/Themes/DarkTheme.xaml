@@ -12,10 +12,10 @@
     <Brush x:Key="window-theme-primary-disabled">#FF919191</Brush>
     <Color x:Key="window-theme-primary-disabled-color">#FF919191</Color>
 
-    <Brush x:Key="window-theme-secondary">#FFD3D3D3</Brush>
-    <Color x:Key="window-theme-secondary-color">#FFD3D3D3</Color>
-    <Brush x:Key="window-theme-secondary-disabled">#FFEFEFF2</Brush>
-    <Color x:Key="window-theme-secondary-disabled-color">#FFEFEFF2</Color>
+    <Brush x:Key="window-theme-secondary">#FF3A3A3A</Brush>
+    <Color x:Key="window-theme-secondary-color">#FF3A3A3A</Color>
+    <Brush x:Key="window-theme-secondary-disabled">#FF1E1E1E</Brush>
+    <Color x:Key="window-theme-secondary-disabled-color">#FF1E1E1E</Color>
 
     <Brush x:Key="text-dark">#FFFFFF</Brush>
     <Brush x:Key="text-muted">#666666</Brush>

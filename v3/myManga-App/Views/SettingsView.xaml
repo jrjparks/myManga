@@ -11,7 +11,7 @@
     x:Class="myManga_App.Views.SettingsView"
     mc:Ignorable="d" 
     d:DesignHeight="400"
-    d:DesignWidth="600" >
+    d:DesignWidth="600">
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -133,21 +133,22 @@
                 <StackPanel 
                     Orientation="Horizontal" 
                     TextElement.FontSize="{StaticResource SettingNameFontSize}"
-                    TextElement.Foreground="{DynamicResource window-foreground}"
-                    TextBlock.Foreground="{DynamicResource window-foreground}">
+                    TextElement.Foreground="{DynamicResource text-dark}">
                     <TextBlock Text="Theme:" Margin="0,0,5,0"/>
                     <RadioButton 
                         Margin="0,0,5,0"
-                        Content="Light" 
                         GroupName="Theme" 
                         VerticalContentAlignment="Center"
-                        IsChecked="{Binding Path=Theme, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static Objects:ThemeType.Light}}"/>
+                        IsChecked="{Binding Path=Theme, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static Objects:ThemeType.Light}}">
+                        <TextBlock Text="Light" Foreground="{DynamicResource text-dark}"/>
+                    </RadioButton>
                     <RadioButton 
                         Margin="0,0,5,0"
-                        Content="Dark" 
                         GroupName="Theme" 
                         VerticalContentAlignment="Center"
-                        IsChecked="{Binding Path=Theme, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static Objects:ThemeType.Dark}}"/>
+                        IsChecked="{Binding Path=Theme, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static Objects:ThemeType.Dark}}">
+                        <TextBlock Text="Dark" Foreground="{DynamicResource text-dark}"/>
+                    </RadioButton>
                 </StackPanel>
             </StackPanel>
         </ScrollViewer>

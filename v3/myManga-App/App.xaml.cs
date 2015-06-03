@@ -80,26 +80,21 @@ namespace myManga_App
 
         #region Theme Resource Dictionary
         public ResourceDictionary ThemeResourceDictionary
-        { get { return Resources.MergedDictionaries[1]; } }
+        {
+            get { return Resources.MergedDictionaries[1]; }
+            set { Resources.MergedDictionaries[1] = value; }
+        }
         public void ApplyTheme(ThemeType theme)
         {
-            ThemeResourceDictionary.Clear();
-            ThemeResourceDictionary.MergedDictionaries.Clear();
             switch (theme)
             {
                 default:
                 case ThemeType.Light:
-                    ThemeResourceDictionary.MergedDictionaries.Add(new ResourceDictionary()
-                    {
-                        Source = new Uri("/myManga;component/Themes/LightTheme.xaml", UriKind.RelativeOrAbsolute)
-                    });
+                    ThemeResourceDictionary.Source = new Uri("/myManga;component/Themes/LightTheme.xaml", UriKind.RelativeOrAbsolute);
                     break;
 
                 case ThemeType.Dark:
-                    ThemeResourceDictionary.MergedDictionaries.Add(new ResourceDictionary()
-                    {
-                        Source = new Uri("/myManga;component/Themes/DarkTheme.xaml", UriKind.RelativeOrAbsolute)
-                    });
+                    ThemeResourceDictionary.Source = new Uri("/myManga;component/Themes/DarkTheme.xaml", UriKind.RelativeOrAbsolute);
                     break;
             }
         }

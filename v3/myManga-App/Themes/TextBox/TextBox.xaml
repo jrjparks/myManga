@@ -1,0 +1,9 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Style TargetType="{x:Type TextBox}">
+        <Setter Property="BorderBrush" Value="{DynamicResource window-theme-primary}"/>
+        <Setter Property="Background" Value="{DynamicResource window-background}"/>
+        <Setter Property="Foreground" Value="{DynamicResource text-dark}"/>
+        <Setter Property="CaretBrush" Value="{DynamicResource text-dark}"/>
+    </Style>
+</ResourceDictionary>

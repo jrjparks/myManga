@@ -8,7 +8,7 @@
     xmlns:mangaObjects="clr-namespace:myMangaSiteExtension.Objects;assembly=myMangaSiteExtension"
     xmlns:Converters="clr-namespace:myManga_App.Converters"
     xmlns:ObjectViews="clr-namespace:myManga_App.Views.ObjectViews"
-    x:Class="myManga_App.Views.HomeView_List"
+    x:Class="myManga_App.Views.HomeView.HomeView_List"
     x:Name="userControl"
     mc:Ignorable="d" 
     d:DesignHeight="400"

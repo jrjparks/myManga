@@ -1,6 +1,6 @@
 ﻿using System.Windows.Controls;
 
-namespace myManga_App.Views
+namespace myManga_App.Views.HomeView
 {
     /// <summary>
     /// Interaction logic for HomeView_List.xaml

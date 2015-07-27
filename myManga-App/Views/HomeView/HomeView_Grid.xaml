@@ -1,5 +1,4 @@
 ﻿<UserControl 
-    x:Class="myManga_App.Views.HomeView_Grid"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -10,6 +9,8 @@
     xmlns:Converters="clr-namespace:myManga_App.Converters"
     xmlns:CoreWPF="clr-namespace:System.Windows.Controls;assembly=Core"
     xmlns:ObjectViews="clr-namespace:myManga_App.Views.ObjectViews"
+    x:Class="myManga_App.Views.HomeView.HomeView_Grid"
+    x:Name="userControl"
     mc:Ignorable="d" 
     d:DesignHeight="400"
     d:DesignWidth="600"

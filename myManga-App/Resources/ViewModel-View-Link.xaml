@@ -3,13 +3,14 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:ViewModels="clr-namespace:myManga_App.ViewModels"
     xmlns:Views="clr-namespace:myManga_App.Views"
+    xmlns:HomeViews="clr-namespace:myManga_App.Views.HomeView"
     xmlns:MVVM="clr-namespace:myManga_App.Objects.MVVM">
 
     <DataTemplate x:Key="HomeView_List" DataType="{x:Type ViewModels:HomeViewModel}">
-        <Views:HomeView_List/>
+        <HomeViews:HomeView_List/>
     </DataTemplate>
     <DataTemplate x:Key="HomeView_Grid" DataType="{x:Type ViewModels:HomeViewModel}">
-        <Views:HomeView_Grid/>
+        <HomeViews:HomeView_Grid/>
     </DataTemplate>
     <DataTemplate DataType="{x:Type ViewModels:HomeViewModel}">
         <ContentControl Content="{Binding}">

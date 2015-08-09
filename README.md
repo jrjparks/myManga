@@ -27,7 +27,7 @@ So in 2011 I began this endeavor, actually started with an old MangaFox only rea
 * **Laptop Screen Brightness Control**
 * Basic Reader Zoom - *Top of Reader*
 
-### Planed Features
+### Planned Features
 * Bookmarks
 * Archive Chapters
 * Language Support

@@ -45,7 +45,7 @@
                                     <RowDefinition Height="*"/>
                                     <RowDefinition Height="15"/>
                                 </Grid.RowDefinitions>
-                                <ContentPresenter Grid.Row="1" Grid.RowSpan="2"/>
+                                <ContentPresenter x:Name="WindowContent" Grid.Row="1" Grid.RowSpan="2" Margin="{TemplateBinding Padding}"/>
                                 <TextBlock 
                                     x:Name="Grip"
                                     Text="o" 
@@ -132,12 +132,16 @@
                             <Setter TargetName="RestoreButton" Property="Visibility" Value="Visible"/>
                             <!-- Hide the resize helper on max view -->
                             <Setter TargetName="RectangleGrid" Property="Visibility" Value="Collapsed"/>
+                            <!-- Remove content margin -->
+                            <Setter TargetName="WindowContent" Property="Margin" Value="0"/>
                         </Trigger>
                         <Trigger Property="WindowStyle" Value="None">
                             <!-- Change Margins -->
                             <Setter TargetName="LayoutRoot" Property="Margin" Value="0"/>
                             <!-- Hide Grip -->
                             <Setter TargetName="Grip" Property="Visibility" Value="Hidden"/>
+                            <!-- Hide Border -->
+                            <Setter Property="BorderThickness" Value="0"/>
                         </Trigger>
                         <DataTrigger Binding="{Binding ElementName=CaptionButtons, Path=IsMouseOver}" Value="True">
                             <!-- Hide the resize helper on mouse over -->

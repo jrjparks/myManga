@@ -18,8 +18,9 @@
     MinHeight="480"
     MinWidth="640"
     Icon="/myManga;component/Resources/Icon.ico"
-    SnapsToDevicePixels="True" 
-    Style="{DynamicResource myMangaWindow}">
+    SnapsToDevicePixels="True"
+    Style="{StaticResource myMangaWindow}"
+    Padding="5">
     <window:myMangaWindow.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -106,8 +107,7 @@
         <ContentPresenter
 			Grid.Row="1"
 			Grid.ColumnSpan="2"
-			Content="{Binding ContentViewModel}" 
-			Margin="5,0,5,5"/>
+			Content="{Binding ContentViewModel}"/>
         <Grid
 			x:Name="Watermark"
 			Panel.ZIndex="99"

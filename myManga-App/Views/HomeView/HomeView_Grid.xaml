@@ -47,7 +47,7 @@
 			ItemContainerStyle="{DynamicResource HomeView_Grid_MangaListBoxItem}" 
 			SelectedItem="{Binding SelectedMangaArchive}"
             ItemsSource="{Binding Path=MangaArchiveCacheCollection, Mode=OneWay, Source={x:Static Application.Current}, UpdateSourceTrigger=PropertyChanged}"
-            Margin="0,1,0,0"
+            Margin="1"
             Padding="0,34,0,0">
             <ListBox.Template>
                 <ControlTemplate TargetType="{x:Type ListBox}">

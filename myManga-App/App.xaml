@@ -7,7 +7,7 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="/myManga;component/Themes/CoreResourceDictionary.xaml"/>
                 <ResourceDictionary Source="/myManga;component/Themes/LightTheme.xaml"/>
-                <ResourceDictionary Source="/myManga;component/Themes/Window/myMangaWindow.xaml"/>
+                <ResourceDictionary Source="/myManga;component/Controls/Window/myMangaWindow.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

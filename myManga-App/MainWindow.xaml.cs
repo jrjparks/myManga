@@ -12,7 +12,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using myManga_App.Properties;
-using myManga_App.Themes.Window;
+using myManga_App.Controls.Window;
 
 namespace myManga_App
 {

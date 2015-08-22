@@ -58,7 +58,7 @@ namespace TestApp
             }
             LoadManga();
             //Search();
-            zip_storage.Destroy();
+            zip_storage.Dispose();
         }
 
         static void Search()

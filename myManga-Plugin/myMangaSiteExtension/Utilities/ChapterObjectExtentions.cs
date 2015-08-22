@@ -1,10 +1,8 @@
-﻿using System;
+﻿using myMangaSiteExtension.Objects;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using myMangaSiteExtension.Objects;
 
 namespace myMangaSiteExtension.Utilities
 {
@@ -44,6 +42,13 @@ namespace myMangaSiteExtension.Utilities
                     foreach (LocationObject Location in Locations)
                         if (!chapterObject.Locations.Any(o => o.ExtensionName == Location.ExtensionName))
                             chapterObject.Locations.Add(Location);
+                        else
+                        {
+                            // Update existing location url
+                            Int32 idx = chapterObject.Locations.FindIndex(o => o.ExtensionName == Location.ExtensionName);
+                            chapterObject.Locations.RemoveAt(idx);
+                            chapterObject.Locations.Insert(idx, Location);
+                        }
 
                 // Pages
                 if (Int32.Equals(chapterObject.Pages.Count, 0))

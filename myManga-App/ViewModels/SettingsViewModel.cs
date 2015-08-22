@@ -318,5 +318,11 @@ namespace myManga_App.ViewModels
                 { try { App.ZipStorage.Write(filepath, typeof(ChapterObject).Name, archive_stream.Deserialize<ChapterObject>(App.UserConfig.SaveType).Serialize(this.SelectedSaveType)); } catch { } archive_stream.Close(); }
             }
         }
+
+        protected override void SubDispose()
+        {
+            this.DatabaseExtensionInformationObjects = null;
+            this.SiteExtensionInformationObjects = null;
+        }
     }
 }

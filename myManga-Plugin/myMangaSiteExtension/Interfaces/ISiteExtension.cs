@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using Core.IO;
+﻿using myMangaSiteExtension.Attributes;
 using myMangaSiteExtension.Objects;
-using myMangaSiteExtension.Enums;
-using myMangaSiteExtension.Attributes;
+using System;
+using System.Collections.Generic;
 
 namespace myMangaSiteExtension.Interfaces
 {

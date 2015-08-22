@@ -1,7 +1,7 @@
-﻿using System;
-using System.Reflection;
-using myMangaSiteExtension.Attributes;
+﻿using myMangaSiteExtension.Attributes;
 using myMangaSiteExtension.Interfaces;
+using System;
+using System.Reflection;
 
 namespace myMangaSiteExtension.Collections
 {

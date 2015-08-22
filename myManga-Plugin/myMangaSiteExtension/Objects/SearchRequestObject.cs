@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Core.IO;
+using myMangaSiteExtension.Enums;
+using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using System.Xml.Serialization;
-using Core.IO;
-using myMangaSiteExtension.Enums;
 
 namespace myMangaSiteExtension.Objects
 {

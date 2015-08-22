@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using myMangaSiteExtension.Objects;
+﻿using myMangaSiteExtension.Objects;
 using myMangaSiteExtension.Utilities;
+using System;
 using System.Windows;
 
 namespace myManga_App.Objects.Cache

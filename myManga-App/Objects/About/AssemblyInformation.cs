@@ -1,10 +1,6 @@
 ﻿using Core.Other.Singleton;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace myManga_App.Objects.About
 {

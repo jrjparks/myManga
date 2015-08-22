@@ -306,5 +306,10 @@ namespace myManga_App.ViewModels
                 MangaListView.SortDescriptions.Add(new SortDescription("MangaObject.Name", ListSortDirection.Ascending));
             }
         }
+
+        protected override void SubDispose()
+        {
+            this.MangaListView = null;
+        }
     }
 }

@@ -2,8 +2,8 @@
 using Core.IO;
 using Core.MVVM;
 using myManga_App.IO.Local;
-using myMangaSiteExtension;
 using myMangaSiteExtension.Attributes;
+using myMangaSiteExtension.Enums;
 using myMangaSiteExtension.Interfaces;
 using myMangaSiteExtension.Objects;
 using myMangaSiteExtension.Utilities;
@@ -19,7 +19,7 @@ using System.Web;
 
 namespace myManga_App.IO.Network
 {
-    public sealed class DownloadManager
+    public sealed class DownloadManager : IDisposable
     {
         #region Classes
         private sealed class Downloader
@@ -166,7 +166,9 @@ namespace myManga_App.IO.Network
 
         #region Item Worker Classes
         private const Int32 DEFAULT_MS_WAIT = 500;     // Wait for 500ms (0.5s)
-        private const Int32 RANDOM_RETRY_MS_WAIT = 500; // Random wait up to 500ms (0.5s)
+        private const Int32 RANDOM_RETRY_MS_WAIT_MIN = 100; // Random wait up to 500ms (0.5s)
+        private const Int32 RANDOM_RETRY_MS_WAIT_MAX = 600; // Random wait up to 500ms (0.5s)
+        private const Int32 RETRY_COUNT = 10; // Random wait up to 500ms (0.5s)
 
         private class MangaObjectWorkerClass : WorkerClass<MangaObject, MangaObject>
         {
@@ -178,7 +180,7 @@ namespace myManga_App.IO.Network
                 Core.IO.KeyValuePair<String, Object> RETRY = Value.Args.FirstOrDefault(arg => arg.Key.Equals(String.Format("RETRY-{0}", Value.Id)) && arg.Value is Int32);
                 // Sleep thread if we are retrying the remote url, longer wait each time
                 if (RETRY != null && (Int32)RETRY.Value > 0)
-                    Thread.Sleep((DEFAULT_MS_WAIT * Rand.Next(RANDOM_RETRY_MS_WAIT)) * (Int32)RETRY.Value);
+                    Thread.Sleep((DEFAULT_MS_WAIT + Rand.Next(RANDOM_RETRY_MS_WAIT_MIN, RANDOM_RETRY_MS_WAIT_MAX)) * (Int32)RETRY.Value);
                 else Thread.Sleep(DEFAULT_MS_WAIT);
 
                 Dictionary<ISiteExtension, String> SiteExtensionContent = new Dictionary<ISiteExtension, String>(Value.Data.Locations.Count);
@@ -197,6 +199,8 @@ namespace myManga_App.IO.Network
                     }
                     catch { }
                 }
+                // Cleanup chapters. The MangaObject Should not be storing PageObjects for ChapterObjects.
+                Value.Data.Chapters.ForEach(c => c.Pages.Clear());
                 return new WorkerResult<MangaObject>(Result: Value.Data, Id: Value.Id, Args: Value.Args, UniqueId: Value.UniqueId);
             }
         }
@@ -220,7 +224,7 @@ namespace myManga_App.IO.Network
                 {
                     // Sleep thread if we are retrying the remote url, longer wait each time
                     if (RETRY != null && (Int32)RETRY.Value > 0)
-                        Thread.Sleep((DEFAULT_MS_WAIT * Rand.Next(RANDOM_RETRY_MS_WAIT)) * (Int32)RETRY.Value);
+                        Thread.Sleep((DEFAULT_MS_WAIT + Rand.Next(RANDOM_RETRY_MS_WAIT_MIN, RANDOM_RETRY_MS_WAIT_MAX)) * (Int32)RETRY.Value);
                     else Thread.Sleep(DEFAULT_MS_WAIT);
 
                     ISiteExtension SiteExtension = null;
@@ -267,16 +271,19 @@ namespace myManga_App.IO.Network
                 {
                     // Sleep thread if we are retrying the remote url, longer wait each time
                     if (RETRY != null && (Int32)RETRY.Value > 0)
-                        Thread.Sleep((DEFAULT_MS_WAIT * Rand.Next(RANDOM_RETRY_MS_WAIT)) * (Int32)RETRY.Value);
+                        Thread.Sleep((DEFAULT_MS_WAIT + Rand.Next(RANDOM_RETRY_MS_WAIT_MIN, RANDOM_RETRY_MS_WAIT_MAX)) * (Int32)RETRY.Value);
                     else Thread.Sleep(DEFAULT_MS_WAIT);
 
                     ISiteExtension SiteExtension = App.SiteExtensions.DLLCollection.First(_SiteExtension => Value.Data.PageObject.Url.Contains(_SiteExtension.GetType().GetCustomAttribute<ISiteExtensionDescriptionAttribute>(false).URLFormat));
                     PageObject DownloadedPageObject = SiteExtension.ParsePageObject(Downloader.GetHtmlContent(Value.Data.PageObject.Url, Value.Data.PageObject.Url));
                     Int32 index = Value.Data.ChapterObject.Pages.FindIndex((po) => po.Url == DownloadedPageObject.Url);
                     Value.Data.ChapterObject.Pages[index] = DownloadedPageObject;
-                    return new WorkerResult<PageObjectDownloadRequest>(Result: new PageObjectDownloadRequest(Value.Data.MangaObject, Value.Data.ChapterObject, DownloadedPageObject), Id: Value.Id, Args: Value.Args, UniqueId: Value.UniqueId);
+
+                    PageObjectDownloadRequest result = new PageObjectDownloadRequest(Value.Data.MangaObject, Value.Data.ChapterObject, DownloadedPageObject);
+                    return new WorkerResult<PageObjectDownloadRequest>(Result: result, Id: Value.Id, Args: Value.Args, UniqueId: Value.UniqueId);
                 }
-                catch (Exception ex) { return new WorkerResult<PageObjectDownloadRequest>(Result: Value.Data, Id: Value.Id, Args: Value.Args, Success: false, Exception: ex, UniqueId: Value.UniqueId); }
+                catch (Exception ex)
+                { return new WorkerResult<PageObjectDownloadRequest>(Result: Value.Data, Id: Value.Id, Args: Value.Args, Success: false, Exception: ex, UniqueId: Value.UniqueId); }
             }
         }
 
@@ -311,7 +318,7 @@ namespace myManga_App.IO.Network
                 {
                     // Sleep thread if we are retrying the remote url, longer wait each time
                     if (RETRY != null && (Int32)RETRY.Value > 0)
-                        Thread.Sleep((DEFAULT_MS_WAIT * Rand.Next(RANDOM_RETRY_MS_WAIT)) * (Int32)RETRY.Value);
+                        Thread.Sleep((DEFAULT_MS_WAIT + Rand.Next(RANDOM_RETRY_MS_WAIT_MIN, RANDOM_RETRY_MS_WAIT_MAX)) * (Int32)RETRY.Value);
                     else Thread.Sleep(DEFAULT_MS_WAIT);
 
                     using (Stream image_stream = Downloader.GetRawContent(Value.Data.URL, Value.Data.Referer))
@@ -321,7 +328,8 @@ namespace myManga_App.IO.Network
                         Value.Data.Stream.Seek(0, SeekOrigin.Begin);
                     }
                 }
-                catch (Exception ex) { return new WorkerResult<ImageDownloadRequest>(Result: Value.Data, Id: Value.Id, Args: Value.Args, Success: false, Exception: ex, UniqueId: Value.UniqueId); }
+                catch (Exception ex)
+                { return new WorkerResult<ImageDownloadRequest>(Result: Value.Data, Id: Value.Id, Args: Value.Args, Success: false, Exception: ex, UniqueId: Value.UniqueId); }
                 return new WorkerResult<ImageDownloadRequest>(Result: Value.Data, Id: Value.Id, Args: Value.Args, UniqueId: Value.UniqueId);
             }
         }
@@ -408,7 +416,7 @@ namespace myManga_App.IO.Network
                 for (Int32 index = 0; index < SearchResultItems.Count; ++index)
                 {
                     MangaObject item = SearchResultItems[index];
-                    for (Int32 sub_index = index + 1; sub_index < SearchResultItems.Count; )
+                    for (Int32 sub_index = index + 1; sub_index < SearchResultItems.Count;)
                     {
                         MangaObject sub_item = SearchResultItems[sub_index];
                         String existing_manga_object_name = SafeAlphaNumeric.Replace(item.Name.ToLower(), String.Empty),
@@ -551,6 +559,7 @@ namespace myManga_App.IO.Network
 
         private void ChapterObjectWorker_WorkComplete(object sender, DownloadManager.WorkerResult<DownloadManager.ChapterObjectDownloadRequest> e)
         {
+            Int32 RETRY_index = e.Args.ToList().FindIndex(arg => arg.Key.Equals(String.Format("RETRY-{0}", e.Id)) && arg.Value is Int32);
             if (e.Success)
             {
                 String save_path = Path.Combine(App.CHAPTER_ARCHIVE_DIRECTORY, e.Result.MangaObject.MangaFileName(), e.Result.ChapterObject.ChapterArchiveName(App.CHAPTER_ARCHIVE_EXTENSION));
@@ -560,6 +569,11 @@ namespace myManga_App.IO.Network
                     from PageObject page_object in e.Result.ChapterObject.Pages select new PageObjectDownloadRequest(e.Result.MangaObject, e.Result.ChapterObject, page_object),
                     Enumerable.Repeat<Guid?>(e.Id, e.Result.ChapterObject.Pages.Count),
                     new Core.IO.KeyValuePair<String, Object>(String.Format("RETRY-{0}", e.Id), 0));
+            }
+            else if (RETRY_index >= 0 && (Int32)e.Args[RETRY_index].Value < RETRY_COUNT)
+            {
+                e.Args[RETRY_index].Value = (Int32)e.Args[RETRY_index].Value + 1;
+                ChapterObjectWorker.RunWork(SmartThreadPool, e.Result, e.Id, Args: e.Args);
             }
             OnStatusChange(e.Exception);
         }
@@ -573,7 +587,7 @@ namespace myManga_App.IO.Network
                 App.ZipStorage.Write(save_path, e.Result.ChapterObject.GetType().Name, e.Result.ChapterObject.Serialize(SaveType: App.UserConfig.SaveType));
                 ImageWorker.RunWork(SmartThreadPool, new ImageDownloadRequest(e.Result.PageObject.ImgUrl, save_path), e.Id);
             }
-            else if (RETRY_index >= 0 && (Int32)e.Args[RETRY_index].Value < 3)
+            else if (RETRY_index >= 0 && (Int32)e.Args[RETRY_index].Value < RETRY_COUNT)
             {
                 e.Args[RETRY_index].Value = (Int32)e.Args[RETRY_index].Value + 1;
                 PageObjectWorker.RunWork(SmartThreadPool, e.Result, e.Id, Args: e.Args);
@@ -589,7 +603,7 @@ namespace myManga_App.IO.Network
                 using (e.Result.Stream)
                 { App.ZipStorage.Write(e.Result.LocalPath, e.Result.Filename, e.Result.Stream); }
             }
-            else if (RETRY_index >= 0 && (Int32)e.Args[RETRY_index].Value < 3)
+            else if (RETRY_index >= 0 && (Int32)e.Args[RETRY_index].Value < RETRY_COUNT)
             {
                 e.Args[RETRY_index].Value = (Int32)e.Args[RETRY_index].Value + 1;
                 ImageWorker.RunWork(SmartThreadPool, e.Result, e.Id, Args: e.Args);
@@ -601,6 +615,11 @@ namespace myManga_App.IO.Network
         {
             Messenger.Default.Send(e.Result, String.Format("SearchResult-{0}", e.Id.ToString()));
             OnStatusChange(e.Exception);
+        }
+
+        public void Dispose()
+        {
+            SmartThreadPool.Dispose();
         }
         #endregion
     }

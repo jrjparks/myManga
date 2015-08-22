@@ -1,5 +1,5 @@
-﻿using myMangaSiteExtension;
-using myMangaSiteExtension.Attributes;
+﻿using myMangaSiteExtension.Attributes;
+using myMangaSiteExtension.Enums;
 
 namespace Batoto
 {

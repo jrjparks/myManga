@@ -15,11 +15,11 @@ namespace myManga_App.ViewModels
         #region NotifyPropertyChange
         public event PropertyChangingEventHandler PropertyChanging;
         protected void OnPropertyChanging([CallerMemberName] String caller = null)
-        { if (PropertyChanging != null)PropertyChanging(this, new PropertyChangingEventArgs(caller)); }
+        { if (PropertyChanging != null) PropertyChanging(this, new PropertyChangingEventArgs(caller)); }
 
         public event PropertyChangedEventHandler PropertyChanged;
         protected void OnPropertyChanged([CallerMemberName] String caller = null)
-        { if (PropertyChanged != null)PropertyChanged(this, new PropertyChangedEventArgs(caller)); }
+        { if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs(caller)); }
 
         protected virtual Boolean SetProperty<T>(ref T storage, T value, [CallerMemberName] String caller = null)
         {
@@ -84,6 +84,27 @@ namespace myManga_App.ViewModels
             }
         }
 
-        public virtual void Dispose() { Messenger.Default.Send(this, "Dispose"); }
+        #region IDisposable Support
+        private bool disposedValue = false; // To detect redundant calls
+
+        protected virtual void SubDispose() { }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    SubDispose();
+                    Messenger.Default.Send(this, "Dispose");
+                }
+
+                disposedValue = true;
+            }
+        }
+
+        public virtual void Dispose()
+        { Dispose(true); }
+        #endregion
     }
 }

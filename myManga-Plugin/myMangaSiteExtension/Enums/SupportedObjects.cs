@@ -1,5 +1,5 @@
 ﻿using System;
-namespace myMangaSiteExtension
+namespace myMangaSiteExtension.Enums
 {
     [Flags]
     public enum SupportedObjects

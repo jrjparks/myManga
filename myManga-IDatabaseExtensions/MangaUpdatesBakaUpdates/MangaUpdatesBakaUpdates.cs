@@ -1,5 +1,4 @@
 ﻿using HtmlAgilityPack;
-using myMangaSiteExtension;
 using myMangaSiteExtension.Attributes;
 using myMangaSiteExtension.Enums;
 using myMangaSiteExtension.Interfaces;

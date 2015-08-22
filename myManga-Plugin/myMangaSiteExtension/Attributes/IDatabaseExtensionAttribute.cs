@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using myMangaSiteExtension.Enums;
+using System;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace myMangaSiteExtension.Attributes
 {

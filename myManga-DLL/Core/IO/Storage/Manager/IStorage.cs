@@ -49,6 +49,6 @@ namespace Core.IO.Storage.Manager
         /// <summary>
         /// Method to clean anything up
         /// </summary>
-        void Destroy();
+        void Dispose();
     }
 }

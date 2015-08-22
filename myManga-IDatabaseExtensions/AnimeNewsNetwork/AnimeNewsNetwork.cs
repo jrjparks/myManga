@@ -1,15 +1,12 @@
-﻿using System;
+﻿using HtmlAgilityPack;
+using myMangaSiteExtension.Attributes;
+using myMangaSiteExtension.Enums;
+using myMangaSiteExtension.Interfaces;
+using myMangaSiteExtension.Objects;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Reflection;
-using System.Threading.Tasks;
-using myMangaSiteExtension.Interfaces;
-using myMangaSiteExtension.Attributes;
-using myMangaSiteExtension.Objects;
-using HtmlAgilityPack;
-using myMangaSiteExtension;
-using myMangaSiteExtension.Enums;
 
 namespace AnimeNewsNetwork
 {

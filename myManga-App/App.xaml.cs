@@ -21,7 +21,7 @@ namespace myManga_App
     /// <summary>
     /// Interaction logic for App.xaml
     /// </summary>
-    public partial class App : Application
+    public partial class App : Application, IDisposable
     {
         #region IO
         private readonly FileStorage fileStorage;
@@ -154,7 +154,7 @@ namespace myManga_App
         {
             log_exception(
                 e.Exception,
-                String.Format("========== DISPATCHER ==========", DateTime.Now.ToShortDateString()),
+                "========== DISPATCHER ==========",
                 String.Format("Thread Name: {0}", e.Dispatcher.Thread.Name),
                 String.Format("Is ThreadPool Thread: {0}", e.Dispatcher.Thread.IsThreadPoolThread));
             e.Handled = true;
@@ -168,11 +168,11 @@ namespace myManga_App
 
                 while (e != null)
                 {
-                    log_stream_writer.WriteLine(String.Format("========== MESSAGE ==========", DateTime.Now.ToShortDateString()));
+                    log_stream_writer.WriteLine("========== MESSAGE ==========");
                     log_stream_writer.WriteLine(e.Message);
-                    log_stream_writer.WriteLine(String.Format("========== STACK TRACE ==========", DateTime.Now.ToShortDateString()));
+                    log_stream_writer.WriteLine("========== STACK TRACE ==========");
                     log_stream_writer.WriteLine(e.StackTrace);
-                    log_stream_writer.WriteLine(String.Format("========== TARGET SITE ==========", DateTime.Now.ToShortDateString()));
+                    log_stream_writer.WriteLine("========== TARGET SITE ==========");
                     log_stream_writer.WriteLine(e.TargetSite);
                     e = e.InnerException;
                     log_stream_writer.WriteLine();
@@ -221,5 +221,31 @@ namespace myManga_App
 
         public void SaveUserConfig()
         { if (!UserConfigurationObject.Equals(this.UserConfig, null)) this.FileStorage.Write(this.USER_CONFIG_PATH, this.UserConfig.Serialize(SaveType: SaveType.XML)); }
+
+        #region IDisposable Support
+        private bool disposedValue = false; // To detect redundant calls
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    this.MangaObjectArchiveWatcher.Dispose();
+                    this.ChapterObjectArchiveWatcher.Dispose();
+                    this.DownloadManager.Dispose();
+                    this.ZipStorage.Dispose();
+                    this.FileStorage.Dispose();
+                    this.SiteExtensions.Unload();
+                    this.DatabaseExtensions.Unload();
+                }
+
+                disposedValue = true;
+            }
+        }
+
+        public void Dispose()
+        { Dispose(true); }
+        #endregion
     }
 }

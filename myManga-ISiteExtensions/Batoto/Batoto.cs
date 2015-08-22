@@ -1,17 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text.RegularExpressions;
-using System.Windows;
-using Core.Other;
+﻿using Core.Other;
 using HtmlAgilityPack;
-using myMangaSiteExtension;
 using myMangaSiteExtension.Attributes;
 using myMangaSiteExtension.Enums;
 using myMangaSiteExtension.Interfaces;
 using myMangaSiteExtension.Objects;
 using myMangaSiteExtension.Utilities;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using System.Text.RegularExpressions;
+using System.Windows;
 
 namespace Batoto
 {
@@ -113,6 +112,11 @@ namespace Batoto
                     if (ReleaseData.Contains("-"))
                         ReleaseData = ReleaseData.Split(new String[] { " - " }, StringSplitOptions.RemoveEmptyEntries)[0];
                     DateTime.TryParse(ReleaseData, out Released);
+                    String ChapterUrl = VolChapNameNode.Attributes["href"].Value;
+                    if (!ChapterUrl.Contains("?"))
+                    { ChapterUrl += "?supress_webtoon=t"; }
+                    else if (ChapterUrl.Contains("?"))
+                    { ChapterUrl += "&supress_webtoon=t"; }
                     ChapterObject chapterObject = new ChapterObject()
                     {
                         Name = HtmlEntity.DeEntitize(ChapterName),
@@ -121,9 +125,10 @@ namespace Batoto
                         SubChapter = SubChapter,
                         Released = Released,
                         Locations = {
-                            new LocationObject() { 
+                            new LocationObject() {
                                 ExtensionName = SiteExtensionDescriptionAttribute.Name,
-                                Url = VolChapNameNode.Attributes["href"].Value }
+                                Url = ChapterUrl
+                            }
                         }
                     };
                     if (!Chapters.Any(o => o.Chapter == chapterObject.Chapter && ((Int32)o.SubChapter - chapterObject.SubChapter).InRange(-4, 4)))
@@ -167,15 +172,49 @@ namespace Batoto
         {
             HtmlDocument ChapterObjectDocument = new HtmlDocument();
             ChapterObjectDocument.LoadHtml(content);
-            return new ChapterObject()
+
+            ChapterObject ParsedChapterObject = new ChapterObject();
+            HtmlNodeCollection PageNodes = ChapterObjectDocument.GetElementbyId("page_select").SelectNodes(".//option");
+            if (PageNodes != null && PageNodes.Count > 0)
             {
-                Pages = (from HtmlNode PageNode in ChapterObjectDocument.GetElementbyId("page_select").SelectNodes(".//option")
-                         select new PageObject()
-                             {
-                                 Url = PageNode.Attributes["value"].Value,
-                                 PageNumber = UInt32.Parse(PageNode.NextSibling.InnerText.Substring(5))
-                             }).ToList()
-            };
+                foreach (HtmlNode PageNode in PageNodes)
+                {
+                    HtmlNode PrevNode = PageNode.SelectSingleNode(".//preceding-sibling::option"),
+                        NextNode = PageNode.SelectSingleNode(".//following-sibling::option");
+
+                    UInt32 PageNumber = UInt32.Parse(PageNode.NextSibling.InnerText.Substring(5));
+                    String PageUrl = PageNode.Attributes["value"].Value,
+                        NextPageUrl = (NextNode != null) ? NextNode.Attributes["value"].Value : null,
+                        PrevPageUrl = (PrevNode != null) ? PrevNode.Attributes["value"].Value : null;
+
+                    if (!PageUrl.Contains("?"))
+                    { PageUrl += "?supress_webtoon=t"; }
+                    else if (PageUrl.Contains("?"))
+                    { PageUrl += "&supress_webtoon=t"; }
+
+                    if (NextPageUrl == null) { }
+                    else if (!NextPageUrl.Contains("?"))
+                    { NextPageUrl += "?supress_webtoon=t"; }
+                    else if (NextPageUrl.Contains("?"))
+                    { NextPageUrl += "&supress_webtoon=t"; }
+
+                    if (PrevPageUrl == null) { }
+                    else if (!PrevPageUrl.Contains("?"))
+                    { PrevPageUrl += "?supress_webtoon=t"; }
+                    else if (PrevPageUrl.Contains("?"))
+                    { PrevPageUrl += "&supress_webtoon=t"; }
+
+                    ParsedChapterObject.Pages.Add(new PageObject()
+                    {
+                        PageNumber = PageNumber,
+                        Url = PageUrl,
+                        NextUrl = NextPageUrl,
+                        PrevUrl = PrevPageUrl
+                    });
+                }
+            }
+
+            return ParsedChapterObject;
         }
 
         public PageObject ParsePageObject(string content)
@@ -183,20 +222,42 @@ namespace Batoto
             HtmlDocument PageObjectDocument = new HtmlDocument();
             PageObjectDocument.LoadHtml(content);
 
-            HtmlNode PageNode = PageObjectDocument.GetElementbyId("page_select").SelectSingleNode(".//option[@selected]"),
+            HtmlNode PageSelect = PageObjectDocument.GetElementbyId("page_select"),
+                PageNode = PageSelect.SelectSingleNode(".//option[@selected]"),
                 PrevNode = PageNode.SelectSingleNode(".//preceding-sibling::option"),
                 NextNode = PageNode.SelectSingleNode(".//following-sibling::option");
 
             Uri ImageLink = new Uri(PageObjectDocument.GetElementbyId("comic_page").Attributes["src"].Value);
             String Name = ImageLink.ToString().Split('/').Last();
 
+            String PageUrl = PageNode.Attributes["value"].Value,
+                NextPageUrl = (NextNode != null) ? NextNode.Attributes["value"].Value : null,
+                PrevPageUrl = (PrevNode != null) ? PrevNode.Attributes["value"].Value : null;
+
+            if (!PageUrl.Contains("?"))
+            { PageUrl += "?supress_webtoon=t"; }
+            else if (PageUrl.Contains("?"))
+            { PageUrl += "&supress_webtoon=t"; }
+
+            if (NextPageUrl == null) { }
+            else if (!NextPageUrl.Contains("?"))
+            { NextPageUrl += "?supress_webtoon=t"; }
+            else if (NextPageUrl.Contains("?"))
+            { NextPageUrl += "&supress_webtoon=t"; }
+
+            if (PrevPageUrl == null) { }
+            else if (!PrevPageUrl.Contains("?"))
+            { PrevPageUrl += "?supress_webtoon=t"; }
+            else if (PrevPageUrl.Contains("?"))
+            { PrevPageUrl += "&supress_webtoon=t"; }
+
             return new PageObject()
             {
                 Name = Name,
                 PageNumber = UInt32.Parse(PageNode.NextSibling.InnerText.Substring(5)),
-                Url = PageNode.Attributes["value"].Value,
-                NextUrl = (NextNode != null) ? NextNode.Attributes["value"].Value : null,
-                PrevUrl = (PrevNode != null) ? PrevNode.Attributes["value"].Value : null,
+                Url = PageUrl,
+                NextUrl = NextPageUrl,
+                PrevUrl = PrevPageUrl,
                 ImgUrl = ImageLink.ToString()
             };
         }

@@ -15,8 +15,8 @@ namespace myManga_App.ViewModels
         #region Content
         private BaseViewModel PreviousContentViewModel;
         private static readonly DependencyProperty ContentViewModelProperty = DependencyProperty.RegisterAttached(
-            "ContentViewModel", 
-            typeof(BaseViewModel), 
+            "ContentViewModel",
+            typeof(BaseViewModel),
             typeof(MainViewModel));
         public BaseViewModel ContentViewModel
         {
@@ -114,7 +114,8 @@ namespace myManga_App.ViewModels
                 SetValue(SearchViewModelPropertyKey, new SearchViewModel());
                 SetValue(SettingsViewModelPropertyKey, new SettingsViewModel());
 
-                Messenger.Default.RegisterRecipient<BaseViewModel>(this, v => {
+                Messenger.Default.RegisterRecipient<BaseViewModel>(this, v =>
+                {
                     if (this.ContentViewModel != v)
                         this.ContentViewModel = v;
                 }, "FocusRequest");
@@ -122,7 +123,10 @@ namespace myManga_App.ViewModels
                 SettingsViewModel.CloseEvent += (s, e) => this.PreviousContentViewModel.PullFocus();
 
                 ServicePointManager.DefaultConnectionLimit = App.DownloadManager.Concurrency;
-                App.DownloadManager.StatusChange += (s, e) => { IsLoading = !(s as DownloadManager).IsIdle; };
+                App.DownloadManager.StatusChange += (s, e) =>
+                {
+                    IsLoading = !(s as DownloadManager).IsIdle;
+                };
 
                 App.MangaObjectArchiveWatcher.Changed += MangaObjectArchiveWatcher_Event;
                 App.MangaObjectArchiveWatcher.Created += MangaObjectArchiveWatcher_Event;
@@ -153,10 +157,12 @@ namespace myManga_App.ViewModels
             else App.Dispatcher.Invoke(DispatcherPriority.Send, new System.Action(() => ChapterObjectArchiveWatcher_Event(sender, e)));
         }
 
-        public override void Dispose()
+        protected override void SubDispose()
         {
-            base.Dispose();
-            App.SiteExtensions.Unload();
+            this.HomeViewModel.Dispose();
+            this.ReaderViewModel.Dispose();
+            this.SearchViewModel.Dispose();
+            this.SettingsViewModel.Dispose();
         }
     }
 }

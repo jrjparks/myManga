@@ -9,7 +9,7 @@ using System.Threading;
 
 namespace Core.IO.Storage.Manager.BaseInterfaceClasses
 {
-    public class FileStorage : IStorage<FileStorageInformationObject>
+    public class FileStorage : IStorage<FileStorageInformationObject>, IDisposable
     {
         protected class FileStorageObject
         {
@@ -75,7 +75,7 @@ namespace Core.IO.Storage.Manager.BaseInterfaceClasses
             return file_storage_information_object;
         }
 
-        public void Destroy()
+        public void Dispose()
         {
             this.run_queue = false;
             write_consumer_task.Wait(1000 * 10); // Wait up to 10 seconds for the write thread to end.

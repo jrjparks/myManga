@@ -370,5 +370,11 @@ namespace myManga_App.ViewModels
                 }
         }
         #endregion
+
+        protected override void SubDispose()
+        {
+            this.MangaObject = null;
+            this.BookmarkObject = null;
+        }
     }
 }

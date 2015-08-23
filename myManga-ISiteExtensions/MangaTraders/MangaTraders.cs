@@ -197,9 +197,9 @@ namespace MangaTraders
             SearchResultDocument.LoadHtml(content);
 
             HtmlNode MainContainer = SearchResultDocument.DocumentNode.SelectSingleNode("//div[contains(@class,'mainContainer')]");
-            HtmlNodeCollection SearchResultNodes = MainContainer.SelectNodes(".//div[contains(@class,'well')]/div[@class='row']");
+            HtmlNodeCollection SearchResultNodes = MainContainer.SelectNodes(".//div[contains(@class,'well')]/div[contains(@class,'row') and (contains(@class,'available') or contains(@class,'unavailable'))]");
 
-            foreach (HtmlNode SearchResultNode in SearchResultNodes.Skip(2))
+            foreach (HtmlNode SearchResultNode in SearchResultNodes)
             {
                 String ImgUrl = SiteExtensionDescriptionAttribute.RootUrl + SearchResultNode.SelectSingleNode(".//img").Attributes["src"].Value.Substring(2),
                     Name = String.Empty,

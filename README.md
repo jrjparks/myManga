@@ -40,6 +40,7 @@ So in 2011 I began this endeavor, actually started with an old MangaFox only rea
  * [MangaReader.net](http://www.mangareader.net/)
  * [MangaPanda.com](http://www.mangapanda.com/)
  * [MangaHere.com](http://www.mangahere.com/)
+ * [MangaTraders.org](http://mangatraders.org/)
 * Databases
  * [MangaHelpers](http://www.mangahelpers.com/manga/)
  * [Anime News Network](http://www.animenewsnetwork.com/)

@@ -5,4 +5,7 @@
         <ResourceDictionary Source="/myManga;component/Resources/Font/Font Awesome/FontAwesomeIcons.xaml"/>
         <ResourceDictionary Source="/myManga;component/Resources/Font/Open Iconic/OpenIconicIcons.xaml"/>
     </ResourceDictionary.MergedDictionaries>
+    <SolidColorBrush x:Key="ProgressBar.Progress" Color="#FF06B025"/>
+    <SolidColorBrush x:Key="ProgressBar.Background" Color="#FFE6E6E6"/>
+    <SolidColorBrush x:Key="ProgressBar.Border" Color="#FFBCBCBC"/>
 </ResourceDictionary>

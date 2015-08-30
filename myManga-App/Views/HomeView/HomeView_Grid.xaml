@@ -29,6 +29,7 @@
                 <ResourceDictionary Source="/myManga;component/Themes/ScrollBar/ScrollBar.xaml"/>
 
                 <ResourceDictionary Source="/myManga;component/Themes/ProgressBar/Spinner.xaml"/>
+                <ResourceDictionary Source="/myManga;component/Themes/ProgressBar/ProgressBar.xaml"/>
             </ResourceDictionary.MergedDictionaries>
             <Converters:LoadImageFromMangaArchive x:Key="LoadImageFromMangaArchive"/>
             <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
@@ -45,7 +46,8 @@
 			x:Name="MangaObjectItems"
             Grid.ColumnSpan="3"
 			ItemContainerStyle="{DynamicResource HomeView_Grid_MangaListBoxItem}" 
-			SelectedItem="{Binding SelectedMangaArchive}"
+			SelectedItem="{Binding SelectedMangaArchiveCacheObject, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+            SelectedIndex="0"
             ItemsSource="{Binding Path=MangaArchiveCacheCollection, Mode=OneWay, Source={x:Static Application.Current}, UpdateSourceTrigger=PropertyChanged}"
             Margin="1"
             Padding="0,34,0,0">

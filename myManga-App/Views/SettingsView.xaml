@@ -21,7 +21,7 @@
             </ResourceDictionary.MergedDictionaries>
             <Converters:CommandParameterStringFormat x:Key="CommandParameterStringFormat"/>
             <Converters:EnumToBooleanConverter x:Key="EnumToBooleanConverter"/>
-            <GridLength x:Key="SettingNameColumnWidth">200</GridLength>
+            <GridLength x:Key="SettingNameColumnWidth">250</GridLength>
             <System:Double x:Key="SettingNameFontSize">20</System:Double>
         </ResourceDictionary>
     </UserControl.Resources>
@@ -103,7 +103,7 @@
                         <ColumnDefinition Width="15"/>
                         <ColumnDefinition/>
                     </Grid.ColumnDefinitions>
-                    <TextBlock Text="Clean Chapters" VerticalAlignment="Center" TextWrapping="Wrap" FontSize="{StaticResource SettingNameFontSize}"/>
+                    <TextBlock Text="Delete Older Chapters" VerticalAlignment="Center" TextWrapping="Wrap" FontSize="{StaticResource SettingNameFontSize}"/>
                     <Button:MetroToggleButton
                         Grid.Column="2"
                         x:Name="RemoveBackChaptersToggleButton"
@@ -120,7 +120,7 @@
                         <ColumnDefinition/>
                     </Grid.ColumnDefinitions>
                     <TextBlock 
-                        Text="{Binding Value, ElementName=BackChaptersToKeepSlider, StringFormat=Chapters\ to\ Clean:\ {0:0}}"
+                        Text="{Binding Value, ElementName=BackChaptersToKeepSlider, StringFormat=Old\ Chapters\ to\ Keep:\ {0:0}}"
                         VerticalAlignment="Center" 
                         TextWrapping="Wrap" 
                         FontSize="{StaticResource SettingNameFontSize}"/>

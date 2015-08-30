@@ -5,8 +5,10 @@
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="/myManga;component/Themes/CoreResourceDictionary.xaml"/>
+                <!-- DO NOT MOVE THIS! DO NOT ADD ANYTHING BEFORE THIS! -->
                 <ResourceDictionary Source="/myManga;component/Themes/LightTheme.xaml"/>
+                
+                <ResourceDictionary Source="/myManga;component/Themes/CoreResourceDictionary.xaml"/>
                 <ResourceDictionary Source="/myManga;component/Controls/Window/myMangaWindow.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>

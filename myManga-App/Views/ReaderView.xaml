@@ -102,9 +102,9 @@
             x:Name="PageListPopup"
             AllowsTransparency="True"
             Width="{Binding ActualWidth, ElementName=PageListDropdown, Mode=OneWay}"
-			PlacementTarget="{Binding ElementName=PageListDropdown}"
-            PlacementRectangle="{Binding ElementName=PageListDropdown}"
-			IsOpen="{Binding IsChecked, ElementName=PageListDropdown}"
+			PlacementTarget="{Binding ElementName=PageListDropdown, Mode=OneWay}"
+            PlacementRectangle="{Binding ElementName=PageListDropdown, Mode=OneWay}"
+			IsOpen="{Binding IsChecked, ElementName=PageListDropdown, Mode=OneWay}"
             PopupAnimation="Fade"
             Grid.ColumnSpan="3" 
             StaysOpen="False">

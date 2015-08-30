@@ -55,6 +55,15 @@ namespace myManga_App
         private readonly DLL_Manager<IDatabaseExtension, IDatabaseExtensionCollection> databaseExtensions;
         public DLL_Manager<IDatabaseExtension, IDatabaseExtensionCollection> DatabaseExtensions
         { get { return databaseExtensions; } }
+        #endregion
+
+        #region DataObjects
+        private MangaArchiveCacheObject selectedMangaArchiveCacheObject;
+        public MangaArchiveCacheObject SelectedMangaArchiveCacheObject
+        {
+            get { return this.selectedMangaArchiveCacheObject; }
+            set { this.selectedMangaArchiveCacheObject = value; }
+        }
 
         private readonly ObservableCollection<MangaArchiveCacheObject> mangaArchiveCacheCollection;
         public ObservableCollection<MangaArchiveCacheObject> MangaArchiveCacheCollection
@@ -81,8 +90,8 @@ namespace myManga_App
         #region Theme Resource Dictionary
         public ResourceDictionary ThemeResourceDictionary
         {
-            get { return Resources.MergedDictionaries[1]; }
-            set { Resources.MergedDictionaries[1] = value; }
+            get { return Resources.MergedDictionaries[0]; }
+            set { Resources.MergedDictionaries[0] = value; }
         }
         public void ApplyTheme(ThemeType theme)
         {
@@ -216,7 +225,6 @@ namespace myManga_App
                 SaveUserConfig();
             }
             ApplyTheme(this.UserConfig.Theme);
-            //this.Resources.MergedDictionaries[1] = new ResourceDictionary() { Source = new Uri("/myManga;component/Themes/DarkTheme.xaml", UriKind.RelativeOrAbsolute) };
         }
 
         public void SaveUserConfig()

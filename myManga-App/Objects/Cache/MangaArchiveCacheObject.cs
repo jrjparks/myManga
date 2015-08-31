@@ -1,5 +1,6 @@
 ﻿using myMangaSiteExtension.Objects;
 using myMangaSiteExtension.Utilities;
+using myMangaSiteExtension.Collections;
 using System;
 using System.Windows;
 

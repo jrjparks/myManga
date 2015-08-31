@@ -1,15 +1,13 @@
 ﻿using Core.IO;
-using Core.IO.Storage.Manager.BaseInterfaceClasses;
 using Core.MVVM;
-using Core.Other.Singleton;
 using myManga_App.IO.Local;
-using myManga_App.IO.Network;
 using myManga_App.Objects;
 using myManga_App.Objects.Cache;
 using myManga_App.Objects.UserInterface;
 using myMangaSiteExtension.Objects;
 using myMangaSiteExtension.Utilities;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
@@ -21,8 +19,10 @@ namespace myManga_App.ViewModels
 {
     public sealed class HomeViewModel : BaseViewModel
     {
-        #region SelectedMangaArchiveCacheObject
-        private static readonly DependencyProperty SelectedMangaArchiveCacheObjectProperty = DependencyProperty.RegisterAttached(
+        #region MangaArchiveCacheObject Collection
+        private ICollectionView MangaListView;
+
+        private static readonly DependencyProperty SelectedMangaArchiveCacheObjectProperty = DependencyProperty.Register(
             "SelectedMangaArchiveCacheObject",
             typeof(MangaArchiveCacheObject),
             typeof(HomeViewModel));
@@ -32,11 +32,23 @@ namespace myManga_App.ViewModels
             set { SetValue(SelectedMangaArchiveCacheObjectProperty, value); App.SelectedMangaArchiveCacheObject = value; }
         }
 
-        private ICollectionView MangaListView;
+        #region SelectedChapterObjectsProperty
+        private static readonly DependencyProperty SelectedChapterObjectsProperty = DependencyProperty.Register(
+            "SelectedChapterObjects",
+            typeof(IList<ChapterObject>),
+            typeof(HomeViewModel),
+            new PropertyMetadata(default(IList<ChapterObject>)));
+
+        public IList<ChapterObject> SelectedChapterObjects
+        {
+            get { return (IList<ChapterObject>)GetValue(SelectedChapterObjectsProperty); }
+            set { SetValue(SelectedChapterObjectsProperty, value); }
+        }
+        #endregion
         #endregion
 
         #region Search Filter
-        private static readonly DependencyProperty SearchFilterProperty = DependencyProperty.RegisterAttached(
+        private static readonly DependencyProperty SearchFilterProperty = DependencyProperty.Register(
             "SearchFilter",
             typeof(String),
             typeof(HomeViewModel),
@@ -75,6 +87,7 @@ namespace myManga_App.ViewModels
         { Messenger.Default.Send(SearchFilter.Trim(), "SearchRequest"); }
         #endregion
 
+        #region Downloading
         #region DownloadChapter
         private DelegateCommand<ChapterObject> _DownloadChapterCommand;
         public ICommand DownloadChapterCommand
@@ -82,6 +95,51 @@ namespace myManga_App.ViewModels
 
         private void DownloadChapter(ChapterObject ChapterObj)
         { App.DownloadManager.Download(SelectedMangaArchiveCacheObject.MangaObject, ChapterObj); }
+        #endregion
+
+        #region DownloadSelectedChapter
+        private DelegateCommand _DownloadSelectedChaptersCommand;
+        public ICommand DownloadSelectedChaptersCommand
+        { get { return _DownloadSelectedChaptersCommand ?? (_DownloadSelectedChaptersCommand = new DelegateCommand(DownloadSelectedChapters, CanDownloadSelectedChapters)); } }
+
+        private Boolean CanDownloadSelectedChapters()
+        {
+            if (this.SelectedChapterObjects == null)
+                return false;
+            return this.SelectedChapterObjects.Count(co => co.IsLocal(System.IO.Path.Combine(App.CHAPTER_ARCHIVE_DIRECTORY, SelectedMangaArchiveCacheObject.MangaObject.MangaFileName()), App.CHAPTER_ARCHIVE_EXTENSION)) > 0;
+        }
+
+        private void DownloadSelectedChapters()
+        {
+            foreach (ChapterObject ChapterObj in this.SelectedChapterObjects)
+                App.DownloadManager.Download(SelectedMangaArchiveCacheObject.MangaObject, ChapterObj);
+        }
+        #endregion
+
+        #region DownloadAllChapter
+        private DelegateCommand _DownloadAllChaptersCommand;
+        public ICommand DownloadAllChaptersCommand
+        { get { return _DownloadAllChaptersCommand ?? (_DownloadAllChaptersCommand = new DelegateCommand(DownloadAllChapters)); } }
+
+        private void DownloadAllChapters()
+        {
+            foreach (ChapterObject ChapterObj in SelectedMangaArchiveCacheObject.MangaObject.Chapters)
+                App.DownloadManager.Download(SelectedMangaArchiveCacheObject.MangaObject, ChapterObj);
+        }
+        #endregion
+
+        #region DownloadToLatestChapter
+        private DelegateCommand _DownloadToLatestChapterCommand;
+        public ICommand DownloadToLatestChapterCommand
+        { get { return _DownloadToLatestChapterCommand ?? (_DownloadToLatestChapterCommand = new DelegateCommand(DownloadToLatestChapter)); } }
+
+        private void DownloadToLatestChapter()
+        {
+            Int32 idx = SelectedMangaArchiveCacheObject.MangaObject.Chapters.IndexOf(SelectedMangaArchiveCacheObject.ResumeChapterObject);
+            foreach (ChapterObject ChapterObj in SelectedMangaArchiveCacheObject.MangaObject.Chapters.Skip(idx))
+                App.DownloadManager.Download(SelectedMangaArchiveCacheObject.MangaObject, ChapterObj);
+        }
+        #endregion
         #endregion
 
         #region ReadChapter
@@ -107,15 +165,20 @@ namespace myManga_App.ViewModels
         {
             String bookmark_chapter_path = Path.Combine(App.CHAPTER_ARCHIVE_DIRECTORY, this.SelectedMangaArchiveCacheObject.MangaObject.MangaFileName());
             MangaObject SelectedMangaObject = this.SelectedMangaArchiveCacheObject.MangaObject;
+
+            ChapterObject ResumeChapterObject = this.SelectedMangaArchiveCacheObject.ResumeChapterObject ?? SelectedMangaObject.Chapters.FirstOrDefault();
+
+            /*//
             ChapterObject ResumeChapterObject = (this.SelectedMangaArchiveCacheObject.BookmarkObject != null) ?
-                SelectedMangaObject.ChapterObjectOfBookmarkObject(this.SelectedMangaArchiveCacheObject.BookmarkObject) : 
+                SelectedMangaObject.ChapterObjectOfBookmarkObject(this.SelectedMangaArchiveCacheObject.BookmarkObject) :
                 SelectedMangaObject.Chapters.FirstOrDefault();
-            BookmarkObject SelectedBookmarkObject = this.SelectedMangaArchiveCacheObject.BookmarkObject ?? new myMangaSiteExtension.Objects.BookmarkObject()
+            //*/
+            BookmarkObject SelectedBookmarkObject = this.SelectedMangaArchiveCacheObject.BookmarkObject ?? new BookmarkObject()
             {
                 Volume = ResumeChapterObject.Volume,
                 Chapter = ResumeChapterObject.Chapter,
                 SubChapter = ResumeChapterObject.SubChapter,
-                Page = 1,
+                Page = ResumeChapterObject.Pages.First().PageNumber,
             };
             if (ResumeChapterObject.IsLocal(bookmark_chapter_path, App.CHAPTER_ARCHIVE_EXTENSION))
                 Messenger.Default.Send(new ReadChapterRequestObject(SelectedMangaObject, ResumeChapterObject), "ReadChapterRequest");
@@ -154,8 +217,9 @@ namespace myManga_App.ViewModels
         { return App.MangaArchiveCacheCollection.Count > 0; }
 
         private void RefreshMangaList()
-        { foreach (MangaArchiveCacheObject manga_archive in App.MangaArchiveCacheCollection)
-            App.DownloadManager.Download(manga_archive.MangaObject, new Core.IO.KeyValuePair<String, Object>("IsRefresh", true));
+        {
+            foreach (MangaArchiveCacheObject manga_archive in App.MangaArchiveCacheCollection)
+                App.DownloadManager.Download(manga_archive.MangaObject, new Core.IO.KeyValuePair<String, Object>("IsRefresh", true));
         }
         #endregion
 
@@ -225,7 +289,7 @@ namespace myManga_App.ViewModels
                 case WatcherChangeTypes.Deleted:
                     // Reselect nearest neighbor after delete
                     Int32 index = App.MangaArchiveCacheCollection.IndexOf(current_manga_archive);
-                    App.MangaArchiveCacheCollection.Remove(current_manga_archive);
+                    App.MangaArchiveCacheCollection.RemoveAt(index);
                     // If delete was the last item subtract from index
                     if (index >= App.MangaArchiveCacheCollection.Count) --index;
                     this.SelectedMangaArchiveCacheObject = App.MangaArchiveCacheCollection[index];
@@ -277,11 +341,17 @@ namespace myManga_App.ViewModels
             }
             if (!manga_archive_cache_object.Empty())
             {
-                MangaArchiveCacheObject existing_manga_archive_cache_object = App.MangaArchiveCacheCollection.FirstOrDefault(maco => maco.MangaObject.Name == manga_archive_cache_object.MangaObject.Name);
+                MangaArchiveCacheObject existing_manga_archive_cache_object = App.MangaArchiveCacheCollection.FirstOrDefault(maco => maco.MangaObject.Name.Equals(manga_archive_cache_object.MangaObject.Name));
                 if (existing_manga_archive_cache_object == null)
-                    App.MangaArchiveCacheCollection.Add(manga_archive_cache_object);
+                { App.MangaArchiveCacheCollection.Add(manga_archive_cache_object); }
                 else
+                {
                     existing_manga_archive_cache_object.Merge(manga_archive_cache_object);
+
+                    // Update SelectedMangaArchiveCacheObject
+                    if (this.SelectedMangaArchiveCacheObject.MangaObject.Name.Equals(existing_manga_archive_cache_object.MangaObject.Name))
+                    { this.SelectedMangaArchiveCacheObject = existing_manga_archive_cache_object; }
+                }
             }
             return manga_archive_cache_object;
         }
@@ -289,23 +359,27 @@ namespace myManga_App.ViewModels
         private void ConfigureSearchFilter()
         {
             this.MangaListView = CollectionViewSource.GetDefaultView(App.MangaArchiveCacheCollection);
-            MangaListView.Filter = mangaArchive =>
+            using (this.MangaListView.DeferRefresh())
             {
-                // Show all items if search is empty
-                if (String.IsNullOrWhiteSpace(SearchFilter)) return true;
-                return (mangaArchive as MangaArchiveCacheObject).MangaObject.IsNameMatch(SearchFilter);
-            };
-            if (MangaListView.CanGroup)
-            {
-                MangaListView.GroupDescriptions.Clear();
-                MangaListView.GroupDescriptions.Add(new PropertyGroupDescription("HasMoreToRead"));
-            }
-            if (MangaListView.CanSort)
-            {
-                MangaListView.SortDescriptions.Clear();
-                MangaListView.SortDescriptions.Add(new SortDescription("IsNew", ListSortDirection.Descending));
-                MangaListView.SortDescriptions.Add(new SortDescription("HasMoreToRead", ListSortDirection.Descending));
-                MangaListView.SortDescriptions.Add(new SortDescription("MangaObject.Name", ListSortDirection.Ascending));
+                MangaListView.Filter = mangaArchive =>
+                {
+                    // Show all items if search is empty
+                    if (String.IsNullOrWhiteSpace(SearchFilter)) return true;
+                    return (mangaArchive as MangaArchiveCacheObject).MangaObject.IsNameMatch(SearchFilter);
+                };
+                if (MangaListView.CanGroup)
+                {
+                    MangaListView.GroupDescriptions.Clear();
+                    MangaListView.GroupDescriptions.Add(new PropertyGroupDescription("IsNew"));
+                    MangaListView.GroupDescriptions.Add(new PropertyGroupDescription("HasMoreToRead"));
+                }
+                if (MangaListView.CanSort)
+                {
+                    MangaListView.SortDescriptions.Clear();
+                    MangaListView.SortDescriptions.Add(new SortDescription("IsNew", ListSortDirection.Descending));
+                    MangaListView.SortDescriptions.Add(new SortDescription("HasMoreToRead", ListSortDirection.Descending));
+                    MangaListView.SortDescriptions.Add(new SortDescription("MangaObject.Name", ListSortDirection.Ascending));
+                }
             }
         }
 

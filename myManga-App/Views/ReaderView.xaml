@@ -104,7 +104,7 @@
             Width="{Binding ActualWidth, ElementName=PageListDropdown, Mode=OneWay}"
 			PlacementTarget="{Binding ElementName=PageListDropdown, Mode=OneWay}"
             PlacementRectangle="{Binding ElementName=PageListDropdown, Mode=OneWay}"
-			IsOpen="{Binding IsChecked, ElementName=PageListDropdown, Mode=OneWay}"
+			IsOpen="{Binding IsChecked, ElementName=PageListDropdown}"
             PopupAnimation="Fade"
             Grid.ColumnSpan="3" 
             StaysOpen="False">

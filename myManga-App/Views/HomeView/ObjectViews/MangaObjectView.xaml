@@ -32,7 +32,7 @@
         Background="{DynamicResource window-background}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="3*"/>
-            <ColumnDefinition MinWidth="100" MaxWidth="300"/>
+            <ColumnDefinition Width="250"/>
         </Grid.ColumnDefinitions>
         <Grid Margin="5,0,0,0">
             <Grid.RowDefinitions>
@@ -145,32 +145,18 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition/>
             </Grid.RowDefinitions>
-            <Grid TextBlock.FontWeight="Bold" x:Name="DownloadButtonGrid">
+            <Grid x:Name="DownloadButtonGrid" TextBlock.FontWeight="Bold" TextElement.FontSize="16">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
                 <Button:MetroButton 
                     HorizontalContentAlignment="Left"
-                    x:Name="DownloadSelected"
-                    Command="{Binding Path=DataContext.DownloadSelected, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl, AncestorLevel=2}}">
-                    <Button:MetroButton.Content>
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock FontFamily="{DynamicResource OpenIconic}" Text="{StaticResource oi-cloud-download}"/>
-                            <Separator Width="10" Height="Auto" RenderTransformOrigin="0.5,0.5">
-                                <Separator.RenderTransform>
-                                    <TransformGroup>
-                                        <ScaleTransform/>
-                                        <SkewTransform/>
-                                        <RotateTransform Angle="90"/>
-                                        <TranslateTransform/>
-                                    </TransformGroup>
-                                </Separator.RenderTransform>
-                            </Separator>
-                            <TextBlock Text="Download Selected"/>
-                        </StackPanel>
-                    </Button:MetroButton.Content>
-                </Button:MetroButton>
+                    x:Name="DownloadSelectedChapters"
+                    FontFamily="{DynamicResource OpenIconic}"
+                    Content="{DynamicResource oi-cloud-download}"
+                    ContentStringFormat="{}{0} Download Selected"
+                    Command="{Binding Path=DataContext.DownloadSelectedChaptersCommand, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl, AncestorLevel=2}}"/>
                 <Button:MetroToggleButton
                     x:Name="DownloadPopupDropdown"
                     Grid.Column="1"
@@ -191,47 +177,19 @@
                         BorderBrush="{DynamicResource window-theme-primary}">
                         <StackPanel Orientation="Vertical">
                             <Button:MetroButton
-                                x:Name="DownloadAll"
+                                x:Name="DownloadAllChapters"
                                 HorizontalContentAlignment="Left"
-                                Command="{Binding Path=DataContext.DownloadAll, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl, AncestorLevel=2}}">
-                                <Button:MetroButton.Content>
-                                    <StackPanel Orientation="Horizontal">
-                                        <TextBlock FontFamily="{DynamicResource OpenIconic}" Text="{StaticResource oi-cloud-download}"/>
-                                        <Separator Width="10" Height="Auto" RenderTransformOrigin="0.5,0.5">
-                                            <Separator.RenderTransform>
-                                                <TransformGroup>
-                                                    <ScaleTransform/>
-                                                    <SkewTransform/>
-                                                    <RotateTransform Angle="90"/>
-                                                    <TranslateTransform/>
-                                                </TransformGroup>
-                                            </Separator.RenderTransform>
-                                        </Separator>
-                                        <TextBlock Text="Download All"/>
-                                    </StackPanel>
-                                </Button:MetroButton.Content>
-                            </Button:MetroButton>
+                                FontFamily="{DynamicResource OpenIconic}"
+                                Content="{DynamicResource oi-cloud-download}"
+                                ContentStringFormat="{}{0} Download All"
+                                Command="{Binding Path=DataContext.DownloadAllChaptersCommand, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl, AncestorLevel=2}}"/>
                             <Button:MetroButton
-                                x:Name="DownloadToLatest"
+                                x:Name="DownloadToLatestChapter"
                                 HorizontalContentAlignment="Left"
-                                Command="{Binding Path=DataContext.DownloadToLatest, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl, AncestorLevel=2}}">
-                                <Button:MetroButton.Content>
-                                    <StackPanel Orientation="Horizontal">
-                                        <TextBlock FontFamily="{DynamicResource OpenIconic}" Text="{StaticResource oi-cloud-download}"/>
-                                        <Separator Width="10" Height="Auto" RenderTransformOrigin="0.5,0.5">
-                                            <Separator.RenderTransform>
-                                                <TransformGroup>
-                                                    <ScaleTransform/>
-                                                    <SkewTransform/>
-                                                    <RotateTransform Angle="90"/>
-                                                    <TranslateTransform/>
-                                                </TransformGroup>
-                                            </Separator.RenderTransform>
-                                        </Separator>
-                                        <TextBlock Text="Download To Latest"/>
-                                    </StackPanel>
-                                </Button:MetroButton.Content>
-                            </Button:MetroButton>
+                                FontFamily="{DynamicResource OpenIconic}"
+                                Content="{DynamicResource oi-cloud-download}"
+                                ContentStringFormat="{}{0} Download To Latest Chapter"
+                                Command="{Binding Path=DataContext.DownloadToLatestChapterCommand, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl, AncestorLevel=2}}"/>
                         </StackPanel>
                     </Border>
                 </Popup>
@@ -240,10 +198,8 @@
                 Grid.Row="1"
                 x:Name="ChapterListBox"
 			    ItemsSource="{Binding MangaObject.Chapters}"
-                SelectedItem="{Binding ResumeChapterObject, Mode=OneWay}"
-                SelectedIndex="0"
+                SelectedValue="{Binding Path=DataContext.SelectedChapterObjects, Mode=OneWayToSource, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl, AncestorLevel=2}}"
 			    ItemContainerStyle="{DynamicResource HomeView_List_ChapterListBoxItem}"
-			    Visibility="{Binding HasItems, Converter={StaticResource BooleanToVisibilityConverter}, RelativeSource={RelativeSource Self}}" 
 			    ScrollViewer.HorizontalScrollBarVisibility="Disabled" 
                 HorizontalContentAlignment="Stretch"
                 SelectionMode="Extended"/>

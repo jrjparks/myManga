@@ -6,6 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
     xmlns:Button="clr-namespace:myManga_App.Resources.Theme.Buttons"
     xmlns:Converters="clr-namespace:myManga_App.Converters"
+    xmlns:Selectors="clr-namespace:myManga_App.Controls.Selectors"
     mc:Ignorable="d" 
     d:DesignHeight="480" d:DesignWidth="640"
     x:Name="MangaArchiveCacheObject">
@@ -184,11 +185,11 @@
                     </Border>
                 </Popup>
             </Grid>
-            <ListBox
+            <Selectors:ListBox 
                 Grid.Row="1"
                 x:Name="ChapterListBox"
 			    ItemsSource="{Binding MangaObject.Chapters}"
-                SelectedValue="{Binding Path=DataContext.SelectedChapterObjects, Mode=OneWayToSource, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl, AncestorLevel=2}}"
+                BindableSelectedItems="{Binding Path=DataContext.SelectedChapterObjects, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl, AncestorLevel=2}}"
 			    ItemContainerStyle="{DynamicResource HomeView_List_ChapterListBoxItem}"
 			    ScrollViewer.HorizontalScrollBarVisibility="Disabled" 
                 HorizontalContentAlignment="Stretch"

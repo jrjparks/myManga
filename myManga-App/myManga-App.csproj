@@ -90,6 +90,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Controls\InputBindingsBehavior.cs" />
+    <Compile Include="Controls\Selectors\ListBox.cs" />
     <Compile Include="Converters\BooleanInverter.cs" />
     <Compile Include="Converters\CommandParameterStringFormat.cs" />
     <Compile Include="Converters\EnumToBooleanConverter.cs" />
@@ -314,6 +315,7 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Controls\Attached Properties\" />
     <Folder Include="Properties\DataSources\" />
   </ItemGroup>
   <ItemGroup>

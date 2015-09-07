@@ -54,20 +54,10 @@
 					Grid.Row="1" 
 					Grid.RowSpan="8"
 					Margin="0,0,3,0">
-                    <Image x:Name="CoverImage" Source="{Binding Path=MangaObject, Converter={StaticResource LoadImageFromMangaArchive}}">
-                        <Image.ContextMenu>
-                            <ContextMenu>
-                                <MenuItem IsEnabled="False" Header="Change Cover Image">
-                                    <MenuItem.Icon>
-                                        <TextBlock
-                                            Text="{DynamicResource oi-image}" 
-                                            FontFamily="{DynamicResource OpenIconic}" 
-                                            HorizontalAlignment="Center" 
-                                            VerticalAlignment="Center"/>
-                                    </MenuItem.Icon>
-                                </MenuItem>
-                            </ContextMenu>
-                        </Image.ContextMenu>
+                    <Image x:Name="CoverImage" Source="{Binding Path=MangaObject, Converter={StaticResource LoadImageFromMangaArchive}, ConverterParameter=200, FallbackValue=/myManga;component/Resources/Images/FallbackMangaIcon.png}">
+                        <Image.CacheMode>
+                            <BitmapCache/>
+                        </Image.CacheMode>
                     </Image>
                     <StackPanel
                         VerticalAlignment="Bottom"

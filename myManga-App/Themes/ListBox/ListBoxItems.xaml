@@ -129,7 +129,11 @@
                                 Margin="6,2" 
                                 Width="48" 
                                 Height="72"
-                                Source="{Binding MangaObject, Converter={StaticResource LoadImageFromMangaArchive}, FallbackValue=/myManga;component/Resources/Images/FallbackMangaIcon.png}"/>
+                                Source="{Binding MangaObject, Converter={StaticResource LoadImageFromMangaArchive}, ConverterParameter=48, FallbackValue=/myManga;component/Resources/Images/FallbackMangaIcon.png}">
+                                <Image.CacheMode>
+                                    <BitmapCache/>
+                                </Image.CacheMode>
+                            </Image>
                             <TextBlock Grid.Column="1" Grid.Row="0" VerticalAlignment="Center" Foreground="{StaticResource text-dark}" FontWeight="Bold" FontSize="14" TextTrimming="CharacterEllipsis" Text="{Binding MangaObject.Name, FallbackValue=No-Name}"/>
                             <TextBlock Grid.Column="1" Grid.Row="1" VerticalAlignment="Center" Foreground="{StaticResource text-muted}" TextTrimming="CharacterEllipsis" Text="{Binding MangaObject.Locations, Converter={StaticResource LocationListToCSV}, Mode=OneWay, FallbackValue=No-Location}"/>
                             <TextBlock Grid.Column="1" Grid.Row="2" VerticalAlignment="Center" Foreground="{StaticResource text-muted}" TextTrimming="CharacterEllipsis" Text="{Binding MangaObject.DatabaseLocations, Converter={StaticResource LocationListToCSV}, Mode=OneWay, FallbackValue=No-Database}"/>
@@ -200,7 +204,11 @@
                                 Width="150"
                                 Height="225"
                                 Stretch="UniformToFill"
-                                Source="{Binding MangaObject, Converter={StaticResource LoadImageFromMangaArchive}, FallbackValue=/myManga;component/Resources/Images/FallbackMangaIcon.png}" ClipToBounds="True"/>
+                                Source="{Binding MangaObject, Converter={StaticResource LoadImageFromMangaArchive}, ConverterParameter=150, FallbackValue=/myManga;component/Resources/Images/FallbackMangaIcon.png}" ClipToBounds="True">
+                                <Image.CacheMode>
+                                    <BitmapCache/>
+                                </Image.CacheMode>
+                            </Image>
 
                             <StackPanel
                                 VerticalAlignment="Bottom"

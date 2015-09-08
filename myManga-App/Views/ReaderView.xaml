@@ -98,7 +98,7 @@
                 </StackPanel>
             </Button:MetroToggleButton.Content>
         </Button:MetroToggleButton>
-        <Popup
+        <Controls:DockingPopup
             x:Name="PageListPopup"
             AllowsTransparency="True"
             Width="{Binding ActualWidth, ElementName=PageListDropdown, Mode=OneWay}"
@@ -160,7 +160,7 @@
                         Command="{Binding ResetPageZoomCommand}"/>
                 </Grid>
             </StackPanel>
-        </Popup>
+        </Controls:DockingPopup>
         <Button:MetroButton
             Grid.Column="0"
             Grid.Row="1"

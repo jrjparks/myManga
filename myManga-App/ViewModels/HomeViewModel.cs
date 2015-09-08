@@ -7,6 +7,7 @@ using myManga_App.Objects.UserInterface;
 using myMangaSiteExtension.Objects;
 using myMangaSiteExtension.Utilities;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
@@ -31,20 +32,6 @@ namespace myManga_App.ViewModels
             get { return GetValue(SelectedMangaArchiveCacheObjectProperty) as MangaArchiveCacheObject; }
             set { SetValue(SelectedMangaArchiveCacheObjectProperty, value); App.SelectedMangaArchiveCacheObject = value; }
         }
-
-        #region SelectedChapterObjectsProperty
-        private static readonly DependencyProperty SelectedChapterObjectsProperty = DependencyProperty.Register(
-            "SelectedChapterObjects",
-            typeof(IList<ChapterObject>),
-            typeof(HomeViewModel),
-            new PropertyMetadata(default(IList<ChapterObject>)));
-
-        public IList<ChapterObject> SelectedChapterObjects
-        {
-            get { return (IList<ChapterObject>)GetValue(SelectedChapterObjectsProperty); }
-            set { SetValue(SelectedChapterObjectsProperty, value); }
-        }
-        #endregion
         #endregion
 
         #region Search Filter
@@ -94,25 +81,22 @@ namespace myManga_App.ViewModels
         { get { return _DownloadChapterCommand ?? (_DownloadChapterCommand = new DelegateCommand<ChapterObject>(DownloadChapter)); } }
 
         private void DownloadChapter(ChapterObject ChapterObj)
-        { App.DownloadManager.Download(SelectedMangaArchiveCacheObject.MangaObject, ChapterObj); }
+        {
+            MangaObject manga_object = this.SelectedMangaArchiveCacheObject.MangaObject;
+            if (!ChapterObj.IsLocal(System.IO.Path.Combine(App.CHAPTER_ARCHIVE_DIRECTORY, manga_object.MangaFileName()), App.CHAPTER_ARCHIVE_EXTENSION))
+                App.DownloadManager.Download(SelectedMangaArchiveCacheObject.MangaObject, ChapterObj);
+        }
         #endregion
 
         #region DownloadSelectedChapter
-        private DelegateCommand _DownloadSelectedChaptersCommand;
+        private DelegateCommand<IList> _DownloadSelectedChaptersCommand;
         public ICommand DownloadSelectedChaptersCommand
-        { get { return _DownloadSelectedChaptersCommand ?? (_DownloadSelectedChaptersCommand = new DelegateCommand(DownloadSelectedChapters, CanDownloadSelectedChapters)); } }
+        { get { return _DownloadSelectedChaptersCommand ?? (_DownloadSelectedChaptersCommand = new DelegateCommand<IList>(DownloadSelectedChapters)); } }
 
-        private Boolean CanDownloadSelectedChapters()
+        private void DownloadSelectedChapters(IList SelectedChapters)
         {
-            if (this.SelectedChapterObjects == null)
-                return false;
-            return this.SelectedChapterObjects.Count(co => co.IsLocal(System.IO.Path.Combine(App.CHAPTER_ARCHIVE_DIRECTORY, SelectedMangaArchiveCacheObject.MangaObject.MangaFileName()), App.CHAPTER_ARCHIVE_EXTENSION)) > 0;
-        }
-
-        private void DownloadSelectedChapters()
-        {
-            foreach (ChapterObject ChapterObj in this.SelectedChapterObjects)
-                App.DownloadManager.Download(SelectedMangaArchiveCacheObject.MangaObject, ChapterObj);
+            foreach (ChapterObject ChapterObj in SelectedChapters)
+            { DownloadChapter(ChapterObj); }
         }
         #endregion
 
@@ -124,7 +108,7 @@ namespace myManga_App.ViewModels
         private void DownloadAllChapters()
         {
             foreach (ChapterObject ChapterObj in SelectedMangaArchiveCacheObject.MangaObject.Chapters)
-                App.DownloadManager.Download(SelectedMangaArchiveCacheObject.MangaObject, ChapterObj);
+            { DownloadChapter(ChapterObj); }
         }
         #endregion
 
@@ -137,7 +121,7 @@ namespace myManga_App.ViewModels
         {
             Int32 idx = SelectedMangaArchiveCacheObject.MangaObject.Chapters.IndexOf(SelectedMangaArchiveCacheObject.ResumeChapterObject);
             foreach (ChapterObject ChapterObj in SelectedMangaArchiveCacheObject.MangaObject.Chapters.Skip(idx))
-                App.DownloadManager.Download(SelectedMangaArchiveCacheObject.MangaObject, ChapterObj);
+            { DownloadChapter(ChapterObj); }
         }
         #endregion
         #endregion

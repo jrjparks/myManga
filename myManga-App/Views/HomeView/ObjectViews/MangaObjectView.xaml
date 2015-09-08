@@ -6,7 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
     xmlns:Button="clr-namespace:myManga_App.Resources.Theme.Buttons"
     xmlns:Converters="clr-namespace:myManga_App.Converters"
-    xmlns:Selectors="clr-namespace:myManga_App.Controls.Selectors"
+    xmlns:Controls="clr-namespace:myManga_App.Controls"
     mc:Ignorable="d" 
     d:DesignHeight="480" d:DesignWidth="640"
     x:Name="MangaArchiveCacheObject">
@@ -141,13 +141,9 @@
                     <ColumnDefinition/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
-                <Button:MetroButton 
-                    HorizontalContentAlignment="Left"
-                    x:Name="DownloadSelectedChapters"
-                    FontFamily="{DynamicResource OpenIconic}"
-                    Content="{DynamicResource oi-cloud-download}"
-                    ContentStringFormat="{}{0} Download Selected"
-                    Command="{Binding Path=DataContext.DownloadSelectedChaptersCommand, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl, AncestorLevel=2}}"/>
+                <TextBlock
+                    VerticalAlignment="Center"
+                    Text="Download Options"/>
                 <Button:MetroToggleButton
                     x:Name="DownloadPopupDropdown"
                     Grid.Column="1"
@@ -155,7 +151,7 @@
                     Content="{DynamicResource oi-chevron-bottom}"
                     Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"
                     IsHitTestVisible="{Binding IsOpen, Converter={StaticResource BooleanInverter}, ElementName=DownloadPopup, Mode=OneWay}"/>
-                <Popup
+                <Controls:DockingPopup
                     x:Name="DownloadPopup"
                     PlacementTarget="{Binding ElementName=DownloadButtonGrid, Mode=OneWay}"
                     Width="{Binding ActualWidth, ElementName=DownloadButtonGrid, Mode=OneWay}"
@@ -167,6 +163,14 @@
                         BorderThickness="1" 
                         BorderBrush="{DynamicResource window-theme-primary}">
                         <StackPanel Orientation="Vertical">
+                            <Button:MetroButton 
+                                HorizontalContentAlignment="Left"
+                                x:Name="DownloadSelectedChapters"
+                                FontFamily="{DynamicResource OpenIconic}"
+                                Content="{DynamicResource oi-cloud-download}"
+                                ContentStringFormat="{}{0} Download Selected"
+                                Command="{Binding Path=DataContext.DownloadSelectedChaptersCommand, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl, AncestorLevel=2}}"
+                                CommandParameter="{Binding BindableSelectedItems, Mode=OneWay, ElementName=ChapterListBox}"/>
                             <Button:MetroButton
                                 x:Name="DownloadAllChapters"
                                 HorizontalContentAlignment="Left"
@@ -183,17 +187,18 @@
                                 Command="{Binding Path=DataContext.DownloadToLatestChapterCommand, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl, AncestorLevel=2}}"/>
                         </StackPanel>
                     </Border>
-                </Popup>
+                </Controls:DockingPopup>
             </Grid>
-            <Selectors:ListBox 
+            <ListBox
                 Grid.Row="1"
                 x:Name="ChapterListBox"
 			    ItemsSource="{Binding MangaObject.Chapters}"
-                BindableSelectedItems="{Binding Path=DataContext.SelectedChapterObjects, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl, AncestorLevel=2}}"
-			    ItemContainerStyle="{DynamicResource HomeView_List_ChapterListBoxItem}"
+                ItemContainerStyle="{DynamicResource HomeView_List_ChapterListBoxItem}"
 			    ScrollViewer.HorizontalScrollBarVisibility="Disabled" 
                 HorizontalContentAlignment="Stretch"
-                SelectionMode="Extended"/>
+                SelectionMode="Extended" 
+                Background="{x:Null}" BorderBrush="{x:Null}" BorderThickness="0"
+                Controls:ListBoxExtentions.HasBindableSelectedItems="True"/>
         </Grid>
     </Grid>
 </UserControl>

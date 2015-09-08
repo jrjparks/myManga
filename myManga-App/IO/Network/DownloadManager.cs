@@ -548,6 +548,7 @@ namespace myManga_App.IO.Network
             String save_path;
             if (ChapterObject != null) { save_path = Path.Combine(App.CHAPTER_ARCHIVE_DIRECTORY, MangaObject.MangaFileName(), ChapterObject.ChapterArchiveName(App.CHAPTER_ARCHIVE_EXTENSION)); }
             else { save_path = Path.Combine(App.MANGA_ARCHIVE_DIRECTORY, MangaObject.MangaArchiveName(App.MANGA_ARCHIVE_EXTENSION)); }
+            Path.GetDirectoryName(save_path).SafeFolder();
             using (File.Open(save_path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite))
             { /* Touch File */ }
         }

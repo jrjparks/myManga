@@ -1,4 +1,6 @@
 # myManga
+
+[![Join the chat at https://gitter.im/BakaBox/myManga](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/BakaBox/myManga?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 Consolidates information from multiple sites.
 
 ### 3rd Party DLLs

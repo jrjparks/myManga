@@ -117,13 +117,16 @@ namespace myManga_App.ViewModels
                 this.SelectedPageObject = this.ChapterObject.PageObjectOfBookmarkObject(this.BookmarkObject);
             }
             else { this.ContinueReading = true; OpenChapter(this.MangaObject, ChapterObjectPreloadDictionary[this.NextArchiveFilePath]); }
-            //this.SelectedPageObject = this.ChapterObject.PageObjectOfBookmarkObject(this.BookmarkObject);
         }
         private Boolean CanNextPage()
         {
-            Boolean n_page = this.BookmarkObject.Page < this.ChapterObject.Pages.Last().PageNumber;
-            if (this.NextArchiveFilePath != null && File.Exists(this.NextArchiveFilePath)) n_page = true;
-            return n_page;
+            try
+            {
+                Boolean n_page = this.BookmarkObject.Page < this.ChapterObject.Pages.Last().PageNumber;
+                if (this.NextArchiveFilePath != null && File.Exists(this.NextArchiveFilePath)) n_page = true;
+                return n_page;
+            }
+            catch { return false; }
         }
         #endregion
 
@@ -140,13 +143,16 @@ namespace myManga_App.ViewModels
                 this.SelectedPageObject = this.ChapterObject.PageObjectOfBookmarkObject(this.BookmarkObject);
             }
             else { this.ContinueReading = true; OpenChapter(this.MangaObject, ChapterObjectPreloadDictionary[this.PrevArchiveFilePath]); }
-            //this.SelectedPageObject = this.ChapterObject.PageObjectOfBookmarkObject(this.BookmarkObject);
         }
         private Boolean CanPrevPage()
         {
-            Boolean p_page = this.BookmarkObject.Page > this.ChapterObject.Pages.First().PageNumber;
-            if (this.PrevArchiveFilePath != null && File.Exists(this.PrevArchiveFilePath)) p_page = true;
-            return p_page;
+            try
+            {
+                Boolean p_page = this.BookmarkObject.Page > this.ChapterObject.Pages.First().PageNumber;
+                if (this.PrevArchiveFilePath != null && File.Exists(this.PrevArchiveFilePath)) p_page = true;
+                return p_page;
+            }
+            catch { return false; }
         }
         #endregion
 
@@ -256,7 +262,7 @@ namespace myManga_App.ViewModels
                 if (!String.Equals(ChapterObjectPreload.Key, null) && !File.Exists(ChapterObjectPreload.Key))
                 {
                     using (File.Open(ChapterObjectPreload.Key, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite))
-                    { /* Touch Chapter File*/ }
+                    { /* Touch Chapter File */ }
                     App.DownloadManager.Download(this.MangaObject, ChapterObjectPreload.Value);
                 }
         }

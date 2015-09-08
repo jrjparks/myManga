@@ -12,11 +12,13 @@ namespace myManga_App.Controls
     [DebuggerStepThrough]
     public class InputBindingsBehavior
     {
+        private static Boolean EventRegistered = false;
+
         public static readonly DependencyProperty HasInputBindingPrecedenceProperty =
             DependencyProperty.RegisterAttached(
-            "HasInputBindingPrecedence", 
-            typeof(Boolean), 
-            typeof(InputBindingsBehavior), 
+            "HasInputBindingPrecedence",
+            typeof(Boolean),
+            typeof(InputBindingsBehavior),
             new UIPropertyMetadata(false, OnTakesInputBindingPrecedenceChanged));
 
         public static Boolean GetHasInputBindingPrecedence(UIElement element)
@@ -26,7 +28,10 @@ namespace myManga_App.Controls
         { element.SetValue(HasInputBindingPrecedenceProperty, value); }
 
         private static void OnTakesInputBindingPrecedenceChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        { (d as UIElement).PreviewKeyDown += new KeyEventHandler(InputBindingsBehavior_PreviewKeyDown); }
+        {
+            if (!EventRegistered)
+            { EventRegistered = true; (d as UIElement).PreviewKeyDown += new KeyEventHandler(InputBindingsBehavior_PreviewKeyDown); }
+        }
 
         private static void InputBindingsBehavior_PreviewKeyDown(object sender, KeyEventArgs e)
         {

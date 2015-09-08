@@ -521,13 +521,36 @@ namespace myManga_App.IO.Network
 
         #region Download Methods
         public void Download(MangaObject MangaObject, params Core.IO.KeyValuePair<String, Object>[] Args)
-        { MangaObjectWorker.RunWork(SmartThreadPool, MangaObject, Args: Args); OnStatusChange(); }
+        {
+            MangaObjectWorker.RunWork(SmartThreadPool, MangaObject, Args: Args);
+            TouchFile(MangaObject: MangaObject);
+            OnStatusChange();
+        }
         public void Download(MangaObject MangaObject, ChapterObject ChapterObject, params Core.IO.KeyValuePair<String, Object>[] Args)
-        { ChapterObjectWorker.RunWork(SmartThreadPool, new ChapterObjectDownloadRequest(MangaObject, ChapterObject), Args: Args); OnStatusChange(); }
+        {
+            ChapterObjectWorker.RunWork(SmartThreadPool, new ChapterObjectDownloadRequest(MangaObject, ChapterObject), Args: Args);
+            TouchFile(MangaObject: MangaObject, ChapterObject: ChapterObject);
+            OnStatusChange();
+        }
         public void Download(MangaObject MangaObject, ChapterObject ChapterObject, PageObject PageObject, params Core.IO.KeyValuePair<String, Object>[] Args)
-        { PageObjectWorker.RunWork(SmartThreadPool, new PageObjectDownloadRequest(MangaObject, ChapterObject, PageObject), Args: Args); OnStatusChange(); }
+        {
+            PageObjectWorker.RunWork(SmartThreadPool, new PageObjectDownloadRequest(MangaObject, ChapterObject, PageObject), Args: Args);
+            OnStatusChange();
+        }
         public void Download(String url, String local_path, String referer = null, String filename = null, params Core.IO.KeyValuePair<String, Object>[] Args)
-        { ImageWorker.RunWork(SmartThreadPool, new ImageDownloadRequest(url, local_path, referer, filename), Args: Args); OnStatusChange(); }
+        {
+            ImageWorker.RunWork(SmartThreadPool, new ImageDownloadRequest(url, local_path, referer, filename), Args: Args);
+            OnStatusChange();
+        }
+
+        private void TouchFile(MangaObject MangaObject, ChapterObject ChapterObject = null)
+        {
+            String save_path;
+            if (ChapterObject != null) { save_path = Path.Combine(App.CHAPTER_ARCHIVE_DIRECTORY, MangaObject.MangaFileName(), ChapterObject.ChapterArchiveName(App.CHAPTER_ARCHIVE_EXTENSION)); }
+            else { save_path = Path.Combine(App.MANGA_ARCHIVE_DIRECTORY, MangaObject.MangaArchiveName(App.MANGA_ARCHIVE_EXTENSION)); }
+            using (File.Open(save_path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite))
+            { /* Touch File */ }
+        }
         #endregion
 
         #region Search Methods
@@ -563,12 +586,17 @@ namespace myManga_App.IO.Network
             if (e.Success)
             {
                 String save_path = Path.Combine(App.CHAPTER_ARCHIVE_DIRECTORY, e.Result.MangaObject.MangaFileName(), e.Result.ChapterObject.ChapterArchiveName(App.CHAPTER_ARCHIVE_EXTENSION));
-                App.ZipStorage.Write(save_path, e.Result.ChapterObject.GetType().Name, e.Result.ChapterObject.Serialize(SaveType: App.UserConfig.SaveType));
-                PageObjectWorker.RunWork(
-                    SmartThreadPool,
-                    from PageObject page_object in e.Result.ChapterObject.Pages select new PageObjectDownloadRequest(e.Result.MangaObject, e.Result.ChapterObject, page_object),
-                    Enumerable.Repeat<Guid?>(e.Id, e.Result.ChapterObject.Pages.Count),
-                    new Core.IO.KeyValuePair<String, Object>(String.Format("RETRY-{0}", e.Id), 0));
+                if (e.Result.ChapterObject.Pages.Count.Equals(0))
+                { File.Delete(save_path); } /* Delete Chapter file if there are no pages. */
+                else
+                {
+                    App.ZipStorage.Write(save_path, e.Result.ChapterObject.GetType().Name, e.Result.ChapterObject.Serialize(SaveType: App.UserConfig.SaveType));
+                    PageObjectWorker.RunWork(
+                        SmartThreadPool,
+                        from PageObject page_object in e.Result.ChapterObject.Pages select new PageObjectDownloadRequest(e.Result.MangaObject, e.Result.ChapterObject, page_object),
+                        Enumerable.Repeat<Guid?>(e.Id, e.Result.ChapterObject.Pages.Count),
+                        new Core.IO.KeyValuePair<String, Object>(String.Format("RETRY-{0}", e.Id), 0));
+                }
             }
             else if (RETRY_index >= 0 && (Int32)e.Args[RETRY_index].Value < RETRY_COUNT)
             {

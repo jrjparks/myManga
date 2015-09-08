@@ -1,5 +1,6 @@
 ﻿using myMangaSiteExtension.Objects;
 using myMangaSiteExtension.Utilities;
+using myMangaSiteExtension.Collections;
 using System;
 using System.Windows;
 
@@ -7,12 +8,14 @@ namespace myManga_App.Objects.Cache
 {
     public sealed class MangaArchiveCacheObject : DependencyObject
     {
+        #region DataObjects
         #region MangaObjectProperty
         private static readonly DependencyProperty MangaObjectProperty = DependencyProperty.RegisterAttached(
             "MangaObject",
             typeof(MangaObject),
             typeof(MangaArchiveCacheObject),
-            new PropertyMetadata(Property_Updated));
+            new PropertyMetadata(OnDataObjectChanged));
+
         public MangaObject MangaObject
         {
             get { return (MangaObject)GetValue(MangaObjectProperty); }
@@ -25,32 +28,50 @@ namespace myManga_App.Objects.Cache
             "BookmarkObject",
             typeof(BookmarkObject),
             typeof(MangaArchiveCacheObject),
-            new PropertyMetadata(OnBookmarkObjectChanged));
-        private static void OnBookmarkObjectChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            MangaArchiveCacheObject _this = (d as MangaArchiveCacheObject);
-            _this.LastUpdate = DateTime.Now;
-            if (!_this.Empty())
-            {
-                if (BookmarkObject.Equals(_this.BookmarkObject, null))
-                { d.SetValue(ResumeChapterObjectPropertyKey, null); }
-                else
-                { d.SetValue(ResumeChapterObjectPropertyKey, _this.MangaObject.ChapterObjectOfBookmarkObject(_this.BookmarkObject)); }
-
-                if (ChapterObject.Equals(_this.ResumeChapterObject, null))
-                { d.SetValue(HasMoreToReadPropertyKey, false); }
-                else
-                {
-                    Int32 ResumeChapterObjectIndex = _this.MangaObject.IndexOfChapterObject(_this.ResumeChapterObject) + 1;
-                    d.SetValue(HasMoreToReadPropertyKey, ResumeChapterObjectIndex < _this.MangaObject.Chapters.Count);
-                }
-            }
-        }
+            new PropertyMetadata(OnDataObjectChanged));
 
         public BookmarkObject BookmarkObject
         {
             get { return (BookmarkObject)GetValue(BookmarkObjectProperty); }
             set { SetValue(BookmarkObjectProperty, value); }
+        }
+        #endregion
+
+        private static void OnDataObjectChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            MangaArchiveCacheObject _this = (d as MangaArchiveCacheObject);
+            _this.LastUpdate = DateTime.Now;
+            if (!_this.Empty())
+            {
+                _this.SetValue(IsNewPropertyKey, false);
+                _this.SetValue(ChapterProgressPropertyKey, 0);
+                _this.SetValue(ChapterProgressMaximumPropertyKey, _this.MangaObject.Chapters.Count);
+
+                if (BookmarkObject.Equals(_this.BookmarkObject, null))  // Does a bookmark exist yet? No? Then this is a newly added manga.
+                {
+                    _this.SetValue(ResumeChapterObjectPropertyKey, null);
+                    _this.SetValue(IsNewPropertyKey, true);
+                    _this.SetValue(HasMoreToReadPropertyKey, true);
+                }
+                else   // Yes? The set the resume data.
+                { _this.SetValue(ResumeChapterObjectPropertyKey, _this.MangaObject.ChapterObjectOfBookmarkObject(_this.BookmarkObject)); }
+
+                if (ChapterObject.Equals(_this.ResumeChapterObject, null))
+                { _this.SetValue(HasMoreToReadPropertyKey, false); }
+                else
+                {
+                    Int32 ResumeChapterObjectIndex = _this.MangaObject.IndexOfChapterObject(_this.ResumeChapterObject) + 1;
+                    _this.SetValue(HasMoreToReadPropertyKey, ResumeChapterObjectIndex < _this.MangaObject.Chapters.Count);
+                    _this.SetValue(ChapterProgressPropertyKey, ResumeChapterObjectIndex);
+                }
+            }
+            else
+            {
+                _this.SetValue(IsNewPropertyKey, true);
+                _this.SetValue(HasMoreToReadPropertyKey, true);
+                _this.SetValue(ChapterProgressPropertyKey, 0);
+                _this.SetValue(ChapterProgressMaximumPropertyKey, 1);
+            }
         }
         #endregion
 
@@ -76,6 +97,40 @@ namespace myManga_App.Objects.Cache
 
         public Boolean HasMoreToRead
         { get { return (Boolean)GetValue(HasMoreToReadProperty); } }
+        #endregion
+
+        #region IsNewProperty
+        private static readonly DependencyPropertyKey IsNewPropertyKey = DependencyProperty.RegisterAttachedReadOnly(
+            "IsNew",
+            typeof(Boolean),
+            typeof(MangaArchiveCacheObject),
+            new PropertyMetadata(Property_Updated));
+        private static readonly DependencyProperty IsNewProperty = IsNewPropertyKey.DependencyProperty;
+
+        public Boolean IsNew
+        { get { return (Boolean)GetValue(IsNewProperty); } }
+        #endregion
+
+        #region ChapterProgressProperty
+        private static readonly DependencyPropertyKey ChapterProgressPropertyKey = DependencyProperty.RegisterAttachedReadOnly(
+            "ChapterProgress",
+            typeof(Int32),
+            typeof(MangaArchiveCacheObject),
+            new PropertyMetadata(Property_Updated));
+        private static readonly DependencyProperty ChapterProgressProperty = ChapterProgressPropertyKey.DependencyProperty;
+
+        public Int32 ChapterProgress
+        { get { return (Int32)GetValue(ChapterProgressProperty); } }
+
+        private static readonly DependencyPropertyKey ChapterProgressMaximumPropertyKey = DependencyProperty.RegisterAttachedReadOnly(
+            "ChapterProgressMaximum",
+            typeof(Int32),
+            typeof(MangaArchiveCacheObject),
+            new PropertyMetadata(Property_Updated));
+        private static readonly DependencyProperty ChapterProgressMaximumProperty = ChapterProgressMaximumPropertyKey.DependencyProperty;
+
+        public Int32 ChapterProgressMaximum
+        { get { return (Int32)GetValue(ChapterProgressMaximumProperty); } }
         #endregion
 
         #region LastUpdateProperty
@@ -113,7 +168,23 @@ namespace myManga_App.Objects.Cache
             this.MangaObject = MangaObject;
             this.BookmarkObject = BookmarkObject;
             if (!this.Empty() && !BookmarkObject.Equals(this.BookmarkObject, null))
+            {
+                this.SetValue(IsNewPropertyKey, false);
                 this.SetValue(ResumeChapterObjectPropertyKey, this.MangaObject.ChapterObjectOfBookmarkObject(this.BookmarkObject));
+
+                Int32 ResumeChapterObjectIndex = this.MangaObject.IndexOfChapterObject(this.ResumeChapterObject) + 1;
+                this.SetValue(HasMoreToReadPropertyKey, ResumeChapterObjectIndex < this.MangaObject.Chapters.Count);
+
+                this.SetValue(ChapterProgressMaximumPropertyKey, this.MangaObject.Chapters.Count);
+                this.SetValue(ChapterProgressPropertyKey, ResumeChapterObjectIndex);
+            }
+            else if (!this.Empty())
+            {
+                this.SetValue(IsNewPropertyKey, true);
+                this.SetValue(HasMoreToReadPropertyKey, true);
+                this.SetValue(ChapterProgressPropertyKey, 0);
+                this.SetValue(ChapterProgressMaximumPropertyKey, 1);
+            }
             this.LastUpdate = DateTime.Now;
         }
         #endregion

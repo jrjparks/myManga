@@ -89,6 +89,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Controls\ListBoxExtentions.cs" />
+    <Compile Include="Controls\Primitives\DockingPopup.cs" />
     <Compile Include="Controls\InputBindingsBehavior.cs" />
     <Compile Include="Converters\BooleanInverter.cs" />
     <Compile Include="Converters\CommandParameterStringFormat.cs" />
@@ -185,6 +187,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Themes\ListView\ListViews.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Themes\ProgressBar\ProgressBar.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

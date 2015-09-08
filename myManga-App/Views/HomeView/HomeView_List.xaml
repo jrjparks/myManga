@@ -167,11 +167,10 @@
             <ListBox
 				x:Name="MangaObjectItems"
 				Grid.Row="1"
-				BorderThickness="0" 
+				BorderThickness="0"
 				ItemContainerStyle="{DynamicResource HomeView_List_MangaListBoxItem}"
 				ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-				SelectedItem="{Binding SelectedMangaArchive}"
-                SelectedIndex="0"
+				SelectedItem="{Binding SelectedMangaArchiveCacheObject}"
                 ItemsSource="{Binding Path=MangaArchiveCacheCollection, Mode=OneWay, Source={x:Static Application.Current}, UpdateSourceTrigger=PropertyChanged}"/>
             <ProgressBar 
 				Grid.Row="1" 
@@ -215,6 +214,13 @@
 			        Command="{Binding DeleteMangaCommand}"
 			        Height="32"
 			        Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"/>
+                <Button:MetroButton
+			        FontFamily="{DynamicResource OpenIconic}"
+			        Content="{DynamicResource oi-pencil}"
+			        Command="{Binding EditMangaCommand}"
+			        Height="32"
+			        Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"
+                    IsEnabled="False"/>
             </StackPanel>
         </Border>
     </Grid>

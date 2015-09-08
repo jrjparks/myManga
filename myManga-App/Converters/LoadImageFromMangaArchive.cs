@@ -26,8 +26,9 @@ namespace myManga_App.Converters
                 Stream image_stream;
                 bitmap_image.BeginInit();
 
-                if (parameter != null && parameter is Int32)
-                    bitmap_image.DecodePixelWidth = (Int32)parameter;
+                Int32 _DecodePixelWidth;
+                if (parameter != null && Int32.TryParse(parameter.ToString(), out _DecodePixelWidth))
+                    bitmap_image.DecodePixelWidth = _DecodePixelWidth;
 
                 if (App.ZipStorage.TryRead(archive_filename, filename, out image_stream) && image_stream.Length > 0)
                 { bitmap_image.StreamSource = image_stream; }                // Load from local zip

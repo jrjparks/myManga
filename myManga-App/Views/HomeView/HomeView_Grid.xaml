@@ -29,6 +29,7 @@
                 <ResourceDictionary Source="/myManga;component/Themes/ScrollBar/ScrollBar.xaml"/>
 
                 <ResourceDictionary Source="/myManga;component/Themes/ProgressBar/Spinner.xaml"/>
+                <ResourceDictionary Source="/myManga;component/Themes/ProgressBar/ProgressBar.xaml"/>
             </ResourceDictionary.MergedDictionaries>
             <Converters:LoadImageFromMangaArchive x:Key="LoadImageFromMangaArchive"/>
             <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
@@ -45,7 +46,7 @@
 			x:Name="MangaObjectItems"
             Grid.ColumnSpan="3"
 			ItemContainerStyle="{DynamicResource HomeView_Grid_MangaListBoxItem}" 
-			SelectedItem="{Binding SelectedMangaArchive}"
+			SelectedItem="{Binding SelectedMangaArchiveCacheObject}"
             ItemsSource="{Binding Path=MangaArchiveCacheCollection, Mode=OneWay, Source={x:Static Application.Current}, UpdateSourceTrigger=PropertyChanged}"
             Margin="1"
             Padding="0,34,0,0">
@@ -71,7 +72,7 @@
         </ListBox>
         <Grid
             Grid.ColumnSpan="3"
-            Visibility="{Binding IsChecked, ElementName=MangaObjectDropdown, Converter={StaticResource BooleanToVisibilityConverter}}">
+            Visibility="{Binding IsChecked, ElementName=MangaObjectDropdown, Converter={StaticResource BooleanToVisibilityConverter}, FallbackValue=Hidden}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="1*"/>
                 <ColumnDefinition Width="8*"/>
@@ -121,6 +122,13 @@
 			                    Command="{Binding DeleteMangaCommand}"
 			                    Height="32"
 			                    Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"/>
+                            <Button:MetroButton
+			                    FontFamily="{DynamicResource OpenIconic}"
+			                    Content="{DynamicResource oi-pencil}"
+			                    Command="{Binding EditMangaCommand}"
+			                    Height="32"
+			                    Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"
+                                IsEnabled="False"/>
                         </StackPanel>
                     </Border>
                 </Grid>

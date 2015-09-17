@@ -129,6 +129,7 @@
                                 Margin="6,2" 
                                 Width="48" 
                                 Height="72"
+                                Stretch="Uniform"
                                 Source="{Binding MangaObject, Converter={StaticResource LoadImageFromMangaArchive}, ConverterParameter=48, FallbackValue=/myManga;component/Resources/Images/FallbackMangaIcon.png}">
                                 <Image.CacheMode>
                                     <BitmapCache/>
@@ -203,7 +204,7 @@
                                 Grid.RowSpan="4"
                                 Width="150"
                                 Height="225"
-                                Stretch="UniformToFill"
+                                Stretch="Uniform"
                                 Source="{Binding MangaObject, Converter={StaticResource LoadImageFromMangaArchive}, ConverterParameter=150, FallbackValue=/myManga;component/Resources/Images/FallbackMangaIcon.png}" ClipToBounds="True">
                                 <Image.CacheMode>
                                     <BitmapCache/>

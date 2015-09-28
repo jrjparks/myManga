@@ -179,6 +179,20 @@ namespace myManga_App.Objects
         }
 
         [XmlIgnore]
+        private Boolean downloadNewChapters = false;
+        [XmlElement]
+        public Boolean DownloadNewChapters
+        {
+            get { return downloadNewChapters; }
+            set
+            {
+                OnPropertyChanging();
+                downloadNewChapters = value;
+                OnPropertyChanged();
+            }
+        }
+
+        [XmlIgnore]
         private ThemeType theme = ThemeType.Light;
         [XmlAttribute]
         public ThemeType Theme

@@ -182,20 +182,54 @@ namespace myManga_App.IO.Network
                 if (RETRY != null && (Int32)RETRY.Value > 0)
                     Thread.Sleep((DEFAULT_MS_WAIT + Rand.Next(RANDOM_RETRY_MS_WAIT_MIN, RANDOM_RETRY_MS_WAIT_MAX)) * (Int32)RETRY.Value);
                 else Thread.Sleep(DEFAULT_MS_WAIT);
-
+                                
                 Dictionary<ISiteExtension, String> SiteExtensionContent = new Dictionary<ISiteExtension, String>(Value.Data.Locations.Count);
-                foreach (LocationObject LocationObj in Value.Data.Locations.FindAll(l => l.Enabled))
+                Dictionary<IDatabaseExtension, String> DatabaseExtensionContents = new Dictionary<IDatabaseExtension, String>(App.UserConfig.EnabledDatabaseExtentions.Count);
+
+                // Load Enabled SiteExtensions for: Value.Data
+                foreach (ISiteExtension SiteExtension in App.SiteExtensions.DLLCollection.Where(SiteExtension =>
                 {
-                    ISiteExtension SiteExtension = App.SiteExtensions.DLLCollection[LocationObj.ExtensionName];
-                    ISiteExtensionDescriptionAttribute SiteExtensionDescriptionAttribute = SiteExtension.GetType().GetCustomAttribute<ISiteExtensionDescriptionAttribute>(false);
-                    SiteExtensionContent.Add(SiteExtension, Downloader.GetHtmlContent(LocationObj.Url, SiteExtensionDescriptionAttribute.RefererHeader));
+                    if (!SiteExtension.SiteExtensionDescriptionAttribute.SupportedObjects.HasFlag(SupportedObjects.Manga)) return false;
+                    if (!App.UserConfig.EnabledSiteExtensions.Contains(SiteExtension.SiteExtensionDescriptionAttribute.Name)) return false;
+                    return true;
+                }))
+                {
+                    LocationObject LocationObj = Value.Data.Locations.FirstOrDefault(l => l.ExtensionName.Equals(SiteExtension.SiteExtensionDescriptionAttribute.Name));
+                    if (!LocationObject.Equals(LocationObj, null))
+                    { SiteExtensionContent.Add(SiteExtension, Downloader.GetHtmlContent(LocationObj.Url, SiteExtension.SiteExtensionDescriptionAttribute.RefererHeader)); }
                 }
+
+                // Load Enabled DatabaseExtensions for: Value.Data
+                foreach (IDatabaseExtension DatabaseExtension in App.DatabaseExtensions.DLLCollection.Where(DatabaseExtension =>
+                {
+                    if (!DatabaseExtension.DatabaseExtensionDescriptionAttribute.SupportedObjects.HasFlag(SupportedObjects.Manga)) return false;
+                    if (!App.UserConfig.EnabledDatabaseExtentions.Contains(DatabaseExtension.DatabaseExtensionDescriptionAttribute.Name)) return false;
+                    return true;
+                }))
+                {
+                    LocationObject DatabaseLocationObj = Value.Data.DatabaseLocations.FirstOrDefault(l => l.ExtensionName.Equals(DatabaseExtension.DatabaseExtensionDescriptionAttribute.Name));
+                    if (!LocationObject.Equals(DatabaseLocationObj, null))
+                    { DatabaseExtensionContents.Add(DatabaseExtension, Downloader.GetHtmlContent(DatabaseLocationObj.Url, DatabaseExtension.DatabaseExtensionDescriptionAttribute.RefererHeader)); }
+                }
+
+                // Add/Merge MangaObjects from the site(s)
                 foreach (System.Collections.Generic.KeyValuePair<ISiteExtension, String> Content in SiteExtensionContent)
                 {
                     try
                     {
                         MangaObject DownloadedMangaObject = Content.Key.ParseMangaObject(Content.Value);
                         if (!MangaObject.Equals(DownloadedMangaObject, null)) Value.Data.Merge(DownloadedMangaObject);
+                    }
+                    catch { }
+                }
+
+                // Attach results from DatabaseExtensions to MangaObjects
+                foreach (System.Collections.Generic.KeyValuePair<IDatabaseExtension, String> DatabaseExtensionContent in DatabaseExtensionContents)
+                {
+                    try
+                    {
+                        DatabaseObject DownloadedDatabaseObject = DatabaseExtensionContent.Key.ParseDatabaseObject(DatabaseExtensionContent.Value);
+                        if (!DatabaseObject.Equals(DownloadedDatabaseObject, null)) Value.Data.AttachDatabase(DownloadedDatabaseObject, preferDatabaseDescription: true);
                     }
                     catch { }
                 }
@@ -406,7 +440,7 @@ namespace myManga_App.IO.Network
                             MangaObject existing_manga_object = SearchResultItems.FirstOrDefault(
                                 mo => SafeAlphaNumeric.Replace(mo.Name.ToLower(), String.Empty).Equals(SafeAlphaNumeric.Replace(SearchResult.Name.ToLower(), String.Empty)));
                             if (!MangaObject.Equals(existing_manga_object, null))
-                            { existing_manga_object.AttachDatabase(SearchResult); }
+                            { existing_manga_object.AttachDatabase(SearchResult, preferDatabaseDescription: true); }
                         }
                     }
                     catch { }

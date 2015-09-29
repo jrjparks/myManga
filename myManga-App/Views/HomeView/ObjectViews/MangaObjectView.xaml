@@ -136,18 +136,25 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition/>
             </Grid.RowDefinitions>
-            <Grid x:Name="DownloadButtonGrid" TextBlock.FontWeight="Bold" TextElement.FontSize="16">
+            <Grid 
+                x:Name="DownloadButtonGrid" 
+                TextBlock.FontWeight="Bold" 
+                TextElement.FontSize="18"
+                TextElement.FontFamily="{DynamicResource OpenIconic}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
-                <TextBlock
-                    VerticalAlignment="Center"
-                    Text="Download Options"/>
+                <Button:MetroButton
+                    x:Name="DownloadToLatestChapter"
+                    HorizontalContentAlignment="Left"
+                    Padding="8"
+                    Content="{DynamicResource oi-cloud-download}"
+                    ContentStringFormat="{}{0} Download To Latest"
+                    Command="{Binding Path=DataContext.DownloadToLatestChapterCommand, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl, AncestorLevel=2}}"/>
                 <Button:MetroToggleButton
                     x:Name="DownloadPopupDropdown"
                     Grid.Column="1"
-                    FontFamily="{DynamicResource OpenIconic}" 
                     Content="{DynamicResource oi-chevron-bottom}"
                     Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"
                     IsHitTestVisible="{Binding IsOpen, Converter={StaticResource BooleanInverter}, ElementName=DownloadPopup, Mode=OneWay}"/>
@@ -178,13 +185,6 @@
                                 Content="{DynamicResource oi-cloud-download}"
                                 ContentStringFormat="{}{0} Download All"
                                 Command="{Binding Path=DataContext.DownloadAllChaptersCommand, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl, AncestorLevel=2}}"/>
-                            <Button:MetroButton
-                                x:Name="DownloadToLatestChapter"
-                                HorizontalContentAlignment="Left"
-                                FontFamily="{DynamicResource OpenIconic}"
-                                Content="{DynamicResource oi-cloud-download}"
-                                ContentStringFormat="{}{0} Download To Latest Chapter"
-                                Command="{Binding Path=DataContext.DownloadToLatestChapterCommand, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl, AncestorLevel=2}}"/>
                         </StackPanel>
                     </Border>
                 </Controls:DockingPopup>

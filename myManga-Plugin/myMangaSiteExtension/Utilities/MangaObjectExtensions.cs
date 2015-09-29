@@ -77,19 +77,22 @@ namespace myMangaSiteExtension.Utilities
                 // Artists
                 foreach (List<String> Artists in (from MangaObject obj in list where obj != null select obj.Artists))
                     foreach (String Artist in Artists)
-                        if (Artist != null && !mangaObject.Artists.Any(o => o.ToLower() == Artist.ToLower()))
+                        if (Artist != null &&
+                            !mangaObject.Artists.Any(o => o.ToLower() == Artist.ToLower()))
                             mangaObject.Artists.Add(Artist);
 
                 // Authors
                 foreach (List<String> Authors in (from MangaObject obj in list where obj != null select obj.Authors))
                     foreach (String Author in Authors)
-                        if (Author != null && !mangaObject.Authors.Any(o => o.ToLower() == Author.ToLower()))
+                        if (Author != null &&
+                            !mangaObject.Authors.Any(o => o.ToLower() == Author.ToLower()))
                             mangaObject.Authors.Add(Author);
 
                 // Covers
                 foreach (List<String> Covers in (from MangaObject obj in list where obj != null select obj.Covers))
                     foreach (String Cover in Covers)
-                        if (Cover != null && !mangaObject.Covers.Any(o => o == Cover))
+                        if (Cover != null &&
+                            !mangaObject.Covers.Any(o => o == Cover))
                             mangaObject.Covers.Add(Cover);
                 mangaObject.Covers.RemoveAll(c => String.IsNullOrWhiteSpace(c));
 
@@ -129,29 +132,38 @@ namespace myMangaSiteExtension.Utilities
             }
         }
 
-        public static void AttachDatabase(this MangaObject value, DatabaseObject databaseObject, Boolean databaseAsMaster = false)
+        public static void AttachDatabase(this MangaObject value, DatabaseObject databaseObject, Boolean databaseAsMaster = false, Boolean preferDatabaseDescription = false)
         {
             value.DatabaseLocations = databaseObject.Locations;
             if (databaseAsMaster)
             {
-                if (value.Name != null && !value.AlternateNames.Any(o => o.ToLower() == value.Name.ToLower()))
+                if (!String.IsNullOrWhiteSpace(value.Name) &&
+                    !value.AlternateNames.Any(o => o.ToLower() == value.Name.ToLower()))
                     value.AlternateNames.Add(value.Name);
                 value.Name = databaseObject.Name;
             }
-            else if (databaseObject.Name != null && !value.AlternateNames.Any(o => o.ToLower() == databaseObject.Name.ToLower()))
+            else if (!String.IsNullOrWhiteSpace(databaseObject.Name) &&
+                !value.AlternateNames.Any(o => o.ToLower() == databaseObject.Name.ToLower()))
                 value.AlternateNames.Add(databaseObject.Name);
             // AlternateNames
             foreach (String AlternateName in databaseObject.AlternateNames)
-                if (AlternateName != null && !value.AlternateNames.Any(o => o.ToLower() == AlternateName.ToLower()))
+                if (!String.IsNullOrWhiteSpace(AlternateName) &&
+                    !value.AlternateNames.Any(o => o.ToLower() == AlternateName.ToLower()))
                     value.AlternateNames.Add(AlternateName);
 
-            if (databaseAsMaster || String.Equals(value.Description, null) || String.Equals(value.Description, String.Empty))
-                if (String.Equals(databaseObject.Description, null) && String.Equals(databaseObject.Description, String.Empty))
+            // Description
+            // Prefer database description if longer.
+            if (databaseAsMaster || preferDatabaseDescription ||
+                String.Equals(value.Description, null) ||
+                String.Equals(value.Description, String.Empty) ||
+                value.Description.Length < databaseObject.Description.Length)
+                if (!String.IsNullOrWhiteSpace(databaseObject.Description))
                     value.Description = databaseObject.Description;
 
             // Genres
             foreach (String Genre in databaseObject.Genres)
-                if (Genre != null && !value.Genres.Any(o => o.ToLower() == Genre.ToLower()))
+                if (!String.IsNullOrWhiteSpace(Genre) &&
+                    !value.Genres.Any(o => o.ToLower() == Genre.ToLower()))
                     value.Genres.Add(Genre);
 
             // DatabaseLocations
@@ -161,7 +173,8 @@ namespace myMangaSiteExtension.Utilities
 
             // Covers
             foreach (String Cover in databaseObject.Covers)
-                if (Cover != null && !value.Covers.Any(o => o == Cover))
+                if (!String.IsNullOrWhiteSpace(Cover) &&
+                    !value.Covers.Any(o => o == Cover))
                     value.Covers.Insert(0, Cover);
 
             // Released
@@ -195,14 +208,12 @@ namespace myMangaSiteExtension.Utilities
 
         public static Boolean IsNameMatch(this MangaObject value, String name)
         {
-            if (String.IsNullOrWhiteSpace(name))
-                return false;
-            if (value == null)
-                return false;
-            
+            if (String.IsNullOrWhiteSpace(name)) return false;
+            if (MangaObject.Equals(value, null)) return false;
+
             String _name = new String(name.Where(Char.IsLetterOrDigit).ToArray()).ToLower();
             if (new String(value.Name.Where(Char.IsLetterOrDigit).ToArray()).ToLower().Contains(_name)) return true;
-            foreach(String alt_name in value.AlternateNames)
+            foreach (String alt_name in value.AlternateNames)
             { if (new String(alt_name.Where(Char.IsLetterOrDigit).ToArray()).ToLower().Contains(_name)) return true; }
             return false;
         }
@@ -228,6 +239,13 @@ namespace myMangaSiteExtension.Utilities
         }
 
         public static ChapterObject ChapterObjectOfBookmarkObject(this MangaObject value, BookmarkObject bookmark_object)
-        { return value.Chapters.Find(c => c.Volume == bookmark_object.Volume && c.Chapter == bookmark_object.Chapter && c.SubChapter == bookmark_object.SubChapter); }
+        {
+            ChapterObject rVal = value.Chapters.Find(c => c.Volume == bookmark_object.Volume && c.Chapter == bookmark_object.Chapter && c.SubChapter == bookmark_object.SubChapter);
+            if (!ChapterObject.Equals(rVal, null)) return rVal; // Return Bookmark of VCS
+            rVal = value.Chapters.Find(c => c.Chapter == bookmark_object.Chapter && c.SubChapter == bookmark_object.SubChapter);
+            if (!ChapterObject.Equals(rVal, null)) return rVal; // Return Bookmark of CS
+            rVal = value.Chapters.Find(c => c.Chapter == bookmark_object.Chapter);
+            return rVal; // Return Bookmark of C or null
+        }
     }
 }

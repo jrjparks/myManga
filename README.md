@@ -4,6 +4,14 @@
 
 Consolidates information from multiple sites.
 
+## Installing
+1. Download the [latest release](https://github.com/jrjparks/myManga/releases/latest).
+ * If you have already downloaded myManga previously download **myManga.\*.UpdateOnly.***
+ * Otherwise download **myManga.*** (note the lack of UpdateOnly in the title).
+2. Extract all files and folders.
+3. Run '**myManga.exe**' from the extracted files.
+4. Profit?
+
 ### 3rd Party DLLs
 * HtmlAgilityPack
 * Ionic.Zip
@@ -21,7 +29,7 @@ Consolidates information from multiple sites.
 * Offline Storage
 * Image Compression
 * **Laptop Screen Brightness Control**
-* Basic Reader Zoom - *Top of Reader*
+* Basic Reader Zoom - *Top of Reader (click the chapter information)*
 
 ### Planned Features
 * Bookmarks
@@ -32,11 +40,11 @@ Consolidates information from multiple sites.
 
 ## Supported Sites - myManga Plugins
 * Manga
- * [Batoto](http://bato.to/)
+ * [MangaTraders.org](http://mangatraders.org/)
+ * [Batoto](http://bato.to/) *(currently broken)*
  * [MangaReader.net](http://www.mangareader.net/)
  * [MangaPanda.com](http://www.mangapanda.com/)
  * [MangaHere.com](http://www.mangahere.com/)
- * [MangaTraders.org](http://mangatraders.org/)
 * Databases
  * [MangaHelpers](http://www.mangahelpers.com/manga/)
  * [Anime News Network](http://www.animenewsnetwork.com/)

@@ -9,10 +9,10 @@ using System.Runtime.Serialization;
 using System.Windows;
 using System.Xml.Serialization;
 
-namespace myManga_App.Objects
+namespace myManga_App.Objects.UserConfig
 {
     [Serializable, XmlRoot, DebuggerStepThrough]
-    public sealed class UserConfigurationObject : SerializableObject
+    public sealed class UserConfigurationObject : SerializableObject, INotifyPropertyChanging, INotifyPropertyChanged
     {
         #region NotifyPropertyChange
         public event EventHandler<String> UserConfigurationUpdated;

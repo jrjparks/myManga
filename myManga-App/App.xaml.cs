@@ -15,6 +15,7 @@ using myManga_App.Objects.About;
 using System.Collections.ObjectModel;
 using myManga_App.Objects.Cache;
 using myManga_App.IO.Network;
+using myManga_App.Objects.UserConfig;
 
 namespace myManga_App
 {
@@ -80,10 +81,15 @@ namespace myManga_App
             MANGA_ARCHIVE_FILTER = "*.ma.zip",
             CHAPTER_ARCHIVE_FILTER = "*.ca.zip",
             USER_CONFIG_FILENAME = "mymanga.conf",
+            USER_AUTH_FILENAME = "mymanga.auth.conf",
             USER_CONFIG_PATH = Path.Combine(Environment.CurrentDirectory, "mymanga.conf".SafeFileName()),
+            USER_AUTH_PATH = Path.Combine(Environment.CurrentDirectory, "mymanga.auth.conf".SafeFileName()),
             LOG_FILE_PATH = Path.Combine(Environment.CurrentDirectory, String.Format("mymanga-{0}-{1}.log", DateTime.Now.ToShortDateString(), DateTime.Now.ToShortTimeString()).SafeFileName());
 
         public UserConfigurationObject UserConfig
+        { get; private set; }
+
+        public UserAuthenticationObject UserAuthentication
         { get; private set; }
         #endregion
 
@@ -206,11 +212,47 @@ namespace myManga_App
             chapterObjectArchiveWatcher.EnableRaisingEvents = true;
         }
 
+        private void AuthenticateUser()
+        {
+            Stream UserAuthenticationStream;
+            if (this.FileStorage.TryRead(this.USER_AUTH_PATH, out UserAuthenticationStream))
+            {
+                using (UserAuthenticationStream)
+                {
+                    try
+                    {
+                        this.UserAuthentication = UserAuthenticationStream.Deserialize<UserAuthenticationObject>(SaveType: SaveType.XML);
+                    }
+                    catch { }
+                }
+            }
+
+            if (UserConfigurationObject.Equals(this.UserConfig, null))
+            {
+                this.UserAuthentication = new UserAuthenticationObject();
+            }
+
+            foreach(UserPluginAuthenticationObject upa in this.UserAuthentication.UserPluginAuthentications)
+            {
+                ISiteExtension siteExtension = this.SiteExtensions.DLLCollection[upa.PluginName];
+                siteExtension.Authenticate(new System.Net.NetworkCredential(upa.Username, upa.Password));
+            }
+        }
+
         private void LoadUserConfig()
         {
             Stream UserConfigStream;
             if (this.FileStorage.TryRead(this.USER_CONFIG_PATH, out UserConfigStream))
-            { using (UserConfigStream) { try { this.UserConfig = UserConfigStream.Deserialize<UserConfigurationObject>(SaveType: SaveType.XML); } catch { } } }
+            {
+                using (UserConfigStream)
+                {
+                    try
+                    {
+                        this.UserConfig = UserConfigStream.Deserialize<UserConfigurationObject>(SaveType: SaveType.XML);
+                    }
+                    catch { }
+                }
+            }
             if (UserConfigurationObject.Equals(this.UserConfig, null))
             {
                 this.UserConfig = new UserConfigurationObject();
@@ -228,7 +270,10 @@ namespace myManga_App
         }
 
         public void SaveUserConfig()
-        { if (!UserConfigurationObject.Equals(this.UserConfig, null)) this.FileStorage.Write(this.USER_CONFIG_PATH, this.UserConfig.Serialize(SaveType: SaveType.XML)); }
+        {
+            if (!UserConfigurationObject.Equals(this.UserConfig, null))
+                this.FileStorage.Write(this.USER_CONFIG_PATH, this.UserConfig.Serialize(SaveType: SaveType.XML));
+        }
 
         #region IDisposable Support
         private bool disposedValue = false; // To detect redundant calls

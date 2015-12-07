@@ -3,10 +3,14 @@ using myMangaSiteExtension.Attributes;
 using myMangaSiteExtension.Enums;
 using myMangaSiteExtension.Interfaces;
 using myMangaSiteExtension.Objects;
+using myMangaSiteExtension.Utilities;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Net;
 using System.Reflection;
+using System.Text;
 using System.Text.RegularExpressions;
 
 namespace MangaTraders
@@ -25,6 +29,59 @@ namespace MangaTraders
         private ISiteExtensionDescriptionAttribute siteExtensionDescriptionAttribute;
         public ISiteExtensionDescriptionAttribute SiteExtensionDescriptionAttribute
         { get { return siteExtensionDescriptionAttribute ?? (siteExtensionDescriptionAttribute = GetType().GetCustomAttribute<ISiteExtensionDescriptionAttribute>(false)); } }
+
+        private CookieCollection cookies;
+        public CookieCollection Cookies
+        { get { return cookies ?? (this.cookies = new CookieCollection()); } private set { this.cookies = value; } }
+
+        public bool Authenticate(NetworkCredential credentials)
+        {
+            CookieContainer cookieContainer = new CookieContainer();
+            HttpWebRequest request = HttpWebRequest.CreateHttp("http://mangatraders.org/login/process.php");
+            request.Method = WebRequestMethods.Http.Post;
+
+            StringBuilder loginData = new StringBuilder();
+            loginData.AppendUrlEncoded("email_Login", credentials.UserName, true);
+            loginData.AppendUrlEncoded("password_Login", credentials.Password);
+
+            Byte[] loginDataBytes = Encoding.UTF8.GetBytes(loginData.ToString());
+            request.ContentType = "application/x-www-form-urlencoded";
+            request.ContentLength = loginDataBytes.Length;
+            request.CookieContainer = cookieContainer;
+
+            using (Stream requestStream = request.GetRequestStream())
+            { requestStream.Write(loginDataBytes, 0, loginDataBytes.Length); }
+
+            HttpWebResponse response = request.GetResponse() as HttpWebResponse;
+            String responseContent = null;
+            using (StreamReader streamReader = new StreamReader(response.GetResponseStream()))
+            { responseContent = streamReader.ReadToEnd(); }
+            this.Cookies = response.Cookies;
+
+            Boolean loginSuccess = responseContent.IndexOf("username or password incorrect", StringComparison.OrdinalIgnoreCase) < 0;
+            return loginSuccess;
+        }
+
+        public void Deauthenticate()
+        {
+            CookieContainer cookieContainer = new CookieContainer();
+            HttpWebRequest request = HttpWebRequest.CreateHttp("http://mangatraders.org/logout.php");
+            request.Method = WebRequestMethods.Http.Get;
+            request.CookieContainer = cookieContainer;
+            request.CookieContainer.Add(this.Cookies);
+            HttpWebResponse response = request.GetResponse() as HttpWebResponse;
+            this.Cookies = new CookieCollection();
+        }
+
+        public List<MangaObject> GetUserFavorites()
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool AddUserFavorites(MangaObject mangaObject)
+        {
+            throw new NotImplementedException();
+        }
 
         public SearchRequestObject GetSearchRequestObject(String searchTerm)
         {
@@ -115,7 +172,7 @@ namespace MangaTraders
                     Locations =
                     {
                         new LocationObject(){
-                            ExtensionName = SiteExtensionDescriptionAttribute.Name, 
+                            ExtensionName = SiteExtensionDescriptionAttribute.Name,
                             Url = SiteExtensionDescriptionAttribute.RootUrl + ChapterNumberNode.Attributes["href"].Value
                         },
                     },
@@ -238,8 +295,8 @@ namespace MangaTraders
                     switch (DetailType)
                     {
                         default: break;
-                        case "MangaName": 
-                            Name = DetailValue; 
+                        case "MangaName":
+                            Name = DetailValue;
                             Link = MangaNameNode.Attributes["href"].Value;
                             if (Link.StartsWith("../manga/?series="))
                                 Link = Link.Substring("../manga/?series=".Length);

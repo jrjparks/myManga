@@ -38,7 +38,7 @@ namespace TestApp
             //SiteExtentions.Add("MangaReader", new AFTV_Network.MangaReader());
             //SiteExtentions.Add("MangaPanda", new AFTV_Network.MangaPanda());
             //SiteExtentions.Add("MangaHere", new MangaHere.MangaHere());
-            //SiteExtentions.Add("Batoto", new Batoto.Batoto());
+            SiteExtentions.Add("Batoto", new Batoto.Batoto());
             SiteExtentions.Add("MangaTraders", new MangaTraders.MangaTraders());
             //SiteExtentions.Add("Batoto-Spanish", new Batoto.Batoto_Spanish());
             //SiteExtentions.Add("Batoto-German", new Batoto.Batoto_German());
@@ -56,9 +56,47 @@ namespace TestApp
                 IDatabaseExtensionDescriptionAttribute isea = ise.GetType().GetCustomAttribute<IDatabaseExtensionDescriptionAttribute>(false);
                 Console.WriteLine("Loaded Database Extention {0}", isea.Name);
             }
-            LoadManga();
+            Authenticate();
+            //LoadManga();
             //Search();
             zip_storage.Dispose();
+        }
+
+        static void Authenticate()
+        {
+            Console.Write("Username: ");
+            String Username = Console.ReadLine();
+            Console.Write("Password: ");
+            String Password = Console.ReadLine();
+
+            Boolean authenticated = SiteExtentions["Batoto"].Authenticate(new NetworkCredential(Username, Password));
+            Console.WriteLine("Authenticated: " + (authenticated ? "Success" : "Failed"));
+
+            Console.WriteLine("Testing manga loading...");
+            MangaObject mObj = LoadMangaObject("https://bato.to/comic/_/comics/no-guns-life-r13414", SiteExtentions["Batoto"]);
+            Console.WriteLine("Returned MangaObject:");
+            Console.WriteLine("\tName:{0}", mObj.Name);
+            Console.WriteLine("\tReleased:{0}", mObj.Released.ToString("yyyy"));
+            Console.WriteLine("\tAlternate Names:{0}", String.Join(", ", mObj.AlternateNames));
+            Console.WriteLine("\tAuthors:{0}", String.Join(", ", mObj.Authors));
+            Console.WriteLine("\tArtists:{0}", String.Join(", ", mObj.Artists));
+            Console.WriteLine("\tGenres:{0}", String.Join(", ", mObj.Genres));
+            Console.WriteLine("\tLocations:{0}", String.Join(", ", mObj.Locations));
+            Console.WriteLine("\tNumber of Chapters:{0}", mObj.Chapters.Count);
+            Console.WriteLine("\tDescription:{0}", mObj.Description);
+
+            Console.WriteLine();
+            foreach (ChapterObject cObj in mObj.Chapters)
+            {
+                Console.WriteLine("\tName:{0}", cObj.Name);
+                Console.WriteLine("\tChapter:{0}", cObj.Chapter);
+                Console.WriteLine("\tReleased:{0}", cObj.Released.ToString("d"));
+                Console.WriteLine();
+            }
+
+            SiteExtentions["Batoto"].Deauthenticate();
+            Console.Write("Done...(press enter)");
+            Console.ReadLine();
         }
 
         static void Search()
@@ -270,6 +308,8 @@ namespace TestApp
             ISiteExtensionDescriptionAttribute isea = ise.GetType().GetCustomAttribute<ISiteExtensionDescriptionAttribute>(false);
 
             HttpWebRequest request = WebRequest.Create(Link) as HttpWebRequest;
+            request.CookieContainer = new CookieContainer();
+            request.CookieContainer.Add(ise.Cookies);
             request.Referer = isea.RefererHeader ?? request.Host;
             request.AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip;
             using (HttpWebResponse response = request.GetResponse() as HttpWebResponse)

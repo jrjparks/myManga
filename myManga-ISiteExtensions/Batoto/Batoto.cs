@@ -7,8 +7,11 @@ using myMangaSiteExtension.Objects;
 using myMangaSiteExtension.Utilities;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Net;
 using System.Reflection;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows;
 
@@ -25,9 +28,87 @@ namespace Batoto
         Language = "English")]
     public class Batoto : ISiteExtension
     {
+        protected readonly String AUTH_KEY = "880ea6a14ea49e853634fbdc5015a024",
+            SECURE_KEY = "ff65abdb3406e0c4459ab7f1c873b621";
+
         protected ISiteExtensionDescriptionAttribute siteExtensionDescriptionAttribute;
         public ISiteExtensionDescriptionAttribute SiteExtensionDescriptionAttribute
         { get { return siteExtensionDescriptionAttribute ?? (siteExtensionDescriptionAttribute = GetType().GetCustomAttribute<ISiteExtensionDescriptionAttribute>(false)); } }
+
+        protected CookieCollection cookies;
+        public CookieCollection Cookies
+        { get { return cookies ?? (this.cookies = new CookieCollection()); } private set { this.cookies = value; } }
+
+        public bool Authenticate(NetworkCredential credentials)
+        {
+            CookieContainer cookieContainer = new CookieContainer();
+            StringBuilder urlString = new StringBuilder();
+            urlString.Append("https://bato.to/forums/index.php?");
+            urlString.AppendUrlEncoded("app", "core", true);
+            urlString.AppendUrlEncoded("module", "global");
+            urlString.AppendUrlEncoded("section", "login");
+            urlString.AppendUrlEncoded("do", "process");
+            HttpWebRequest request = HttpWebRequest.CreateHttp(urlString.ToString());
+            request.Method = WebRequestMethods.Http.Post;
+
+            // Generate login data
+            StringBuilder loginData = new StringBuilder();
+            loginData.AppendUrlEncoded("auth_key", AUTH_KEY, true);
+            loginData.AppendUrlEncoded("anonymous", "1");
+            loginData.AppendUrlEncoded("rememberMe", "1");
+            loginData.AppendUrlEncoded("referer", this.SiteExtensionDescriptionAttribute.RefererHeader);
+            loginData.AppendUrlEncoded("ips_username", credentials.UserName);
+            loginData.AppendUrlEncoded("ips_password", credentials.Password);
+
+            // Apply loginData to request
+            Byte[] loginDataBytes = Encoding.UTF8.GetBytes(loginData.ToString());
+            request.ContentType = "application/x-www-form-urlencoded";
+            request.ContentLength = loginDataBytes.Length;
+            request.CookieContainer = cookieContainer;
+
+            // Write loginData to request
+            using (Stream requestStream = request.GetRequestStream())
+            { requestStream.Write(loginDataBytes, 0, loginDataBytes.Length); }
+
+            // Get response and store cookies
+            HttpWebResponse response = request.GetResponse() as HttpWebResponse;
+            String responseContent = null;
+            using (StreamReader streamReader = new StreamReader(response.GetResponseStream()))
+            { responseContent = streamReader.ReadToEnd(); }
+            this.Cookies = response.Cookies;
+
+            Boolean loginSuccess = responseContent.IndexOf("username or password incorrect", StringComparison.OrdinalIgnoreCase) < 0;
+            return loginSuccess;
+        }
+
+        public void Deauthenticate()
+        {
+            CookieContainer cookieContainer = new CookieContainer();
+            StringBuilder urlString = new StringBuilder();
+            urlString.Append("https://bato.to/forums/index.php?");
+            urlString.AppendUrlEncoded("app", "core", true);
+            urlString.AppendUrlEncoded("module", "global");
+            urlString.AppendUrlEncoded("section", "login");
+            urlString.AppendUrlEncoded("do", "logout");
+            urlString.AppendUrlEncoded("k", SECURE_KEY);
+            HttpWebRequest request = HttpWebRequest.CreateHttp(urlString.ToString());
+            request.Method = WebRequestMethods.Http.Get;
+            request.CookieContainer = cookieContainer;
+            request.CookieContainer.Add(this.Cookies);
+            HttpWebResponse response = request.GetResponse() as HttpWebResponse;
+            this.Cookies = new CookieCollection();
+        }
+
+        public List<MangaObject> GetUserFavorites()
+        {
+            // https://bato.to/myfollows
+            throw new NotImplementedException();
+        }
+
+        public bool AddUserFavorites(MangaObject mangaObject)
+        {
+            throw new NotImplementedException();
+        }
 
         public SearchRequestObject GetSearchRequestObject(string searchTerm)
         {

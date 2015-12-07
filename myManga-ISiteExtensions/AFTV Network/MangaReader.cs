@@ -10,6 +10,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Windows;
+using System.Net;
 
 namespace AFTV_Network
 {
@@ -27,6 +28,28 @@ namespace AFTV_Network
         protected ISiteExtensionDescriptionAttribute siteExtensionDescriptionAttribute;
         public ISiteExtensionDescriptionAttribute SiteExtensionDescriptionAttribute 
         { get { return siteExtensionDescriptionAttribute ?? (siteExtensionDescriptionAttribute = GetType().GetCustomAttribute<ISiteExtensionDescriptionAttribute>(false)); } }
+
+        private CookieCollection cookies;
+        public CookieCollection Cookies
+        { get { return cookies ?? (this.cookies = new CookieCollection()); } private set { this.cookies = value; } }
+
+        public bool Authenticate(NetworkCredential credentials)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Deauthenticate()
+        { this.Cookies = new CookieCollection(); }
+
+        public List<MangaObject> GetUserFavorites()
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool AddUserFavorites(MangaObject mangaObject)
+        {
+            throw new NotImplementedException();
+        }
 
         public SearchRequestObject GetSearchRequestObject(String searchTerm)
         {

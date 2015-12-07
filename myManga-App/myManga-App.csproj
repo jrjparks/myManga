@@ -103,6 +103,9 @@
     <Compile Include="Converters\StringArrayToCSV.cs" />
     <Compile Include="IO\Local\VerifyArchiveFile.cs" />
     <Compile Include="IO\Network\DownloadManager.cs" />
+    <Compile Include="IO\Network\WebDownloader.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Objects\About\AssemblyInformation.cs" />
     <Compile Include="Objects\Cache\MangaArchiveCacheObject.cs" />
     <Compile Include="Objects\UserConfig\ThemeType.cs" />

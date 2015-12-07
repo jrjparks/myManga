@@ -22,58 +22,6 @@ namespace myManga_App.IO.Network
     public sealed class DownloadManager : IDisposable
     {
         #region Classes
-        private sealed class Downloader
-        {
-            public static Stream GetRawContent(String url, String referer = null)
-            {
-                HttpWebRequest request = WebRequest.Create(url) as HttpWebRequest;
-                request.Referer = referer ?? request.Host;
-                request.Method = "GET";
-                request.AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip;
-                return GetResponse(request);
-            }
-
-            public static String GetHtmlContent(String url, String referer = null)
-            {
-                HttpWebRequest request = WebRequest.Create(url) as HttpWebRequest;
-                request.Referer = referer ?? request.Host;
-                request.Method = "GET";
-                request.AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip;
-                return GetResponseString(request);
-            }
-
-            public static Stream GetResponse(HttpWebRequest request)
-            {
-                Stream content = new MemoryStream();
-                try
-                {
-                    using (HttpWebResponse response = request.GetResponse() as HttpWebResponse)
-                    {
-                        using (Stream response_stream = response.GetResponseStream())
-                        { response_stream.CopyTo(content); }
-                    }
-                }
-                catch (WebException webEx)
-                {
-                    using (HttpWebResponse response = webEx.Response as HttpWebResponse)
-                    {
-                        using (Stream response_stream = response.GetResponseStream())
-                        { response_stream.CopyTo(content); }
-                    }
-                }
-                content.Seek(0, SeekOrigin.Begin);
-                return content;
-            }
-
-            public static String GetResponseString(HttpWebRequest request)
-            {
-                String content = null;
-                using (StreamReader streamReader = new StreamReader(GetResponse(request)))
-                { content = streamReader.ReadToEnd(); }
-                return HttpUtility.HtmlDecode(content);
-            }
-        }
-
         private abstract class WorkerClass<T, R>
             where T : class
             where R : class
@@ -182,7 +130,7 @@ namespace myManga_App.IO.Network
                 if (RETRY != null && (Int32)RETRY.Value > 0)
                     Thread.Sleep((DEFAULT_MS_WAIT + Rand.Next(RANDOM_RETRY_MS_WAIT_MIN, RANDOM_RETRY_MS_WAIT_MAX)) * (Int32)RETRY.Value);
                 else Thread.Sleep(DEFAULT_MS_WAIT);
-                                
+
                 Dictionary<ISiteExtension, String> SiteExtensionContent = new Dictionary<ISiteExtension, String>(Value.Data.Locations.Count);
                 Dictionary<IDatabaseExtension, String> DatabaseExtensionContents = new Dictionary<IDatabaseExtension, String>(App.UserConfig.EnabledDatabaseExtentions.Count);
 
@@ -196,7 +144,10 @@ namespace myManga_App.IO.Network
                 {
                     LocationObject LocationObj = Value.Data.Locations.FirstOrDefault(l => l.ExtensionName.Equals(SiteExtension.SiteExtensionDescriptionAttribute.Name));
                     if (!LocationObject.Equals(LocationObj, null))
-                    { SiteExtensionContent.Add(SiteExtension, Downloader.GetHtmlContent(LocationObj.Url, SiteExtension.SiteExtensionDescriptionAttribute.RefererHeader)); }
+                    {
+                        using (WebDownloader webDownloader = new WebDownloader(SiteExtension.Cookies))
+                        { SiteExtensionContent.Add(SiteExtension, webDownloader.GetStringContent(LocationObj.Url, SiteExtension.SiteExtensionDescriptionAttribute.RefererHeader)); }
+                    }
                 }
 
                 // Load Enabled DatabaseExtensions for: Value.Data
@@ -209,7 +160,11 @@ namespace myManga_App.IO.Network
                 {
                     LocationObject DatabaseLocationObj = Value.Data.DatabaseLocations.FirstOrDefault(l => l.ExtensionName.Equals(DatabaseExtension.DatabaseExtensionDescriptionAttribute.Name));
                     if (!LocationObject.Equals(DatabaseLocationObj, null))
-                    { DatabaseExtensionContents.Add(DatabaseExtension, Downloader.GetHtmlContent(DatabaseLocationObj.Url, DatabaseExtension.DatabaseExtensionDescriptionAttribute.RefererHeader)); }
+                    {
+
+                        using (WebDownloader webDownloader = new WebDownloader())
+                        { DatabaseExtensionContents.Add(DatabaseExtension, webDownloader.GetStringContent(DatabaseLocationObj.Url, DatabaseExtension.DatabaseExtensionDescriptionAttribute.RefererHeader)); }
+                    }
                 }
 
                 // Add/Merge MangaObjects from the site(s)
@@ -276,9 +231,12 @@ namespace myManga_App.IO.Network
                     }
                     ISiteExtensionDescriptionAttribute SiteExtensionDescriptionAttribute = SiteExtension.GetType().GetCustomAttribute<ISiteExtensionDescriptionAttribute>(false);
 
-                    ChapterObject DownloadedChapterObject = SiteExtension.ParseChapterObject(Downloader.GetHtmlContent(LocationObj.Url, SiteExtensionDescriptionAttribute.RefererHeader));
-                    Value.Data.ChapterObject.Merge(DownloadedChapterObject);
-                    Value.Data.ChapterObject.Pages = DownloadedChapterObject.Pages;
+                    using (WebDownloader webDownloader = new WebDownloader(SiteExtension.Cookies))
+                    {
+                        ChapterObject DownloadedChapterObject = SiteExtension.ParseChapterObject(webDownloader.GetStringContent(LocationObj.Url, SiteExtensionDescriptionAttribute.RefererHeader));
+                        Value.Data.ChapterObject.Merge(DownloadedChapterObject);
+                        Value.Data.ChapterObject.Pages = DownloadedChapterObject.Pages;
+                    }
                 }
                 catch (Exception ex) { return new WorkerResult<ChapterObjectDownloadRequest>(Result: Value.Data, Id: Value.Id, Args: Value.Args, Success: false, Exception: ex, UniqueId: Value.UniqueId); }
                 return new WorkerResult<ChapterObjectDownloadRequest>(Result: Value.Data, Id: Value.Id, Args: Value.Args, UniqueId: Value.UniqueId);
@@ -309,11 +267,15 @@ namespace myManga_App.IO.Network
                     else Thread.Sleep(DEFAULT_MS_WAIT);
 
                     ISiteExtension SiteExtension = App.SiteExtensions.DLLCollection.First(_SiteExtension => Value.Data.PageObject.Url.Contains(_SiteExtension.GetType().GetCustomAttribute<ISiteExtensionDescriptionAttribute>(false).URLFormat));
-                    PageObject DownloadedPageObject = SiteExtension.ParsePageObject(Downloader.GetHtmlContent(Value.Data.PageObject.Url, Value.Data.PageObject.Url));
-                    Int32 index = Value.Data.ChapterObject.Pages.FindIndex((po) => po.Url == DownloadedPageObject.Url);
-                    Value.Data.ChapterObject.Pages[index] = DownloadedPageObject;
+                    PageObjectDownloadRequest result = null;
+                    using (WebDownloader webDownloader = new WebDownloader(SiteExtension.Cookies))
+                    {
+                        PageObject DownloadedPageObject = SiteExtension.ParsePageObject(webDownloader.GetStringContent(Value.Data.PageObject.Url, Value.Data.PageObject.Url));
+                        Int32 index = Value.Data.ChapterObject.Pages.FindIndex((po) => po.Url == DownloadedPageObject.Url);
+                        Value.Data.ChapterObject.Pages[index] = DownloadedPageObject;
 
-                    PageObjectDownloadRequest result = new PageObjectDownloadRequest(Value.Data.MangaObject, Value.Data.ChapterObject, DownloadedPageObject);
+                        result = new PageObjectDownloadRequest(Value.Data.MangaObject, Value.Data.ChapterObject, DownloadedPageObject);
+                    }
                     return new WorkerResult<PageObjectDownloadRequest>(Result: result, Id: Value.Id, Args: Value.Args, UniqueId: Value.UniqueId);
                 }
                 catch (Exception ex)
@@ -354,12 +316,14 @@ namespace myManga_App.IO.Network
                     if (RETRY != null && (Int32)RETRY.Value > 0)
                         Thread.Sleep((DEFAULT_MS_WAIT + Rand.Next(RANDOM_RETRY_MS_WAIT_MIN, RANDOM_RETRY_MS_WAIT_MAX)) * (Int32)RETRY.Value);
                     else Thread.Sleep(DEFAULT_MS_WAIT);
-
-                    using (Stream image_stream = Downloader.GetRawContent(Value.Data.URL, Value.Data.Referer))
+                    using (WebDownloader webDownloader = new WebDownloader())
                     {
-                        image_stream.Seek(0, SeekOrigin.Begin);
-                        image_stream.CopyTo(Value.Data.Stream);
-                        Value.Data.Stream.Seek(0, SeekOrigin.Begin);
+                        using (Stream image_stream = webDownloader.GetRawContent(Value.Data.URL, Value.Data.Referer))
+                        {
+                            image_stream.Seek(0, SeekOrigin.Begin);
+                            image_stream.CopyTo(Value.Data.Stream);
+                            Value.Data.Stream.Seek(0, SeekOrigin.Begin);
+                        }
                     }
                 }
                 catch (Exception ex)
@@ -491,7 +455,10 @@ namespace myManga_App.IO.Network
                         { requestWriter.Write(RequestObject.RequestContent); }
                         break;
                 }
-                return Downloader.GetResponseString(request);
+                String content = String.Empty;
+                using (WebDownloader webDownloader = new WebDownloader())
+                { content = webDownloader.GetWebResponseString(request); }
+                return content;
             }
         }
         #endregion

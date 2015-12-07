@@ -70,70 +70,6 @@
                 </ControlTemplate>
             </ListBox.Template>
         </ListBox>
-        <Grid
-            Grid.ColumnSpan="3"
-            Visibility="{Binding IsChecked, ElementName=MangaObjectDropdown, Converter={StaticResource BooleanToVisibilityConverter}, FallbackValue=Hidden}">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="1*"/>
-                <ColumnDefinition Width="8*"/>
-                <ColumnDefinition Width="1*"/>
-            </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="1*"/>
-                <RowDefinition Height="8*"/>
-                <RowDefinition Height="1*"/>
-            </Grid.RowDefinitions>
-            <Button:MetroToggleButton
-                Grid.ColumnSpan="3"
-                Grid.RowSpan="3"
-                Background="{DynamicResource window-background}"
-                PrimaryBrush="{DynamicResource window-background}"
-                PrimaryDisabledBrush="{DynamicResource window-background}"
-                SecondaryBrush="{DynamicResource window-background}"
-                SecondaryDisabledBrush="{DynamicResource window-background}"
-                Opacity="0.9"
-                IsChecked="{Binding IsChecked, ElementName=MangaObjectDropdown}"/>
-            <Border
-                BorderBrush="{DynamicResource window-theme-primary}" 
-                BorderThickness="1"
-                Grid.Column="1"
-                Grid.Row="1">
-                <Grid>
-                    <ObjectViews:MangaObjectView 
-                        DataContext="{Binding SelectedItem, ElementName=MangaObjectItems}"/>
-                    <Border
-			            HorizontalAlignment="Left" 
-			            VerticalAlignment="Top"
-                        BorderBrush="{DynamicResource window-theme-primary}"
-                        BorderThickness="1,1,0,1"
-                        Margin="-33,-1,0,0">
-                        <StackPanel 
-                            Orientation="Vertical"
-			                Grid.Column="2">
-                            <Button:MetroButton
-			                    FontFamily="{DynamicResource OpenIconic}"
-			                    Content="{DynamicResource oi-reload}"
-			                    Command="{Binding RefreshMangaCommand}"
-			                    Height="32"
-			                    Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"/>
-                            <Button:MetroButton
-			                    FontFamily="{DynamicResource OpenIconic}"
-			                    Content="{DynamicResource oi-trash}"
-			                    Command="{Binding DeleteMangaCommand}"
-			                    Height="32"
-			                    Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"/>
-                            <Button:MetroButton
-			                    FontFamily="{DynamicResource OpenIconic}"
-			                    Content="{DynamicResource oi-pencil}"
-			                    Command="{Binding EditMangaCommand}"
-			                    Height="32"
-			                    Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"
-                                IsEnabled="False"/>
-                        </StackPanel>
-                    </Border>
-                </Grid>
-            </Border>
-        </Grid>
         <Border
             Grid.ColumnSpan="2"
             Height="32"
@@ -280,5 +216,69 @@
                 <TextBlock Text="More Information" FontSize="18"/>
             </Button:MetroToggleButton.Content>
         </Button:MetroToggleButton>
+        <Grid
+            Grid.ColumnSpan="3"
+            Visibility="{Binding IsChecked, ElementName=MangaObjectDropdown, Converter={StaticResource BooleanToVisibilityConverter}, FallbackValue=Hidden}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="8*"/>
+                <ColumnDefinition Width="1*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="8*"/>
+                <RowDefinition Height="1*"/>
+            </Grid.RowDefinitions>
+            <Button:MetroToggleButton
+                Grid.ColumnSpan="3"
+                Grid.RowSpan="3"
+                Background="{DynamicResource window-background}"
+                PrimaryBrush="{DynamicResource window-background}"
+                PrimaryDisabledBrush="{DynamicResource window-background}"
+                SecondaryBrush="{DynamicResource window-background}"
+                SecondaryDisabledBrush="{DynamicResource window-background}"
+                Opacity="0.9"
+                IsChecked="{Binding IsChecked, ElementName=MangaObjectDropdown}"/>
+            <Border
+                BorderBrush="{DynamicResource window-theme-primary}" 
+                BorderThickness="1"
+                Grid.Column="1"
+                Grid.Row="1">
+                <Grid>
+                    <ObjectViews:MangaObjectView 
+                        DataContext="{Binding SelectedItem, ElementName=MangaObjectItems}"/>
+                    <Border
+			            HorizontalAlignment="Left" 
+			            VerticalAlignment="Top"
+                        BorderBrush="{DynamicResource window-theme-primary}"
+                        BorderThickness="1,1,0,1"
+                        Margin="-33,-1,0,0">
+                        <StackPanel 
+                            Orientation="Vertical"
+			                Grid.Column="2">
+                            <Button:MetroButton
+			                    FontFamily="{DynamicResource OpenIconic}"
+			                    Content="{DynamicResource oi-reload}"
+			                    Command="{Binding RefreshMangaCommand}"
+			                    Height="32"
+			                    Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"/>
+                            <Button:MetroButton
+			                    FontFamily="{DynamicResource OpenIconic}"
+			                    Content="{DynamicResource oi-trash}"
+			                    Command="{Binding DeleteMangaCommand}"
+			                    Height="32"
+			                    Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"/>
+                            <Button:MetroButton
+			                    FontFamily="{DynamicResource OpenIconic}"
+			                    Content="{DynamicResource oi-pencil}"
+			                    Command="{Binding EditMangaCommand}"
+			                    Height="32"
+			                    Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"
+                                IsEnabled="False"/>
+                        </StackPanel>
+                    </Border>
+                </Grid>
+            </Border>
+        </Grid>
     </Grid>
 </UserControl>

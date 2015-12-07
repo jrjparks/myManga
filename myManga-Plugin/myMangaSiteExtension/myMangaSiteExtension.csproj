@@ -68,6 +68,7 @@
     <Compile Include="Utilities\DatabaseObjectExtensions.cs" />
     <Compile Include="Utilities\MangaObjectExtensions.cs" />
     <Compile Include="Utilities\SearchResultObjectExtensions.cs" />
+    <Compile Include="Utilities\StringBuilderExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\myManga-DLL\Core\Core.csproj">

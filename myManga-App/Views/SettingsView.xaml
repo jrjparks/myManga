@@ -23,6 +23,7 @@
             <Converters:EnumToBooleanConverter x:Key="EnumToBooleanConverter"/>
             <GridLength x:Key="SettingNameColumnWidth">250</GridLength>
             <System:Double x:Key="SettingNameFontSize">20</System:Double>
+            <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
         </ResourceDictionary>
     </UserControl.Resources>
     <Grid Background="{DynamicResource window-background}">
@@ -38,11 +39,23 @@
                         <ColumnDefinition Width="15"/>
                         <ColumnDefinition/>
                     </Grid.ColumnDefinitions>
-                    <TextBlock Text="Site Extensions" VerticalAlignment="Top" TextWrapping="Wrap" FontSize="{StaticResource SettingNameFontSize}"/>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="Site Extensions" VerticalAlignment="Top" TextWrapping="Wrap" FontSize="{StaticResource SettingNameFontSize}"/>
+                        <Button:MetroToggleButton 
+                            Grid.Column="2"
+                            Content="Authenticate"
+                            IsChecked="{Binding ShowAuthentication}"/>
+                    </Grid>
                     <ListBox
                         Grid.Column="2"
 				        Background="{DynamicResource window-background}"
                         ItemContainerStyle="{DynamicResource SettingsView_SiteExtensionInformationObjectListBoxItem}"
+                        SelectedItem="{Binding SelectedSiteExtensionInformationObject}"
 				        ItemsSource="{Binding SiteExtensionInformationObjects}"
 				        HorizontalContentAlignment="Stretch"/>
                 </Grid>
@@ -168,5 +181,75 @@
 				ContentStringFormat="{}{0} Close"
 				Command="{Binding CloseCommand}"/>
         </StackPanel>
+        <Grid
+            Grid.ColumnSpan="3"
+            Visibility="{Binding ShowAuthentication, Converter={StaticResource BooleanToVisibilityConverter}, FallbackValue=Hidden}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="400"/>
+                <ColumnDefinition Width="1*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="300"/>
+                <RowDefinition Height="1*"/>
+            </Grid.RowDefinitions>
+            <Button:MetroToggleButton
+                Grid.ColumnSpan="3"
+                Grid.RowSpan="3"
+                Background="{DynamicResource window-background}"
+                PrimaryBrush="{DynamicResource window-background}"
+                PrimaryDisabledBrush="{DynamicResource window-background}"
+                SecondaryBrush="{DynamicResource window-background}"
+                SecondaryDisabledBrush="{DynamicResource window-background}"
+                Opacity="0.9"
+                IsChecked="{Binding ShowAuthentication}"/>
+            <Border
+                BorderBrush="{DynamicResource window-theme-primary}" 
+                BorderThickness="1"
+                Grid.Column="1"
+                Grid.Row="1">
+                <Grid>
+                    <Border
+                        BorderBrush="{DynamicResource window-theme-primary}"
+                        BorderThickness="1">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                            </Grid.RowDefinitions>
+                            <!-- Username/Password -->
+                            <TextBlock 
+                                Text="Username" 
+                                Grid.Column="0" 
+                                Grid.Row="0"/>
+                            <TextBox 
+                                Text="{Binding AuthenticationUsername}" 
+                                Grid.Column="1" 
+                                Grid.Row="0"/>
+                            <TextBlock 
+                                Text="Password" 
+                                Grid.Column="0" 
+                                Grid.Row="1"/>
+                            <PasswordBox 
+                                Grid.Column="1" 
+                                Grid.Row="1" 
+                                x:Name="AuthenticationPassword"/>
+                            <Button:MetroButton
+                                Grid.ColumnSpan="2" 
+                                Grid.Row="2" 
+                                Content="Login"
+                                Command="{Binding AuthenticateCommand}" 
+                                CommandParameter="{Binding ElementName=AuthenticationPassword}"/>
+                        </Grid>
+                    </Border>
+                </Grid>
+            </Border>
+        </Grid>
     </Grid>
 </UserControl>

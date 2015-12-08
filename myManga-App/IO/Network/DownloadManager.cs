@@ -229,11 +229,11 @@ namespace myManga_App.IO.Network
                         LocationObj = Value.Data.ChapterObject.Locations.First();
                         SiteExtension = App.SiteExtensions.DLLCollection[LocationObj.ExtensionName];
                     }
-                    ISiteExtensionDescriptionAttribute SiteExtensionDescriptionAttribute = SiteExtension.GetType().GetCustomAttribute<ISiteExtensionDescriptionAttribute>(false);
 
                     using (WebDownloader webDownloader = new WebDownloader(SiteExtension.Cookies))
                     {
-                        ChapterObject DownloadedChapterObject = SiteExtension.ParseChapterObject(webDownloader.GetStringContent(LocationObj.Url, SiteExtensionDescriptionAttribute.RefererHeader));
+                        String chapterContent = webDownloader.GetStringContent(LocationObj.Url, SiteExtension.SiteExtensionDescriptionAttribute.RefererHeader);
+                        ChapterObject DownloadedChapterObject = SiteExtension.ParseChapterObject(chapterContent);
                         Value.Data.ChapterObject.Merge(DownloadedChapterObject);
                         Value.Data.ChapterObject.Pages = DownloadedChapterObject.Pages;
                     }
@@ -266,11 +266,15 @@ namespace myManga_App.IO.Network
                         Thread.Sleep((DEFAULT_MS_WAIT + Rand.Next(RANDOM_RETRY_MS_WAIT_MIN, RANDOM_RETRY_MS_WAIT_MAX)) * (Int32)RETRY.Value);
                     else Thread.Sleep(DEFAULT_MS_WAIT);
 
-                    ISiteExtension SiteExtension = App.SiteExtensions.DLLCollection.First(_SiteExtension => Value.Data.PageObject.Url.Contains(_SiteExtension.GetType().GetCustomAttribute<ISiteExtensionDescriptionAttribute>(false).URLFormat));
+                    ISiteExtension SiteExtension = App.SiteExtensions.DLLCollection.First(siteExtention =>
+                    {
+                        return Value.Data.PageObject.Url.Contains(siteExtention.SiteExtensionDescriptionAttribute.URLFormat);
+                    });
                     PageObjectDownloadRequest result = null;
                     using (WebDownloader webDownloader = new WebDownloader(SiteExtension.Cookies))
                     {
-                        PageObject DownloadedPageObject = SiteExtension.ParsePageObject(webDownloader.GetStringContent(Value.Data.PageObject.Url, Value.Data.PageObject.Url));
+                        String pageContent = webDownloader.GetStringContent(Value.Data.PageObject.Url, SiteExtension.SiteExtensionDescriptionAttribute.RefererHeader);
+                        PageObject DownloadedPageObject = SiteExtension.ParsePageObject(pageContent);
                         Int32 index = Value.Data.ChapterObject.Pages.FindIndex((po) => po.Url == DownloadedPageObject.Url);
                         Value.Data.ChapterObject.Pages[index] = DownloadedPageObject;
 

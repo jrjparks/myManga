@@ -12,6 +12,8 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
 
 namespace myManga_App.ViewModels
@@ -35,6 +37,18 @@ namespace myManga_App.ViewModels
         #endregion
 
         #region PluginList
+        private static readonly DependencyProperty SelectedSiteExtensionInformationObjectProperty = DependencyProperty.RegisterAttached(
+            "SelectedSiteExtensionInformationObject",
+            typeof(SiteExtensionInformationObject),
+            typeof(SettingsViewModel),
+            new PropertyMetadata(null));
+
+        public SiteExtensionInformationObject SelectedSiteExtensionInformationObject
+        {
+            get { return (SiteExtensionInformationObject)GetValue(SelectedSiteExtensionInformationObjectProperty); }
+            private set { SetValue(SelectedSiteExtensionInformationObjectProperty, value); }
+        }
+
         private ObservableCollection<SiteExtensionInformationObject> _SiteExtensionInformationObjects;
         public ObservableCollection<SiteExtensionInformationObject> SiteExtensionInformationObjects
         {
@@ -235,6 +249,48 @@ namespace myManga_App.ViewModels
                 OnPropertyChanged();
                 App.ApplyTheme(value);
             }
+        }
+        #endregion
+
+        #region Plugin Authenticate
+        private static readonly DependencyProperty AuthenticationUsernameProperty = DependencyProperty.RegisterAttached(
+            "AuthenticationUsername",
+            typeof(String),
+            typeof(SettingsViewModel),
+            new PropertyMetadata(String.Empty));
+
+        public String AuthenticationUsername
+        {
+            get { return (String)GetValue(AuthenticationUsernameProperty); }
+            private set { SetValue(AuthenticationUsernameProperty, value); }
+        }
+
+        private static readonly DependencyProperty ShowAuthenticationProperty = DependencyProperty.RegisterAttached(
+            "ShowAuthentication",
+            typeof(Boolean),
+            typeof(SettingsViewModel),
+            new PropertyMetadata(false));
+
+        public Boolean ShowAuthentication
+        {
+            get { return (Boolean)GetValue(ShowAuthenticationProperty); }
+            private set { SetValue(ShowAuthenticationProperty, value); }
+        }
+
+        protected DelegateCommand<System.Windows.Controls.PasswordBox> authenticateCommand;
+        public ICommand AuthenticateCommand
+        { get { return authenticateCommand ?? (authenticateCommand = new DelegateCommand<System.Windows.Controls.PasswordBox>(Authenticate)); } }
+        public async void Authenticate(System.Windows.Controls.PasswordBox PasswordBox)
+        {
+            ISiteExtension siteExtention = App.SiteExtensions.DLLCollection[this.SelectedSiteExtensionInformationObject.Name];
+            String Username = this.AuthenticationUsername;
+            System.Security.SecureString Password = PasswordBox.SecurePassword.Copy();
+            Task<Boolean> authenticationTask = Task.Run<Boolean>(() =>
+            {
+                return siteExtention.Authenticate(new System.Net.NetworkCredential(Username, Password)); ;
+            });
+            Boolean authenticationSuccess = await authenticationTask;
+            this.ShowAuthentication = !authenticationSuccess;
         }
         #endregion
 

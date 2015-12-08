@@ -43,8 +43,7 @@ namespace myManga_App.IO.Network
         {
             HttpWebRequest request = base.GetWebRequest(address) as HttpWebRequest;
             request.CookieContainer = this.CookieContainer;
-            request.AllowAutoRedirect = true;
-            request.ProtocolVersion = HttpVersion.Version11;
+            request.Headers.Add("X-Requested-With", "XMLHttpRequest");
             return request;
         }
 

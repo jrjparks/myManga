@@ -110,6 +110,7 @@
     </Compile>
     <Compile Include="Objects\About\AssemblyInformation.cs" />
     <Compile Include="Objects\Cache\MangaArchiveCacheObject.cs" />
+    <Compile Include="Objects\MVVM\NotifyTaskCompletion.cs" />
     <Compile Include="Objects\UserConfig\ThemeType.cs" />
     <Compile Include="Objects\UserConfig\UserAuthenticationObject.cs" />
     <Compile Include="Objects\UserConfig\UserPluginAuthenticationObject.cs" />

@@ -20,8 +20,8 @@ namespace Batoto
     [ISiteExtensionDescription(
         "Batoto",
         "bato.to",
-        "http://bato.to/",
-        RootUrl = "http://bato.to",
+        "https://bato.to/reader",
+        RootUrl = "https://bato.to",
         Author = "James Parks",
         Version = "0.0.1",
         SupportedObjects = SupportedObjects.All,
@@ -194,10 +194,8 @@ namespace Batoto
                         ReleaseData = ReleaseData.Split(new String[] { " - " }, StringSplitOptions.RemoveEmptyEntries)[0];
                     DateTime.TryParse(ReleaseData, out Released);
                     String ChapterUrl = VolChapNameNode.Attributes["href"].Value;
-                    if (!ChapterUrl.Contains("?"))
-                    { ChapterUrl += "?supress_webtoon=t"; }
-                    else if (ChapterUrl.Contains("?"))
-                    { ChapterUrl += "&supress_webtoon=t"; }
+                    String ChapterHash = ChapterUrl.Split('#').Last().Split('_').First();
+                    ChapterUrl = String.Format("https://bato.to/areader?id={0}&p=1&supress_webtoon=t", ChapterHash);
                     ChapterObject chapterObject = new ChapterObject()
                     {
                         Name = HtmlEntity.DeEntitize(ChapterName),
@@ -268,22 +266,23 @@ namespace Batoto
                         NextPageUrl = (NextNode != null) ? NextNode.Attributes["value"].Value : null,
                         PrevPageUrl = (PrevNode != null) ? PrevNode.Attributes["value"].Value : null;
 
-                    if (!PageUrl.Contains("?"))
-                    { PageUrl += "?supress_webtoon=t"; }
-                    else if (PageUrl.Contains("?"))
-                    { PageUrl += "&supress_webtoon=t"; }
+                    if (!String.IsNullOrWhiteSpace(PageUrl))
+                    {
+                        String PageHash = PageUrl.Split('#').Last().Split('_').First();
+                        PageUrl = String.Format("https://bato.to/areader?id={0}&p={1}&supress_webtoon=t", PageHash, PageNumber);
+                    }
 
-                    if (NextPageUrl == null) { }
-                    else if (!NextPageUrl.Contains("?"))
-                    { NextPageUrl += "?supress_webtoon=t"; }
-                    else if (NextPageUrl.Contains("?"))
-                    { NextPageUrl += "&supress_webtoon=t"; }
+                    if (!String.IsNullOrWhiteSpace(NextPageUrl))
+                    {
+                        String PageHash = NextPageUrl.Split('#').Last().Split('_').First();
+                        NextPageUrl = String.Format("https://bato.to/areader?id={0}&p={1}&supress_webtoon=t", PageHash, PageNumber + 1);
+                    }
 
-                    if (PrevPageUrl == null) { }
-                    else if (!PrevPageUrl.Contains("?"))
-                    { PrevPageUrl += "?supress_webtoon=t"; }
-                    else if (PrevPageUrl.Contains("?"))
-                    { PrevPageUrl += "&supress_webtoon=t"; }
+                    if (!String.IsNullOrWhiteSpace(PrevPageUrl))
+                    {
+                        String PageHash = PrevPageUrl.Split('#').Last().Split('_').First();
+                        PrevPageUrl = String.Format("https://bato.to/areader?id={0}&p={1}&supress_webtoon=t", PageHash, PageNumber - 1);
+                    }
 
                     ParsedChapterObject.Pages.Add(new PageObject()
                     {
@@ -311,31 +310,33 @@ namespace Batoto
             Uri ImageLink = new Uri(PageObjectDocument.GetElementbyId("comic_page").Attributes["src"].Value);
             String Name = ImageLink.ToString().Split('/').Last();
 
+            UInt32 PageNumber = UInt32.Parse(PageNode.NextSibling.InnerText.Substring(5));
             String PageUrl = PageNode.Attributes["value"].Value,
                 NextPageUrl = (NextNode != null) ? NextNode.Attributes["value"].Value : null,
                 PrevPageUrl = (PrevNode != null) ? PrevNode.Attributes["value"].Value : null;
 
-            if (!PageUrl.Contains("?"))
-            { PageUrl += "?supress_webtoon=t"; }
-            else if (PageUrl.Contains("?"))
-            { PageUrl += "&supress_webtoon=t"; }
+            if (!String.IsNullOrWhiteSpace(PageUrl))
+            {
+                String PageHash = PageUrl.Split('#').Last().Split('_').First();
+                PageUrl = String.Format("https://bato.to/areader?id={0}&p={1}&supress_webtoon=t", PageHash, PageNumber);
+            }
 
-            if (NextPageUrl == null) { }
-            else if (!NextPageUrl.Contains("?"))
-            { NextPageUrl += "?supress_webtoon=t"; }
-            else if (NextPageUrl.Contains("?"))
-            { NextPageUrl += "&supress_webtoon=t"; }
+            if (!String.IsNullOrWhiteSpace(NextPageUrl))
+            {
+                String PageHash = NextPageUrl.Split('#').Last().Split('_').First();
+                NextPageUrl = String.Format("https://bato.to/areader?id={0}&p={1}&supress_webtoon=t", PageHash, PageNumber + 1);
+            }
 
-            if (PrevPageUrl == null) { }
-            else if (!PrevPageUrl.Contains("?"))
-            { PrevPageUrl += "?supress_webtoon=t"; }
-            else if (PrevPageUrl.Contains("?"))
-            { PrevPageUrl += "&supress_webtoon=t"; }
+            if (!String.IsNullOrWhiteSpace(PrevPageUrl))
+            {
+                String PageHash = PrevPageUrl.Split('#').Last().Split('_').First();
+                PrevPageUrl = String.Format("https://bato.to/areader?id={0}&p={1}&supress_webtoon=t", PageHash, PageNumber - 1);
+            }
 
             return new PageObject()
             {
                 Name = Name,
-                PageNumber = UInt32.Parse(PageNode.NextSibling.InnerText.Substring(5)),
+                PageNumber = PageNumber,
                 Url = PageUrl,
                 NextUrl = NextPageUrl,
                 PrevUrl = PrevPageUrl,

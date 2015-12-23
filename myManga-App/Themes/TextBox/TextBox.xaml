@@ -5,5 +5,13 @@
         <Setter Property="Background" Value="{DynamicResource window-background}"/>
         <Setter Property="Foreground" Value="{DynamicResource text-dark}"/>
         <Setter Property="CaretBrush" Value="{DynamicResource text-dark}"/>
+        <Setter Property="SelectionBrush" Value="{DynamicResource window-theme-primary}"/>
+    </Style>
+    <Style TargetType="{x:Type PasswordBox}">
+        <Setter Property="BorderBrush" Value="{DynamicResource window-theme-primary}"/>
+        <Setter Property="Background" Value="{DynamicResource window-background}"/>
+        <Setter Property="Foreground" Value="{DynamicResource text-dark}"/>
+        <Setter Property="CaretBrush" Value="{DynamicResource text-dark}"/>
+        <Setter Property="SelectionBrush" Value="{DynamicResource window-theme-primary}"/>
     </Style>
 </ResourceDictionary>

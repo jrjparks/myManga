@@ -12,6 +12,16 @@
     Foreground="{DynamicResource text-dark}"
     TextBlock.Foreground="{DynamicResource text-dark}"
     TextElement.Foreground="{DynamicResource text-dark}">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/myManga;component/Resources/Localization/Dictionary_en-US.xaml"/>
+                <ResourceDictionary Source="/myManga;component/Themes/CoreResourceDictionary.xaml"/>
+                <ResourceDictionary Source="/myManga;component/Themes/Button/MetroButton.xaml"/>
+                <ResourceDictionary Source="/myManga;component/Themes/TextBox/TextBox.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
     <Border
         BorderBrush="{DynamicResource window-theme-primary}"
         BorderThickness="1">

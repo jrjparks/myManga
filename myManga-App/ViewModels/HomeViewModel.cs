@@ -236,13 +236,13 @@ namespace myManga_App.ViewModels
         {
             if (!IsInDesignMode)
             {
+                ConfigureSearchFilter();
                 this.SelectedMangaArchiveCacheObject = App.SelectedMangaArchiveCacheObject;
                 foreach (String MangaArchiveFilePath in Directory.GetFiles(App.MANGA_ARCHIVE_DIRECTORY, App.MANGA_ARCHIVE_FILTER, SearchOption.AllDirectories))
                 {
                     VerifyArchiveFile.VerifyArchive(App.ZipStorage, MangaArchiveFilePath);
                     CacheMangaObject(MangaArchiveFilePath);
                 }
-                ConfigureSearchFilter();
                 MangaListView.MoveCurrentToFirst();
                 this.SelectedMangaArchiveCacheObject = App.MangaArchiveCacheCollection.FirstOrDefault();
 

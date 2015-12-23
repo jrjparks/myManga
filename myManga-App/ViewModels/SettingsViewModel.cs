@@ -3,6 +3,7 @@ using Core.IO.Storage.Manager.BaseInterfaceClasses;
 using Core.MVVM;
 using Core.Other.Singleton;
 using myManga_App.Objects;
+using myManga_App.Objects.UserConfig;
 using myMangaSiteExtension.Attributes;
 using myMangaSiteExtension.Interfaces;
 using myMangaSiteExtension.Objects;
@@ -265,6 +266,30 @@ namespace myManga_App.ViewModels
             private set { SetValue(AuthenticationUsernameProperty, value); }
         }
 
+        private static readonly DependencyProperty AuthenticationPasswordProperty = DependencyProperty.RegisterAttached(
+            "AuthenticationPassword",
+            typeof(String),
+            typeof(SettingsViewModel),
+            new PropertyMetadata(String.Empty));
+
+        public String AuthenticationPassword
+        {
+            get { return (String)GetValue(AuthenticationPasswordProperty); }
+            private set { SetValue(AuthenticationPasswordProperty, value); }
+        }
+
+        private static readonly DependencyProperty AuthenticationRememberMeProperty = DependencyProperty.RegisterAttached(
+            "AuthenticationRememberMe",
+            typeof(Boolean),
+            typeof(SettingsViewModel),
+            new PropertyMetadata(false));
+
+        public Boolean AuthenticationRememberMe
+        {
+            get { return (Boolean)GetValue(AuthenticationRememberMeProperty); }
+            private set { SetValue(AuthenticationRememberMeProperty, value); }
+        }
+
         private static readonly DependencyProperty ShowAuthenticationProperty = DependencyProperty.RegisterAttached(
             "ShowAuthentication",
             typeof(Boolean),
@@ -280,18 +305,38 @@ namespace myManga_App.ViewModels
         protected DelegateCommand<System.Windows.Controls.PasswordBox> authenticateCommand;
         public ICommand AuthenticateCommand
         { get { return authenticateCommand ?? (authenticateCommand = new DelegateCommand<System.Windows.Controls.PasswordBox>(Authenticate)); } }
-        public async void Authenticate(System.Windows.Controls.PasswordBox PasswordBox)
+        private async void Authenticate(System.Windows.Controls.PasswordBox PasswordBox)
         {
             ISiteExtension siteExtention = App.SiteExtensions.DLLCollection[this.SelectedSiteExtensionInformationObject.Name];
             String Username = this.AuthenticationUsername;
-            System.Security.SecureString Password = PasswordBox.SecurePassword.Copy();
-            Task<Boolean> authenticationTask = Task.Run<Boolean>(() =>
-            {
-                return siteExtention.Authenticate(new System.Net.NetworkCredential(Username, Password)); ;
-            });
+            Boolean RememberMe = this.AuthenticationRememberMe;
+            Task<Boolean> authenticationTask = Task.Run<Boolean>(() => siteExtention.Authenticate(new System.Net.NetworkCredential(Username, PasswordBox.SecurePassword)));
             Boolean authenticationSuccess = await authenticationTask;
+            if (authenticationSuccess)
+            {
+                this.AuthenticationUsername = String.Empty;
+                this.AuthenticationRememberMe = false;
+                if (RememberMe)
+                {
+                    UserPluginAuthenticationObject upa = App.UserAuthentication.UserPluginAuthentications.FirstOrDefault(_upa => _upa.PluginName.Equals(this.SelectedSiteExtensionInformationObject.Name));
+                    App.UserAuthentication.UserPluginAuthentications.Remove(upa);
+                    upa = upa ?? new UserPluginAuthenticationObject();
+                    upa.PluginName = this.SelectedSiteExtensionInformationObject.Name;
+                    upa.Username = Username;
+                    upa.Password = PasswordBox.SecurePassword;
+                    App.UserAuthentication.UserPluginAuthentications.Add(upa);
+                    App.SaveUserAuthentication();
+                }
+            }
+            PasswordBox.SecurePassword.Clear();
+            PasswordBox.Clear();
             this.ShowAuthentication = !authenticationSuccess;
         }
+
+        protected DelegateCommand cancelAuthenticationCommand;
+        public ICommand CancelAuthenticationCommand
+        { get { return cancelAuthenticationCommand ?? (cancelAuthenticationCommand = new DelegateCommand(CancelAuthentication)); } }
+        private void CancelAuthentication() { this.ShowAuthentication = false; }
         #endregion
 
         public SettingsViewModel()

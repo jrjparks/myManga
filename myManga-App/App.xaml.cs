@@ -205,6 +205,7 @@ namespace myManga_App
             DatabaseExtensions.LoadDLL(PLUGIN_DIRECTORY, Filter: "*.mymanga.dll");
 
             LoadUserConfig();
+            AuthenticateUser();
             UserConfig.UserConfigurationUpdated += (_s, _e) => SaveUserConfig();
 
             // Enable FileSystemWatchers
@@ -219,24 +220,29 @@ namespace myManga_App
             {
                 using (UserAuthenticationStream)
                 {
-                    try
-                    {
-                        this.UserAuthentication = UserAuthenticationStream.Deserialize<UserAuthenticationObject>(SaveType: SaveType.XML);
-                    }
+                    try { this.UserAuthentication = UserAuthenticationStream.Deserialize<UserAuthenticationObject>(SaveType: SaveType.XML); }
                     catch { }
                 }
             }
 
-            if (UserConfigurationObject.Equals(this.UserConfig, null))
+            if (UserAuthenticationObject.Equals(this.UserAuthentication, null))
             {
                 this.UserAuthentication = new UserAuthenticationObject();
             }
 
-            foreach(UserPluginAuthenticationObject upa in this.UserAuthentication.UserPluginAuthentications)
+            foreach (UserPluginAuthenticationObject upa in this.UserAuthentication.UserPluginAuthentications)
             {
-                ISiteExtension siteExtension = this.SiteExtensions.DLLCollection[upa.PluginName];
-                siteExtension.Authenticate(new System.Net.NetworkCredential(upa.Username, upa.Password));
+                try
+                {
+                    ISiteExtension siteExtension = this.SiteExtensions.DLLCollection[upa.PluginName];
+                    siteExtension.Authenticate(new System.Net.NetworkCredential(upa.Username, upa.Password));
+                }
+                catch
+                {
+                    MessageBox.Show(String.Format("There was an error decoding {0}. Please reauthenticate.", upa.PluginName));
+                }
             }
+            SaveUserAuthentication();
         }
 
         private void LoadUserConfig()
@@ -273,6 +279,12 @@ namespace myManga_App
         {
             if (!UserConfigurationObject.Equals(this.UserConfig, null))
                 this.FileStorage.Write(this.USER_CONFIG_PATH, this.UserConfig.Serialize(SaveType: SaveType.XML));
+        }
+
+        public void SaveUserAuthentication()
+        {
+            if (!UserConfigurationObject.Equals(this.UserConfig, null))
+                this.FileStorage.Write(this.USER_AUTH_PATH, this.UserAuthentication.Serialize(SaveType: SaveType.XML));
         }
 
         #region IDisposable Support

@@ -4,6 +4,7 @@
     xmlns:ViewModels="clr-namespace:myManga_App.ViewModels"
     xmlns:Views="clr-namespace:myManga_App.Views"
     xmlns:HomeViews="clr-namespace:myManga_App.Views.HomeView"
+    xmlns:SettingsView="clr-namespace:myManga_App.Views.SettingsView"
     xmlns:MVVM="clr-namespace:myManga_App.Objects.MVVM">
 
     <DataTemplate x:Key="HomeView_List" DataType="{x:Type ViewModels:HomeViewModel}">
@@ -28,7 +29,7 @@
     </DataTemplate>
     
     <DataTemplate DataType="{x:Type ViewModels:SettingsViewModel}">
-        <Views:SettingsView/>
+        <SettingsView:SettingsView/>
     </DataTemplate>
     
     <DataTemplate DataType="{x:Type ViewModels:SearchViewModel}">

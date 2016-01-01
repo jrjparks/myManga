@@ -24,7 +24,10 @@ namespace myManga_App.ViewModels.Pages
                     SearchProgressActive = (0 < ProgressValue && ProgressValue < 100);
                     SearchProgress = ProgressValue;
                 });
-                Messenger.Default.RegisterRecipient<String>(this, SearchAsync, "SearchRequest");
+                Messenger.Default.RegisterRecipient<String>(this, SearchTerm => {
+                    SearchAsync(SearchTerm);
+                    PullFocus();
+                }, "SearchRequest");
             }
         }
 

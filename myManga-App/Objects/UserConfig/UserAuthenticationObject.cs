@@ -51,8 +51,5 @@ namespace myManga_App.Objects.UserConfig
                     userPluginAuthentications.Add(_value);
             }
         }
-
-        public UserAuthenticationObject() : base() { }
-        public UserAuthenticationObject(SerializationInfo info, StreamingContext context) : base(info, context) { }
     }
 }

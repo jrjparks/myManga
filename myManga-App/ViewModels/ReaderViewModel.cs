@@ -196,10 +196,13 @@ namespace myManga_App.ViewModels
 
         private void ReloadPageImage()
         {
+            App.ContentDownloadManager.Download(MangaObject, ChapterObject, SelectedPageObject);
+            /*
             if (this.SelectedPageObject.ImgUrl != null)
                 App.DownloadManager.Download(this.SelectedPageObject.ImgUrl, this.ArchiveFilePath);
             else if (this.SelectedPageObject.Url != null)
                 App.DownloadManager.Download(this.MangaObject, this.ChapterObject, this.SelectedPageObject);
+            //*/
         }
         #endregion
         #endregion
@@ -261,9 +264,8 @@ namespace myManga_App.ViewModels
             foreach (System.Collections.Generic.KeyValuePair<String, ChapterObject> ChapterObjectPreload in ChapterObjectPreloadDictionary)
                 if (!String.Equals(ChapterObjectPreload.Key, null) && !File.Exists(ChapterObjectPreload.Key))
                 {
-                    using (File.Open(ChapterObjectPreload.Key, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite))
-                    { /* Touch Chapter File */ }
-                    App.DownloadManager.Download(this.MangaObject, ChapterObjectPreload.Value);
+                    if (!App.ContentDownloadManager.IsCacheKeyActive(App.ContentDownloadManager.CacheKey(MangaObject, ChapterObjectPreload.Value)))
+                    { App.ContentDownloadManager.Download(MangaObject, ChapterObjectPreload.Value); }
                 }
         }
 
@@ -371,7 +373,7 @@ namespace myManga_App.ViewModels
                         break;
 
                     case WatcherChangeTypes.Deleted:
-                        App.DownloadManager.Download(this.MangaObject, this.ChapterObject);
+                        App.ContentDownloadManager.Download(MangaObject, ChapterObject);
                         break;
                 }
         }

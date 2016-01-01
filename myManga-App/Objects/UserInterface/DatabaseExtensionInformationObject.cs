@@ -96,7 +96,6 @@ namespace myManga_App.Objects
 
         public DatabaseExtensionInformationObject() : base() { }
         public DatabaseExtensionInformationObject(IDatabaseExtensionDescriptionAttribute attribute) : base() { iDatabaseExtensionAttribute = attribute; }
-        public DatabaseExtensionInformationObject(SerializationInfo info, StreamingContext context) : base(info, context) { }
         #endregion
     }
 }

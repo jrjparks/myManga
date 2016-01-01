@@ -66,7 +66,7 @@ namespace System.Windows.Controls
                     value != null ? value.GetType().FullName : "(null)"));
             }
         }
-        
+
         /// <summary>
         /// Determines whether conversion is possible to a specified type.
         /// </summary>

@@ -8,6 +8,35 @@ namespace myManga_App.Objects.Cache
 {
     public sealed class MangaArchiveCacheObject : DependencyObject
     {
+        #region Progress
+        public IProgress<Int32> ProgressReporter
+        { get; private set; }
+
+        private static readonly DependencyProperty ProgressProperty = DependencyProperty.RegisterAttached(
+            "Progress",
+            typeof(Int32),
+            typeof(MangaArchiveCacheObject),
+            new PropertyMetadata(0));
+
+        public Int32 Progress
+        {
+            get { return (Int32)GetValue(ProgressProperty); }
+            set { SetValue(ProgressProperty, value); }
+        }
+
+        private static readonly DependencyProperty ProgressActiveProperty = DependencyProperty.RegisterAttached(
+            "ProgressActive",
+            typeof(Boolean),
+            typeof(MangaArchiveCacheObject),
+            new PropertyMetadata(false));
+
+        public Boolean ProgressActive
+        {
+            get { return (Boolean)GetValue(ProgressActiveProperty); }
+            set { SetValue(ProgressActiveProperty, value); }
+        }
+        #endregion
+
         #region DataObjects
         #region MangaObjectProperty
         private static readonly DependencyProperty MangaObjectProperty = DependencyProperty.RegisterAttached(
@@ -149,22 +178,17 @@ namespace myManga_App.Objects.Cache
         { (d as MangaArchiveCacheObject).LastUpdate = DateTime.Now; }
         #endregion
 
-        #region Guid
-        private static readonly DependencyPropertyKey GuidPropertyKey = DependencyProperty.RegisterAttachedReadOnly(
-            "Id",
-            typeof(Guid),
-            typeof(MangaArchiveCacheObject),
-            null);
-        private static readonly DependencyProperty GuidProperty = GuidPropertyKey.DependencyProperty;
-        public Guid Id { get { return (Guid)GetValue(GuidProperty); } }
-        #endregion
-
         #region Constructors
         public MangaArchiveCacheObject() : this(null, null) { }
         public MangaArchiveCacheObject(MangaObject MangaObject, BookmarkObject BookmarkObject)
             : base()
         {
-            SetValue(GuidPropertyKey, Guid.NewGuid());
+            ProgressReporter = new Progress<Int32>(ProgressValue =>
+            {
+                ProgressActive = (0 < ProgressValue && ProgressValue < 100);
+                Progress = ProgressValue;
+            });
+
             this.MangaObject = MangaObject;
             this.BookmarkObject = BookmarkObject;
             if (!this.Empty() && !BookmarkObject.Equals(this.BookmarkObject, null))
@@ -190,7 +214,7 @@ namespace myManga_App.Objects.Cache
         #endregion
     }
 
-    public static class MangaArchiveCacheObjectExtentions
+    public static class MangaArchiveCacheObjectExtensions
     {
         #region Static Methods
         public static void Merge(this MangaArchiveCacheObject obj, MangaArchiveCacheObject value)
@@ -202,7 +226,8 @@ namespace myManga_App.Objects.Cache
         public static Boolean Empty(this MangaArchiveCacheObject obj)
         {
             if (MangaArchiveCacheObject.Equals(obj, null)) return true;
-            if (MangaObject.Equals(obj.MangaObject, null) || MangaObject.Equals(obj.MangaObject, default(MangaObject))) return true;
+            if (MangaObject.Equals(obj.MangaObject, null)) return true;
+            if (MangaObject.Equals(obj.MangaObject, default(MangaObject))) return true;
             return false;
         }
         #endregion

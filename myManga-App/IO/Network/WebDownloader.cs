@@ -9,11 +9,13 @@ namespace myManga_App.IO.Network
     {
         public CookieContainer CookieContainer
         { get; private set; }
+        public String Referer
+        { get; set; }
 
         /// <summary>
         /// Empty WebDownloader constructor
         /// </summary>
-        public WebDownloader() : this(new CookieContainer(), new CookieCollection())
+        public WebDownloader() : this(new CookieContainer(), null)
         { }
 
         /// <summary>
@@ -31,7 +33,8 @@ namespace myManga_App.IO.Network
         public WebDownloader(CookieContainer cookieContainer, CookieCollection cookies) : base()
         {
             this.CookieContainer = cookieContainer;
-            this.CookieContainer.Add(cookies);
+            if (!Equals(cookies, null))
+            { this.CookieContainer.Add(cookies); }
         }
 
         /// <summary>
@@ -42,8 +45,10 @@ namespace myManga_App.IO.Network
         protected override WebRequest GetWebRequest(Uri address)
         {
             HttpWebRequest request = base.GetWebRequest(address) as HttpWebRequest;
+            request.AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip;
             request.CookieContainer = this.CookieContainer;
             request.Headers.Add("X-Requested-With", "XMLHttpRequest");
+            request.Referer = Referer ?? request.Host;
             return request;
         }
 

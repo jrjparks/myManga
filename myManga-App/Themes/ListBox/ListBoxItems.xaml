@@ -17,6 +17,7 @@
 
     <converters:StringListToCSV x:Key="StringListToCSV"/>
     <converters:LocationListToCSV x:Key="LocationListToCSV"/>
+    <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
 
     <Style TargetType="{x:Type ListBoxItem}">
         <Setter Property="BorderBrush" Value="{DynamicResource window-theme-primary}"/>
@@ -151,6 +152,12 @@
                                     <DropShadowEffect Color="{DynamicResource window-background-color}" ShadowDepth="0"/>
                                 </TextBlock.Effect>
                             </TextBlock>
+
+                            <ProgressBar
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Bottom"
+                                Visibility="{Binding ProgressActive, Converter={StaticResource BooleanToVisibilityConverter}, FallbackValue=Hidden}"
+                                Value="{Binding Progress, FallbackValue=0}"/>
                         </Grid>
                         <Border.InputBindings>
                             <MouseBinding MouseAction="LeftDoubleClick" Command="{Binding Path=DataContext.ResumeReadingCommand, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl}}"/>
@@ -263,6 +270,12 @@
                                     <DropShadowEffect Color="{DynamicResource window-background-color}" ShadowDepth="0"/>
                                 </TextBlock.Effect>
                             </TextBlock>
+
+                            <ProgressBar
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Bottom"
+                                Visibility="{Binding ProgressActive, Converter={StaticResource BooleanToVisibilityConverter}, FallbackValue=Hidden}"
+                                Value="{Binding Progress, FallbackValue=0}"/>
                         </Grid>
                         <Border.InputBindings>
                             <MouseBinding MouseAction="LeftDoubleClick" Command="{Binding Path=DataContext.ResumeReadingCommand, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl}}"/>

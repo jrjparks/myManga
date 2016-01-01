@@ -87,10 +87,6 @@ namespace myMangaSiteExtension.Objects
                 OnPropertyChanged();
             }
         }
-
-        public SearchRequestObject() : base() { }
-        public SearchRequestObject(SerializationInfo info, StreamingContext context)
-            : base(info, context) { }
         #endregion
     }
 }

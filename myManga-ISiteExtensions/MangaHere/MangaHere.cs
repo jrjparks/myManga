@@ -5,10 +5,12 @@ using myMangaSiteExtension.Interfaces;
 using myMangaSiteExtension.Objects;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Reflection;
 using System.Text;
+using System.Threading;
 
 namespace MangaHere
 {
@@ -27,27 +29,41 @@ namespace MangaHere
         public ISiteExtensionDescriptionAttribute SiteExtensionDescriptionAttribute
         { get { return siteExtensionDescriptionAttribute ?? (siteExtensionDescriptionAttribute = GetType().GetCustomAttribute<ISiteExtensionDescriptionAttribute>(false)); } }
 
-        private CookieCollection cookies;
+        #region IExtension
         public CookieCollection Cookies
-        { get { return cookies ?? (this.cookies = new CookieCollection()); } private set { this.cookies = value; } }
+        { get; private set; }
 
-        public bool Authenticate(NetworkCredential credentials)
+        public Boolean IsAuthenticated
+        { get; private set; }
+
+        public bool Authenticate(NetworkCredential credentials, CancellationToken ct, IProgress<Int32> ProgressReporter)
         {
+            if (IsAuthenticated) return true;
             throw new NotImplementedException();
         }
 
         public void Deauthenticate()
-        { this.Cookies = new CookieCollection(); }
+        {
+            if (!IsAuthenticated) return;
+            Cookies = null;
+            IsAuthenticated = false;
+        }
 
         public List<MangaObject> GetUserFavorites()
         {
             throw new NotImplementedException();
         }
 
-        public bool AddUserFavorites(MangaObject mangaObject)
+        public bool AddUserFavorites(MangaObject MangaObject)
         {
             throw new NotImplementedException();
         }
+
+        public bool RemoveUserFavorites(MangaObject MangaObject)
+        {
+            throw new NotImplementedException();
+        }
+        #endregion
 
         public SearchRequestObject GetSearchRequestObject(String searchTerm)
         {
@@ -101,10 +117,10 @@ namespace MangaHere
                     Name = ChapterTitle,
                     Volume = UInt32.Parse(volChapSub[0]),
                     Chapter = UInt32.Parse(volChapSub[1]),
-                    Locations = { 
-                        new LocationObject() { 
-                                ExtensionName = SiteExtensionDescriptionAttribute.Name, 
-                                Url = ChapterNode.SelectSingleNode(".//span[1]/a").Attributes["href"].Value } 
+                    Locations = {
+                        new LocationObject() {
+                                ExtensionName = SiteExtensionDescriptionAttribute.Name,
+                                Url = ChapterNode.SelectSingleNode(".//span[1]/a").Attributes["href"].Value }
                         },
                     Released = ChapterNode.SelectSingleNode(".//span[2]").InnerText.ToLower().Equals("today") ? DateTime.Today : (ChapterNode.SelectSingleNode(".//span[2]").InnerText.ToLower().Equals("yesterday") ? DateTime.Today.AddDays(-1) : DateTime.Parse(ChapterNode.SelectSingleNode(".//span[2]").InnerText))
                 };
@@ -121,7 +137,7 @@ namespace MangaHere
                 Name = MangaName,
                 Description = HtmlEntity.DeEntitize(Desciption),
                 AlternateNames = AlternateNames.ToList(),
-                Covers = { Cover },
+                CoverLocations = { new LocationObject() { Url = Cover, ExtensionName = SiteExtensionDescriptionAttribute.Name } },
                 Authors = Authors.ToList(),
                 Artists = Artists.ToList(),
                 Genres = Genres.ToList(),
@@ -177,51 +193,52 @@ namespace MangaHere
         public List<SearchResultObject> ParseSearch(string content)
         {
             List<SearchResultObject> SearchResults = new List<SearchResultObject>();
-
             HtmlDocument SearchResultDocument = new HtmlDocument();
             SearchResultDocument.LoadHtml(content);
             HtmlWeb HtmlWeb = new HtmlWeb();
             HtmlNodeCollection HtmlSearchResults = SearchResultDocument.DocumentNode.SelectNodes(".//div[contains(@class,'result_search')]/dl");
-            if (HtmlSearchResults != null && !HtmlSearchResults[0].InnerText.ToLower().Equals("No Manga Series".ToLower()))
+            if (!Equals(HtmlSearchResults, null) && !Equals(HtmlSearchResults[0].InnerText.ToLower(), "No Manga Series".ToLower()))
             {
                 foreach (HtmlNode SearchResultNode in HtmlSearchResults)
                 {
-                    String Name = SearchResultNode.SelectSingleNode(".//dt/a[1]").Attributes["rel"].Value,
-                        Url = SearchResultNode.SelectSingleNode(".//dt/a[1]").Attributes["href"].Value;
-                    HtmlWeb.PreRequest = new HtmlAgilityPack.HtmlWeb.PreRequestHandler(req =>
+                    try
                     {
-                        req.Method = "POST";
-                        req.ContentType = "application/x-www-form-urlencoded";
-                        String PayloadContent = String.Format("name={0}", Uri.EscapeDataString(Name));
-                        Byte[] PayloadBuffer = Encoding.UTF8.GetBytes(PayloadContent.ToCharArray());
-                        req.ContentLength = PayloadBuffer.Length;
-                        req.GetRequestStream().Write(PayloadBuffer, 0, PayloadBuffer.Length);
+                        String Name = SearchResultNode.SelectSingleNode(".//dt/a[1]").Attributes["rel"].Value,
+                            Url = SearchResultNode.SelectSingleNode(".//dt/a[1]").Attributes["href"].Value;
+                        HtmlWeb.PreRequest = new HtmlAgilityPack.HtmlWeb.PreRequestHandler(req =>
+                        {
+                            req.Method = "POST";
+                            req.ContentType = "application/x-www-form-urlencoded";
+                            String PayloadContent = String.Format("name={0}", Uri.EscapeDataString(Name));
+                            Byte[] PayloadBuffer = Encoding.UTF8.GetBytes(PayloadContent.ToCharArray());
+                            req.ContentLength = PayloadBuffer.Length;
+                            req.GetRequestStream().Write(PayloadBuffer, 0, PayloadBuffer.Length);
 
-                        return true;
-                    });
-                    String[] Details = HtmlWeb.Load(
-                        String.Format("{0}/ajax/series.php", SiteExtensionDescriptionAttribute.RootUrl)
-                        ).DocumentNode.InnerText.Replace("\\/","/").Split(new String[]{"\",\""}, StringSplitOptions.None);
-                    String CoverUrl = Details[1].Substring(0, Details[1].LastIndexOf('?'));
-                    Double Rating = -1;
-                    Double.TryParse(Details[3], out Rating);
+                            return true;
+                        });
+                        String[] Details = HtmlWeb.Load(
+                            String.Format("{0}/ajax/series.php", SiteExtensionDescriptionAttribute.RootUrl)
+                            ).DocumentNode.InnerText.Replace("\\/", "/").Split(new String[] { "\",\"" }, StringSplitOptions.None);
+                        LocationObject Cover = new LocationObject() { Url = Details[1].Substring(0, Details[1].LastIndexOf('?')), ExtensionName = SiteExtensionDescriptionAttribute.Name };
+                        Double Rating = -1;
+                        Double.TryParse(Details[3], out Rating);
 
-                    SearchResults.Add(new SearchResultObject()
-                    {
-                        Name = Name,
-                        Rating = Rating,
-                        Description = HtmlEntity.DeEntitize(Details[8]),
-                        Artists = (from String Staff in Details[5].Split(new String[] { ", " }, StringSplitOptions.RemoveEmptyEntries) select Staff.Trim()).ToList(),
-                        Authors = (from String Staff in Details[5].Split(new String[] { ", " }, StringSplitOptions.RemoveEmptyEntries) select Staff.Trim()).ToList(),
-                        CoverUrl = CoverUrl,
-                        Url = Url,
-                        ExtensionName = SiteExtensionDescriptionAttribute.Name
-                    });
-
-                    HtmlWeb.PreRequest = null;
+                        SearchResults.Add(new SearchResultObject()
+                        {
+                            Name = Name,
+                            Rating = Rating,
+                            Description = HtmlEntity.DeEntitize(Details[8]),
+                            Artists = (from String Staff in Details[5].Split(new String[] { ", " }, StringSplitOptions.RemoveEmptyEntries) select Staff.Trim()).ToList(),
+                            Authors = (from String Staff in Details[5].Split(new String[] { ", " }, StringSplitOptions.RemoveEmptyEntries) select Staff.Trim()).ToList(),
+                            Cover = Cover,
+                            Url = Url,
+                            ExtensionName = SiteExtensionDescriptionAttribute.Name
+                        });
+                    }
+                    catch { }
+                    finally { HtmlWeb.PreRequest = null; }
                 }
             }
-
             return SearchResults;
         }
     }

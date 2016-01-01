@@ -8,7 +8,7 @@
     xmlns:Converters="clr-namespace:myManga_App.Converters"
     xmlns:Objects="clr-namespace:myManga_App.Objects"
     xmlns:System="clr-namespace:System;assembly=mscorlib"
-    xmlns:SettingsView="clr-namespace:myManga_App.Views.SettingsView"
+    xmlns:Dialog="clr-namespace:myManga_App.Views.Dialog"
     x:Class="myManga_App.Views.SettingsView.SettingsView"
     mc:Ignorable="d" 
     d:DesignHeight="400"
@@ -205,7 +205,7 @@
                 SecondaryDisabledBrush="{DynamicResource window-background}"
                 Opacity="0.9"
                 IsChecked="{Binding ShowAuthentication}"/>
-            <SettingsView:LoginDialog
+            <Dialog:LoginDialog
                 DataContext="{Binding Mode=OneWay}"
                 Grid.Column="1"
                 Grid.Row="1"/>

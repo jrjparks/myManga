@@ -1,6 +1,8 @@
 ﻿<window:myMangaWindow
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
     xmlns:p="http://schemas.microsoft.com/netfx/2007/xaml/presentation"
     xmlns:window="clr-namespace:myManga_App.Controls.Window"
     xmlns:ViewModels="clr-namespace:myManga_App.ViewModels"
@@ -15,8 +17,8 @@
     Width="{Binding UserConfig.WindowSizeWidth, FallbackValue=640, Mode=TwoWay, Source={x:Static Application.Current}, UpdateSourceTrigger=PropertyChanged}"
     Height="{Binding UserConfig.WindowSizeHeight, FallbackValue=480, Mode=TwoWay, Source={x:Static Application.Current}, UpdateSourceTrigger=PropertyChanged}"
     x:Name="myMangaMainWindow"
-    MinHeight="480"
-    MinWidth="640"
+    MinHeight="768"
+    MinWidth="1024"
     Icon="/myManga;component/Resources/Icon.ico"
     SnapsToDevicePixels="True"
     Style="{StaticResource myMangaWindow}"
@@ -29,6 +31,7 @@
                 <ResourceDictionary Source="/myManga;component/Resources/Localization/Dictionary_en-US.xaml"/>
                 <ResourceDictionary Source="/myManga;component/Resources/ViewModel-View-Link.xaml"/>
 
+                <ResourceDictionary Source="/myManga;component/Themes/ProgressBar/ProgressBar.xaml"/>
                 <ResourceDictionary Source="/myManga;component/Themes/ProgressBar/Spinner.xaml"/>
             </ResourceDictionary.MergedDictionaries>
             <Converters:EnumToBooleanConverter x:Key="EnumToBooleanConverter"/>
@@ -47,63 +50,73 @@
             <ColumnDefinition/>
             <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
-        <StackPanel
-			Grid.Row="0"
-			Orientation="Horizontal"
-			TextElement.FontSize="20"
-			TextElement.FontFamily="{DynamicResource OpenIconic}">
-            <Button:MetroButton
-                Content="{DynamicResource HomeTabHeaderContent}"
-				ToolTip="{DynamicResource HomeTabHeaderName}"
-				Command="{Binding HomeCommand}"
-				MinWidth="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"
-                Margin="3px 0px"/>
-            <Button:MetroButton
-				Content="{DynamicResource SearchTabHeaderContent}"
-				ToolTip="{DynamicResource SearchTabHeaderName}"
-				Command="{Binding SearchCommand}"
-				MinWidth="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"
-                Margin="3px 0px"/>
-            <Button:MetroButton
-				Content="{DynamicResource ReaderTabHeaderContent}"
-				ToolTip="{DynamicResource ReaderTabHeaderName}"
-				Command="{Binding ReadCommand}"
-				MinWidth="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"
-                Margin="3px 0px"/>
-        </StackPanel>
-        <StackPanel
-			Grid.Column="1"
-			Orientation="Horizontal">
-            <ProgressBar
-				VerticalAlignment="Center"
-				Height="24"
-				Width="{Binding Height, Mode=OneWay, RelativeSource={RelativeSource Self}}" 
-				Style="{DynamicResource Spinner}" 
-				Visibility="{Binding IsLoading, Converter={StaticResource BooleanToVisibilityConverter}}"
-                Foreground="{DynamicResource text-dark}"
-				IsHitTestVisible="False"/>
-            <StackPanel 
-                Orientation="Horizontal" 
-                TextElement.FontFamily="{DynamicResource OpenIconic}"
-                TextElement.FontSize="20"
-                VerticalAlignment="Center"
-                Visibility="{Binding ContentViewModel.SupportsViewTypeChange, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
-                <Button:MetroRadioButton 
-                    Content="{DynamicResource oi-list}" 
-                    IsChecked="{Binding ContentViewModel.ViewType, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static MVVM:ViewModelViewType.Normal}, Mode=TwoWay}"/>
-                <Button:MetroRadioButton 
-                    Content="{DynamicResource oi-grid-four-up}"
-                    IsChecked="{Binding ContentViewModel.ViewType, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static MVVM:ViewModelViewType.Grid}, Mode=TwoWay}"/>
+
+        <Grid
+            Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <StackPanel
+			    Grid.Row="0"
+			    Orientation="Horizontal"
+			    TextElement.FontSize="20"
+			    TextElement.FontFamily="{DynamicResource OpenIconic}">
+                <Button:MetroButton
+                    Content="{DynamicResource HomeTabHeaderContent}"
+				    ToolTip="{DynamicResource HomeTabHeaderName}"
+				    Command="{Binding HomeCommand}"
+				    MinWidth="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"
+                    Margin="3px 0px"/>
+                <Button:MetroButton
+				    Content="{DynamicResource SearchTabHeaderContent}"
+				    ToolTip="{DynamicResource SearchTabHeaderName}"
+				    Command="{Binding SearchCommand}"
+				    MinWidth="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"
+                    Margin="3px 0px"/>
+                <Button:MetroButton
+				    Content="{DynamicResource ReaderTabHeaderContent}"
+				    ToolTip="{DynamicResource ReaderTabHeaderName}"
+				    Command="{Binding ReadCommand}"
+				    MinWidth="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"
+                    Margin="3px 0px"/>
             </StackPanel>
-            <Button:MetroButton
-				TextElement.FontSize="20"
-				TextElement.FontFamily="{DynamicResource OpenIconic}"
-				Content="{DynamicResource oi-wrench}"
-				ContentStringFormat="Settings {0}"
-				ToolTip="Settings"
-				Command="{Binding SettingsCommand}"
-				MinWidth="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"/>
-        </StackPanel>
+
+            <ProgressBar
+                Grid.Column="1"
+                IsIndeterminate="{Binding DownloadsActive}"
+                Style="{DynamicResource PerformanceProgressBar}"/>
+
+            <StackPanel
+			    Grid.Column="2"
+			    Orientation="Horizontal">
+                <StackPanel 
+                    Orientation="Horizontal" 
+                    TextElement.FontFamily="{DynamicResource OpenIconic}"
+                    TextElement.FontSize="20"
+                    VerticalAlignment="Center"
+                    Visibility="{Binding ContentViewModel.SupportsViewTypeChange, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
+                    <Button:MetroRadioButton 
+                        Content="{DynamicResource oi-list}" 
+                        IsChecked="{Binding ContentViewModel.ViewType, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static MVVM:ViewModelViewType.Normal}, Mode=TwoWay}"/>
+                    <Button:MetroRadioButton 
+                        Content="{DynamicResource oi-grid-four-up}"
+                        IsChecked="{Binding ContentViewModel.ViewType, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static MVVM:ViewModelViewType.Grid}, Mode=TwoWay}"/>
+                </StackPanel>
+                <Button:MetroButton
+				    TextElement.FontSize="20"
+				    TextElement.FontFamily="{DynamicResource OpenIconic}"
+				    Content="{DynamicResource oi-wrench}"
+				    ContentStringFormat="Settings {0}"
+				    ToolTip="Settings"
+				    Command="{Binding SettingsCommand}"
+				    MinWidth="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"/>
+            </StackPanel>
+
+        </Grid>
+
         <ContentPresenter
 			Grid.Row="1"
 			Grid.ColumnSpan="2"
@@ -112,6 +125,7 @@
 			x:Name="Watermark"
 			Panel.ZIndex="99"
 			Grid.RowSpan="2"
+			Grid.ColumnSpan="2"
             TextElement.Foreground="{DynamicResource window-foreground}"
 			IsHitTestVisible="False"
 			VerticalAlignment="Center"

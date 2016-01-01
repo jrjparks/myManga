@@ -73,12 +73,8 @@ namespace myMangaSiteExtension.Objects
             }
         }
 
-        public LocationObject() : base() { }
-        public LocationObject(SerializationInfo info, StreamingContext context) : base(info, context) { }
         public override string ToString()
-        {
-            return String.Format("{0}[{2}]: {1}", ExtensionName, Url, Enabled ? "Enabled" : "Disabled");
-        }
+        { return String.Format("{0}[{2}]: {1}", ExtensionName, Url, Enabled ? "Enabled" : "Disabled"); }
         #endregion
     }
 }

@@ -579,8 +579,8 @@ namespace myManga_App.IO.Network
                 if (IsRefresh == null || (IsRefresh.Value is Boolean && (Boolean)IsRefresh.Value == false))
                     ImageWorker.RunWork(
                         SmartThreadPool,
-                        (from String url in e.Result.Covers select new ImageDownloadRequest(url, save_path)).AsEnumerable(),
-                        Enumerable.Repeat<Guid?>(e.Id, e.Result.Covers.Count));
+                        (from String url in e.Result.CoverLocations select new ImageDownloadRequest(url, save_path)).AsEnumerable(),
+                        Enumerable.Repeat<Guid?>(e.Id, e.Result.CoverLocations.Count));
                 else VerifyArchiveFile.VerifyArchive(App.ZipStorage, save_path);
             }
             OnStatusChange(e.Exception);

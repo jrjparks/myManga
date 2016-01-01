@@ -6,7 +6,6 @@
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
-using System.Windows.Media.Animation;
 
 namespace System.Windows.Controls
 {
@@ -39,7 +38,7 @@ namespace System.Windows.Controls
         [TypeConverter(typeof(LengthConverter))]
         public double ItemHeight
         {
-            get { return (double) GetValue(ItemHeightProperty); }
+            get { return (double)GetValue(ItemHeightProperty); }
             set { SetValue(ItemHeightProperty, value); }
         }
 
@@ -74,7 +73,7 @@ namespace System.Windows.Controls
         [TypeConverter(typeof(LengthConverter))]
         public double ItemWidth
         {
-            get { return (double) GetValue(ItemWidthProperty); }
+            get { return (double)GetValue(ItemWidthProperty); }
             set { SetValue(ItemWidthProperty, value); }
         }
 
@@ -107,7 +106,7 @@ namespace System.Windows.Controls
         /// </value>
         public Orientation Orientation
         {
-            get { return (Orientation) GetValue(OrientationProperty); }
+            get { return (Orientation)GetValue(OrientationProperty); }
             set { SetValue(OrientationProperty, value); }
         }
 
@@ -157,7 +156,7 @@ namespace System.Windows.Controls
             {
                 // Reset the property to its original state before throwing
                 source._ignorePropertyChange = true;
-                source.SetValue(OrientationProperty, (Orientation) e.OldValue);
+                source.SetValue(OrientationProperty, (Orientation)e.OldValue);
 
                 string message = string.Format(
                     CultureInfo.InvariantCulture,
@@ -225,7 +224,7 @@ namespace System.Windows.Controls
         private static void OnItemHeightOrWidthPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             BalancedWrapPanel source = (BalancedWrapPanel)d;
-            double value = (double) e.NewValue;
+            double value = (double)e.NewValue;
 
             // Ignore the change if requested
             if (source._ignorePropertyChange)
@@ -240,7 +239,7 @@ namespace System.Windows.Controls
             {
                 // Reset the property to its original state before throwing
                 source._ignorePropertyChange = true;
-                source.SetValue(e.Property, (double) e.OldValue);
+                source.SetValue(e.Property, (double)e.OldValue);
 
                 string message = string.Format(
                     CultureInfo.InvariantCulture,
@@ -369,8 +368,8 @@ namespace System.Windows.Controls
             bool hasFixedHeight = !itemHeight.IsNaN();
             double indirectOffset = 0;
             double? directDelta = (o == Orientation.Horizontal) ?
-                (hasFixedWidth ? (double?) itemWidth : null) :
-                (hasFixedHeight ? (double?) itemHeight : null);
+                (hasFixedWidth ? (double?)itemWidth : null) :
+                (hasFixedHeight ? (double?)itemHeight : null);
 
             // Measure each of the Children.  We will process the elements one
             // line at a time, just like during measure, but we will wait until

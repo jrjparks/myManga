@@ -45,11 +45,11 @@ namespace myManga_App.IO.Local
                     // TODO: Fix this code when looking up archive files.
                     if (index is MangaObject)
                     {
-                        String[] MissingCovers = (index as MangaObject).Covers.Where(
+                        LocationObject[] MissingCovers = (index as MangaObject).CoverLocations.Where(
                             c => zip_storage_information_object.ArchiveEntries.Count(
-                                ze => ze.FileName.Equals(Path.GetFileName(c))) == 0).ToArray();
-                        foreach (String Cover in MissingCovers)
-                        { if (Cover != null) App.DownloadManager.Download(Cover, filename); }
+                                ze => ze.FileName.Equals(Path.GetFileName(c.Url))) == 0).ToArray();
+                        foreach (LocationObject Cover in MissingCovers)
+                        { if (Cover != null) App.ContentDownloadManager.DownloadCover((index as MangaObject), Cover); }
                     }
                     else if (index is ChapterObject)
                     {
@@ -57,9 +57,9 @@ namespace myManga_App.IO.Local
                             po => zip_storage_information_object.ArchiveEntries.Count(
                                 ze => ze.FileName.Equals(po.Name)) == 0).ToArray();
                         foreach (PageObject Page in MissingPages)
-                        { if (Page.ImgUrl != null) App.DownloadManager.Download(Page.ImgUrl, filename); }
+                        { /*if (Page.ImgUrl != null) App.DownloadManager.Download(Page.ImgUrl, filename); */ }
                     }
-                    else return true;
+                    return true;
                 }
             }
             catch { }

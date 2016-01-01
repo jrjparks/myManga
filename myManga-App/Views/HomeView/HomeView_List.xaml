@@ -7,7 +7,7 @@
     xmlns:system="clr-namespace:System;assembly=mscorlib"
     xmlns:mangaObjects="clr-namespace:myMangaSiteExtension.Objects;assembly=myMangaSiteExtension"
     xmlns:Converters="clr-namespace:myManga_App.Converters"
-    xmlns:ObjectViews="clr-namespace:myManga_App.Views.ObjectViews"
+    xmlns:ObjectViews="clr-namespace:myManga_App.Views.HomeView.ObjectViews"
     x:Class="myManga_App.Views.HomeView.HomeView_List"
     x:Name="userControl"
     mc:Ignorable="d" 
@@ -173,14 +173,6 @@
 				ScrollViewer.HorizontalScrollBarVisibility="Disabled"
 				SelectedItem="{Binding SelectedMangaArchiveCacheObject}"
                 ItemsSource="{Binding Path=MangaArchiveCacheCollection, Mode=OneWay, Source={x:Static Application.Current}, UpdateSourceTrigger=PropertyChanged}"/>
-            <ProgressBar 
-				Grid.Row="1" 
-				HorizontalAlignment="Center" 
-				VerticalAlignment="Center" 
-				Width="96" Height="96" 
-				Style="{DynamicResource Spinner}" 
-				Visibility="{Binding IsLoading, Converter={StaticResource BooleanToVisibilityConverter}}"
-                Foreground="#BF000000"/>
             <Button:MetroButton
 				Grid.Row="3"
 				FontSize="16"
@@ -192,7 +184,7 @@
         <ObjectViews:MangaObjectView 
 			x:Name="MangaObjectDescription"
             Grid.Column="2" 
-            DataContext="{Binding SelectedItem, ElementName=MangaObjectItems}"/>
+            DataContext="{Binding SelectedMangaArchiveCacheObject}"/>
         <Border
 			HorizontalAlignment="Center" 
 			VerticalAlignment="Top"

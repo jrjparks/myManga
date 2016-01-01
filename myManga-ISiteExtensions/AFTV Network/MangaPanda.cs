@@ -10,6 +10,7 @@ using System.Linq;
 using System.Net;
 using System.Reflection;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Windows;
 
 namespace AFTV_Network
@@ -29,27 +30,41 @@ namespace AFTV_Network
         public ISiteExtensionDescriptionAttribute SiteExtensionDescriptionAttribute
         { get { return siteExtensionDescriptionAttribute ?? (siteExtensionDescriptionAttribute = GetType().GetCustomAttribute<ISiteExtensionDescriptionAttribute>(false)); } }
 
-        private CookieCollection cookies;
+        #region IExtesion
         public CookieCollection Cookies
-        { get { return cookies ?? (this.cookies = new CookieCollection()); } private set { this.cookies = value; } }
+        { get; private set; }
 
-        public bool Authenticate(NetworkCredential credentials)
+        public Boolean IsAuthenticated
+        { get; private set; }
+
+        public bool Authenticate(NetworkCredential credentials, CancellationToken ct, IProgress<Int32> ProgressReporter)
         {
+            if (IsAuthenticated) return true;
             throw new NotImplementedException();
         }
 
         public void Deauthenticate()
-        { this.Cookies = new CookieCollection(); }
+        {
+            if (!IsAuthenticated) return;
+            Cookies = null;
+            IsAuthenticated = false;
+        }
 
         public List<MangaObject> GetUserFavorites()
         {
             throw new NotImplementedException();
         }
 
-        public bool AddUserFavorites(MangaObject mangaObject)
+        public bool AddUserFavorites(MangaObject MangaObject)
         {
             throw new NotImplementedException();
         }
+
+        public bool RemoveUserFavorites(MangaObject MangaObject)
+        {
+            throw new NotImplementedException();
+        }
+        #endregion
 
         public SearchRequestObject GetSearchRequestObject(String searchTerm)
         {
@@ -65,9 +80,14 @@ namespace AFTV_Network
             Regex MangaCoverRegex = new Regex(@"(\d+)\.jpg");
             Int32 MangaCoverInt = Int32.Parse(MangaCoverRegex.Match(MangaCoverPrime).Groups[1].Value);
             List<String> MangaCovers = new List<String>(MangaCoverInt + 1);
+            List<LocationObject> Covers = new List<LocationObject>();
             for (Int32 mcI = 0; mcI <= MangaCoverInt; ++mcI)
-                MangaCovers.Add(MangaCoverRegex.Replace(MangaCoverPrime, String.Format("{0}.jpg", mcI)));
-            MangaCovers.TrimExcess();
+                Covers.Add(new LocationObject()
+                {
+                    Url = MangaCoverRegex.Replace(MangaCoverPrime, String.Format("{0}.jpg", mcI)),
+                    ExtensionName = SiteExtensionDescriptionAttribute.Name
+                });
+            Covers.TrimExcess();
 
             HtmlNode MangaProperties = MangaObjectDocument.GetElementbyId("mangaproperties").SelectSingleNode(".//table"),
                 ChapterListing = MangaObjectDocument.GetElementbyId("listing"),
@@ -108,10 +128,10 @@ namespace AFTV_Network
                                         {
                                             Name = HtmlEntity.DeEntitize(ChapterNode.SelectSingleNode(".//td[1]").LastChild.InnerText.Substring(3).Trim()),
                                             Chapter = UInt32.Parse(ChapterNode.SelectSingleNode(".//td[1]/a").InnerText.Substring(ChapterNode.SelectSingleNode(".//td[1]/a").InnerText.LastIndexOf(' ') + 1)),
-                                            Locations = { 
-                                                    new LocationObject() { 
-                                                        ExtensionName = SiteExtensionDescriptionAttribute.Name, 
-                                                        Url = String.Format("{0}{1}", SiteExtensionDescriptionAttribute.RootUrl, ChapterNode.SelectSingleNode(".//td[1]/a").Attributes["href"].Value) } 
+                                            Locations = {
+                                                    new LocationObject() {
+                                                        ExtensionName = SiteExtensionDescriptionAttribute.Name,
+                                                        Url = String.Format("{0}{1}", SiteExtensionDescriptionAttribute.RootUrl, ChapterNode.SelectSingleNode(".//td[1]/a").Attributes["href"].Value) }
                                                 },
                                             Released = DateTime.Parse(ChapterNode.SelectSingleNode(".//td[2]").InnerText)
                                         }).ToArray();
@@ -123,7 +143,7 @@ namespace AFTV_Network
                 PageFlowDirection = PageFlowDirection,
                 Description = HtmlEntity.DeEntitize(Desciption),
                 AlternateNames = AlternateNames.ToList(),
-                Covers = MangaCovers,
+                CoverLocations = Covers,
                 Authors = (from Author in Authors select HtmlEntity.DeEntitize(Author)).ToList(),
                 Artists = (from Artist in Artists select HtmlEntity.DeEntitize(Artist)).ToList(),
                 Genres = Genres.ToList(),
@@ -177,7 +197,7 @@ namespace AFTV_Network
             HtmlDocument SearchResultDocument = new HtmlDocument();
             SearchResultDocument.LoadHtml(content);
             HtmlNodeCollection HtmlSearchResults = SearchResultDocument.DocumentNode.SelectNodes("//div[contains(@class,'mangaresultitem')]");
-            if (HtmlSearchResults != null)
+            if (!Equals(HtmlSearchResults, null))
                 foreach (HtmlNode SearchResultNode in HtmlSearchResults)
                 {
                     HtmlNode NameLink = SearchResultNode.SelectSingleNode(".//div[contains(@class,'manga_name')]/div[1]/h3[1]/a[1]");
@@ -187,7 +207,7 @@ namespace AFTV_Network
                     Int32 Id; if (!Int32.TryParse(Link.Slice(1, Link.IndexOf('/', 1)), out Id)) Id = -1;
                     SearchResults.Add(new SearchResultObject()
                     {
-                        CoverUrl = new Regex(@"r(\d+)\.jpg").Replace(CoverUrl, "l$1.jpg"),
+                        Cover = new LocationObject() { Url = new Regex(@"r(\d+)\.jpg").Replace(CoverUrl, "l$1.jpg"), ExtensionName = SiteExtensionDescriptionAttribute.Name },
                         Name = Name,
                         Url = String.Format("{0}{1}", SiteExtensionDescriptionAttribute.RootUrl, Link),
                         ExtensionName = SiteExtensionDescriptionAttribute.Name,

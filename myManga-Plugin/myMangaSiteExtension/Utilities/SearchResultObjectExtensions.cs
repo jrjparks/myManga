@@ -11,7 +11,7 @@ namespace myMangaSiteExtension.Utilities
                 Name = value.Name,
                 Description = value.Description,
                 Locations = { new LocationObject() { Url = value.Url, ExtensionName = value.ExtensionName } },
-                Covers = { value.CoverUrl },
+                CoverLocations = { value.Cover },
                 Authors = value.Authors,
                 Artists = value.Artists,
                 Rating = value.Rating

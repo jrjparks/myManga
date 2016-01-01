@@ -8,7 +8,7 @@
     xmlns:mangaObjects="clr-namespace:myMangaSiteExtension.Objects;assembly=myMangaSiteExtension"
     xmlns:Converters="clr-namespace:myManga_App.Converters"
     xmlns:CoreWPF="clr-namespace:System.Windows.Controls;assembly=Core"
-    xmlns:ObjectViews="clr-namespace:myManga_App.Views.ObjectViews"
+    xmlns:ObjectViews="clr-namespace:myManga_App.Views.HomeView.ObjectViews"
     x:Class="myManga_App.Views.HomeView.HomeView_Grid"
     x:Name="userControl"
     mc:Ignorable="d" 
@@ -247,7 +247,7 @@
                 Grid.Row="1">
                 <Grid>
                     <ObjectViews:MangaObjectView 
-                        DataContext="{Binding SelectedItem, ElementName=MangaObjectItems}"/>
+                        DataContext="{Binding SelectedMangaArchiveCacheObject}"/>
                     <Border
 			            HorizontalAlignment="Left" 
 			            VerticalAlignment="Top"

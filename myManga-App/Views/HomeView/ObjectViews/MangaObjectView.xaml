@@ -1,5 +1,5 @@
 ﻿<UserControl
-    x:Class="myManga_App.Views.ObjectViews.MangaObjectView"
+    x:Class="myManga_App.Views.HomeView.ObjectViews.MangaObjectView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -198,7 +198,7 @@
                 HorizontalContentAlignment="Stretch"
                 SelectionMode="Extended" 
                 Background="{x:Null}" BorderBrush="{x:Null}" BorderThickness="0"
-                Controls:ListBoxExtentions.HasBindableSelectedItems="True"/>
+                />
         </Grid>
     </Grid>
 </UserControl>

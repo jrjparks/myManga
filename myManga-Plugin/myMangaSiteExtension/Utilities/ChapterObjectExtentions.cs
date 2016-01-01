@@ -65,5 +65,22 @@ namespace myMangaSiteExtension.Utilities
 
         public static PageObject PageObjectOfBookmarkObject(this ChapterObject value, BookmarkObject bookmark_object)
         { return value.Pages.Find(p => p.PageNumber == bookmark_object.Page); }
+
+        public static Int32 IndexOfPageObject(this ChapterObject value, PageObject page_object)
+        { return value.Pages.FindIndex(p => p.PageNumber == page_object.PageNumber); }
+
+        public static PageObject NextPageObject(this ChapterObject value, PageObject page_object)
+        {
+            Int32 index = value.IndexOfPageObject(page_object) + 1;
+            if (index >= value.Pages.Count) return null;
+            return value.Pages[index];
+        }
+
+        public static PageObject PrevPageObject(this ChapterObject value, PageObject page_object)
+        {
+            Int32 index = value.IndexOfPageObject(page_object) - 1;
+            if (index < 0) return null;
+            return value.Pages[index];
+        }
     }
 }

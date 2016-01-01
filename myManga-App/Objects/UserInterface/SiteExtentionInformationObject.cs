@@ -96,7 +96,6 @@ namespace myManga_App.Objects
 
         public SiteExtensionInformationObject() : base() { }
         public SiteExtensionInformationObject(ISiteExtensionDescriptionAttribute attribute) : base() { iSiteExtensionDescriptionAttribute = attribute; }
-        public SiteExtensionInformationObject(SerializationInfo info, StreamingContext context) : base(info, context) { }
         #endregion
     }
 }

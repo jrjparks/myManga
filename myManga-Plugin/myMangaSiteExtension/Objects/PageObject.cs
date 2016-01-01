@@ -114,9 +114,6 @@ namespace myMangaSiteExtension.Objects
                 OnPropertyChanged();
             }
         }
-
-        public PageObject() : base() { }
-        public PageObject(SerializationInfo info, StreamingContext context) : base(info, context) { }
         #endregion
     }
 }

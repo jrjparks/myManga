@@ -71,6 +71,7 @@
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Runtime.Caching" />
     <Reference Include="System.Security" />
     <Reference Include="System.Web" />
     <Reference Include="System.Xml" />
@@ -93,7 +94,9 @@
     <Compile Include="Controls\ListBoxExtentions.cs" />
     <Compile Include="Controls\Primitives\DockingPopup.cs" />
     <Compile Include="Controls\InputBindingsBehavior.cs" />
+    <Compile Include="Controls\Unsupported\RelativeAnimatingContentControl.cs" />
     <Compile Include="Converters\BooleanInverter.cs" />
+    <Compile Include="Converters\BooleanToVisibilityConverter.cs" />
     <Compile Include="Converters\CommandParameterStringFormat.cs" />
     <Compile Include="Converters\EnumToBooleanConverter.cs" />
     <Compile Include="Converters\EqualsConverter.cs" />
@@ -110,6 +113,7 @@
     </Compile>
     <Compile Include="Objects\About\AssemblyInformation.cs" />
     <Compile Include="Objects\Cache\MangaArchiveCacheObject.cs" />
+    <Compile Include="Objects\Cache\MangaCacheObject.cs" />
     <Compile Include="Objects\MVVM\NotifyTaskCompletion.cs" />
     <Compile Include="Objects\UserConfig\ThemeType.cs" />
     <Compile Include="Objects\UserConfig\UserAuthenticationObject.cs" />
@@ -123,8 +127,13 @@
     <Compile Include="Themes\Button\MetroButton.cs" />
     <Compile Include="Controls\Window\myMangaWindow.cs" />
     <Compile Include="ViewModels\BaseViewModel.cs" />
+    <Compile Include="ViewModels\Dialog\AuthenticationDialogViewModel.cs" />
+    <Compile Include="ViewModels\Dialog\DialogViewModel.cs" />
     <Compile Include="ViewModels\HomeViewModel.cs" />
+    <Compile Include="ViewModels\Pages\ChapterReaderViewModel.cs" />
+    <Compile Include="ViewModels\Pages\HomeViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
+    <Compile Include="ViewModels\Pages\SearchViewModel.cs" />
     <Compile Include="ViewModels\ReaderViewModel.cs" />
     <Compile Include="ViewModels\SearchViewModel.cs" />
     <Compile Include="ViewModels\SettingsViewModel.cs" />
@@ -137,13 +146,37 @@
     <Compile Include="Views\HomeView\ObjectViews\MangaObjectView.xaml.cs">
       <DependentUpon>MangaObjectView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Objects\ChapterObject\ChapterObjectView.xaml.cs">
+      <DependentUpon>ChapterObjectView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Objects\MangaCacheObjectView\MangaCacheObjectDetailView.xaml.cs">
+      <DependentUpon>MangaCacheObjectDetailView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Objects\MangaObject.xaml.cs">
+      <DependentUpon>MangaObject.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Pages\ChapterReaderView.xaml.cs">
+      <DependentUpon>ChapterReaderView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Pages\HomeView\GridHomeView.xaml.cs">
+      <DependentUpon>GridHomeView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Pages\HomeView\ListHomeView.xaml.cs">
+      <DependentUpon>ListHomeView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Pages\SearchView.xaml.cs">
+      <DependentUpon>SearchView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Pages\SettingsView.xaml.cs">
+      <DependentUpon>SettingsView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\ReaderView.xaml.cs">
       <DependentUpon>ReaderView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\SearchView.xaml.cs">
       <DependentUpon>SearchView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\SettingsView\LoginDialog.xaml.cs">
+    <Compile Include="Views\Dialog\LoginDialog.xaml.cs">
       <DependentUpon>LoginDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\SettingsView\SettingsView.xaml.cs">
@@ -249,6 +282,46 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\Objects\ChapterObject\ChapterObjectListItem.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Objects\ChapterObject\ChapterObjectView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Objects\MangaCacheObjectView\MangaCacheObjectDetailView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Objects\MangaCacheObjectView\MangaCacheObjectViewListItem.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Objects\MangaObject.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Pages\ChapterReaderView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Pages\HomeView\GridHomeView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Pages\HomeView\ListHomeView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Pages\SearchView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Pages\SettingsView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\ReaderView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -257,7 +330,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\SettingsView\LoginDialog.xaml">
+    <Page Include="Views\Dialog\LoginDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -36,6 +36,8 @@ namespace myMangaSiteExtension.Objects
         protected UInt32 subchapter;
         [NonSerialized, XmlIgnore, EditorBrowsable(EditorBrowsableState.Never)]
         protected UInt32 page;
+        [NonSerialized, XmlIgnore, EditorBrowsable(EditorBrowsableState.Never)]
+        protected UInt32 lastPage;
         #endregion
 
         #region Public
@@ -87,8 +89,17 @@ namespace myMangaSiteExtension.Objects
             }
         }
 
-        public BookmarkObject() : base() { }
-        public BookmarkObject(SerializationInfo info, StreamingContext context) : base(info, context) { }
+        [XmlAttribute]
+        public UInt32 LastPage
+        {
+            get { return lastPage; }
+            set
+            {
+                OnPropertyChanging();
+                lastPage = value;
+                OnPropertyChanged();
+            }
+        }
         #endregion
     }
 }

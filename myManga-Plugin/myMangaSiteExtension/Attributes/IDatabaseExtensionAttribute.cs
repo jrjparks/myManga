@@ -26,6 +26,8 @@ namespace myMangaSiteExtension.Attributes
         public String RootUrl;
         public SupportedObjects SupportedObjects = SupportedObjects.None;
 
+        public Boolean RequiresAuthentication = false;
+
         public String Language;
 
         /// <summary>

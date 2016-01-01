@@ -13,6 +13,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
@@ -254,6 +255,7 @@ namespace myManga_App.ViewModels
         #endregion
 
         #region Plugin Authenticate
+        private CancellationTokenSource AuthenticationCTS { get; set; }
         private static readonly DependencyProperty AuthenticationUsernameProperty = DependencyProperty.RegisterAttached(
             "AuthenticationUsername",
             typeof(String),
@@ -307,30 +309,41 @@ namespace myManga_App.ViewModels
         { get { return authenticateCommand ?? (authenticateCommand = new DelegateCommand<System.Windows.Controls.PasswordBox>(Authenticate)); } }
         private async void Authenticate(System.Windows.Controls.PasswordBox PasswordBox)
         {
-            ISiteExtension siteExtention = App.SiteExtensions.DLLCollection[this.SelectedSiteExtensionInformationObject.Name];
-            String Username = this.AuthenticationUsername;
-            Boolean RememberMe = this.AuthenticationRememberMe;
-            Task<Boolean> authenticationTask = Task.Run<Boolean>(() => siteExtention.Authenticate(new System.Net.NetworkCredential(Username, PasswordBox.SecurePassword)));
-            Boolean authenticationSuccess = await authenticationTask;
-            if (authenticationSuccess)
+            try { if (!Equals(AuthenticationCTS, null)) { AuthenticationCTS.Cancel(); } }
+            catch { }
+            using (AuthenticationCTS = new CancellationTokenSource())
             {
-                this.AuthenticationUsername = String.Empty;
-                this.AuthenticationRememberMe = false;
-                if (RememberMe)
+                try
                 {
-                    UserPluginAuthenticationObject upa = App.UserAuthentication.UserPluginAuthentications.FirstOrDefault(_upa => _upa.PluginName.Equals(this.SelectedSiteExtensionInformationObject.Name));
-                    App.UserAuthentication.UserPluginAuthentications.Remove(upa);
-                    upa = upa ?? new UserPluginAuthenticationObject();
-                    upa.PluginName = this.SelectedSiteExtensionInformationObject.Name;
-                    upa.Username = Username;
-                    upa.Password = PasswordBox.SecurePassword;
-                    App.UserAuthentication.UserPluginAuthentications.Add(upa);
-                    App.SaveUserAuthentication();
+                    ISiteExtension siteExtention = App.SiteExtensions.DLLCollection[this.SelectedSiteExtensionInformationObject.Name];
+                    String Username = this.AuthenticationUsername;
+                    Boolean RememberMe = this.AuthenticationRememberMe;
+                    Task<Boolean> authenticationTask = Task.Run<Boolean>(() => siteExtention.Authenticate(new System.Net.NetworkCredential(Username, PasswordBox.SecurePassword), AuthenticationCTS.Token, null));
+                    Boolean authenticationSuccess = await authenticationTask;
+                    if (authenticationSuccess)
+                    {
+                        this.AuthenticationUsername = String.Empty;
+                        this.AuthenticationRememberMe = false;
+                        if (RememberMe)
+                        {
+                            UserPluginAuthenticationObject upa = App.UserAuthentication.UserPluginAuthentications.FirstOrDefault(_upa => _upa.PluginName.Equals(this.SelectedSiteExtensionInformationObject.Name));
+                            App.UserAuthentication.UserPluginAuthentications.Remove(upa);
+                            upa = upa ?? new UserPluginAuthenticationObject();
+                            upa.PluginName = this.SelectedSiteExtensionInformationObject.Name;
+                            upa.Username = Username;
+                            upa.Password = PasswordBox.SecurePassword;
+                            App.UserAuthentication.UserPluginAuthentications.Add(upa);
+                            App.SaveUserAuthentication();
+                        }
+                    }
+                    PasswordBox.SecurePassword.Clear();
+                    PasswordBox.Clear();
+                    this.ShowAuthentication = !authenticationSuccess;
                 }
+                catch (OperationCanceledException) { }
+                catch (Exception ex) { throw ex; }
+                finally { }
             }
-            PasswordBox.SecurePassword.Clear();
-            PasswordBox.Clear();
-            this.ShowAuthentication = !authenticationSuccess;
         }
 
         protected DelegateCommand cancelAuthenticationCommand;

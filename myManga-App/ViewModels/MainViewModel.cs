@@ -1,9 +1,9 @@
 ﻿using Core.MVVM;
-using myManga_App.IO.Network;
 using System;
 using System.IO;
 using System.Net;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
@@ -69,17 +69,40 @@ namespace myManga_App.ViewModels
         #endregion
         #endregion
 
+        #region Pages
+
+        #region PagesHomeViewModelProperty
+        private static readonly DependencyPropertyKey PagesHomeViewModelPropertyKey = DependencyProperty.RegisterAttachedReadOnly(
+            "PagesHomeViewModel",
+            typeof(Pages.HomeViewModel),
+            typeof(MainViewModel),
+            null);
+        private static readonly DependencyProperty PagesHomeViewModelProperty = PagesHomeViewModelPropertyKey.DependencyProperty;
+        public Pages.HomeViewModel PagesHomeViewModel
+        { get { return (Pages.HomeViewModel)GetValue(PagesHomeViewModelProperty); } }
+        #endregion
+
+        #region PagesSearchViewModelProperty
+        private static readonly DependencyPropertyKey PagesSearchViewModelPropertyKey = DependencyProperty.RegisterAttachedReadOnly(
+            "PagesSearchViewModel",
+            typeof(Pages.SearchViewModel),
+            typeof(MainViewModel),
+            null);
+        private static readonly DependencyProperty PagesSearchViewModelProperty = PagesSearchViewModelPropertyKey.DependencyProperty;
+        public Pages.SearchViewModel PagesSearchViewModel
+        { get { return (Pages.SearchViewModel)GetValue(PagesSearchViewModelProperty); } }
+        #endregion
+
+        #endregion
+
         #region Header Buttons
         private DelegateCommand homeCommand;
         public ICommand HomeCommand
-        { get { return homeCommand ?? (homeCommand = new DelegateCommand(HomeViewModel.PullFocus)); } }
+        { get { return homeCommand ?? (homeCommand = new DelegateCommand(PagesHomeViewModel.PullFocus)); } }
 
         private DelegateCommand searchCommand;
         public ICommand SearchCommand
-        { get { return searchCommand ?? (searchCommand = new DelegateCommand(SearchViewModel.PullFocus, CanOpenSearch)); } }
-
-        private Boolean CanOpenSearch()
-        { return SearchViewModel != null; }
+        { get { return searchCommand ?? (searchCommand = new DelegateCommand(PagesSearchViewModel.PullFocus)); } }
 
         private DelegateCommand readCommand;
         public ICommand ReadCommand
@@ -96,11 +119,19 @@ namespace myManga_App.ViewModels
         #endregion
 
         #region Download Active
-        private Boolean _IsLoading = false;
-        public Boolean IsLoading
+        private Timer ActiveDownloadsTime
+        { get; set; }
+
+        private static readonly DependencyProperty DownloadsActiveProperty = DependencyProperty.RegisterAttached(
+            "DownloadsActive",
+            typeof(Boolean),
+            typeof(MainViewModel),
+            new PropertyMetadata(false));
+
+        public Boolean DownloadsActive
         {
-            get { return _IsLoading; }
-            set { SetProperty(ref this._IsLoading, value); }
+            get { return (Boolean)GetValue(DownloadsActiveProperty); }
+            set { SetValue(DownloadsActiveProperty, value); }
         }
         #endregion
 
@@ -109,60 +140,47 @@ namespace myManga_App.ViewModels
         {
             if (!IsInDesignMode)
             {
-                SetValue(HomeViewModelPropertyKey, new HomeViewModel());
+                SetValue(PagesHomeViewModelPropertyKey, new Pages.HomeViewModel());
+                SetValue(PagesSearchViewModelPropertyKey, new Pages.SearchViewModel());
+
+                //SetValue(HomeViewModelPropertyKey, new HomeViewModel());
+                //SetValue(SearchViewModelPropertyKey, new SearchViewModel());
                 SetValue(ReaderViewModelPropertyKey, new ReaderViewModel());
-                SetValue(SearchViewModelPropertyKey, new SearchViewModel());
                 SetValue(SettingsViewModelPropertyKey, new SettingsViewModel());
 
                 Messenger.Default.RegisterRecipient<BaseViewModel>(this, v =>
                 {
-                    if (this.ContentViewModel != v)
-                        this.ContentViewModel = v;
+                    if (ContentViewModel != v)
+                        ContentViewModel = v;
                 }, "FocusRequest");
 
-                SettingsViewModel.CloseEvent += (s, e) => this.PreviousContentViewModel.PullFocus();
+                SettingsViewModel.CloseEvent += (s, e) => PreviousContentViewModel.PullFocus();
 
-                ServicePointManager.DefaultConnectionLimit = App.DownloadManager.Concurrency;
-                App.DownloadManager.StatusChange += (s, e) =>
-                {
-                    IsLoading = !(s as DownloadManager).IsIdle;
-                };
+                ServicePointManager.DefaultConnectionLimit = App.ContentDownloadManager.DownloadConcurrency;
 
-                App.MangaObjectArchiveWatcher.Changed += MangaObjectArchiveWatcher_Event;
-                App.MangaObjectArchiveWatcher.Created += MangaObjectArchiveWatcher_Event;
-                App.MangaObjectArchiveWatcher.Deleted += MangaObjectArchiveWatcher_Event;
-                App.MangaObjectArchiveWatcher.Renamed += MangaObjectArchiveWatcher_Event;
+                ActiveDownloadsTime = new Timer(state =>
+                {   // Monitor the ContentDownloadManager IsActive property
+                    App.RunOnUiThread(new Action(() =>
+                    {
+                        if (!Equals(App.ContentDownloadManager.IsActive, DownloadsActive))
+                            DownloadsActive = App.ContentDownloadManager.IsActive;
+                    }));
+                }, null, TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(1));
 
-                App.ChapterObjectArchiveWatcher.Changed += ChapterObjectArchiveWatcher_Event;
-                App.ChapterObjectArchiveWatcher.Created += ChapterObjectArchiveWatcher_Event;
-                App.ChapterObjectArchiveWatcher.Deleted += ChapterObjectArchiveWatcher_Event;
-                App.ChapterObjectArchiveWatcher.Renamed += ChapterObjectArchiveWatcher_Event;
-
-                HomeViewModel.PullFocus();
+                PagesHomeViewModel.PullFocus();
             }
-            else ContentViewModel = HomeViewModel;
-        }
-
-        void MangaObjectArchiveWatcher_Event(object sender, FileSystemEventArgs e)
-        {
-            if (App.Dispatcher.Thread == Thread.CurrentThread)
-            { Messenger.Default.Send(e, "MangaObjectArchiveWatcher"); }
-            else App.Dispatcher.Invoke(DispatcherPriority.Send, new System.Action(() => MangaObjectArchiveWatcher_Event(sender, e)));
-        }
-
-        void ChapterObjectArchiveWatcher_Event(object sender, FileSystemEventArgs e)
-        {
-            if (App.Dispatcher.Thread == Thread.CurrentThread)
-            { Messenger.Default.Send(e, "ChapterObjectArchiveWatcher"); }
-            else App.Dispatcher.Invoke(DispatcherPriority.Send, new System.Action(() => ChapterObjectArchiveWatcher_Event(sender, e)));
+            else ContentViewModel = PagesHomeViewModel;
         }
 
         protected override void SubDispose()
         {
-            this.HomeViewModel.Dispose();
-            this.ReaderViewModel.Dispose();
-            this.SearchViewModel.Dispose();
-            this.SettingsViewModel.Dispose();
+            HomeViewModel.Dispose();
+            ReaderViewModel.Dispose();
+            SearchViewModel.Dispose();
+            SettingsViewModel.Dispose();
+
+            PagesHomeViewModel.Dispose();
+            PagesSearchViewModel.Dispose();
         }
     }
 }

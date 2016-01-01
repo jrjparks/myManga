@@ -3,7 +3,6 @@
 // Please see http://go.microsoft.com/fwlink/?LinkID=131993 for details.
 // All other rights reserved.
 
-using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 
@@ -35,7 +34,7 @@ namespace System.Windows.Controls
             /// </summary>
             [FieldOffset(0)]
             internal ulong IntegerValue;
-        } 
+        }
 
         /// <summary>
         /// Check if a number is zero.

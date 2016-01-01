@@ -54,6 +54,7 @@
     <Compile Include="Enums\SearchMethod.cs" />
     <Compile Include="Enums\SupportedObjects.cs" />
     <Compile Include="Interfaces\IDatabaseExtension.cs" />
+    <Compile Include="Interfaces\IExtension.cs" />
     <Compile Include="Interfaces\ISiteExtension.cs" />
     <Compile Include="Objects\BookmarkObject.cs" />
     <Compile Include="Objects\ChapterObject.cs" />

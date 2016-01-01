@@ -103,7 +103,7 @@ namespace myManga_App.ViewModels
             }
         }
 
-        public virtual void Dispose()
+        public void Dispose()
         { Dispose(true); }
         #endregion
     }

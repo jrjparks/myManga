@@ -23,8 +23,8 @@ namespace myMangaSiteExtension.Utilities
                             databaseObject.Locations.Add(Location);
 
                 // Covers
-                foreach (List<String> Covers in (from DatabaseObject obj in list.Skip(1) where obj != null select obj.Covers))
-                    foreach (String Cover in Covers)
+                foreach (List<LocationObject> Covers in (from DatabaseObject obj in list.Skip(1) where obj != null select obj.Covers))
+                    foreach (LocationObject Cover in Covers)
                         if (!databaseObject.Covers.Any(o => o == Cover))
                             databaseObject.Covers.Add(Cover);
 

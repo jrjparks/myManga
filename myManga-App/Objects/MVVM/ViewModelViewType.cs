@@ -54,8 +54,5 @@ namespace myManga_App.Objects.MVVM
             get { return viewType; }
             set { OnPropertyChanging(); viewType = value; OnPropertyChanged(); }
         }
-
-        public SerializableViewModelViewType() : base() { }
-        public SerializableViewModelViewType(SerializationInfo info, StreamingContext context) : base(info, context) { }
     }
 }

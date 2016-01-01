@@ -42,8 +42,8 @@ namespace myMangaSiteExtension.Objects
         [NonSerialized, XmlIgnore, EditorBrowsable(EditorBrowsableState.Never)]
         protected String url;
         [NonSerialized, XmlIgnore, EditorBrowsable(EditorBrowsableState.Never)]
-        protected String coverurl;
-
+        protected LocationObject cover;
+        
         [NonSerialized, XmlIgnore, EditorBrowsable(EditorBrowsableState.Never)]
         protected List<String> authors;
         [NonSerialized, XmlIgnore, EditorBrowsable(EditorBrowsableState.Never)]
@@ -115,13 +115,13 @@ namespace myMangaSiteExtension.Objects
         }
 
         [XmlAttribute]
-        public String CoverUrl
+        public LocationObject Cover
         {
-            get { return coverurl; }
+            get { return cover; }
             set
             {
                 OnPropertyChanging();
-                coverurl = value;
+                cover = value;
                 OnPropertyChanged();
             }
         }
@@ -160,10 +160,6 @@ namespace myMangaSiteExtension.Objects
                 OnPropertyChanged();
             }
         }
-
-        public SearchResultObject() : base() { }
-        public SearchResultObject(SerializationInfo info, StreamingContext context)
-            : base(info, context) { }
         #endregion
     }
 }

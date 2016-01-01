@@ -13,6 +13,7 @@ using System.Net;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Windows;
 
 namespace Batoto
@@ -25,22 +26,27 @@ namespace Batoto
         Author = "James Parks",
         Version = "0.0.1",
         SupportedObjects = SupportedObjects.All,
-        Language = "English")]
+        Language = "English",
+        RequiresAuthentication = true)]
     public class Batoto : ISiteExtension
     {
-        protected readonly String AUTH_KEY = "880ea6a14ea49e853634fbdc5015a024",
+        protected const String AUTH_KEY = "880ea6a14ea49e853634fbdc5015a024",
             SECURE_KEY = "ff65abdb3406e0c4459ab7f1c873b621";
 
         protected ISiteExtensionDescriptionAttribute siteExtensionDescriptionAttribute;
         public ISiteExtensionDescriptionAttribute SiteExtensionDescriptionAttribute
         { get { return siteExtensionDescriptionAttribute ?? (siteExtensionDescriptionAttribute = GetType().GetCustomAttribute<ISiteExtensionDescriptionAttribute>(false)); } }
 
-        protected CookieCollection cookies;
+        #region IExtension
         public CookieCollection Cookies
-        { get { return cookies ?? (this.cookies = new CookieCollection()); } private set { this.cookies = value; } }
+        { get; private set; }
 
-        public bool Authenticate(NetworkCredential credentials)
+        public Boolean IsAuthenticated
+        { get; private set; }
+
+        public bool Authenticate(NetworkCredential Credentials, CancellationToken ct, IProgress<Int32> ProgressReporter)
         {
+            if (IsAuthenticated) return true;
             CookieContainer cookieContainer = new CookieContainer();
             StringBuilder urlString = new StringBuilder();
             urlString.Append("https://bato.to/forums/index.php?");
@@ -51,14 +57,20 @@ namespace Batoto
             HttpWebRequest request = HttpWebRequest.CreateHttp(urlString.ToString());
             request.Method = WebRequestMethods.Http.Post;
 
+            if (!Equals(ProgressReporter, null)) ProgressReporter.Report(10);
+            ct.ThrowIfCancellationRequested();
+
             // Generate login data
             StringBuilder loginData = new StringBuilder();
             loginData.AppendUrlEncoded("auth_key", AUTH_KEY, true);
             loginData.AppendUrlEncoded("anonymous", "1");
             loginData.AppendUrlEncoded("rememberMe", "1");
             loginData.AppendUrlEncoded("referer", this.SiteExtensionDescriptionAttribute.RefererHeader);
-            loginData.AppendUrlEncoded("ips_username", credentials.UserName);
-            loginData.AppendUrlEncoded("ips_password", credentials.Password);
+            loginData.AppendUrlEncoded("ips_username", Credentials.UserName);
+            loginData.AppendUrlEncoded("ips_password", Credentials.Password);
+
+            if (!Equals(ProgressReporter, null)) ProgressReporter.Report(20);
+            ct.ThrowIfCancellationRequested();
 
             // Apply loginData to request
             Byte[] loginDataBytes = Encoding.UTF8.GetBytes(loginData.ToString());
@@ -66,23 +78,35 @@ namespace Batoto
             request.ContentLength = loginDataBytes.Length;
             request.CookieContainer = cookieContainer;
 
+            if (!Equals(ProgressReporter, null)) ProgressReporter.Report(30);
+            ct.ThrowIfCancellationRequested();
+
             // Write loginData to request
             using (Stream requestStream = request.GetRequestStream())
             { requestStream.Write(loginDataBytes, 0, loginDataBytes.Length); }
 
+            if (!Equals(ProgressReporter, null)) ProgressReporter.Report(55);
+            ct.ThrowIfCancellationRequested();
+
             // Get response and store cookies
             HttpWebResponse response = request.GetResponse() as HttpWebResponse;
             String responseContent = null;
+            if (!Equals(ProgressReporter, null)) ProgressReporter.Report(75);
             using (StreamReader streamReader = new StreamReader(response.GetResponseStream()))
             { responseContent = streamReader.ReadToEnd(); }
-            this.Cookies = response.Cookies;
 
-            Boolean loginSuccess = responseContent.IndexOf("username or password incorrect", StringComparison.OrdinalIgnoreCase) < 0;
-            return loginSuccess;
+            if (!Equals(ProgressReporter, null)) ProgressReporter.Report(95);
+            ct.ThrowIfCancellationRequested();
+            Cookies = response.Cookies;
+
+            IsAuthenticated = responseContent.IndexOf("username or password incorrect", StringComparison.OrdinalIgnoreCase) < 0;
+            if (!Equals(ProgressReporter, null)) ProgressReporter.Report(100);
+            return IsAuthenticated;
         }
 
         public void Deauthenticate()
         {
+            if (!IsAuthenticated) return;
             CookieContainer cookieContainer = new CookieContainer();
             StringBuilder urlString = new StringBuilder();
             urlString.Append("https://bato.to/forums/index.php?");
@@ -94,9 +118,10 @@ namespace Batoto
             HttpWebRequest request = HttpWebRequest.CreateHttp(urlString.ToString());
             request.Method = WebRequestMethods.Http.Get;
             request.CookieContainer = cookieContainer;
-            request.CookieContainer.Add(this.Cookies);
+            request.CookieContainer.Add(Cookies);
             HttpWebResponse response = request.GetResponse() as HttpWebResponse;
-            this.Cookies = new CookieCollection();
+            Cookies = null;
+            IsAuthenticated = false;
         }
 
         public List<MangaObject> GetUserFavorites()
@@ -105,10 +130,16 @@ namespace Batoto
             throw new NotImplementedException();
         }
 
-        public bool AddUserFavorites(MangaObject mangaObject)
+        public bool AddUserFavorites(MangaObject MangaObject)
         {
             throw new NotImplementedException();
         }
+
+        public bool RemoveUserFavorites(MangaObject MangaObject)
+        {
+            throw new NotImplementedException();
+        }
+        #endregion
 
         public SearchRequestObject GetSearchRequestObject(string searchTerm)
         {
@@ -126,7 +157,7 @@ namespace Batoto
             MangaObjectDocument.LoadHtml(content);
 
             HtmlNode InformationNode = MangaObjectDocument.DocumentNode.SelectSingleNode("//div[contains(@class,'ipsBox')]/div");
-            String MangaCover = InformationNode.SelectSingleNode(".//div[1]/img").Attributes["src"].Value;
+            String Cover = InformationNode.SelectSingleNode(".//div[1]/img").Attributes["src"].Value;
 
             HtmlNode MangaProperties = InformationNode.SelectSingleNode(".//table[contains(@class,'ipb_table')]"),
                 ChapterListing = MangaObjectDocument.DocumentNode.SelectSingleNode("//table[contains(@class,'chapters_list')]");
@@ -234,7 +265,7 @@ namespace Batoto
                 PageFlowDirection = PageFlowDirection,
                 Description = HtmlEntity.DeEntitize(Desciption),
                 AlternateNames = AlternateNames.ToList(),
-                Covers = new List<String>(new String[] { MangaCover }),
+                CoverLocations = { new LocationObject() { Url = Cover, ExtensionName = SiteExtensionDescriptionAttribute.Name } },
                 Authors = Authors.ToList(),
                 Artists = Artists.ToList(),
                 Genres = Genres.ToList(),
@@ -352,7 +383,7 @@ namespace Batoto
             SearchResultDocument.LoadHtml(content);
             HtmlWeb HtmlWeb = new HtmlWeb();
             HtmlNodeCollection HtmlSearchResults = SearchResultDocument.DocumentNode.SelectNodes("//table[contains(@class,'ipb_table chapters_list')]/tbody/tr[not(contains(@class,'header'))]");
-            if (HtmlSearchResults != null)
+            if (!Equals(HtmlSearchResults, null))
                 foreach (HtmlNode SearchResultNode in HtmlSearchResults)
                 {
                     HtmlNode NameLink = SearchResultNode.SelectSingleNode(".//td[1]/strong/a");
@@ -361,20 +392,20 @@ namespace Batoto
                         Int32 Id = -1;
                         String Name = HtmlEntity.DeEntitize(NameLink.InnerText).Trim(),
                             Link = NameLink.Attributes["href"].Value,
-                            Cover = null,
                             Description = null;
+                        LocationObject Cover = null;
                         if (Int32.TryParse(IdMatch.Match(Link).Value.Substring(1), out Id))
                         {
                             HtmlDocument PopDocument = HtmlWeb.Load(String.Format("{0}/comic_pop?id={1}", SiteExtensionDescriptionAttribute.RootUrl, Id));
                             HtmlNode CoverNode = PopDocument.DocumentNode.SelectSingleNode("//img"),
                                 DescriptionNode = PopDocument.DocumentNode.SelectSingleNode("//table/tbody/tr[6]/td[2]");
-                            if (!HtmlNode.Equals(CoverNode, null)) Cover = CoverNode.Attributes["src"].Value;
+                            if (!HtmlNode.Equals(CoverNode, null)) Cover = new LocationObject() { Url = CoverNode.Attributes["src"].Value, ExtensionName = SiteExtensionDescriptionAttribute.Name };
                             if (!HtmlNode.Equals(DescriptionNode, null)) Description = DescriptionNode.InnerText.Trim();
                         }
                         String[] Author_Artists = { SearchResultNode.SelectSingleNode(".//td[2]").InnerText.Trim() };
                         SearchResults.Add(new SearchResultObject()
                         {
-                            CoverUrl = Cover,
+                            Cover = Cover,
                             Description = Description,
                             ExtensionName = SiteExtensionDescriptionAttribute.Name,
                             Name = Name,

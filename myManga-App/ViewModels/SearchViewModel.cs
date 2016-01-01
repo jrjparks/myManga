@@ -8,6 +8,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
@@ -16,67 +17,45 @@ namespace myManga_App.ViewModels
 {
     public sealed class SearchViewModel : BaseViewModel
     {
-        #region Search
-        private void StartSearch(String search_content)
+        #region Progress
+        private IProgress<Int32> SearchProgressReporter
+        { get; set; }
+
+        private static readonly DependencyProperty SearchProgressProperty = DependencyProperty.RegisterAttached(
+            "SearchProgress",
+            typeof(Int32),
+            typeof(SearchViewModel),
+            new PropertyMetadata(0));
+
+        public Int32 SearchProgress
         {
-            Messenger.Default.Send(this, "FocusRequest");
-            SearchFilter = search_content;
-            SearchSites();
+            get { return (Int32)GetValue(SearchProgressProperty); }
+            set { SetValue(SearchProgressProperty, value); }
         }
 
-        private DelegateCommand searchSitesCommand;
-        public ICommand SearchSiteCommand
-        { get { return searchSitesCommand ?? (searchSitesCommand = new DelegateCommand(SearchSites, CanSearchSite)); } }
+        private static readonly DependencyProperty SearchProgressActiveProperty = DependencyProperty.RegisterAttached(
+            "SearchProgressActive",
+            typeof(Boolean),
+            typeof(SearchViewModel),
+            new PropertyMetadata(false));
 
-        private Boolean CanSearchSite()
-        { return !String.IsNullOrWhiteSpace(SearchFilter) && (SearchFilter.Trim().Length >= 3); }
-
-        private void SearchSites()
+        public Boolean SearchProgressActive
         {
-            MangaCollection.Clear();
-            IsLoading = true;
-            Guid ResultId = App.DownloadManager.Search(SearchFilter.Trim());
-            Messenger.Default.RegisterRecipient<List<MangaObject>>(
-                this, DisplaySearchResults, 
-                String.Format("SearchResult-{0}", ResultId.ToString()));
+            get { return (Boolean)GetValue(SearchProgressActiveProperty); }
+            set { SetValue(SearchProgressActiveProperty, value); }
         }
-
-        private void DisplaySearchResults(List<MangaObject> Results, Object Context)
-        {
-            Messenger.Default.UnregisterRecipient(this, Context);
-            IsLoading = false;
-            foreach (MangaObject MangaObj in Results)
-                MangaCollection.Add(MangaObj);
-        }
-
-        private Boolean isLoading;
-        public Boolean IsLoading
-        {
-            get { return isLoading; }
-            set { SetProperty(ref isLoading, value); }
-        }
-
-        private DelegateCommand clearSearchCommand;
-        public ICommand ClearSearchCommand
-        {
-            get { return clearSearchCommand ?? (clearSearchCommand = new DelegateCommand(ClearSearch, CanClearSearch)); }
-        }
-        private void ClearSearch()
-        { SearchFilter = String.Empty; }
-        private Boolean CanClearSearch()
-        { return !String.IsNullOrWhiteSpace(SearchFilter); }
         #endregion
 
-        #region Manga List
-        private static readonly DependencyProperty MangaCollectionProperty = DependencyProperty.RegisterAttached(
-            "MangaCollection",
+        #region MangaObject List
+        private static readonly DependencyProperty MangaObjectCollectionProperty = DependencyProperty.RegisterAttached(
+            "MangaObjectCollection",
             typeof(ObservableCollection<MangaObject>),
             typeof(SearchViewModel),
             new PropertyMetadata(new ObservableCollection<MangaObject>()));
-        public ObservableCollection<MangaObject> MangaCollection
+        public ObservableCollection<MangaObject> MangaObjectCollection
         {
-            get { return (ObservableCollection<MangaObject>)GetValue(MangaCollectionProperty); }
-            set { SetValue(MangaCollectionProperty, value); }
+            get { return (ObservableCollection<MangaObject>)GetValue(MangaObjectCollectionProperty); }
+            set { SetValue(MangaObjectCollectionProperty, value); }
         }
 
         private static readonly DependencyProperty SelectedMangaObjectProperty = DependencyProperty.RegisterAttached(
@@ -88,52 +67,96 @@ namespace myManga_App.ViewModels
             get { return (MangaObject)GetValue(SelectedMangaObjectProperty); }
             set { SetValue(SelectedMangaObjectProperty, value); }
         }
-
-        private static readonly DependencyProperty SearchFilterProperty = DependencyProperty.RegisterAttached(
-            "SearchFilter",
-            typeof(String),
-            typeof(SearchViewModel),
-            new PropertyMetadata(OnSearchFilterChanged));
-        public String SearchFilter
-        {
-            get { return (String)GetValue(SearchFilterProperty); }
-            set { SetValue(SearchFilterProperty, value); }
-        }
-
-        private static void OnSearchFilterChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            SearchViewModel _this = (d as SearchViewModel);
-            _this.MangaListView.Refresh();
-            _this.MangaListView.MoveCurrentToFirst();
-        }
-
-        private ICollectionView MangaListView;
         #endregion
 
-        #region Store MangaInfo
-        private DelegateCommand storeMangaInfoCommand;
-        public ICommand StoreMangaInfoCommand
-        { get { return storeMangaInfoCommand ?? (storeMangaInfoCommand = new DelegateCommand(StoreMangaInfo, CanStoreMangaInfo)); } }
+        #region Search
+        private CancellationTokenSource SearchAsyncCTS { get; set; }
 
-        private Boolean CanStoreMangaInfo()
-        { return SelectedMangaObject != null; }
+        #region Search Properties
+        private static readonly DependencyProperty SearchTermProperty = DependencyProperty.RegisterAttached(
+            "SearchTerm",
+            typeof(String),
+            typeof(SearchViewModel),
+            new PropertyMetadata(String.Empty));
 
-        private void StoreMangaInfo()
-        { App.DownloadManager.Download(SelectedMangaObject); }
-
-        private delegate void Instance_SearchCompleteInvoke(object sender, List<MangaObject> e);
-        private void Instance_SearchComplete(object sender, List<MangaObject> e)
+        public String SearchTerm
         {
-            if (App.Dispatcher.Thread == Thread.CurrentThread)
-            {
-                IsLoading = false;
-                foreach (MangaObject MangaObj in e)
-                    if (!MangaCollection.Any(mo => mo.Name == MangaObj.Name))
-                        MangaCollection.Add(MangaObj);
-            }
-            else
-                App.Dispatcher.BeginInvoke(new Instance_SearchCompleteInvoke(Instance_SearchComplete), new Object[] { sender, e });
+            get { return (String)GetValue(SearchTermProperty); }
+            set { SetValue(SearchTermProperty, value); }
         }
+        #endregion
+
+        #region Clear SearchTerm Command
+        private DelegateCommand clearSearchCommand;
+        public ICommand ClearSearchCommand
+        { get { return clearSearchCommand ?? (clearSearchCommand = new DelegateCommand(ClearSearch, CanClearSearch)); } }
+
+        private Boolean CanClearSearch()
+        {
+            if (Equals(SearchTerm, null)) return false;
+            if (String.IsNullOrWhiteSpace(SearchTerm)) return false;
+            return true;
+        }
+
+        private void ClearSearch()
+        { SearchTerm = String.Empty; }
+        #endregion
+
+        #region Search Command
+        private DelegateCommand<String> searchCommandAsync;
+        public ICommand SearchCommandAsync
+        { get { return searchCommandAsync ?? (searchCommandAsync = new DelegateCommand<String>(SearchAsync, CanSearchAsync)); } }
+
+        private Boolean CanSearchAsync(String SearchTerm)
+        {
+            if (Equals(SearchTerm, null)) return false;
+            SearchTerm = SearchTerm.Trim();
+            if (String.IsNullOrWhiteSpace(SearchTerm)) return false;
+            else if (SearchTerm.Length < 3) return false;
+            return true;
+        }
+
+        private async void SearchAsync(String SearchTerm)
+        {
+            try { if (!Equals(SearchAsyncCTS, null)) { SearchAsyncCTS.Cancel(); } }
+            catch { }
+            using (SearchAsyncCTS = new CancellationTokenSource())
+            {
+                try
+                {
+                    List<MangaObject> MangaObjects = await App.ContentDownloadManager.SearchAsync(SearchTerm, SearchAsyncCTS.Token, SearchProgressReporter);
+                    MangaObjectCollection.Clear();
+                    foreach (MangaObject MangaObject in MangaObjects)
+                    { MangaObjectCollection.Add(MangaObject); }
+                }
+                catch (OperationCanceledException) { }
+                catch (Exception ex) { throw ex; }
+                finally { SearchProgressActive = false; }
+            }
+        }
+
+        private void SearchAsyncRequest(String SearchTerm)
+        {
+            Messenger.Default.Send(this, "FocusRequest");
+            this.SearchTerm = SearchTerm.Trim();
+            SearchAsync(SearchTerm);
+        }
+        #endregion
+        #endregion
+
+        #region Download Search Result MangaObject
+        private DelegateCommand<MangaObject> downloadMangaObjectCommandAsync;
+        public ICommand DownloadMangaObjectCommandAsync
+        { get { return downloadMangaObjectCommandAsync ?? (downloadMangaObjectCommandAsync = new DelegateCommand<MangaObject>(DownloadMangaObjectAsync, CanDownloadMangaObjectAsync)); } }
+
+        private Boolean CanDownloadMangaObjectAsync(MangaObject MangaObject)
+        {
+            if (Equals(MangaObject, null)) return false;
+            return true;
+        }
+
+        private void DownloadMangaObjectAsync(MangaObject MangaObject)
+        { Task.Run(() => App.ContentDownloadManager.DownloadAsync(MangaObject, false, SearchProgressReporter)); }
         #endregion
 
         public SearchViewModel()
@@ -141,22 +164,13 @@ namespace myManga_App.ViewModels
         {
             if (!IsInDesignMode)
             {
-                ConfigureSearchFilter();
-                Messenger.Default.RegisterRecipient<String>(this, StartSearch, "SearchRequest");
+                SearchProgressReporter = new Progress<Int32>(ProgressValue =>
+                {
+                    SearchProgressActive = (0 < ProgressValue && ProgressValue < 100);
+                    SearchProgress = ProgressValue;
+                });
+                Messenger.Default.RegisterRecipient<String>(this, SearchAsyncRequest, "SearchRequest");
             }
-        }
-
-        private void ConfigureSearchFilter()
-        {
-            MangaListView = CollectionViewSource.GetDefaultView(MangaCollection);
-            MangaListView.Filter = mangaObject => String.IsNullOrWhiteSpace(SearchFilter) ? true : (mangaObject as MangaObject).IsNameMatch(SearchFilter);
-            if (MangaListView.CanSort)
-                MangaListView.SortDescriptions.Add(new SortDescription("Name", ListSortDirection.Ascending));
-        }
-
-        protected override void SubDispose()
-        {
-            this.MangaListView = null;
         }
     }
 }

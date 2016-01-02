@@ -5,7 +5,7 @@ using System.IO.Compression;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Core.IO.Storage
+namespace myManga_App.IO.Local
 {
     public sealed class ZipManager : IDisposable
     {

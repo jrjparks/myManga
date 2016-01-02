@@ -16,6 +16,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
+using myManga_App.ViewModels.Objects;
 
 namespace myManga_App.ViewModels.Pages
 {
@@ -26,6 +27,7 @@ namespace myManga_App.ViewModels.Pages
         public HomeViewModel()
             : base(SupportsViewTypeChange: true)
         {
+            MangaCacheObjectDetail = new MangaCacheObjectDetailViewModel();
             if (!IsInDesignMode)
             {
                 ConfigureMangaArchiveCacheObjectView();
@@ -86,7 +88,9 @@ namespace myManga_App.ViewModels.Pages
             "SelectedMangaCacheObject",
             typeof(MangaCacheObject),
             typeof(HomeViewModel),
-            new PropertyMetadata(null));
+            new PropertyMetadata((d,e) => {
+                (d as HomeViewModel).MangaCacheObjectDetail.MangaCacheObject = e.NewValue as MangaCacheObject;
+            }));
 
         public MangaCacheObject SelectedMangaCacheObject
         {
@@ -95,7 +99,23 @@ namespace myManga_App.ViewModels.Pages
         }
         #endregion
 
-        #region MangaCacheObject
+        #region MangaCacheObjects
+
+        #region Search Term
+        private static readonly DependencyPropertyKey MangaCacheObjectDetailPropertyKey = DependencyProperty.RegisterAttachedReadOnly(
+            "MangaCacheObjectDetail",
+            typeof(MangaCacheObjectDetailViewModel),
+            typeof(HomeViewModel),
+            null);
+        private static readonly DependencyProperty MangaCacheObjectDetailProperty = MangaCacheObjectDetailPropertyKey.DependencyProperty;
+
+        public MangaCacheObjectDetailViewModel MangaCacheObjectDetail
+        {
+            get { return (MangaCacheObjectDetailViewModel)GetValue(MangaCacheObjectDetailProperty); }
+            private set { SetValue(MangaCacheObjectDetailPropertyKey, value); }
+        }
+        #endregion
+
         private ICollectionView MangaCacheObjectView
         { get; set; }
 

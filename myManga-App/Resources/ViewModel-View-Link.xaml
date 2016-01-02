@@ -14,6 +14,9 @@
     xmlns:PagesViews="clr-namespace:myManga_App.Views.Pages"
     xmlns:PagesHomeViews="clr-namespace:myManga_App.Views.Pages.HomeView"
     
+    xmlns:ObjectsViewModels="clr-namespace:myManga_App.ViewModels.Objects"
+    xmlns:MangaCacheObjectViews="clr-namespace:myManga_App.Views.Objects.MangaCacheObjectView"
+    
     xmlns:MVVM="clr-namespace:myManga_App.Objects.MVVM">
 
     <DataTemplate x:Key="HomeView_List" DataType="{x:Type ViewModels:HomeViewModel}">
@@ -81,4 +84,11 @@
     <DataTemplate DataType="{x:Type PagesViewModels:ChapterReaderViewModel}">
         <PagesViews:ChapterReaderView/>
     </DataTemplate>
+
+    <!-- Objects -->
+
+    <DataTemplate DataType="{x:Type ObjectsViewModels:MangaCacheObjectDetailViewModel}">
+        <MangaCacheObjectViews:MangaCacheObjectDetailView/>
+    </DataTemplate>
+
 </ResourceDictionary>

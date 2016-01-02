@@ -257,11 +257,9 @@ namespace myManga_App.Objects.Cache
                 if (!Equals(update.BookmarkObject, null))
                 { current.BookmarkObject = update.BookmarkObject; }
 
-                // Update or Merge MangaObject
-                if (Equals(current.MangaObject, null))
+                // Update MangaObject
+                if (!Equals(update.MangaObject, null))
                 { current.MangaObject = update.MangaObject; }
-                else
-                { current.MangaObject.Merge(update.MangaObject); }
 
                 // Update CoverImage
                 if (!Equals(update.CoverImage, null))

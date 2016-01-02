@@ -13,14 +13,14 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace myManga_App.Views.Objects
+namespace myManga_App.Views.Objects.MangaObjectViews
 {
     /// <summary>
-    /// Interaction logic for MangaObject.xaml
+    /// Interaction logic for MangaObjectView.xaml
     /// </summary>
-    public partial class MangaObject : UserControl
+    public partial class MangaObjectView : UserControl
     {
-        public MangaObject()
+        public MangaObjectView()
         {
             InitializeComponent();
         }

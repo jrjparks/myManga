@@ -1,13 +1,14 @@
 ﻿<ResourceDictionary 
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="clr-namespace:myManga_App.Views.Objects.MangaCacheObjectView"
+    xmlns:local="clr-namespace:myManga_App.Views.Objects.MangaCacheObject"
     xmlns:converters="clr-namespace:myManga_App.Converters">
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="/myManga;component/Themes/CoreResourceDictionary.xaml"/>
         <ResourceDictionary Source="/myManga;component/Themes/ListBox/ListBoxItems.xaml"/>
     </ResourceDictionary.MergedDictionaries>
     <converters:StringListToCSV x:Key="StringListToCSV"/>
+    <converters:LocationListToCSV x:Key="LocationListToCSV"/>
     <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
 
     <Style TargetType="{x:Type ListBoxItem}" BasedOn="{StaticResource {x:Type ListBoxItem}}" x:Key="GridMangaCacheObjectListBoxItem">
@@ -147,14 +148,14 @@
 
                         <Grid x:Name="MangaCacheObject">
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="40"/>
                                 <ColumnDefinition Width="54"/>
                                 <ColumnDefinition/>
+                                <ColumnDefinition Width="10"/>
                             </Grid.ColumnDefinitions>
 
                             <Image
                                 x:Name="CoverImage"
-                                Grid.Column="1"
+                                Grid.Column="0"
                                 Width="52"
                                 Height="78"
                                 Stretch="Uniform"
@@ -162,12 +163,14 @@
                                 ClipToBounds="True"/>
 
                             <Grid
-                                Grid.Column="2"
+                                Grid.Column="1"
                                 VerticalAlignment="Center"
                                 TextBlock.FontSize="14">
                                 <Grid.RowDefinitions>
                                     <RowDefinition/>
-                                    <RowDefinition Height="10"/>
+                                    <RowDefinition Height="5"/>
+                                    <RowDefinition/>
+                                    <RowDefinition Height="5"/>
                                     <RowDefinition/>
                                 </Grid.RowDefinitions>
                                 <TextBlock
@@ -182,10 +185,16 @@
                                     TextTrimming="CharacterEllipsis" 
                                     Text="{Binding MangaObject.Genres, Converter={StaticResource StringListToCSV}, Mode=OneWay, FallbackValue=No-Genre}" 
                                     ToolTip="{Binding Text, RelativeSource={RelativeSource Self}}"/>
+                                <TextBlock 
+                                    Grid.Row="4" 
+                                    Foreground="{StaticResource text-muted}" 
+                                    TextTrimming="CharacterEllipsis" 
+                                    Text="{Binding Locations, Converter={StaticResource LocationListToCSV}, Mode=OneWay, FallbackValue=No-Genre}" 
+                                    ToolTip="{Binding Text, RelativeSource={RelativeSource Self}}"/>
                             </Grid>
 
                             <StackPanel
-                                Grid.ColumnSpan="3"
+                                Grid.Column="1"
                                 VerticalAlignment="Bottom">
 
                                 <ProgressBar
@@ -215,32 +224,29 @@
                                 Grid.ColumnSpan="3"
                                 Opacity="0.9">
                                 <Path
-                                    x:Name="IconBackgroundSlider"
+                                    x:Name="IconBackground"
                                     HorizontalAlignment="Right"
                                     VerticalAlignment="Top"
-                                    Data="M 0,0 h206 v5 h-206"
-                                    StrokeThickness="1"
-                                    Fill="{Binding Fill, ElementName=IconBackground}"
-                                    Stroke="{Binding Stroke, ElementName=IconBackground}"/>
-                                <Path
-                                    x:Name="IconBackground"
-                                    HorizontalAlignment="Left"
-                                    VerticalAlignment="Top"
-                                    Data="M 94,0 h-94 v75 h5 v-30 L 45,5 h49"
+                                    Data="M 0,0 h45 v75 h-5 v-30 L 0,5 Z"
                                     StrokeThickness="1"
                                     Fill="{DynamicResource window-theme-primary}"
                                     Stroke="{DynamicResource window-theme-secondary}"/>
-                                <TextBlock
-                                    x:Name="Icon"
-                                    HorizontalAlignment="Left"
+                                <Grid
+                                    HorizontalAlignment="Right"
                                     VerticalAlignment="Top"
-                                    FontFamily="{DynamicResource OpenIconic}"
-                                    FontSize="20"
+                                    Width="20"
+                                    Height="20"
                                     Margin="3">
-                                    <TextBlock.Effect>
-                                        <DropShadowEffect Color="{TemplateBinding Background}" ShadowDepth="0"/>
-                                    </TextBlock.Effect>
-                                </TextBlock>
+                                    <TextBlock
+                                        x:Name="Icon"
+                                        TextAlignment="Center"
+                                        FontFamily="{DynamicResource OpenIconic}"
+                                        FontSize="20">
+                                        <TextBlock.Effect>
+                                            <DropShadowEffect Color="{TemplateBinding Background}" ShadowDepth="0"/>
+                                        </TextBlock.Effect>
+                                    </TextBlock>
+                                </Grid>
                             </Grid>
 
                         </Grid>

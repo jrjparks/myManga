@@ -71,6 +71,8 @@
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.IO.Compression" />
+    <Reference Include="System.IO.Compression.FileSystem" />
     <Reference Include="System.Runtime.Caching" />
     <Reference Include="System.Security" />
     <Reference Include="System.Web" />
@@ -106,6 +108,7 @@
     <Compile Include="Converters\ObjectIsLocal.cs" />
     <Compile Include="Converters\StringArrayToCSV.cs" />
     <Compile Include="IO\Local\VerifyArchiveFile.cs" />
+    <Compile Include="IO\Local\ZipManager.cs" />
     <Compile Include="IO\Network\ContentDownloadManager.cs" />
     <Compile Include="IO\Network\DownloadManager.cs" />
     <Compile Include="IO\Network\WebDownloader.cs">
@@ -130,6 +133,7 @@
     <Compile Include="ViewModels\Dialog\AuthenticationDialogViewModel.cs" />
     <Compile Include="ViewModels\Dialog\DialogViewModel.cs" />
     <Compile Include="ViewModels\HomeViewModel.cs" />
+    <Compile Include="ViewModels\Objects\MangaCacheObjectDetailViewModel.cs" />
     <Compile Include="ViewModels\Pages\ChapterReaderViewModel.cs" />
     <Compile Include="ViewModels\Pages\HomeViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
@@ -146,14 +150,11 @@
     <Compile Include="Views\HomeView\ObjectViews\MangaObjectView.xaml.cs">
       <DependentUpon>MangaObjectView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Objects\ChapterObject\ChapterObjectView.xaml.cs">
-      <DependentUpon>ChapterObjectView.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\Objects\MangaCacheObjectView\MangaCacheObjectDetailView.xaml.cs">
       <DependentUpon>MangaCacheObjectDetailView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Objects\MangaObject.xaml.cs">
-      <DependentUpon>MangaObject.xaml</DependentUpon>
+    <Compile Include="Views\Objects\MangaObjectViews\MangaObjectView.xaml.cs">
+      <DependentUpon>MangaObjectView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Pages\ChapterReaderView.xaml.cs">
       <DependentUpon>ChapterReaderView.xaml</DependentUpon>
@@ -282,11 +283,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Objects\ChapterObject\ChapterObjectListItem.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\Objects\ChapterObject\ChapterObjectView.xaml">
+    <Page Include="Views\Objects\ChapterObjectViews\ChapterObjectListItems.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -294,11 +291,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Objects\MangaCacheObjectView\MangaCacheObjectViewListItem.xaml">
+    <Page Include="Views\Objects\MangaCacheObjectView\MangaCacheObjectViewListItems.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Objects\MangaObject.xaml">
+    <Page Include="Views\Objects\MangaObjectViews\MangaObjectView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Objects\MangaObjectViews\MangaObjectViewListItems.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

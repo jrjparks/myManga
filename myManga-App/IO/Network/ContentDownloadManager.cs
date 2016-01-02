@@ -30,8 +30,7 @@ namespace myManga_App.IO.Network
 
         private readonly SemaphoreSlim TaskConcurrencySemaphore;
         private readonly SemaphoreSlim ImageTaskConcurrencySemaphore;
-        private readonly LimitedConcurrencyLevelTaskScheduler LimitedTaskScheduler;
-        private readonly TaskFactory LimitedTaskFactory;
+        private readonly TaskFactory ContentTaskFactory;
         private readonly CancellationTokenSource cts;
 
         private readonly MemoryCache ActiveDownloadsCache;
@@ -57,20 +56,24 @@ namespace myManga_App.IO.Network
         #endregion
 
         #region Constructors
-        public ContentDownloadManager()
+        /// <summary>
+        /// Create a new ContentDownloadManager
+        /// DownloadConcurrency = Environment.ProcessorCount * ConcurrencyMultiplier;
+        /// ImageDownloadConcurrency = DownloadConcurrency / 2;
+        /// </summary>
+        /// <param name="ConcurrencyMultiplier">Default is 1.</param>
+        public ContentDownloadManager(Int32 ConcurrencyMultiplier = 1)
         {
             ActiveDownloadsCache = new MemoryCache("ActiveDownloadsCache");
 
-            DownloadConcurrency = Environment.ProcessorCount;
+            DownloadConcurrency = Environment.ProcessorCount * ConcurrencyMultiplier;
             ImageDownloadConcurrency = DownloadConcurrency / 2;
             TaskConcurrencySemaphore = new SemaphoreSlim(DownloadConcurrency, DownloadConcurrency);
             ImageTaskConcurrencySemaphore = new SemaphoreSlim(ImageDownloadConcurrency, ImageDownloadConcurrency);
             ServicePointManager.DefaultConnectionLimit = DownloadConcurrency;
-
-            LimitedTaskScheduler = new LimitedConcurrencyLevelTaskScheduler(DownloadConcurrency);
+            
             cts = new CancellationTokenSource();
-            //LimitedTaskFactory = new TaskFactory(cts.Token, TaskCreationOptions.None, TaskContinuationOptions.None, LimitedTaskScheduler);
-            LimitedTaskFactory = Task.Factory;
+            ContentTaskFactory = Task.Factory;
         }
 
         ~ContentDownloadManager()
@@ -132,7 +135,7 @@ namespace myManga_App.IO.Network
             {
                 await Task.Delay(TimeSpan.FromSeconds(1));
                 // Load the MangaObject via Async and LimitedTaskFactory
-                MangaObject = await LimitedTaskFactory.StartNew(() => LoadMangaObjectAsync(MangaObject, cts.Token, ProgressReporter)).Unwrap();
+                MangaObject = await ContentTaskFactory.StartNew(() => LoadMangaObjectAsync(MangaObject, cts.Token, ProgressReporter)).Unwrap();
                 // Calculate MangaObject Save Path
                 // Save the MangaObject via Async to Save Path with Retry and Timeout of 30min
                 await StoreMangaObject(MangaObject);
@@ -175,11 +178,15 @@ namespace myManga_App.IO.Network
             {
                 await Task.Delay(TimeSpan.FromSeconds(1));
                 // Load the ChapterObject via Async and LimitedTaskFactory
-                ChapterObject = await LimitedTaskFactory.StartNew(() => LoadChapterObjectAsync(
+                IProgress<Int32> ChapterObjectProgressReporter = new Progress<Int32>(ProgressValue =>
+                {
+                    if (!Equals(ProgressReporter, null)) ProgressReporter.Report((Int32)Math.Round((Double)ProgressValue * 0.5));
+                });
+                ChapterObject = await ContentTaskFactory.StartNew(() => LoadChapterObjectAsync(
                     MangaObject,
                     ChapterObject,
                     cts.Token,
-                    ProgressReporter)).Unwrap();
+                    ChapterObjectProgressReporter)).Unwrap();
 
                 if (!ChapterObject.Pages.Count.Equals(0))
                 { // Check for pages
@@ -191,7 +198,7 @@ namespace myManga_App.IO.Network
 
                     foreach (PageObject PageObject in ChapterObject.Pages)
                     {
-                        PageObjectDownloadTasks.Add(LimitedTaskFactory.StartNew(() => LoadPageObjectAsync(
+                        PageObjectDownloadTasks.Add(ContentTaskFactory.StartNew(() => LoadPageObjectAsync(
                             MangaObject,
                             ChapterObject,
                             PageObject,
@@ -202,19 +209,31 @@ namespace myManga_App.IO.Network
                     foreach (Task<PageObject> PageObjectDownloadTask in PageObjectDownloadTasks)
                     {
                         PageObject PageObject = await PageObjectDownloadTask;
-                        ChapterObject = await StorePageObject(MangaObject, ChapterObject, PageObject);
-
-                        ISiteExtension SiteExtension = App.SiteExtensions.DLLCollection.First(_SiteExtension =>
-                        { return PageObject.Url.Contains(_SiteExtension.SiteExtensionDescriptionAttribute.URLFormat); });
-                        // Start the DownloadImage task, don't wait.
-                        DownloadImage(
-                            PageObject.ImgUrl,
-                            PageObject.Url,
-                            SiteExtension.Cookies,
-                            SavePath(MangaObject, ChapterObject),
-                            Path.GetFileName(new Uri(PageObject.ImgUrl).LocalPath));
+                        Int32 index = ChapterObject.Pages.FindIndex(_PageObject => Equals(_PageObject.PageNumber, PageObject.PageNumber));
+                        ChapterObject.Pages[index] = PageObject;
                     }
                     await StoreChapterObject(MangaObject, ChapterObject);
+
+                    // Download Images
+                    IEnumerable<Task> DownloadImageTasksQuery =
+                    from PageObject in ChapterObject.Pages
+                    select DownloadImageAsync(
+                        PageObject.ImgUrl,
+                        PageObject.Url,
+                        App.SiteExtensions.DLLCollection.First(_SiteExtension => PageObject.Url.Contains(_SiteExtension.SiteExtensionDescriptionAttribute.URLFormat)).Cookies,
+                        SavePath(MangaObject, ChapterObject),
+                        Path.GetFileName(new Uri(PageObject.ImgUrl).LocalPath));
+                    List<Task> DownloadImageTasks = DownloadImageTasksQuery.ToList();
+                    Int32 OriginalDownloadImageTasksCount = DownloadImageTasks.Count;
+
+                    while (DownloadImageTasks.Count > 0)
+                    {
+                        Task completedTask = await Task.WhenAny(DownloadImageTasks);
+                        DownloadImageTasks.Remove(completedTask);
+
+                        Int32 DownloadImageTasksProgress = (Int32)Math.Round(((Double)(OriginalDownloadImageTasksCount - DownloadImageTasks.Count) / (Double)OriginalDownloadImageTasksCount) * 50);
+                        if (!Equals(ProgressReporter, null)) ProgressReporter.Report(50 + DownloadImageTasksProgress);
+                    }
                 }
             }
             catch (Exception ex)
@@ -249,7 +268,7 @@ namespace myManga_App.IO.Network
             {
                 await Task.Delay(TimeSpan.FromSeconds(1));
                 // Load the PageObject via Async and LimitedTaskFactory
-                PageObject = await LimitedTaskFactory.StartNew(() => LoadPageObjectAsync(
+                PageObject = await ContentTaskFactory.StartNew(() => LoadPageObjectAsync(
                     MangaObject,
                     ChapterObject,
                     PageObject,
@@ -322,7 +341,7 @@ namespace myManga_App.IO.Network
             ActiveDownloadsCache.Set(Url, true, DateTimeOffset.MaxValue);
             try
             {
-                using (Stream ImageStream = await LimitedTaskFactory.StartNew(() => LoadImageAsync(Url, Referer, Cookies, cts.Token, ProgressReporter)).Unwrap())
+                using (Stream ImageStream = await ContentTaskFactory.StartNew(() => LoadImageAsync(Url, Referer, Cookies, cts.Token, ProgressReporter)).Unwrap())
                 {
                     // Save the Image via Async to Save Path with Retry and Timeout of 30min
                     await StoreImage(ArchiveName, EntryName, ImageStream);
@@ -548,6 +567,7 @@ namespace myManga_App.IO.Network
                     });
                     if (!Equals(LocationObject, null))
                     { SiteExtension = App.SiteExtensions.DLLCollection[LocationObject.ExtensionName]; break; }
+                    // Rewrite this code to handle a fail chain for the locations
                 }
 
                 if (Equals(SiteExtension, null))
@@ -747,7 +767,7 @@ namespace myManga_App.IO.Network
                             });
                             if (!Equals(ExistingMangaObject, null))
                             {
-                                if (!Equals(ExistingMangaObject.DatabaseLocations.FindIndex(_DatabaseLocation => Equals(
+                                if (Equals(ExistingMangaObject.DatabaseLocations.FindIndex(_DatabaseLocation => Equals(
                                     _DatabaseLocation.ExtensionName,
                                     DatabaseExtension.DatabaseExtensionDescriptionAttribute.Name)), -1))
                                 {

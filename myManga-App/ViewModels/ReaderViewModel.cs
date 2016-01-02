@@ -308,7 +308,7 @@ namespace myManga_App.ViewModels
                     if (!_ChapterObject.Read)
                     {
                         _ChapterObject.Read = true;
-                        App.ZipStorage.Write(
+                        App.ZipManager.Write(
                             Path.Combine(App.MANGA_ARCHIVE_DIRECTORY, this.MangaObject.MangaArchiveName(App.MANGA_ARCHIVE_EXTENSION)),
                             typeof(MangaObject).Name,
                             this.MangaObject.Serialize(SaveType: App.UserConfig.SaveType));
@@ -316,7 +316,7 @@ namespace myManga_App.ViewModels
                 }
             }
             if (this.SelectedPageObject != null) this.BookmarkObject.Page = this.SelectedPageObject.PageNumber;
-            App.ZipStorage.Write(
+            App.ZipManager.Write(
                 Path.Combine(App.MANGA_ARCHIVE_DIRECTORY, this.MangaObject.MangaArchiveName(App.MANGA_ARCHIVE_EXTENSION)),
                 typeof(BookmarkObject).Name,
                 this.BookmarkObject.Serialize(SaveType: App.UserConfig.SaveType));

@@ -137,7 +137,7 @@
                 <RowDefinition/>
             </Grid.RowDefinitions>
             <Grid 
-                x:Name="DownloadButtonGrid" 
+                x:Name="DownloadButtonGrid"
                 TextBlock.FontWeight="Bold" 
                 TextElement.FontSize="18"
                 TextElement.FontFamily="{DynamicResource OpenIconic}">

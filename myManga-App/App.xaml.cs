@@ -14,7 +14,6 @@ using System.Collections.ObjectModel;
 using myManga_App.Objects.Cache;
 using myManga_App.IO.Network;
 using myManga_App.Objects.UserConfig;
-using Core.IO.Storage;
 using System.Threading;
 using System.Runtime.Caching;
 using System.Windows.Threading;
@@ -24,6 +23,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows.Media.Imaging;
 using Core.MVVM;
+using myManga_App.IO.Local;
 
 namespace myManga_App
 {
@@ -130,7 +130,7 @@ namespace myManga_App
             }
         }
 
-        private async Task<MangaCacheObject> ReloadMangaCacheObjectAsync(String ArchivePath)
+        private async Task<MangaCacheObject> ReloadMangaCacheObjectAsync(String ArchivePath, Boolean ReloadCoverImage=false)
         {
             try
             {
@@ -149,19 +149,22 @@ namespace myManga_App
                 if (!Equals(MangaCacheObject.MangaObject, null))
                     MangaCacheObject.MangaObject = await MigrateCovers(ArchivePath, MangaCacheObject.MangaObject);
 
-                // Load Cover Image
-                String CoverImageFileName = Path.GetFileName(MangaCacheObject.MangaObject.SelectedCover().Url);
-                Stream CoverImageStream = await ZipManager.Retry(() => ZipManager.ReadAsync(ArchivePath, CoverImageFileName), TimeSpan.FromMinutes(1));
-                if (!Equals(CoverImageStream, null))
+                if (ReloadCoverImage)
                 {
-                    using (CoverImageStream)
+                    // Load Cover Image
+                    String CoverImageFileName = Path.GetFileName(MangaCacheObject.MangaObject.SelectedCover().Url);
+                    Stream CoverImageStream = await ZipManager.Retry(() => ZipManager.ReadAsync(ArchivePath, CoverImageFileName), TimeSpan.FromMinutes(1));
+                    if (!Equals(CoverImageStream, null))
                     {
-                        MangaCacheObject.CoverImage = new BitmapImage();
-                        MangaCacheObject.CoverImage.BeginInit();
-                        MangaCacheObject.CoverImage.DecodePixelWidth = 300;
-                        MangaCacheObject.CoverImage.CacheOption = BitmapCacheOption.OnLoad;
-                        MangaCacheObject.CoverImage.StreamSource = CoverImageStream;
-                        MangaCacheObject.CoverImage.EndInit();
+                        using (CoverImageStream)
+                        {
+                            MangaCacheObject.CoverImage = new BitmapImage();
+                            MangaCacheObject.CoverImage.BeginInit();
+                            MangaCacheObject.CoverImage.DecodePixelWidth = 300;
+                            MangaCacheObject.CoverImage.CacheOption = BitmapCacheOption.OnLoad;
+                            MangaCacheObject.CoverImage.StreamSource = CoverImageStream;
+                            MangaCacheObject.CoverImage.EndInit();
+                        }
                     }
                 }
 
@@ -410,7 +413,7 @@ namespace myManga_App
                         goto case WatcherChangeTypes.Changed;
                     case WatcherChangeTypes.Changed:
                         // (Re)Cache if creaded or changed
-                        MangaCacheObject ReloadedMangaCacheObject = await ReloadMangaCacheObjectAsync(e.FullPath);
+                        MangaCacheObject ReloadedMangaCacheObject = await ReloadMangaCacheObjectAsync(e.FullPath, Equals(ExistingMangaCacheObject.CoverImage, null));
                         if (!Equals(ReloadedMangaCacheObject, null))
                         {
                             if (Equals(ExistingMangaCacheObject, null))

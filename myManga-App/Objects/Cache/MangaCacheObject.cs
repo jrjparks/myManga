@@ -55,13 +55,6 @@ namespace myManga_App.Objects.Cache
                 return String.Format("[MangaCacheObject]{0}", MangaObject.Name);
             return String.Format("{0}", base.ToString());
         }
-
-        public void ForceDataRefresh()
-        {
-            BindingOperations.GetBindingExpressionBase(this, MangaObjectProperty).UpdateTarget();
-            BindingOperations.GetBindingExpressionBase(this, BookmarkObjectProperty).UpdateTarget();
-            BindingOperations.GetBindingExpressionBase(this, ResumeChapterObjectProperty).UpdateTarget();
-        }
         #endregion
 
         #region Manga
@@ -79,7 +72,7 @@ namespace myManga_App.Objects.Cache
         }
         #endregion
 
-        #region Chapter
+        #region Chapter Cache
         private static readonly DependencyPropertyKey ChapterCacheObjectsPropertyKey = DependencyProperty.RegisterAttachedReadOnly(
             "ChapterCacheObjects",
             typeof(List<ChapterCacheObject>),
@@ -154,6 +147,7 @@ namespace myManga_App.Objects.Cache
                                 control.MangaObject.MangaFileName()),
                             control.App.CHAPTER_ARCHIVE_EXTENSION)
                     });
+
             }
             else
             {

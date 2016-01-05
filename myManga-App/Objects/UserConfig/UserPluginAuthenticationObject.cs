@@ -74,7 +74,7 @@ namespace myManga_App.Objects.UserConfig
                 Byte[] entropy = Encoding.UTF8.GetBytes(Assembly.GetExecutingAssembly().FullName),
                     passwordData = Convert.FromBase64String(this.EncryptedPassword);
                 SecureString secureString = new SecureString();
-                foreach(Char c in Encoding.UTF8.GetString(ProtectedData.Unprotect(passwordData, entropy, DataProtectionScope.CurrentUser)))
+                foreach (Char c in Encoding.UTF8.GetString(ProtectedData.Unprotect(passwordData, entropy, DataProtectionScope.CurrentUser)))
                 { secureString.AppendChar(c); }
                 secureString.MakeReadOnly();
                 return secureString;
@@ -93,7 +93,14 @@ namespace myManga_App.Objects.UserConfig
             }
         }
 
-        public UserPluginAuthenticationObject() : base() { }
-        public UserPluginAuthenticationObject(SerializationInfo info, StreamingContext context) : base(info, context) { }
+        public UserPluginAuthenticationObject()
+            : base()
+        { }
+        private UserPluginAuthenticationObject(SerializationInfo info, StreamingContext context)
+            : base(info, context)
+        { }
+
+        public override void GetObjectData(SerializationInfo info, StreamingContext context)
+        { base.GetObjectData(info, context); }
     }
 }

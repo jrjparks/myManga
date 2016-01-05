@@ -37,7 +37,13 @@ namespace myManga_App.Objects.Cache
         public override string ToString()
         {
             if (!Equals(ChapterObject, null))
-                return String.Format("[ChapterCacheObject]{0} - {1}.{2}.{3}", ChapterObject.Name, ChapterObject.Volume, ChapterObject.Chapter, ChapterObject.SubChapter);
+                return String.Format(
+                    "[ChapterCacheObject][{0}]{1} - {2}.{3}.{4}", 
+                    IsLocal ? "LOCAL" : "CLOUD", 
+                    ChapterObject.Name, 
+                    ChapterObject.Volume, 
+                    ChapterObject.Chapter, 
+                    ChapterObject.SubChapter);
             return String.Format("{0}", base.ToString());
         }
 

@@ -76,7 +76,7 @@
                     Content="{DynamicResource oi-cloud-download}"
                     ContentStringFormat="{}{0} Download To Latest"
                     Padding="4,8"
-                    Command="{Binding DownloadToLatestChapterCommandAsync}"/>
+                    Command="{Binding DownloadToLatestChapterAsyncCommand}"/>
 
                 <Button:MetroToggleButton
                     x:Name="DownloadDropdown"
@@ -106,7 +106,7 @@
                                 Content="{DynamicResource oi-cloud-download}"
                                 ContentStringFormat="{}{0} Download Selected"
                                 Padding="4,8"
-                                Command="{Binding DownloadSelectedChaptersCommandAsync}"
+                                Command="{Binding DownloadSelectedChaptersAsyncCommand}"
                                 CommandParameter="{Binding SelectedItems, ElementName=ChapterObjects}"/>
 
                             <Button:MetroButton
@@ -115,7 +115,7 @@
                                 Content="{DynamicResource oi-cloud-download}"
                                 ContentStringFormat="{}{0} Download All"
                                 Padding="4,8"
-                                Command="{Binding DownloadAllChaptersCommandAsync}"/>
+                                Command="{Binding DownloadAllChaptersAsyncCommand}"/>
 
                         </StackPanel>
                     </Border>
@@ -142,7 +142,7 @@
                     Padding="4,8"
                     Content="{DynamicResource oi-book}"
                     ContentStringFormat="{}{0} Read Selected Chapter"
-                    Command="{Binding ReadSelectedChapterCommandAsync}"
+                    Command="{Binding ReadSelectedChapterAsyncCommand}"
                     CommandParameter="{Binding SelectedItems, ElementName=ChapterObjects}"
                     Margin="0,0,1,0"/>
 
@@ -160,7 +160,7 @@
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="300"/>
-                    <ColumnDefinition/>
+                    <ColumnDefinition MaxWidth="600"/>
                     <ColumnDefinition Width="5"/>
                 </Grid.ColumnDefinitions>
 
@@ -180,7 +180,7 @@
                         ContentStringFormat="{}{0} Resume Reading"
                         FontSize="18"
                         Padding="5"
-                        Command="{Binding Path=ResumeReadingCommand}"/>
+                        Command="{Binding ResumeReadingAsyncCommand}"/>
                     <ProgressBar
                         Height="5"
                         Minimum="0"

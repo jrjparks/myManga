@@ -24,7 +24,8 @@ namespace myManga_App.ViewModels.Pages
                     SearchProgressActive = (0 < ProgressValue && ProgressValue < 100);
                     SearchProgress = ProgressValue;
                 });
-                Messenger.Default.RegisterRecipient<String>(this, SearchTerm => {
+                Messenger.Default.RegisterRecipient<String>(this, SearchTerm =>
+                {
                     SearchAsync(SearchTerm);
                     PullFocus();
                 }, "SearchRequest");
@@ -82,6 +83,29 @@ namespace myManga_App.ViewModels.Pages
         { get { return clearSearchTermCommand ?? (clearSearchTermCommand = new DelegateCommand(() => SearchTerm = String.Empty)); } }
         #endregion
 
+        #region MangaObject List
+        private static readonly DependencyProperty SearchResultMangaObjectCollectionProperty = DependencyProperty.RegisterAttached(
+            "SearchResultMangaObjectCollection",
+            typeof(ObservableCollection<MangaObject>),
+            typeof(SearchViewModel),
+            new PropertyMetadata(new ObservableCollection<MangaObject>()));
+        public ObservableCollection<MangaObject> SearchResultMangaObjectCollection
+        {
+            get { return (ObservableCollection<MangaObject>)GetValue(SearchResultMangaObjectCollectionProperty); }
+            set { SetValue(SearchResultMangaObjectCollectionProperty, value); }
+        }
+
+        private static readonly DependencyProperty SelectedSearchResultMangaObjectProperty = DependencyProperty.RegisterAttached(
+            "SelectedSearchResultMangaObject",
+            typeof(MangaObject),
+            typeof(SearchViewModel));
+        public MangaObject SelectedSearchResultMangaObject
+        {
+            get { return (MangaObject)GetValue(SelectedSearchResultMangaObjectProperty); }
+            set { SetValue(SelectedSearchResultMangaObjectProperty, value); }
+        }
+        #endregion
+
         #region Search Command
         private CancellationTokenSource SearchAsyncCTS { get; set; }
 
@@ -121,27 +145,19 @@ namespace myManga_App.ViewModels.Pages
         }
         #endregion
 
-        #region MangaObject List
-        private static readonly DependencyProperty SearchResultMangaObjectCollectionProperty = DependencyProperty.RegisterAttached(
-            "SearchResultMangaObjectCollection",
-            typeof(ObservableCollection<MangaObject>),
-            typeof(SearchViewModel),
-            new PropertyMetadata(new ObservableCollection<MangaObject>()));
-        public ObservableCollection<MangaObject> SearchResultMangaObjectCollection
+        #region Download Result Command
+        private DelegateCommand<MangaObject> downloadResultCommand;
+        public ICommand DownloadResultCommand
+        { get { return downloadResultCommand ?? (downloadResultCommand = new DelegateCommand<MangaObject>(DownloadResult, CanDownloadResult)); } }
+
+        private Boolean CanDownloadResult(MangaObject MangaObject)
         {
-            get { return (ObservableCollection<MangaObject>)GetValue(SearchResultMangaObjectCollectionProperty); }
-            set { SetValue(SearchResultMangaObjectCollectionProperty, value); }
+            if (Equals(MangaObject, null)) return false;
+            return true;
         }
 
-        private static readonly DependencyProperty SelectedSearchResultMangaObjectProperty = DependencyProperty.RegisterAttached(
-            "SelectedSearchResultMangaObject",
-            typeof(MangaObject),
-            typeof(SearchViewModel));
-        public MangaObject SelectedSearchResultMangaObject
-        {
-            get { return (MangaObject)GetValue(SelectedSearchResultMangaObjectProperty); }
-            set { SetValue(SelectedSearchResultMangaObjectProperty, value); }
-        }
+        private void DownloadResult(MangaObject MangaObject)
+        { App.ContentDownloadManager.Download(MangaObject, false); }
         #endregion
 
         #endregion

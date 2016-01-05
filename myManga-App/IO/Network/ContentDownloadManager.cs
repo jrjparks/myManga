@@ -180,7 +180,7 @@ namespace myManga_App.IO.Network
                 // Load the ChapterObject via Async and LimitedTaskFactory
                 IProgress<Int32> ChapterObjectProgressReporter = new Progress<Int32>(ProgressValue =>
                 {
-                    if (!Equals(ProgressReporter, null)) ProgressReporter.Report((Int32)Math.Round((Double)ProgressValue * 0.5));
+                    if (!Equals(ProgressReporter, null)) ProgressReporter.Report((Int32)Math.Round((Double)ProgressValue * 0.25));
                 });
                 ChapterObject = await ContentTaskFactory.StartNew(() => LoadChapterObjectAsync(
                     MangaObject,
@@ -231,8 +231,8 @@ namespace myManga_App.IO.Network
                         Task completedTask = await Task.WhenAny(DownloadImageTasks);
                         DownloadImageTasks.Remove(completedTask);
 
-                        Int32 DownloadImageTasksProgress = (Int32)Math.Round(((Double)(OriginalDownloadImageTasksCount - DownloadImageTasks.Count) / (Double)OriginalDownloadImageTasksCount) * 50);
-                        if (!Equals(ProgressReporter, null)) ProgressReporter.Report(50 + DownloadImageTasksProgress);
+                        Int32 DownloadImageTasksProgress = (Int32)Math.Round(((Double)(OriginalDownloadImageTasksCount - DownloadImageTasks.Count) / (Double)OriginalDownloadImageTasksCount) * 75);
+                        if (!Equals(ProgressReporter, null)) ProgressReporter.Report(25 + DownloadImageTasksProgress);
                     }
                 }
             }

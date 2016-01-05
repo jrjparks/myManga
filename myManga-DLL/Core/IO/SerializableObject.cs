@@ -18,7 +18,7 @@ namespace Core.IO
                 inf.SetValue(this, info.GetValue(inf.Name, inf.PropertyType), null);
         }
 
-        public void GetObjectData(SerializationInfo info, StreamingContext context)
+        public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             if (info == null)
                 throw new System.ArgumentNullException("info");

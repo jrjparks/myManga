@@ -103,9 +103,9 @@ namespace myManga_App.ViewModels
         #endregion
 
         #region Search Command
-        private DelegateCommand<String> searchCommandAsync;
-        public ICommand SearchCommandAsync
-        { get { return searchCommandAsync ?? (searchCommandAsync = new DelegateCommand<String>(SearchAsync, CanSearchAsync)); } }
+        private DelegateCommand<String> searchAsyncCommand;
+        public ICommand SearchAsyncCommand
+        { get { return searchAsyncCommand ?? (searchAsyncCommand = new DelegateCommand<String>(SearchAsync, CanSearchAsync)); } }
 
         private Boolean CanSearchAsync(String SearchTerm)
         {
@@ -145,9 +145,9 @@ namespace myManga_App.ViewModels
         #endregion
 
         #region Download Search Result MangaObject
-        private DelegateCommand<MangaObject> downloadMangaObjectCommandAsync;
-        public ICommand DownloadMangaObjectCommandAsync
-        { get { return downloadMangaObjectCommandAsync ?? (downloadMangaObjectCommandAsync = new DelegateCommand<MangaObject>(DownloadMangaObjectAsync, CanDownloadMangaObjectAsync)); } }
+        private DelegateCommand<MangaObject> downloadMangaObjectAsyncCommand;
+        public ICommand DownloadMangaObjectAsyncCommand
+        { get { return downloadMangaObjectAsyncCommand ?? (downloadMangaObjectAsyncCommand = new DelegateCommand<MangaObject>(DownloadMangaObjectAsync, CanDownloadMangaObjectAsync)); } }
 
         private Boolean CanDownloadMangaObjectAsync(MangaObject MangaObject)
         {

@@ -53,14 +53,14 @@
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
                     <Grid.InputBindings>
-                        <KeyBinding Command="{Binding SearchCommandAsync}" CommandParameter="{Binding Text, ElementName=SearchBox}" Key="Return"/>
+                        <KeyBinding Command="{Binding SearchAsyncCommand}" CommandParameter="{Binding Text, ElementName=SearchBox}" Key="Return"/>
                         <KeyBinding Command="{Binding ClearSearchCommand}" Key="Esc"/>
                     </Grid.InputBindings>
                     <button:MetroButton
                         Grid.Column="0"
 						FontFamily="{DynamicResource OpenIconic}"
 						Content="{DynamicResource oi-magnifying-glass}"
-                        Command="{Binding SearchCommandAsync}"
+                        Command="{Binding SearchAsyncCommand}"
                         CommandParameter="{Binding Text, ElementName=SearchBox}"
                         ToolTip="Search Sites"
                         Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"/>
@@ -110,7 +110,7 @@
                 Content="{DynamicResource oi-data-transfer-download}"
                 ContentStringFormat="{}{0} Add to Library {0}"
                 FontSize="18"
-                Command="{Binding DownloadMangaObjectCommandAsync}"
+                Command="{Binding DownloadMangaObjectAsyncCommand}"
                 CommandParameter="{Binding SelectedMangaObject}"/>
             <Grid
                 x:Name="MangaObjectDescription"

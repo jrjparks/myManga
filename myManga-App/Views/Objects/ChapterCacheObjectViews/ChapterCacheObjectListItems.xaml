@@ -24,37 +24,67 @@
                         TextBlock.Foreground="{TemplateBinding Foreground}"
                         TextElement.Foreground="{TemplateBinding Foreground}">
 
-                        <Grid 
-                            x:Name="ChapterObject" 
-                            VerticalAlignment="Center"
-                            DataContext="{Binding ChapterObject}">
-                            <Grid.RowDefinitions>
-                                <RowDefinition/>
-                                <RowDefinition Height="5"/>
-                                <RowDefinition/>
-                            </Grid.RowDefinitions>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
 
-                            <TextBlock 
-                                Grid.Row="0" 
-                                VerticalAlignment="Center" 
-                                Foreground="{DynamicResource text-dark}" 
-                                FontWeight="Bold" FontSize="14" 
-                                TextTrimming="CharacterEllipsis" 
-                                Text="{Binding Name}"/>
-                            <TextBlock 
-                                Grid.Row="2" 
-                                VerticalAlignment="Center" 
-                                Foreground="{DynamicResource text-muted}" 
-                                TextTrimming="CharacterEllipsis">
-                                <TextBlock.Text>
-                                    <MultiBinding StringFormat="Vol {0} Chap {1}.{2}">
-                                        <Binding Path="Volume"/>
-                                        <Binding Path="Chapter"/>
-                                        <Binding Path="SubChapter"/>
-                                    </MultiBinding>
-                                </TextBlock.Text>
-                            </TextBlock>
+                            <ProgressBar
+                                Height="5"
+                                Grid.ColumnSpan="2"
+                                VerticalAlignment="Top"
+                                Minimum="0"
+                                Maximum="100" 
+                                Value="{Binding DownloadProgress, Mode=OneWay, FallbackValue=25}"
+                                Visibility="{Binding DownloadProgressActive, Converter={StaticResource BooleanToVisibilityConverter}, FallbackValue=Collapsed}"
+                                Foreground="{DynamicResource window-theme-primary}" 
+                                Background="{TemplateBinding Background}" 
+                                BorderThickness="0"/>
 
+                            <Grid 
+                                x:Name="ChapterObject" 
+                                VerticalAlignment="Center"
+                                DataContext="{Binding ChapterObject}">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition/>
+                                    <RowDefinition Height="5"/>
+                                    <RowDefinition/>
+                                </Grid.RowDefinitions>
+
+                                <TextBlock 
+                                    Grid.Row="0" 
+                                    VerticalAlignment="Center" 
+                                    Foreground="{DynamicResource text-dark}" 
+                                    FontWeight="Bold" FontSize="14" 
+                                    TextTrimming="CharacterEllipsis" 
+                                    Text="{Binding Name}"/>
+                                <TextBlock 
+                                    Grid.Row="2" 
+                                    VerticalAlignment="Center" 
+                                    Foreground="{DynamicResource text-muted}" 
+                                    TextTrimming="CharacterEllipsis">
+                                    <TextBlock.Text>
+                                        <MultiBinding StringFormat="Vol {0} Chap {1}.{2}">
+                                            <Binding Path="Volume"/>
+                                            <Binding Path="Chapter"/>
+                                            <Binding Path="SubChapter"/>
+                                        </MultiBinding>
+                                    </TextBlock.Text>
+                                </TextBlock>
+
+                            </Grid>
+
+                            <TextBlock
+                                x:Name="Icon"
+                                Grid.Column="1"
+                                Visibility="Collapsed"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Center"
+                                FontFamily="{DynamicResource OpenIconic}"
+                                Text="{DynamicResource oi-folder}"
+                                FontSize="20"
+                                Margin="3"/>
                         </Grid>
 
                     </Border>
@@ -64,9 +94,15 @@
                             <Setter TargetName="ItemBorder" Property="BorderThickness" Value="{Binding BorderThickness, RelativeSource={RelativeSource TemplatedParent}}"/>
                             <Setter TargetName="ItemBorder" Property="Padding" Value="0"/>
                         </Trigger>
+                        <DataTrigger Binding="{Binding IsLocal}" Value="True">
+                            <Setter TargetName="Icon" Property="Visibility" Value="Visible"/>
+                        </DataTrigger>
                         <Trigger Property="IsMouseOver" Value="True">
                             <Setter TargetName="ItemBorder" Property="Background" Value="{DynamicResource window-theme-secondary}"/>
                         </Trigger>
+                        <DataTrigger Binding="{Binding IsResumeChapter}" Value="True">
+                            <Setter TargetName="ItemBorder" Property="Background" Value="{DynamicResource window-theme-primary-disabled}"/>
+                        </DataTrigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>

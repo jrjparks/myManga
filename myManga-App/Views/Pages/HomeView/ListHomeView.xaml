@@ -148,7 +148,8 @@
             </Grid>
 
             <Grid
-                Grid.Column="2">
+                Grid.Column="2"
+                Visibility="{Binding MangaCacheObjectDetail.MangaCacheObject, TargetNullValue=Collapsed, FallbackValue=Visible}">
                 <Rectangle Fill="Gray" Margin="3"/>
                 <ContentPresenter Content="{Binding MangaCacheObjectDetail}"/>
                 <!-- DETAIL VIEW -->

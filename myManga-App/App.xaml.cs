@@ -444,27 +444,27 @@ namespace myManga_App
 
         private void ChapterObjectArchiveWatcher_Event(object sender, FileSystemEventArgs e)
         {
-            if (Dispatcher.Thread == Thread.CurrentThread)
+            RunOnUiThread(() =>
             {
                 switch (e.ChangeType)
                 {
                     case WatcherChangeTypes.Created:
                     case WatcherChangeTypes.Deleted:
-                        FileInfo ChapterObjectFileInfo = new FileInfo(e.FullPath);
-                        MangaCacheObject ExistingMangaCacheObject = MangaCacheObjects.FirstOrDefault(_ => Equals(_.MangaObject.MangaFileName(), ChapterObjectFileInfo.DirectoryName));
+                        MangaCacheObject ExistingMangaCacheObject = MangaCacheObjects.FirstOrDefault(
+                            _ => Equals(
+                                _.MangaObject.MangaFileName(),
+                                Path.GetDirectoryName(e.Name)));
                         if (!Equals(ExistingMangaCacheObject, null))
                         {
-                            Int32 ExistingMangaCacheObjectIndex = ExistingMangaCacheObject.ChapterCacheObjects.FindIndex(_ => Equals(_.ArchiveFileName, e.Name));
+                            Int32 ExistingMangaCacheObjectIndex = ExistingMangaCacheObject.ChapterCacheObjects.FindIndex(_ => Equals(_.ArchiveFileName, Path.GetFileName(e.Name)));
                             if (ExistingMangaCacheObjectIndex >= 0)
                                 ExistingMangaCacheObject.ChapterCacheObjects[ExistingMangaCacheObjectIndex].IsLocal = File.Exists(e.FullPath);
-                            ExistingMangaCacheObject.ForceDataRefresh();
                         }
                         break;
                 }
 
                 Messenger.Default.Send(e, "ChapterObjectArchiveWatcher");
-            }
-            else Dispatcher.Invoke(DispatcherPriority.Send, new Action(() => ChapterObjectArchiveWatcher_Event(sender, e)));
+            });
         }
         #endregion
 

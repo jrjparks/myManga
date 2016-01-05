@@ -94,8 +94,18 @@ namespace myManga_App.Objects
             }
         }
 
-        public SiteExtensionInformationObject() : base() { }
-        public SiteExtensionInformationObject(ISiteExtensionDescriptionAttribute attribute) : base() { iSiteExtensionDescriptionAttribute = attribute; }
+        public SiteExtensionInformationObject()
+            : base()
+        { }
+        public SiteExtensionInformationObject(ISiteExtensionDescriptionAttribute attribute)
+            : base()
+        { iSiteExtensionDescriptionAttribute = attribute; }
+        protected SiteExtensionInformationObject(SerializationInfo info, StreamingContext context)
+            : base(info, context)
+        { }
+
+        public override void GetObjectData(SerializationInfo info, StreamingContext context)
+        { base.GetObjectData(info, context); }
         #endregion
     }
 }

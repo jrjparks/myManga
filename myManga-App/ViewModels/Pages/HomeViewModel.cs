@@ -250,9 +250,9 @@ namespace myManga_App.ViewModels.Pages
 
         #region Downloads
         #region Chapter Download
-        private DelegateCommand<ChapterObject> downloadChapterCommandAsync;
-        public ICommand DownloadChapterCommandAsync
-        { get { return downloadChapterCommandAsync ?? (downloadChapterCommandAsync = new DelegateCommand<ChapterObject>(DownloadChapterAsync, CanDownloadChapterAsync)); } }
+        private DelegateCommand<ChapterObject> downloadChapterAsyncCommand;
+        public ICommand DownloadChapterAsyncCommand
+        { get { return downloadChapterAsyncCommand ?? (downloadChapterAsyncCommand = new DelegateCommand<ChapterObject>(DownloadChapterAsync, CanDownloadChapterAsync)); } }
 
         private Boolean CanDownloadChapterAsync(ChapterObject ChapterObject)
         {
@@ -267,9 +267,9 @@ namespace myManga_App.ViewModels.Pages
         #endregion
 
         #region Selected Chapters Download
-        private DelegateCommand<IList> downloadSelectedChaptersCommandAsync;
-        public ICommand DownloadSelectedChaptersCommandAsync
-        { get { return downloadSelectedChaptersCommandAsync ?? (downloadSelectedChaptersCommandAsync = new DelegateCommand<IList>(DownloadSelectedChaptersAsync, CanDownloadSelectedChaptersAsync)); } }
+        private DelegateCommand<IList> downloadSelectedChaptersAsyncCommand;
+        public ICommand DownloadSelectedChaptersAsyncCommand
+        { get { return downloadSelectedChaptersAsyncCommand ?? (downloadSelectedChaptersAsyncCommand = new DelegateCommand<IList>(DownloadSelectedChaptersAsync, CanDownloadSelectedChaptersAsync)); } }
 
         private Boolean CanDownloadSelectedChaptersAsync(IList SelectedChapterObjects)
         {
@@ -288,9 +288,9 @@ namespace myManga_App.ViewModels.Pages
         #endregion
 
         #region All Chapters Download
-        private DelegateCommand downloadAllChaptersCommandAsync;
-        public ICommand DownloadAllChaptersCommandAsync
-        { get { return downloadAllChaptersCommandAsync ?? (downloadAllChaptersCommandAsync = new DelegateCommand(DownloadAllChaptersAsync, CanDownloadAllChaptersAsync)); } }
+        private DelegateCommand downloadAllChaptersAsyncCommand;
+        public ICommand DownloadAllChaptersAsyncCommand
+        { get { return downloadAllChaptersAsyncCommand ?? (downloadAllChaptersAsyncCommand = new DelegateCommand(DownloadAllChaptersAsync, CanDownloadAllChaptersAsync)); } }
 
         private Boolean CanDownloadAllChaptersAsync()
         {
@@ -307,9 +307,9 @@ namespace myManga_App.ViewModels.Pages
         #endregion
 
         #region To Latest Chapter Download
-        private DelegateCommand downloadToLatestChapterCommandAsync;
-        public ICommand DownloadToLatestChapterCommandAsync
-        { get { return downloadToLatestChapterCommandAsync ?? (downloadToLatestChapterCommandAsync = new DelegateCommand(DownloadToLatestChapterAsync, CanDownloadToLatestChapterAsync)); } }
+        private DelegateCommand downloadToLatestChapterAsyncCommand;
+        public ICommand DownloadToLatestChapterAsyncCommand
+        { get { return downloadToLatestChapterAsyncCommand ?? (downloadToLatestChapterAsyncCommand = new DelegateCommand(DownloadToLatestChapterAsync, CanDownloadToLatestChapterAsync)); } }
 
         private Boolean CanDownloadToLatestChapterAsync()
         {

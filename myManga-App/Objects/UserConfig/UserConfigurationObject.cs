@@ -206,8 +206,15 @@ namespace myManga_App.Objects.UserConfig
             }
         }
 
-        public UserConfigurationObject() : base() { CreateEventLinks(); }
-        public UserConfigurationObject(SerializationInfo info, StreamingContext context) : base(info, context) { CreateEventLinks(); }
+        public UserConfigurationObject()
+            : base()
+        { CreateEventLinks(); }
+        private UserConfigurationObject(SerializationInfo info, StreamingContext context)
+            : base(info, context)
+        { CreateEventLinks(); }
+
+        public override void GetObjectData(SerializationInfo info, StreamingContext context)
+        { base.GetObjectData(info, context); }
 
         private void CreateEventLinks()
         {

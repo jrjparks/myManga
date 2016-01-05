@@ -103,10 +103,19 @@
             </Grid>
 
             <Grid
-                Grid.Column="2">
+                Grid.Column="2"
+                Visibility="{Binding SelectedSearchResultMangaObject, TargetNullValue=Collapsed, FallbackValue=Visible}">
                 <Rectangle Fill="Gray" Margin="3"/>
                 <MangaObjectViews:MangaObjectView
                     DataContext="{Binding SelectedSearchResultMangaObject}"/>
+                <Button:MetroButton
+                    VerticalAlignment="Bottom"
+                    FontFamily="{DynamicResource OpenIconic}"
+                    Content="{DynamicResource oi-data-transfer-download}"
+                    ContentStringFormat="{}{0} Add to Library {0}"
+                    FontSize="18"
+                    Command="{Binding DownloadResultCommand}"
+                    CommandParameter="{Binding SelectedSearchResultMangaObject}"/>
                 <!-- DETAIL VIEW -->
             </Grid>
 

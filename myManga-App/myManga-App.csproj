@@ -115,6 +115,7 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Objects\About\AssemblyInformation.cs" />
+    <Compile Include="Objects\Cache\ChapterCacheObject.cs" />
     <Compile Include="Objects\Cache\MangaArchiveCacheObject.cs" />
     <Compile Include="Objects\Cache\MangaCacheObject.cs" />
     <Compile Include="Objects\MVVM\NotifyTaskCompletion.cs" />
@@ -280,6 +281,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\HomeView\ObjectViews\MangaObjectView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Objects\ChapterCacheObjectViews\ChapterCacheObjectListItems.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

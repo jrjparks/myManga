@@ -1,6 +1,7 @@
 ﻿using myMangaSiteExtension.Objects;
 using myMangaSiteExtension.Utilities;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Data;
@@ -78,6 +79,21 @@ namespace myManga_App.Objects.Cache
         }
         #endregion
 
+        #region Chapter
+        private static readonly DependencyPropertyKey ChapterCacheObjectsPropertyKey = DependencyProperty.RegisterAttachedReadOnly(
+            "ChapterCacheObjects",
+            typeof(List<ChapterCacheObject>),
+            typeof(MangaCacheObject),
+            null);
+        private static readonly DependencyProperty ChapterCacheObjectsProperty = ChapterCacheObjectsPropertyKey.DependencyProperty;
+
+        public List<ChapterCacheObject> ChapterCacheObjects
+        {
+            get { return (List<ChapterCacheObject>)GetValue(ChapterCacheObjectsProperty); }
+            internal set { SetValue(ChapterCacheObjectsPropertyKey, value); }
+        }
+        #endregion
+
         #region Bookmark
         private static readonly DependencyPropertyKey BookmarkObjectPropertyKey = DependencyProperty.RegisterAttachedReadOnly(
             "BookmarkObject",
@@ -126,6 +142,18 @@ namespace myManga_App.Objects.Cache
                     control.ResumeChapterObject = control.MangaObject.Chapters.FirstOrDefault();
                     control.HasMoreToRead = !Equals(control.ResumeChapterObject, null);
                 }
+
+                control.ChapterCacheObjects = new List<ChapterCacheObject>(
+                    from ChapterObject in control.MangaObject.Chapters
+                    select new ChapterCacheObject(ChapterObject)
+                    {
+                        IsResumeChapter = Equals(ChapterObject, control.ResumeChapterObject),
+                        IsLocal = ChapterObject.IsLocal(
+                            System.IO.Path.Combine(
+                                control.App.CHAPTER_ARCHIVE_DIRECTORY,
+                                control.MangaObject.MangaFileName()),
+                            control.App.CHAPTER_ARCHIVE_EXTENSION)
+                    });
             }
             else
             {

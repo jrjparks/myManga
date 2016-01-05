@@ -21,7 +21,7 @@
                 <ResourceDictionary Source="/myManga;component/Themes/ListBox/ListBoxes.xaml"/>
                 <ResourceDictionary Source="/myManga;component/Themes/ListBox/ListBoxItems.xaml"/>
 
-                <ResourceDictionary Source="/myManga;component/Views/Objects/ChapterObjectViews/ChapterObjectListItems.xaml"/>
+                <ResourceDictionary Source="/myManga;component/Views/Objects/ChapterCacheObjectViews/ChapterCacheObjectListItems.xaml"/>
 
                 <ResourceDictionary Source="/myManga;component/Themes/ScrollBar/ScrollBar.xaml"/>
 
@@ -45,12 +45,12 @@
                 x:Name="ChapterObjects"
                 Grid.Column="1"
                 Padding="0,38,0,38"
-                ItemsSource="{Binding MangaCacheObject.MangaObject.Chapters}"
+                ItemsSource="{Binding MangaCacheObject.ChapterCacheObjects}"
                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                 ScrollViewer.VerticalScrollBarVisibility="Visible"
                 HorizontalContentAlignment="Stretch"
                 SelectionMode="Extended" 
-                ItemContainerStyle="{DynamicResource ChapterObjectListBoxItem}"/>
+                ItemContainerStyle="{DynamicResource ChapterCacheObjectListBoxItem}"/>
 
             <Grid
                 x:Name="DownloadButtonsGrid"

@@ -130,7 +130,7 @@ namespace myManga_App
             }
         }
 
-        private async Task<MangaCacheObject> ReloadMangaCacheObjectAsync(String ArchivePath, Boolean ReloadCoverImage=false)
+        private async Task<MangaCacheObject> ReloadMangaCacheObjectAsync(String ArchivePath, Boolean ReloadCoverImage = false)
         {
             try
             {
@@ -211,7 +211,7 @@ namespace myManga_App
 
             IEnumerable<Task<MangaCacheObject>> MangaCacheObjectTasksQuery = from MangaArchivePath in MangaArchivePaths select UnsafeLoadMangaCacheObjectAsync(MangaArchivePath);
             List<Task<MangaCacheObject>> MangaCacheObjectTasks = MangaCacheObjectTasksQuery.ToList();
-            
+
             MangaCacheObjects.Clear();
             while (MangaCacheObjectTasks.Count > 0)
             {
@@ -453,7 +453,12 @@ namespace myManga_App
                         FileInfo ChapterObjectFileInfo = new FileInfo(e.FullPath);
                         MangaCacheObject ExistingMangaCacheObject = MangaCacheObjects.FirstOrDefault(_ => Equals(_.MangaObject.MangaFileName(), ChapterObjectFileInfo.DirectoryName));
                         if (!Equals(ExistingMangaCacheObject, null))
+                        {
+                            Int32 ExistingMangaCacheObjectIndex = ExistingMangaCacheObject.ChapterCacheObjects.FindIndex(_ => Equals(_.ArchiveFileName, e.Name));
+                            if (ExistingMangaCacheObjectIndex >= 0)
+                                ExistingMangaCacheObject.ChapterCacheObjects[ExistingMangaCacheObjectIndex].IsLocal = File.Exists(e.FullPath);
                             ExistingMangaCacheObject.ForceDataRefresh();
+                        }
                         break;
                 }
 

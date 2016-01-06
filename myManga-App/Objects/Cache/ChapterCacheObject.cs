@@ -23,7 +23,8 @@ namespace myManga_App.Objects.Cache
             set { initialArchiveFileName = value; }
         }
 
-        public ChapterCacheObject(ChapterObject ChapterObject, Boolean CreateProgressReporter = true) : base()
+        public ChapterCacheObject(MangaObject MangaObject, ChapterObject ChapterObject, Boolean CreateProgressReporter = true)
+            : base()
         {
             DownloadProgressReporter = new Progress<Int32>(ProgressValue =>
             {
@@ -38,20 +39,28 @@ namespace myManga_App.Objects.Cache
         {
             if (!Equals(ChapterObject, null))
                 return String.Format(
-                    "[ChapterCacheObject][{0}]{1} - {2}.{3}.{4}", 
-                    IsLocal ? "LOCAL" : "CLOUD", 
-                    ChapterObject.Name, 
-                    ChapterObject.Volume, 
-                    ChapterObject.Chapter, 
+                    "[ChapterCacheObject][{0}]{1} - {2}.{3}.{4}",
+                    IsLocal ? "LOCAL" : "CLOUD",
+                    ChapterObject.Name,
+                    ChapterObject.Volume,
+                    ChapterObject.Chapter,
                     ChapterObject.SubChapter);
             return String.Format("{0}", base.ToString());
         }
+        #endregion
 
-        public void ForceDataRefresh()
+        #region Manga
+        private static readonly DependencyPropertyKey MangaObjectPropertyKey = DependencyProperty.RegisterAttachedReadOnly(
+            "MangaObject",
+            typeof(MangaObject),
+            typeof(ChapterCacheObject),
+            null);
+        private static readonly DependencyProperty MangaObjectProperty = MangaObjectPropertyKey.DependencyProperty;
+
+        public MangaObject MangaObject
         {
-            BindingOperations.GetBindingExpressionBase(this, ChapterObjectProperty).UpdateTarget();
-            BindingOperations.GetBindingExpressionBase(this, IsLocalProperty).UpdateTarget();
-            BindingOperations.GetBindingExpressionBase(this, IsResumeChapterProperty).UpdateTarget();
+            get { return (MangaObject)GetValue(MangaObjectProperty); }
+            internal set { SetValue(MangaObjectPropertyKey, value); }
         }
         #endregion
 

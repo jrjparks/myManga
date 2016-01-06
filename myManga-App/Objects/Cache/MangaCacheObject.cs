@@ -138,7 +138,7 @@ namespace myManga_App.Objects.Cache
 
                 control.ChapterCacheObjects = new List<ChapterCacheObject>(
                     from ChapterObject in control.MangaObject.Chapters
-                    select new ChapterCacheObject(ChapterObject)
+                    select new ChapterCacheObject(control.MangaObject, ChapterObject)
                     {
                         IsResumeChapter = Equals(ChapterObject, control.ResumeChapterObject),
                         IsLocal = ChapterObject.IsLocal(

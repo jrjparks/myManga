@@ -10,7 +10,11 @@
     xmlns:MangaObjectViews="clr-namespace:myManga_App.Views.Objects.MangaObjectViews"
     mc:Ignorable="d" 
     d:DesignHeight="600"
-    d:DesignWidth="800">
+    d:DesignWidth="800"
+    Background="{DynamicResource window-background}"
+    Foreground="{DynamicResource window-foreground}"
+    TextElement.Foreground="{DynamicResource window-foreground}"
+    TextBlock.Foreground="{DynamicResource window-foreground}">
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>

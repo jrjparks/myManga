@@ -53,7 +53,7 @@ namespace myManga_App.ViewModels.Objects
         }
 
         private void DownloadChapterAsync(ChapterCacheObject ChapterCacheObject)
-        { App.ContentDownloadManager.Download(MangaCacheObject.MangaObject, ChapterCacheObject.ChapterObject, ChapterCacheObject.DownloadProgressReporter); }
+        { App.ContentDownloadManager.Download(ChapterCacheObject.MangaObject, ChapterCacheObject.ChapterObject, ChapterCacheObject.DownloadProgressReporter); }
         #endregion
 
         #region Selected Chapters Download
@@ -73,7 +73,7 @@ namespace myManga_App.ViewModels.Objects
         private void DownloadSelectedChaptersAsync(IList SelectedChapterObjects)
         {
             foreach (ChapterCacheObject ChapterCacheObject in SelectedChapterObjects)
-            { App.ContentDownloadManager.Download(MangaCacheObject.MangaObject, ChapterCacheObject.ChapterObject, ChapterCacheObject.DownloadProgressReporter); }
+            { App.ContentDownloadManager.Download(ChapterCacheObject.MangaObject, ChapterCacheObject.ChapterObject, ChapterCacheObject.DownloadProgressReporter); }
         }
         #endregion
 
@@ -92,7 +92,7 @@ namespace myManga_App.ViewModels.Objects
         private void DownloadAllChaptersAsync()
         {
             foreach (ChapterCacheObject ChapterCacheObject in MangaCacheObject.ChapterCacheObjects)
-            { if (!ChapterCacheObject.IsLocal) { App.ContentDownloadManager.Download(MangaCacheObject.MangaObject, ChapterCacheObject.ChapterObject, ChapterCacheObject.DownloadProgressReporter); } }
+            { if (!ChapterCacheObject.IsLocal) { App.ContentDownloadManager.Download(ChapterCacheObject.MangaObject, ChapterCacheObject.ChapterObject, ChapterCacheObject.DownloadProgressReporter); } }
         }
         #endregion
 
@@ -112,7 +112,7 @@ namespace myManga_App.ViewModels.Objects
         {
             Int32 idx = MangaCacheObject.ChapterCacheObjects.FindIndex(_ => _.IsResumeChapter);
             foreach (ChapterCacheObject ChapterCacheObject in MangaCacheObject.ChapterCacheObjects.Skip(idx))
-            { if (!ChapterCacheObject.IsLocal) { App.ContentDownloadManager.Download(MangaCacheObject.MangaObject, ChapterCacheObject.ChapterObject, ChapterCacheObject.DownloadProgressReporter); } }
+            { if (!ChapterCacheObject.IsLocal) { App.ContentDownloadManager.Download(ChapterCacheObject.MangaObject, ChapterCacheObject.ChapterObject, ChapterCacheObject.DownloadProgressReporter); } }
         }
         #endregion
         #endregion
@@ -137,30 +137,33 @@ namespace myManga_App.ViewModels.Objects
         {
             ChapterCacheObject ChapterCacheObject = SelectedChapterObjects[0] as ChapterCacheObject;
             if (!ChapterCacheObject.IsLocal)
-                await App.ContentDownloadManager.DownloadAsync(MangaCacheObject.MangaObject, ChapterCacheObject.ChapterObject, ChapterCacheObject.DownloadProgressReporter);
-            Messenger.Default.Send(new ReadChapterRequestObject(MangaCacheObject.MangaObject, ChapterCacheObject.ChapterObject), "ReadChapterRequest");
+                await App.ContentDownloadManager.DownloadAsync(ChapterCacheObject.MangaObject, ChapterCacheObject.ChapterObject, ChapterCacheObject.DownloadProgressReporter);
+            Messenger.Default.Send(new ReadChapterRequestObject(ChapterCacheObject.MangaObject, ChapterCacheObject.ChapterObject), "ReadChapterRequest");
         }
         #endregion
 
         #region Resume ChapterObject
-        private DelegateCommand resumeReadingAsyncCommand;
+        private DelegateCommand<ChapterCacheObject> resumeReadingAsyncCommand;
         public ICommand ResumeReadingAsyncCommand
-        { get { return resumeReadingAsyncCommand ?? (resumeReadingAsyncCommand = new DelegateCommand(ResumeReadingAsync, CanResumeReadingAsync)); } }
+        { get { return resumeReadingAsyncCommand ?? (resumeReadingAsyncCommand = new DelegateCommand<ChapterCacheObject>(ResumeReadingAsync, CanResumeReadingAsync)); } }
 
-        private Boolean CanResumeReadingAsync()
+        private Boolean CanResumeReadingAsync(ChapterCacheObject ChapterCacheObject)
         {
             if (Equals(MangaCacheObject, null)) return false;
             if (Equals(MangaCacheObject.MangaObject, null)) return false;
-            if (Equals(MangaCacheObject.ResumeChapterObject, null)) return false;
+            if (Equals(ChapterCacheObject, null)) return false;
+            if (Equals(ChapterCacheObject.MangaObject, null)) return false;
+            if (Equals(ChapterCacheObject.ChapterObject, null)) return false;
+            if (Equals(ChapterCacheObject.IsResumeChapter, null)) return false;
             return true;
         }
 
-        private async void ResumeReadingAsync()
+        private async void ResumeReadingAsync(ChapterCacheObject ChapterCacheObject)
         {
-            ChapterCacheObject ChapterCacheObject = MangaCacheObject.ChapterCacheObjects.First(_ => _.IsResumeChapter);
             if (!ChapterCacheObject.IsLocal)
-                await App.ContentDownloadManager.DownloadAsync(MangaCacheObject.MangaObject, ChapterCacheObject.ChapterObject, ChapterCacheObject.DownloadProgressReporter);
-            Messenger.Default.Send(new ReadChapterRequestObject(MangaCacheObject.MangaObject, ChapterCacheObject.ChapterObject), "ReadChapterRequest");
+                await App.ContentDownloadManager.DownloadAsync(ChapterCacheObject.MangaObject, ChapterCacheObject.ChapterObject, ChapterCacheObject.DownloadProgressReporter);
+            Messenger.Default.Send(new ReadChapterRequestObject(ChapterCacheObject.MangaObject, ChapterCacheObject.ChapterObject), "ReadChapterRequest");
+            Messenger.Default.Send(ChapterCacheObject, "ReadChapterCacheObject");
         }
         #endregion
 

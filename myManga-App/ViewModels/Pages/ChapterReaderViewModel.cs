@@ -1,5 +1,6 @@
 ﻿using Core.IO;
 using Core.MVVM;
+using myManga_App.Objects.Cache;
 using myMangaSiteExtension.Objects;
 using myMangaSiteExtension.Utilities;
 using System;
@@ -20,10 +21,38 @@ namespace myManga_App.ViewModels.Pages
     {
         private readonly TimeSpan TIMEOUT = TimeSpan.FromSeconds(30);
 
+        #region ArchiveFileNames
+        private String initialMangaArchiveFilePath;
+        public String MangaArchiveFilePath
+        {
+            get
+            {
+                if (!Equals(MangaObject, null))
+                    return Path.Combine(App.MANGA_ARCHIVE_DIRECTORY, MangaObject.MangaArchiveName(App.MANGA_ARCHIVE_EXTENSION));
+                return initialMangaArchiveFilePath;
+            }
+            set { initialMangaArchiveFilePath = value; }
+        }
+
+        private String initialChapterArchiveFilePath;
+        public String ChapterArchiveFilePath
+        {
+            get
+            {
+                String ChapterDirectoryPath = Path.Combine(App.CHAPTER_ARCHIVE_DIRECTORY, MangaObject.MangaFileName());
+                if (!Equals(ChapterObject, null))
+                    return Path.Combine(ChapterDirectoryPath, ChapterObject.ChapterArchiveName(App.CHAPTER_ARCHIVE_EXTENSION));
+                return initialChapterArchiveFilePath;
+            }
+            set { initialChapterArchiveFilePath = value; }
+        }
+        #endregion
+
         public ChapterReaderViewModel() : base()
         {
             if (!IsInDesignMode)
             {
+                Messenger.Default.RegisterRecipient<ChapterCacheObject>(this, (cco) => { });
             }
         }
 
@@ -34,12 +63,24 @@ namespace myManga_App.ViewModels.Pages
             "BookmarkObject",
             typeof(BookmarkObject),
             typeof(ChapterReaderViewModel),
-            new PropertyMetadata(null));
+            new PropertyMetadata(OnBookmarkObjectChanged));
 
         public BookmarkObject BookmarkObject
         {
             get { return (BookmarkObject)GetValue(BookmarkObjectProperty); }
             set { SetValue(BookmarkObjectProperty, value); }
+        }
+
+        private async static void OnBookmarkObjectChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ChapterReaderViewModel control = d as ChapterReaderViewModel;
+            BookmarkObject BookmarkObject = e.NewValue as BookmarkObject;
+            await control.App.ZipManager.Retry(
+                () => control.App.ZipManager.WriteAsync(
+                    control.MangaArchiveFilePath, 
+                    nameof(myMangaSiteExtension.Objects.BookmarkObject),
+                    BookmarkObject.Serialize(control.App.UserConfig.SaveType)), 
+                TimeSpan.FromMinutes(1));
         }
         #endregion
 
@@ -84,11 +125,8 @@ namespace myManga_App.ViewModels.Pages
             set { SetValue(PageObjectProperty, value); }
         }
 
-        private static void OnPageObjectChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            ChapterReaderViewModel _this = (d as ChapterReaderViewModel);
-            Task.Run(() => _this.LoadPageImageAsync());
-        }
+        private async static void OnPageObjectChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        { await (d as ChapterReaderViewModel).LoadPageImageAsync(); }
         #endregion
 
         #region Chapter Overview
@@ -178,7 +216,7 @@ namespace myManga_App.ViewModels.Pages
         }
         #endregion
 
-            #region Page Zoom
+        #region Page Zoom
         private static readonly DependencyProperty PageZoomProperty = DependencyProperty.RegisterAttached(
             "PageZoom",
             typeof(Double),

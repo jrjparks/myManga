@@ -190,7 +190,7 @@
                     <Grid>
                         <Rectangle Fill="Gray" Margin="3"/>
                         <ContentPresenter
-                            Height="680"
+                            Height="620"
                             Width="900"
                             Content="{Binding MangaCacheObjectDetail}"/>
                         <!-- DETAIL VIEW -->

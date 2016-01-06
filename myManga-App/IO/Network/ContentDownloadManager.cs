@@ -565,7 +565,8 @@ namespace myManga_App.IO.Network
                     return true;
                 });
 
-                foreach(LocationObject LocationObject in ChapterObject.Locations)
+                IEnumerable<LocationObject> OrderedChapterObjectLocations = ChapterObject.Locations.OrderBy(_ => App.UserConfig.EnabledSiteExtensions.IndexOf(_.ExtensionName));
+                foreach(LocationObject LocationObject in OrderedChapterObjectLocations)
                 {
                     ct.ThrowIfCancellationRequested();
                     ISiteExtension SiteExtension = ValidSiteExtentions.FirstOrDefault(_ => Equals(_.SiteExtensionDescriptionAttribute.Name, LocationObject.ExtensionName));

@@ -1,9 +1,7 @@
 ﻿using myMangaSiteExtension.Objects;
 using myMangaSiteExtension.Utilities;
 using System;
-using System.Linq;
 using System.Windows;
-using System.Windows.Data;
 
 namespace myManga_App.Objects.Cache
 {
@@ -32,6 +30,7 @@ namespace myManga_App.Objects.Cache
                 DownloadProgress = ProgressValue;
             });
 
+            this.MangaObject = MangaObject;
             this.ChapterObject = ChapterObject;
         }
 
@@ -39,8 +38,9 @@ namespace myManga_App.Objects.Cache
         {
             if (!Equals(ChapterObject, null))
                 return String.Format(
-                    "[ChapterCacheObject][{0}]{1} - {2}.{3}.{4}",
+                    "[ChapterCacheObject][{0}]{1}/{2} - {3}.{4}.{5}",
                     IsLocal ? "LOCAL" : "CLOUD",
+                    MangaObject.Name,
                     ChapterObject.Name,
                     ChapterObject.Volume,
                     ChapterObject.Chapter,

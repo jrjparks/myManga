@@ -108,13 +108,17 @@ namespace myManga_App.Objects.Cache
             MangaCacheObject control = source as MangaCacheObject;
             if (!Equals(control.MangaObject, null))
             {   // MangaObject exists
+                // Use the first ChapterObject or null for the ResumeChapterObject
+                ChapterObject ResumeChapterObject = control.MangaObject.Chapters.FirstOrDefault();
+
                 if (!Equals(control.BookmarkObject, null))
                 {   // BookmarkObject exists
                     control.IsNewManga = false;
-                    control.ResumeChapterObject = control.MangaObject.ChapterObjectOfBookmarkObject(control.BookmarkObject);
+                    // A BookmarkObject exists, lookup the ResumeChapterObject
+                    ResumeChapterObject = control.MangaObject.ChapterObjectOfBookmarkObject(control.BookmarkObject);
 
                     Double ChapterProgressMaxValue = control.MangaObject.Chapters.Count,
-                        ChapterProgressValue = control.MangaObject.IndexOfChapterObject(control.ResumeChapterObject) + 1;
+                        ChapterProgressValue = control.MangaObject.IndexOfChapterObject(ResumeChapterObject) + 1;
                     // Calculate and round the readers progress for chapters
                     control.ChapterProgress = (Int32)Math.Round((ChapterProgressValue / ChapterProgressMaxValue) * 100);
 
@@ -132,19 +136,22 @@ namespace myManga_App.Objects.Cache
                 {
                     control.IsNewManga = true;
                     control.ChapterProgress = 0;
-                    control.ResumeChapterObject = control.MangaObject.Chapters.FirstOrDefault();
-                    control.HasMoreToRead = !Equals(control.ResumeChapterObject, null);
+                    control.HasMoreToRead = !Equals(ResumeChapterObject, null);
                 }
 
+                // Store boolean for if the ResumeChapterObject is null
+                Boolean ResumeChapterIsNull = Equals(ResumeChapterObject, null);
+                String MangaObjectChaptersDirectory = System.IO.Path.Combine(control.App.CHAPTER_ARCHIVE_DIRECTORY, control.MangaObject.MangaFileName());
                 control.ChapterCacheObjects = new List<ChapterCacheObject>(
                     from ChapterObject in control.MangaObject.Chapters
                     select new ChapterCacheObject(control.MangaObject, ChapterObject)
                     {
-                        IsResumeChapter = Equals(ChapterObject, control.ResumeChapterObject),
+                        // If ResumeChapterIsNull is true, there is no ResumeChapter
+                        IsResumeChapter = ResumeChapterIsNull ? false : Equals(ChapterObject, ResumeChapterObject),
+
+                        // Store if the ChapterObject archive exists locally
                         IsLocal = ChapterObject.IsLocal(
-                            System.IO.Path.Combine(
-                                control.App.CHAPTER_ARCHIVE_DIRECTORY,
-                                control.MangaObject.MangaFileName()),
+                            MangaObjectChaptersDirectory,
                             control.App.CHAPTER_ARCHIVE_EXTENSION)
                     });
 
@@ -173,17 +180,9 @@ namespace myManga_App.Objects.Cache
         #endregion
 
         #region Resume Chapter
-        private static readonly DependencyPropertyKey ResumeChapterObjectPropertyKey = DependencyProperty.RegisterAttachedReadOnly(
-            "ResumeChapterObject",
-            typeof(ChapterObject),
-            typeof(MangaCacheObject),
-            new PropertyMetadata(null));
-        private static readonly DependencyProperty ResumeChapterObjectProperty = ResumeChapterObjectPropertyKey.DependencyProperty;
-
-        public ChapterObject ResumeChapterObject
+        public ChapterCacheObject ResumeChapterCacheObject
         {
-            get { return (ChapterObject)GetValue(ResumeChapterObjectProperty); }
-            internal set { SetValue(ResumeChapterObjectPropertyKey, value); }
+            get { return ChapterCacheObjects.FirstOrDefault(_ => _.IsResumeChapter); }
         }
         #endregion
 

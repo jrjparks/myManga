@@ -180,7 +180,8 @@
                         ContentStringFormat="{}{0} Resume Reading"
                         FontSize="18"
                         Padding="5"
-                        Command="{Binding ResumeReadingAsyncCommand}"/>
+                        Command="{Binding ResumeReadingAsyncCommand}"
+                        CommandParameter="{Binding MangaCacheObject.ResumeChapterCacheObject}"/>
                     <ProgressBar
                         Height="5"
                         Minimum="0"

@@ -81,7 +81,7 @@
                 x:Name="MangaCacheObjects"
                 Grid.ColumnSpan="2"
 				ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                ScrollViewer.VerticalScrollBarVisibility="Visible"
+                ScrollViewer.VerticalScrollBarVisibility="Auto"
                 ItemContainerStyle="{StaticResource DetailsMangaCacheObjectListBoxItem}"
                 SelectedItem="{Binding SelectedMangaCacheObject}"
                 ItemsSource="{Binding Path=MangaCacheObjects, Mode=OneWay, Source={x:Static Application.Current}}"

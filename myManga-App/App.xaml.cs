@@ -32,6 +32,22 @@ namespace myManga_App
     /// </summary>
     public partial class App : Application, IDisposable
     {
+        #region Logging
+        private readonly log4net.ILog logger = log4net.LogManager.GetLogger(typeof(App));
+
+        private void ConfigureLog4Net()
+        {
+            log4net.Appender.FileAppender appender = new log4net.Appender.FileAppender();
+            appender.Layout = new log4net.Layout.SimpleLayout();
+            appender.File = LOG_FILE_PATH;
+            appender.AppendToFile = true;
+            appender.ImmediateFlush = true;
+            appender.Threshold = log4net.Core.Level.All;
+            appender.ActivateOptions();
+            log4net.Config.BasicConfigurator.Configure(appender);
+        }
+        #endregion
+
         #region IO
         public FileStorage FileStorage
         { get; private set; }
@@ -131,6 +147,7 @@ namespace myManga_App
             }
             catch (Exception ex)
             {
+                logger.Warn("Unable to read Manga Archive.", ex);
                 MessageBox.Show(String.Format("Unable to read Manga Archive.\nFile: {0}\nException:\n{1}\n\n{2}", ArchivePath, ex.Message, ex.StackTrace));
                 return null;
             }
@@ -190,6 +207,7 @@ namespace myManga_App
             }
             catch (Exception ex)
             {
+                logger.Warn("Unable to read Manga Archive.", ex);
                 MessageBox.Show(String.Format("Unable to read Manga Archive.\nFile: {0}\nException:\n{1}\n\n{2}", ArchivePath, ex.Message, ex.StackTrace));
                 return null;
             }
@@ -302,6 +320,9 @@ namespace myManga_App
         {
             AppMemoryCache = new RegionedMemoryCache("AppMemoryCache");
 
+            // Configure log4net
+            ConfigureLog4Net();
+
             // Load Embedded DLLs from Resources.
             emdll = new EmbeddedDLL();
             SiteExtensions = new DLL_Manager<ISiteExtension, ISiteExtensionCollection>();
@@ -344,44 +365,13 @@ namespace myManga_App
 
         void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
-            Exception ex = e.ExceptionObject as Exception;
-            log_exception(
-                e.ExceptionObject as Exception,
-                String.Format("Is Terminating: {0}", e.IsTerminating));
+            logger.Error(sender.GetType().FullName, e.ExceptionObject as Exception);
         }
 
         void App_DispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
         {
-            log_exception(
-                e.Exception,
-                "========== DISPATCHER ==========",
-                String.Format("Thread Name: {0}", e.Dispatcher.Thread.Name),
-                String.Format("Is ThreadPool Thread: {0}", e.Dispatcher.Thread.IsThreadPoolThread));
+            logger.Error(sender.GetType().FullName, e.Exception);
             e.Handled = true;
-        }
-
-        void log_exception(Exception e, params String[] extra_lines)
-        {
-            using (StreamWriter log_stream_writer = new StreamWriter(LOG_FILE_PATH, true))
-            {
-                log_stream_writer.WriteLine(String.Format("========== {0} ==========", DateTime.Now.ToShortDateString()));
-
-                while (e != null)
-                {
-                    log_stream_writer.WriteLine("========== MESSAGE ==========");
-                    log_stream_writer.WriteLine(e.Message);
-                    log_stream_writer.WriteLine("========== STACK TRACE ==========");
-                    log_stream_writer.WriteLine(e.StackTrace);
-                    log_stream_writer.WriteLine("========== TARGET SITE ==========");
-                    log_stream_writer.WriteLine(e.TargetSite);
-                    e = e.InnerException;
-                    log_stream_writer.WriteLine();
-                }
-
-                foreach (String extra_line in extra_lines)
-                    log_stream_writer.WriteLine(extra_line);
-                log_stream_writer.WriteLine();
-            }
         }
 
         async void App_Startup(object sender, StartupEventArgs e)

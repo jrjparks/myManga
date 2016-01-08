@@ -66,6 +66,7 @@
     <Style x:Key="PerformanceProgressBar" TargetType="{x:Type ProgressBar}">
         <Setter Property="Foreground" Value="{DynamicResource window-theme-primary}"/>
         <Setter Property="Background" Value="{DynamicResource window-theme-secondary}"/>
+        <Setter Property="Height" Value="10"/>
         <Setter Property="Maximum" Value="100"/>
         <Setter Property="IsHitTestVisible" Value="False"/>
         <Setter Property="Padding" Value="12, 0"/>
@@ -159,7 +160,7 @@
                             </Grid>
                             <Border x:Name="IndeterminateRoot" Margin="{TemplateBinding Padding}" Visibility="Collapsed">
                                 <Grid HorizontalAlignment="Left">
-                                    <Rectangle Fill="{TemplateBinding Foreground}" Stroke="{TemplateBinding Background}" StrokeThickness="1" Height="4" IsHitTestVisible="False" Width="4" x:Name="R1" Opacity="0">
+                                    <Rectangle Fill="{TemplateBinding Foreground}" Stroke="{TemplateBinding Background}" StrokeThickness="1" Height="{TemplateBinding Height}" IsHitTestVisible="False" Width="{TemplateBinding Height}" x:Name="R1" Opacity="0">
                                         <Rectangle.CacheMode>
                                             <BitmapCache/>
                                         </Rectangle.CacheMode>
@@ -167,7 +168,7 @@
                                             <TranslateTransform x:Name="R1TT"/>
                                         </Rectangle.RenderTransform>
                                     </Rectangle>
-                                    <Rectangle Fill="{TemplateBinding Foreground}" Stroke="{TemplateBinding Background}" StrokeThickness="1" Height="4" IsHitTestVisible="False" Width="4" x:Name="R2" Opacity="0">
+                                    <Rectangle Fill="{TemplateBinding Foreground}" Stroke="{TemplateBinding Background}" StrokeThickness="1" Height="{TemplateBinding Height}" IsHitTestVisible="False" Width="{TemplateBinding Height}" x:Name="R2" Opacity="0">
                                         <Rectangle.CacheMode>
                                             <BitmapCache/>
                                         </Rectangle.CacheMode>
@@ -175,7 +176,7 @@
                                             <TranslateTransform x:Name="R2TT"/>
                                         </Rectangle.RenderTransform>
                                     </Rectangle>
-                                    <Rectangle Fill="{TemplateBinding Foreground}" Stroke="{TemplateBinding Background}" StrokeThickness="1" Height="4" IsHitTestVisible="False" Width="4" x:Name="R3" Opacity="0">
+                                    <Rectangle Fill="{TemplateBinding Foreground}" Stroke="{TemplateBinding Background}" StrokeThickness="1" Height="{TemplateBinding Height}" IsHitTestVisible="False" Width="{TemplateBinding Height}" x:Name="R3" Opacity="0">
                                         <Rectangle.CacheMode>
                                             <BitmapCache/>
                                         </Rectangle.CacheMode>
@@ -183,7 +184,7 @@
                                             <TranslateTransform x:Name="R3TT"/>
                                         </Rectangle.RenderTransform>
                                     </Rectangle>
-                                    <Rectangle Fill="{TemplateBinding Foreground}" Stroke="{TemplateBinding Background}" StrokeThickness="1" Height="4" IsHitTestVisible="False" Width="4" x:Name="R4" Opacity="0">
+                                    <Rectangle Fill="{TemplateBinding Foreground}" Stroke="{TemplateBinding Background}" StrokeThickness="1" Height="{TemplateBinding Height}" IsHitTestVisible="False" Width="{TemplateBinding Height}" x:Name="R4" Opacity="0">
                                         <Rectangle.CacheMode>
                                             <BitmapCache/>
                                         </Rectangle.CacheMode>
@@ -191,7 +192,7 @@
                                             <TranslateTransform x:Name="R4TT"/>
                                         </Rectangle.RenderTransform>
                                     </Rectangle>
-                                    <Rectangle Fill="{TemplateBinding Foreground}" Stroke="{TemplateBinding Background}" StrokeThickness="1" Height="4" IsHitTestVisible="False" Width="4" x:Name="R5" Opacity="0">
+                                    <Rectangle Fill="{TemplateBinding Foreground}" Stroke="{TemplateBinding Background}" StrokeThickness="1" Height="{TemplateBinding Height}" IsHitTestVisible="False" Width="{TemplateBinding Height}" x:Name="R5" Opacity="0">
                                         <Rectangle.CacheMode>
                                             <BitmapCache/>
                                         </Rectangle.CacheMode>

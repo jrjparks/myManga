@@ -70,21 +70,15 @@ namespace myManga_App
         #endregion
 
         #region DataObjects
-        private MangaArchiveCacheObject selectedMangaArchiveCacheObject;
         public MangaArchiveCacheObject SelectedMangaArchiveCacheObject
-        {
-            get { return this.selectedMangaArchiveCacheObject; }
-            set { this.selectedMangaArchiveCacheObject = value; }
-        }
+        { get; set; }
 
-        private readonly ObservableCollection<MangaArchiveCacheObject> mangaArchiveCacheCollection;
         public ObservableCollection<MangaArchiveCacheObject> MangaArchiveCacheCollection
-        { get { return this.mangaArchiveCacheCollection; } }
+        { get; private set; }
 
         #region MangaObject Cache
-        private readonly ObservableCollection<MangaCacheObject> mangaCacheObjects;
         public ObservableCollection<MangaCacheObject> MangaCacheObjects
-        { get { return mangaCacheObjects; } }
+        { get; private set; }
 
         private async Task<MangaCacheObject> UnsafeLoadMangaCacheObjectAsync(String ArchivePath)
         {
@@ -112,12 +106,24 @@ namespace myManga_App
                 {
                     using (CoverImageStream)
                     {
-                        MangaCacheObject.CoverImage = new BitmapImage();
+                        if (Equals(MangaCacheObject.CoverImage, null))
+                            MangaCacheObject.CoverImage = new BitmapImage();
+
+                        if (!Equals(MangaCacheObject.CoverImage.StreamSource, null))
+                        {
+                            MangaCacheObject.CoverImage.StreamSource.Close();
+                            MangaCacheObject.CoverImage.StreamSource.Dispose();
+                            MangaCacheObject.CoverImage.StreamSource = null;
+                        }
+
                         MangaCacheObject.CoverImage.BeginInit();
                         MangaCacheObject.CoverImage.DecodePixelWidth = 300;
                         MangaCacheObject.CoverImage.CacheOption = BitmapCacheOption.OnLoad;
+                        MangaCacheObject.CoverImage.CreateOptions = BitmapCreateOptions.PreservePixelFormat;
                         MangaCacheObject.CoverImage.StreamSource = CoverImageStream;
                         MangaCacheObject.CoverImage.EndInit();
+                        MangaCacheObject.CoverImage.Freeze();
+                        CoverImageStream.Close();
                     }
                 }
 
@@ -158,12 +164,24 @@ namespace myManga_App
                     {
                         using (CoverImageStream)
                         {
-                            MangaCacheObject.CoverImage = new BitmapImage();
+                            if (Equals(MangaCacheObject.CoverImage, null))
+                                MangaCacheObject.CoverImage = new BitmapImage();
+
+                            if (!Equals(MangaCacheObject.CoverImage.StreamSource, null))
+                            {
+                                MangaCacheObject.CoverImage.StreamSource.Close();
+                                MangaCacheObject.CoverImage.StreamSource.Dispose();
+                                MangaCacheObject.CoverImage.StreamSource = null;
+                            }
+
                             MangaCacheObject.CoverImage.BeginInit();
                             MangaCacheObject.CoverImage.DecodePixelWidth = 300;
                             MangaCacheObject.CoverImage.CacheOption = BitmapCacheOption.OnLoad;
+                            MangaCacheObject.CoverImage.CreateOptions = BitmapCreateOptions.PreservePixelFormat;
                             MangaCacheObject.CoverImage.StreamSource = CoverImageStream;
                             MangaCacheObject.CoverImage.EndInit();
+                            MangaCacheObject.CoverImage.Freeze();
+                            CoverImageStream.Close();
                         }
                     }
                 }
@@ -299,8 +317,8 @@ namespace myManga_App
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
 
             // Initialize Collections
-            mangaArchiveCacheCollection = new ObservableCollection<MangaArchiveCacheObject>();
-            mangaCacheObjects = new ObservableCollection<MangaCacheObject>();
+            MangaArchiveCacheCollection = new ObservableCollection<MangaArchiveCacheObject>();
+            MangaCacheObjects = new ObservableCollection<MangaCacheObject>();
 
             // Create a File System Watcher for Manga Objects
             MangaObjectArchiveWatcher = new FileSystemWatcher(MANGA_ARCHIVE_DIRECTORY, MANGA_ARCHIVE_FILTER);
@@ -332,7 +350,7 @@ namespace myManga_App
                 String.Format("Is Terminating: {0}", e.IsTerminating));
         }
 
-        void App_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
+        void App_DispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
         {
             log_exception(
                 e.Exception,

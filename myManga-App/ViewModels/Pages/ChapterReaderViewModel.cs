@@ -50,6 +50,7 @@ namespace myManga_App.ViewModels.Pages
 
         public ChapterReaderViewModel() : base()
         {
+            PageCacheObjects = new ObservableCollection<PageCacheObject>();
             if (!IsInDesignMode)
             {
                 Messenger.Default.RegisterRecipient<ChapterCacheObject>(this, (cco) => { });
@@ -57,6 +58,29 @@ namespace myManga_App.ViewModels.Pages
         }
 
         #region Reader Objects
+
+        #region ChapterCacheObject
+        private static readonly DependencyProperty ChapterCacheObjectProperty = DependencyProperty.RegisterAttached(
+            "ChapterCacheObject",
+            typeof(ChapterCacheObject),
+            typeof(ChapterReaderViewModel),
+            new PropertyMetadata(OnChapterCacheObjectChanged));
+
+        public ChapterCacheObject ChapterCacheObject
+        {
+            get { return (ChapterCacheObject)GetValue(ChapterCacheObjectProperty); }
+            set { SetValue(ChapterCacheObjectProperty, value); }
+        }
+
+        private async static void OnChapterCacheObjectChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ChapterReaderViewModel control = d as ChapterReaderViewModel;
+            ChapterCacheObject ChapterCacheObject = e.NewValue as ChapterCacheObject;
+            MangaCacheObject MangaCacheObject = control.App.MangaCacheObjects.FirstOrDefault(_ => Equals(_.MangaObject.Name, ChapterCacheObject.MangaObject.Name));
+            control.BookmarkObject = MangaCacheObject.BookmarkObject;
+            await control.LoadPageCacheObjectsAsync();
+        }
+        #endregion
 
         #region BookmarkObject
         private static readonly DependencyProperty BookmarkObjectProperty = DependencyProperty.RegisterAttached(
@@ -77,38 +101,10 @@ namespace myManga_App.ViewModels.Pages
             BookmarkObject BookmarkObject = e.NewValue as BookmarkObject;
             await control.App.ZipManager.Retry(
                 () => control.App.ZipManager.WriteAsync(
-                    control.MangaArchiveFilePath, 
+                    control.MangaArchiveFilePath,
                     nameof(myMangaSiteExtension.Objects.BookmarkObject),
-                    BookmarkObject.Serialize(control.App.UserConfig.SaveType)), 
+                    BookmarkObject.Serialize(control.App.UserConfig.SaveType)),
                 TimeSpan.FromMinutes(1));
-        }
-        #endregion
-
-        #region MangaObject
-        private static readonly DependencyProperty MangaObjectProperty = DependencyProperty.RegisterAttached(
-            "MangaObject",
-            typeof(MangaObject),
-            typeof(ChapterReaderViewModel),
-            new PropertyMetadata(null));
-
-        public MangaObject MangaObject
-        {
-            get { return (MangaObject)GetValue(MangaObjectProperty); }
-            set { SetValue(MangaObjectProperty, value); }
-        }
-        #endregion
-
-        #region ChapterObject
-        private static readonly DependencyProperty ChapterObjectProperty = DependencyProperty.RegisterAttached(
-            "ChapterObject",
-            typeof(ChapterObject),
-            typeof(ChapterReaderViewModel),
-            new PropertyMetadata(null));
-
-        public ChapterObject ChapterObject
-        {
-            get { return (ChapterObject)GetValue(ChapterObjectProperty); }
-            set { SetValue(ChapterObjectProperty, value); }
         }
         #endregion
 
@@ -129,21 +125,21 @@ namespace myManga_App.ViewModels.Pages
         { await (d as ChapterReaderViewModel).LoadPageImageAsync(); }
         #endregion
 
-        #region Chapter Overview
+        #region PageCacheObjects
         private static readonly DependencyProperty ChapterOverviewProperty = DependencyProperty.RegisterAttached(
-            "ChapterOverview",
-            typeof(ObservableCollection<BitmapImage>),
+            "PageCacheObjects",
+            typeof(ObservableCollection<PageCacheObject>),
             typeof(ChapterReaderViewModel),
-            new PropertyMetadata(default(ObservableCollection<BitmapImage>)));
+            new PropertyMetadata(default(ObservableCollection<PageCacheObject>)));
 
-        public ObservableCollection<BitmapImage> ChapterOverview
+        public ObservableCollection<PageCacheObject> PageCacheObjects
         {
-            get { return (ObservableCollection<BitmapImage>)GetValue(ChapterOverviewProperty); }
+            get { return (ObservableCollection<PageCacheObject>)GetValue(ChapterOverviewProperty); }
             set { SetValue(ChapterOverviewProperty, value); }
         }
 
         private CancellationTokenSource ChapterOverviewAsyncCTS { get; set; }
-        private async Task LoadChapterOverviewAsync()
+        private async Task LoadPageCacheObjectsAsync()
         {
             try { if (!Equals(ChapterOverviewAsyncCTS, null)) { ChapterOverviewAsyncCTS.Cancel(); } }
             catch { }
@@ -151,32 +147,39 @@ namespace myManga_App.ViewModels.Pages
             {
                 try
                 {
-                    ChapterOverview.Clear();
-                    String ArchivePath = Path.Combine(
-                        App.CHAPTER_ARCHIVE_DIRECTORY,
-                        MangaObject.MangaFileName(),
-                        ChapterObject.ChapterArchiveName(App.CHAPTER_ARCHIVE_EXTENSION));
-                    foreach (PageObject PageObject in ChapterObject.Pages)
+                    foreach (PageCacheObject PageCacheObject in PageCacheObjects)
                     {
-                        BitmapImage ChapterOverviewImage = new BitmapImage();
+                        if (!Equals(PageCacheObject.ThumbnailImage, null))
+                            if (!Equals(PageCacheObject.ThumbnailImage.StreamSource, null))
+                            {
+                                PageCacheObject.ThumbnailImage.StreamSource.Close();
+                                PageCacheObject.ThumbnailImage.StreamSource.Dispose();
+                            }
+                    }
+                    PageCacheObjects.Clear();
+                    foreach (PageObject PageObject in ChapterCacheObject.ChapterObject.Pages)
+                    {
+                        PageCacheObject PageCacheObject = new PageCacheObject(ChapterCacheObject.MangaObject, ChapterCacheObject.ChapterObject, PageObject);
+                        PageCacheObject.ThumbnailImage = new BitmapImage();
                         Stream ChapterOverviewImageStream = await App.ZipManager.Retry(() =>
                         {
                             PageAsyncCTS.Token.ThrowIfCancellationRequested();
-                            return App.ZipManager.ReadAsync(ArchivePath, PageObject.Name);
+                            return App.ZipManager.ReadAsync(ChapterCacheObject.ArchiveFilePath, PageObject.Name);
                         }, TIMEOUT);
                         using (ChapterOverviewImageStream)
                         {
-                            ChapterOverviewImage.BeginInit();
-                            ChapterOverviewImage.DecodePixelWidth = 200;
-                            using (ChapterOverviewImage.StreamSource = ChapterOverviewImageStream)
+                            PageCacheObject.ThumbnailImage.BeginInit();
+                            PageCacheObject.ThumbnailImage.DecodePixelHeight = 100;
+                            PageCacheObject.ThumbnailImage.CacheOption = BitmapCacheOption.OnLoad;
+                            PageCacheObject.ThumbnailImage.CreateOptions = BitmapCreateOptions.PreservePixelFormat;
+                            using (PageCacheObject.ThumbnailImage.StreamSource = ChapterOverviewImageStream)
                             {
-                                ChapterOverviewImage.CacheOption = BitmapCacheOption.OnLoad;
-                                ChapterOverviewImage.CreateOptions = BitmapCreateOptions.IgnoreImageCache;
-                                ChapterOverviewImage.EndInit();
+                                PageCacheObject.ThumbnailImage.EndInit();
+                                PageCacheObject.ThumbnailImage.Freeze();
                             }
                         }
                         PageAsyncCTS.Token.ThrowIfCancellationRequested();
-                        ChapterOverview.Add(ChapterOverviewImage);
+                        PageCacheObjects.Add(PageCacheObject);
                     }
                 }
                 catch (OperationCanceledException) { }

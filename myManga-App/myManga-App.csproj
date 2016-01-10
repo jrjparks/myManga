@@ -122,6 +122,7 @@
     <Compile Include="Objects\Cache\ChapterCacheObject.cs" />
     <Compile Include="Objects\Cache\MangaArchiveCacheObject.cs" />
     <Compile Include="Objects\Cache\MangaCacheObject.cs" />
+    <Compile Include="Objects\Cache\PageCacheObject.cs" />
     <Compile Include="Objects\MVVM\NotifyTaskCompletion.cs" />
     <Compile Include="Objects\UserConfig\ThemeType.cs" />
     <Compile Include="Objects\UserConfig\UserAuthenticationObject.cs" />

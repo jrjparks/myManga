@@ -1,12 +1,12 @@
-﻿using myMangaSiteExtension.Objects;
-using myMangaSiteExtension.Utilities;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Windows;
+using myMangaSiteExtension.Objects;
+using myMangaSiteExtension.Utilities;
+using System.Windows.Media.Imaging;
 
 namespace myManga_App.Objects.Cache
 {
-    public sealed class ChapterCacheObject : DependencyObject
+    public sealed class PageCacheObject : DependencyObject
     {
         #region Constructors
         private readonly App App = App.Current as App;
@@ -38,7 +38,7 @@ namespace myManga_App.Objects.Cache
             set { initialArchiveFilePath = value; }
         }
 
-        public ChapterCacheObject(MangaObject MangaObject, ChapterObject ChapterObject, Boolean CreateProgressReporter = true)
+        public PageCacheObject(MangaObject MangaObject, ChapterObject ChapterObject, PageObject PageObject, Boolean CreateProgressReporter = true)
             : base()
         {
             DownloadProgressReporter = new Progress<Int32>(ProgressValue =>
@@ -49,20 +49,22 @@ namespace myManga_App.Objects.Cache
 
             this.MangaObject = MangaObject;
             this.ChapterObject = ChapterObject;
+            this.PageObject = PageObject;
         }
 
         public override string ToString()
         {
             if (!Equals(MangaObject, null))
                 if (!Equals(ChapterObject, null))
-                    return String.Format(
-                        "[ChapterCacheObject][{0}]{1}/{2} - {3}.{4}.{5}",
-                        IsLocal ? "LOCAL" : "CLOUD",
-                        MangaObject.Name,
-                        ChapterObject.Name,
-                        ChapterObject.Volume,
-                        ChapterObject.Chapter,
-                        ChapterObject.SubChapter);
+                    if (!Equals(PageObject, null))
+                        return String.Format(
+                            "[PageCacheObject][{0}]{1}/{2} - {3}.{4}.{5}/{6}",
+                            MangaObject.Name,
+                            ChapterObject.Name,
+                            ChapterObject.Volume,
+                            ChapterObject.Chapter,
+                            ChapterObject.SubChapter,
+                            PageObject.PageNumber);
             return String.Format("{0}", base.ToString());
         }
         #endregion
@@ -97,37 +99,37 @@ namespace myManga_App.Objects.Cache
         }
         #endregion
 
+        #region Page
+        private static readonly DependencyPropertyKey PageObjectPropertyKey = DependencyProperty.RegisterAttachedReadOnly(
+            "PageObject",
+            typeof(PageObject),
+            typeof(PageCacheObject),
+            null);
+        private static readonly DependencyProperty PageObjectProperty = PageObjectPropertyKey.DependencyProperty;
+
+        public PageObject PageObject
+        {
+            get { return (PageObject)GetValue(PageObjectProperty); }
+            internal set { SetValue(PageObjectPropertyKey, value); }
+        }
+        #endregion
+
+        #region ThumbnailImageImage
+        private static readonly DependencyPropertyKey ThumbnailImagePropertyKey = DependencyProperty.RegisterAttachedReadOnly(
+            "ThumbnailImage",
+            typeof(BitmapImage),
+            typeof(PageCacheObject),
+            null);
+        private static readonly DependencyProperty ThumbnailImageProperty = ThumbnailImagePropertyKey.DependencyProperty;
+
+        public BitmapImage ThumbnailImage
+        {
+            get { return (BitmapImage)GetValue(ThumbnailImageProperty); }
+            internal set { SetValue(ThumbnailImagePropertyKey, value); }
+        }
+        #endregion
+
         #region Status
-
-        #region IsLocal
-        private static readonly DependencyPropertyKey IsLocalPropertyKey = DependencyProperty.RegisterAttachedReadOnly(
-            "IsLocal",
-            typeof(Boolean),
-            typeof(ChapterCacheObject),
-            null);
-        private static readonly DependencyProperty IsLocalProperty = IsLocalPropertyKey.DependencyProperty;
-
-        public Boolean IsLocal
-        {
-            get { return (Boolean)GetValue(IsLocalProperty); }
-            internal set { SetValue(IsLocalPropertyKey, value); }
-        }
-        #endregion
-
-        #region IsResumeChapter
-        private static readonly DependencyPropertyKey IsResumeChapterPropertyKey = DependencyProperty.RegisterAttachedReadOnly(
-            "IsResumeChapter",
-            typeof(Boolean),
-            typeof(ChapterCacheObject),
-            null);
-        private static readonly DependencyProperty IsResumeChapterProperty = IsResumeChapterPropertyKey.DependencyProperty;
-
-        public Boolean IsResumeChapter
-        {
-            get { return (Boolean)GetValue(IsResumeChapterProperty); }
-            internal set { SetValue(IsResumeChapterPropertyKey, value); }
-        }
-        #endregion
 
         #region Progress
         public IProgress<Int32> DownloadProgressReporter

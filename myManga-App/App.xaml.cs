@@ -24,6 +24,7 @@ using System.Diagnostics;
 using System.Windows.Media.Imaging;
 using Core.MVVM;
 using myManga_App.IO.Local;
+using System.Windows.Media;
 
 namespace myManga_App
 {
@@ -35,14 +36,16 @@ namespace myManga_App
         #region Logging
         private readonly log4net.ILog logger = log4net.LogManager.GetLogger(typeof(App));
 
-        private void ConfigureLog4Net()
+        private void ConfigureLog4Net(log4net.Core.Level LogLevel = null)
         {
+            if (Equals(LogLevel, null))
+                LogLevel = log4net.Core.Level.All;
             log4net.Appender.FileAppender appender = new log4net.Appender.FileAppender();
             appender.Layout = new log4net.Layout.SimpleLayout();
             appender.File = LOG_FILE_PATH;
             appender.AppendToFile = true;
             appender.ImmediateFlush = true;
-            appender.Threshold = log4net.Core.Level.All;
+            appender.Threshold = LogLevel;
             appender.ActivateOptions();
             log4net.Config.BasicConfigurator.Configure(appender);
         }

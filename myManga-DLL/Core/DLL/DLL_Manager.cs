@@ -9,70 +9,51 @@ namespace Core.DLL
     /// <summary>
     /// Class loads and manages DLLs
     /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <typeparam name="C"></typeparam>
+    /// <typeparam name="ItemType">Class of DLL Item</typeparam>
+    /// <typeparam name="CollectionType">Class of Collection for DLLs</typeparam>
     [DebuggerStepThrough]
-    public class DLL_Manager<T, C> where C : ICollection<T>, new()
+    public class DLL_Manager<ItemType, CollectionType> where CollectionType : ICollection<ItemType>, new()
     {
-        protected SynchronizationContext SyncContext { get; set; }
-
-        protected String appDomainName { get; set; }
         public String AppDomainName
-        {
-            get
-            {
-                if (appDomainName == null || appDomainName == String.Empty)
-                    appDomainName = String.Format("{0}-AppDomain", typeof(T).Name);
-                return appDomainName;
-            }
-            set
-            {
-                appDomainName = value;
-                if (DLLAppDomain != null)
-                {
-                    AppDomain.Unload(DLLAppDomain);
-                    DLLAppDomain = null;
-                }
-                if (DLLCollection.Count > 0)
-                    DLLCollection.Clear();
-                DLLAppDomain = AppDomain.CreateDomain(AppDomainName);
-            }
-        }
+        { get; private set; }
 
-        protected AppDomain dllAppDomain { get; set; }
-        public AppDomain DLLAppDomain
-        {
-            get { return dllAppDomain ?? (dllAppDomain = AppDomain.CreateDomain(AppDomainName)); }
-            set { dllAppDomain = value; }
-        }
-        public C DLLCollection { get; set; }
+        public AppDomain DllAppDomain
+        { get; protected set; }
 
-        public DLL_Manager()
+        public CollectionType DLLCollection
+        { get; set; }
+
+        public DLL_Manager() : this(null) { }
+
+        public DLL_Manager(String AppDomainName)
         {
-            SyncContext = SynchronizationContext.Current;
-            DLLCollection = new C();
+            if (Equals(AppDomainName, null))
+                AppDomainName = String.Format("{0}-AppDomain", typeof(ItemType).Name);
+            this.AppDomainName = AppDomainName;
+            DllAppDomain = AppDomain.CreateDomain(AppDomainName);
+            DLLCollection = new CollectionType();
         }
 
         public void LoadDLL(String DLLPath, String Filter = "*.dll", SearchOption DirectorySearchOption = SearchOption.TopDirectoryOnly)
         {
             FileAttributes fileAttr = File.GetAttributes(DLLPath);
             if ((fileAttr & FileAttributes.Directory) == FileAttributes.Directory)
-                foreach (T Class in DLL_Loader<T>.LoadDirectory(DLLPath, Filter, DirectorySearchOption))
+                foreach (ItemType Class in DLL_Loader<ItemType>.LoadDirectory(DLLPath, Filter, DirectorySearchOption))
                     DLLCollection.Add(Class);
             else
-                foreach (T Class in DLL_Loader<T>.LoadDLL(DLLPath))
+                foreach (ItemType Class in DLL_Loader<ItemType>.LoadDLL(DLLPath))
                     DLLCollection.Add(Class);
         }
 
         public void Unload()
         {
-            if (DLLAppDomain != null)
-            {
-                AppDomain.Unload(DLLAppDomain);
-                DLLAppDomain = null;
-            }
             if (DLLCollection.Count > 0)
                 DLLCollection.Clear();
+            if (DllAppDomain != null)
+            {
+                AppDomain.Unload(DllAppDomain);
+                DllAppDomain = null;
+            }
         }
     }
 }

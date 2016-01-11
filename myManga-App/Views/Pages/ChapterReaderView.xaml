@@ -25,18 +25,20 @@
                 <ResourceDictionary Source="/myManga;component/Themes/ListBox/ListBoxItems.xaml"/>
                 <ResourceDictionary Source="/myManga;component/Themes/ScrollBar/ScrollBar.xaml"/>
                 <ResourceDictionary Source="/myManga;component/Themes/Slider/Slider.xaml"/>
+
+                <ResourceDictionary Source="/myManga;component/Views/Objects/Cache/PageCacheObjectViews/PageCacheObjectListItems.xaml"/>
             </ResourceDictionary.MergedDictionaries>
             <Converters:BooleanInverter x:Key="BooleanInverter"/>
         </ResourceDictionary>
     </UserControl.Resources>
     <UserControl.InputBindings>
-        <KeyBinding Command="{Binding PrevPageCommand}" Key="Left"/>
-        <KeyBinding Command="{Binding PrevPageCommand}" Key="BrowserForward"/>
+        <KeyBinding Command="{Binding PagePrevCommand}" Key="Left"/>
+        <KeyBinding Command="{Binding PagePrevCommand}" Key="BrowserForward"/>
 
-        <KeyBinding Command="{Binding NextPageCommand}" Key="Right"/>
-        <KeyBinding Command="{Binding NextPageCommand}" Key="BrowserBack"/>
+        <KeyBinding Command="{Binding PageNextCommand}" Key="Right"/>
+        <KeyBinding Command="{Binding PageNextCommand}" Key="BrowserBack"/>
 
-        <KeyBinding Command="{Binding ReloadPageImageCommand}" Key="F5"/>
+        <KeyBinding Command="{Binding ReloadPageAsyncCommand}" CommandParameter="{Binding PageObject}" Key="F5"/>
 
         <KeyBinding Command="{Binding ResetPageZoomCommand}" Key="D0" Modifiers="Ctrl"/>
         <KeyBinding Command="{Binding ResetPageZoomCommand}" Key="NumPad0" Modifiers="Ctrl"/>
@@ -86,7 +88,7 @@
                     </TextBlock>
                     <TextBlock Text=" "/>
                     <TextBlock 
-                        Text="{Binding SelectedPageObject.PageNumber, FallbackValue={}Page: 0, StringFormat={}Page: {0}}"/>
+                        Text="{Binding PageObject.PageNumber, FallbackValue={}Page: 0, StringFormat={}Page: {0}}"/>
                     <TextBlock Text=" of "/>
                     <TextBlock 
                         Text="{Binding ChapterObject.Pages.Count, FallbackValue={}0, StringFormat={}{0}}"/>
@@ -108,10 +110,11 @@
                 Background="{DynamicResource window-background}">
                 <ListBox
                     x:Name="ChapterOverviewList"
-                    ItemsSource="{Binding ChapterObject.Pages}"
-                    SelectedItem="{Binding PageObject}" 
+                    ItemsSource="{Binding PageCacheObjects}"
+                    SelectedValuePath="PageObject"
+                    SelectedValue="{Binding PageObject}" 
                     IsSynchronizedWithCurrentItem="True" 
-                    ItemContainerStyle="{DynamicResource ReaderView_PageListBoxItem}" 
+                    ItemContainerStyle="{DynamicResource PageCacheObjectListBoxItem}" 
                     ScrollViewer.VerticalScrollBarVisibility="Disabled"
                     Background="{DynamicResource window-background}"
                     SourceUpdated="PageImageContent_SourceUpdated"
@@ -174,7 +177,10 @@
             HorizontalContentAlignment="Center">
             <ScrollViewer.ContextMenu>
                 <ContextMenu>
-                    <MenuItem Command="{Binding ReloadPageImageCommand}" Header="(F5) Reload Page Image">
+                    <MenuItem 
+                        Command="{Binding ReloadPageImageCommand}" 
+                        CommandParameter="{Binding PageObject}"
+                        Header="(F5) Reload Page Image">
                         <MenuItem.Icon>
                             <TextBlock
                                 Text="{DynamicResource oi-cloud-download}" 
@@ -184,7 +190,9 @@
                         </MenuItem.Icon>
                     </MenuItem>
                     <Separator/>
-                    <MenuItem Command="{Binding IncreasePageZoomCommand}" Header="(Ctrl+=) Zoom In">
+                    <MenuItem 
+                        Command="{Binding IncreasePageZoomCommand}"
+                        Header="(Ctrl+=) Zoom In">
                         <MenuItem.Icon>
                             <TextBlock
                                 Text="{DynamicResource oi-plus}" 
@@ -226,7 +234,7 @@
                     Height="{Binding Source.PixelHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"
                     Width="{Binding Source.PixelWidth, Mode=OneWay, RelativeSource={RelativeSource Self}}"
                     Margin="3"
-                    Source="{Binding PageImage}">
+                    Source="{Binding PageImage, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True, Mode=OneWay}">
                     <Image.LayoutTransform>
                         <ScaleTransform
                             ScaleX="{Binding Path=PageZoom, Mode=OneWay, FallbackValue=1}" 

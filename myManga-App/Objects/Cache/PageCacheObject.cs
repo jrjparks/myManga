@@ -58,7 +58,7 @@ namespace myManga_App.Objects.Cache
                 if (!Equals(ChapterObject, null))
                     if (!Equals(PageObject, null))
                         return String.Format(
-                            "[PageCacheObject][{0}]{1}/{2} - {3}.{4}.{5}/{6}",
+                            "[PageCacheObject]{0}/{1} - {2}.{3}.{4}/{5}",
                             MangaObject.Name,
                             ChapterObject.Name,
                             ChapterObject.Volume,
@@ -73,7 +73,7 @@ namespace myManga_App.Objects.Cache
         private static readonly DependencyPropertyKey MangaObjectPropertyKey = DependencyProperty.RegisterAttachedReadOnly(
             "MangaObject",
             typeof(MangaObject),
-            typeof(ChapterCacheObject),
+            typeof(PageCacheObject),
             null);
         private static readonly DependencyProperty MangaObjectProperty = MangaObjectPropertyKey.DependencyProperty;
 
@@ -88,7 +88,7 @@ namespace myManga_App.Objects.Cache
         private static readonly DependencyPropertyKey ChapterObjectPropertyKey = DependencyProperty.RegisterAttachedReadOnly(
             "ChapterObject",
             typeof(ChapterObject),
-            typeof(ChapterCacheObject),
+            typeof(PageCacheObject),
             null);
         private static readonly DependencyProperty ChapterObjectProperty = ChapterObjectPropertyKey.DependencyProperty;
 
@@ -138,7 +138,7 @@ namespace myManga_App.Objects.Cache
         private static readonly DependencyPropertyKey DownloadProgressPropertyKey = DependencyProperty.RegisterAttachedReadOnly(
             "DownloadProgress",
             typeof(Int32),
-            typeof(ChapterCacheObject),
+            typeof(PageCacheObject),
             new PropertyMetadata(0));
         private static readonly DependencyProperty DownloadProgressProperty = DownloadProgressPropertyKey.DependencyProperty;
 
@@ -151,7 +151,7 @@ namespace myManga_App.Objects.Cache
         private static readonly DependencyPropertyKey DownloadProgressActivePropertyKey = DependencyProperty.RegisterAttachedReadOnly(
             "DownloadProgressActive",
             typeof(Boolean),
-            typeof(ChapterCacheObject),
+            typeof(PageCacheObject),
             new PropertyMetadata(false));
         private static readonly DependencyProperty DownloadProgressActiveProperty = DownloadProgressActivePropertyKey.DependencyProperty;
 

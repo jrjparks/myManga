@@ -24,39 +24,6 @@ namespace myManga_App.ViewModels
             set { PreviousContentViewModel = ContentViewModel; SetValue(ContentViewModelProperty, value); }
         }
 
-        #region HomeViewModelProperty
-        private static readonly DependencyPropertyKey HomeViewModelPropertyKey = DependencyProperty.RegisterAttachedReadOnly(
-            "HomeViewModel",
-            typeof(HomeViewModel),
-            typeof(MainViewModel),
-            null);
-        private static readonly DependencyProperty HomeViewModelProperty = HomeViewModelPropertyKey.DependencyProperty;
-        public HomeViewModel HomeViewModel
-        { get { return (HomeViewModel)GetValue(HomeViewModelProperty); } }
-        #endregion
-
-        #region ReaderViewModelProperty
-        private static readonly DependencyPropertyKey ReaderViewModelPropertyKey = DependencyProperty.RegisterAttachedReadOnly(
-            "ReaderViewModel",
-            typeof(ReaderViewModel),
-            typeof(MainViewModel),
-            null);
-        private static readonly DependencyProperty ReaderViewModelProperty = ReaderViewModelPropertyKey.DependencyProperty;
-        public ReaderViewModel ReaderViewModel
-        { get { return (ReaderViewModel)GetValue(ReaderViewModelProperty); } }
-        #endregion
-
-        #region SearchViewModelProperty
-        private static readonly DependencyPropertyKey SearchViewModelPropertyKey = DependencyProperty.RegisterAttachedReadOnly(
-            "SearchViewModel",
-            typeof(SearchViewModel),
-            typeof(MainViewModel),
-            null);
-        private static readonly DependencyProperty SearchViewModelProperty = SearchViewModelPropertyKey.DependencyProperty;
-        public SearchViewModel SearchViewModel
-        { get { return (SearchViewModel)GetValue(SearchViewModelProperty); } }
-        #endregion
-
         #region SettingsViewModelProperty
         private static readonly DependencyPropertyKey SettingsViewModelPropertyKey = DependencyProperty.RegisterAttachedReadOnly(
             "SettingsViewModel",
@@ -66,7 +33,6 @@ namespace myManga_App.ViewModels
         private static readonly DependencyProperty SettingsViewModelProperty = SettingsViewModelPropertyKey.DependencyProperty;
         public SettingsViewModel SettingsViewModel
         { get { return (SettingsViewModel)GetValue(SettingsViewModelProperty); } }
-        #endregion
         #endregion
 
         #region Pages
@@ -79,7 +45,10 @@ namespace myManga_App.ViewModels
             null);
         private static readonly DependencyProperty PagesHomeViewModelProperty = PagesHomeViewModelPropertyKey.DependencyProperty;
         public Pages.HomeViewModel PagesHomeViewModel
-        { get { return (Pages.HomeViewModel)GetValue(PagesHomeViewModelProperty); } }
+        {
+            get { return (Pages.HomeViewModel)GetValue(PagesHomeViewModelProperty); }
+            private set { SetValue(PagesHomeViewModelPropertyKey, value); }
+        }
         #endregion
 
         #region PagesSearchViewModelProperty
@@ -90,7 +59,26 @@ namespace myManga_App.ViewModels
             null);
         private static readonly DependencyProperty PagesSearchViewModelProperty = PagesSearchViewModelPropertyKey.DependencyProperty;
         public Pages.SearchViewModel PagesSearchViewModel
-        { get { return (Pages.SearchViewModel)GetValue(PagesSearchViewModelProperty); } }
+        {
+            get { return (Pages.SearchViewModel)GetValue(PagesSearchViewModelProperty); }
+            private set { SetValue(PagesSearchViewModelPropertyKey, value); }
+        }
+        #endregion
+
+        #region PagesChapterReaderViewModelProperty
+        private static readonly DependencyPropertyKey PagesChapterReaderViewModelPropertyKey = DependencyProperty.RegisterAttachedReadOnly(
+            "PagesChapterReaderViewModel",
+            typeof(Pages.ChapterReaderViewModel),
+            typeof(MainViewModel),
+            null);
+        private static readonly DependencyProperty PagesChapterReaderViewModelProperty = PagesChapterReaderViewModelPropertyKey.DependencyProperty;
+        public Pages.ChapterReaderViewModel PagesChapterReaderViewModel
+        {
+            get { return (Pages.ChapterReaderViewModel)GetValue(PagesChapterReaderViewModelProperty); }
+            private set { SetValue(PagesChapterReaderViewModelPropertyKey, value); }
+        }
+        #endregion
+
         #endregion
 
         #endregion
@@ -106,10 +94,15 @@ namespace myManga_App.ViewModels
 
         private DelegateCommand readCommand;
         public ICommand ReadCommand
-        { get { return readCommand ?? (readCommand = new DelegateCommand(ReaderViewModel.PullFocus, CanOpenRead)); } }
+        { get { return readCommand ?? (readCommand = new DelegateCommand(PagesChapterReaderViewModel.PullFocus, CanOpenRead)); } }
 
         private Boolean CanOpenRead()
-        { return ReaderViewModel != null && ReaderViewModel.MangaObject != null && ReaderViewModel.ChapterObject != null; }
+        {
+            if (Equals(PagesChapterReaderViewModel, null)) return false;
+            if (Equals(PagesChapterReaderViewModel.MangaObject, null)) return false;
+            if (Equals(PagesChapterReaderViewModel.ChapterObject, null)) return false;
+            return true;
+        }
         #endregion
 
         #region Settings
@@ -140,12 +133,10 @@ namespace myManga_App.ViewModels
         {
             if (!IsInDesignMode)
             {
-                SetValue(PagesHomeViewModelPropertyKey, new Pages.HomeViewModel());
-                SetValue(PagesSearchViewModelPropertyKey, new Pages.SearchViewModel());
+                PagesHomeViewModel = new Pages.HomeViewModel();
+                PagesSearchViewModel = new Pages.SearchViewModel();
+                PagesChapterReaderViewModel = new Pages.ChapterReaderViewModel();
 
-                //SetValue(HomeViewModelPropertyKey, new HomeViewModel());
-                //SetValue(SearchViewModelPropertyKey, new SearchViewModel());
-                SetValue(ReaderViewModelPropertyKey, new ReaderViewModel());
                 SetValue(SettingsViewModelPropertyKey, new SettingsViewModel());
 
                 Messenger.Default.RegisterRecipient<BaseViewModel>(this, v =>
@@ -174,13 +165,11 @@ namespace myManga_App.ViewModels
 
         protected override void SubDispose()
         {
-            HomeViewModel.Dispose();
-            ReaderViewModel.Dispose();
-            SearchViewModel.Dispose();
             SettingsViewModel.Dispose();
 
             PagesHomeViewModel.Dispose();
             PagesSearchViewModel.Dispose();
+            PagesChapterReaderViewModel.Dispose();
         }
     }
 }

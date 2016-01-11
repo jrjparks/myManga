@@ -20,7 +20,7 @@
                 <ResourceDictionary Source="/myManga;component/Themes/ListBox/ListBoxes.xaml"/>
                 <ResourceDictionary Source="/myManga;component/Themes/ListBox/ListBoxItems.xaml"/>
 
-                <ResourceDictionary Source="/myManga;component/Views/Objects/MangaCacheObjectView/MangaCacheObjectViewListItems.xaml"/>
+                <ResourceDictionary Source="/myManga;component/Views/Objects/Cache/MangaCacheObjectViews/MangaCacheObjectViewListItems.xaml"/>
 
                 <ResourceDictionary Source="/myManga;component/Themes/ScrollBar/ScrollBar.xaml"/>
 

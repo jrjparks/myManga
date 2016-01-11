@@ -5,7 +5,6 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
     xmlns:local="clr-namespace:myManga_App.Views.Pages.HomeView"
-    xmlns:MangaCacheObjectViews="clr-namespace:myManga_App.Views.Objects.MangaCacheObjectView"
     xmlns:Button="clr-namespace:myManga_App.Resources.Theme.Buttons"
     xmlns:Converters="clr-namespace:myManga_App.Converters"
     xmlns:CoreWPF="clr-namespace:System.Windows.Controls;assembly=Core"
@@ -23,7 +22,7 @@
                 <ResourceDictionary Source="/myManga;component/Themes/ListBox/ListBoxes.xaml"/>
                 <ResourceDictionary Source="/myManga;component/Themes/ListBox/ListBoxItems.xaml"/>
 
-                <ResourceDictionary Source="/myManga;component/Views/Objects/MangaCacheObjectView/MangaCacheObjectViewListItems.xaml"/>
+                <ResourceDictionary Source="/myManga;component/Views/Objects/Cache/MangaCacheObjectViews/MangaCacheObjectViewListItems.xaml"/>
 
                 <ResourceDictionary Source="/myManga;component/Themes/ScrollBar/ScrollBar.xaml"/>
 

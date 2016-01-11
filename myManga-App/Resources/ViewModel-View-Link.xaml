@@ -3,8 +3,6 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     
     xmlns:ViewModels="clr-namespace:myManga_App.ViewModels"
-    xmlns:Views="clr-namespace:myManga_App.Views"
-    xmlns:HomeViews="clr-namespace:myManga_App.Views.HomeView"
     xmlns:SettingsView="clr-namespace:myManga_App.Views.SettingsView"
     
     xmlns:DialogViewModels="clr-namespace:myManga_App.ViewModels.Dialog"
@@ -15,41 +13,12 @@
     xmlns:PagesHomeViews="clr-namespace:myManga_App.Views.Pages.HomeView"
     
     xmlns:ObjectsViewModels="clr-namespace:myManga_App.ViewModels.Objects"
-    xmlns:MangaCacheObjectViews="clr-namespace:myManga_App.Views.Objects.MangaCacheObjectView"
+    xmlns:MangaCacheObjectViews="clr-namespace:myManga_App.Views.Objects.Cache.MangaCacheObjectViews"
     
     xmlns:MVVM="clr-namespace:myManga_App.Objects.MVVM">
 
-    <DataTemplate x:Key="HomeView_List" DataType="{x:Type ViewModels:HomeViewModel}">
-        <HomeViews:HomeView_List/>
-    </DataTemplate>
-    <DataTemplate x:Key="HomeView_Grid" DataType="{x:Type ViewModels:HomeViewModel}">
-        <HomeViews:HomeView_Grid/>
-    </DataTemplate>
-    <DataTemplate DataType="{x:Type ViewModels:HomeViewModel}">
-        <ContentControl Content="{Binding}">
-            <ContentControl.Style>
-                <Style TargetType="{x:Type ContentControl}">
-                    <Setter Property="ContentTemplate" Value="{StaticResource HomeView_List}"/>
-                    <Style.Triggers>
-                        <DataTrigger Binding="{Binding ViewType}" Value="{x:Static MVVM:ViewModelViewType.Grid}">
-                            <Setter Property="ContentTemplate" Value="{StaticResource HomeView_Grid}"/>
-                        </DataTrigger>
-                    </Style.Triggers>
-                </Style>
-            </ContentControl.Style>
-        </ContentControl>
-    </DataTemplate>
-    
     <DataTemplate DataType="{x:Type ViewModels:SettingsViewModel}">
         <SettingsView:SettingsView/>
-    </DataTemplate>
-    
-    <DataTemplate DataType="{x:Type ViewModels:SearchViewModel}">
-        <Views:SearchView/>
-    </DataTemplate>
-
-    <DataTemplate DataType="{x:Type ViewModels:ReaderViewModel}">
-        <Views:ReaderView/>
     </DataTemplate>
 
     <!-- Pages -->

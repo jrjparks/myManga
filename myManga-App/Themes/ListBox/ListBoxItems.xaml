@@ -10,8 +10,6 @@
         <ResourceDictionary Source="/myManga;component/Themes/CoreResourceDictionary.xaml"/>
         <ResourceDictionary Source="/myManga;component/Themes/ProgressBar/ProgressBar.xaml"/>
     </ResourceDictionary.MergedDictionaries>
-    <converters:LoadImageFromMangaArchive x:Key="LoadImageFromMangaArchive"/>
-    <converters:LoadImageFromChapterArchive x:Key="LoadImageFromChapterArchive"/>
     <converters:ObjectIsLocal x:Key="ObjectIsLocal"/>
     <converters:EqualsConverter x:Key="EqualsConverter"/>
 

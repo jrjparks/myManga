@@ -139,6 +139,7 @@ namespace myManga_App.ViewModels.Objects
             if (!ChapterCacheObject.IsLocal)
                 await App.ContentDownloadManager.DownloadAsync(ChapterCacheObject.MangaObject, ChapterCacheObject.ChapterObject, ChapterCacheObject.DownloadProgressReporter);
             Messenger.Default.Send(new ReadChapterRequestObject(ChapterCacheObject.MangaObject, ChapterCacheObject.ChapterObject), "ReadChapterRequest");
+            Messenger.Default.Send(ChapterCacheObject, "ReadChapterCacheObject");
         }
         #endregion
 

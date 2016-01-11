@@ -31,18 +31,15 @@ namespace Core.IO.Storage
             try
             {
                 await semaphore.WaitAsync();
-                using (FileStream zipFile = new FileStream(FileName, FileMode.Open, FileAccess.ReadWrite, FileShare.None))
+                using (ZipArchive zipArchive = new ZipArchive(new FileStream(FileName, FileMode.Open, FileAccess.ReadWrite, FileShare.None), ZipArchiveMode.Read))
                 {
-                    using (ZipArchive zipArchive = new ZipArchive(zipFile, ZipArchiveMode.Read))
+                    ZipArchiveEntry entry = zipArchive.GetEntry(EntryName);
+                    using (Stream entryStream = entry.Open())
                     {
-                        ZipArchiveEntry entry = zipArchive.GetEntry(EntryName);
-                        using (Stream entryStream = entry.Open())
-                        {
-                            Stream rtn = new MemoryStream();
-                            await entryStream.CopyToAsync(rtn);
-                            rtn.Seek(0, SeekOrigin.Begin);
-                            return rtn;
-                        }
+                        Stream rtn = new MemoryStream();
+                        await entryStream.CopyToAsync(rtn);
+                        rtn.Seek(0, SeekOrigin.Begin);
+                        return rtn;
                     }
                 }
             }
@@ -56,18 +53,15 @@ namespace Core.IO.Storage
         {
             try
             {
-                using (FileStream zipFile = new FileStream(FileName, FileMode.Open, FileAccess.ReadWrite, FileShare.None))
+                using (ZipArchive zipArchive = new ZipArchive(new FileStream(FileName, FileMode.Open, FileAccess.ReadWrite, FileShare.None), ZipArchiveMode.Read))
                 {
-                    using (ZipArchive zipArchive = new ZipArchive(zipFile, ZipArchiveMode.Read))
+                    ZipArchiveEntry entry = zipArchive.GetEntry(EntryName);
+                    using (Stream entryStream = entry.Open())
                     {
-                        ZipArchiveEntry entry = zipArchive.GetEntry(EntryName);
-                        using (Stream entryStream = entry.Open())
-                        {
-                            Stream rtn = new MemoryStream();
-                            entryStream.CopyTo(rtn);
-                            rtn.Seek(0, SeekOrigin.Begin);
-                            return rtn;
-                        }
+                        Stream rtn = new MemoryStream();
+                        entryStream.CopyTo(rtn);
+                        rtn.Seek(0, SeekOrigin.Begin);
+                        return rtn;
                     }
                 }
             }
@@ -87,19 +81,16 @@ namespace Core.IO.Storage
             try
             {
                 await semaphore.WaitAsync();
-                using (FileStream zipFile = new FileStream(FileName, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None))
+                using (ZipArchive zipArchive = new ZipArchive(new FileStream(FileName, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None), ZipArchiveMode.Update))
                 {
-                    using (ZipArchive zipArchive = new ZipArchive(zipFile, ZipArchiveMode.Update))
+                    ZipArchiveEntry entry = zipArchive.GetEntry(EntryName);
+                    if (!Equals(entry, null)) entry.Delete(); // Delete the existing entry if it exists.
+                    entry = zipArchive.CreateEntry(EntryName, CompressionLevel.Fastest);
+                    using (Stream entryStream = entry.Open())
                     {
-                        ZipArchiveEntry entry = zipArchive.GetEntry(EntryName);
-                        if (!Equals(entry, null)) entry.Delete(); // Delete the existing entry if it exists.
-                        entry = zipArchive.CreateEntry(EntryName, CompressionLevel.Fastest);
-                        using (Stream entryStream = entry.Open())
-                        {
-                            EntryStream.Seek(0, SeekOrigin.Begin);
-                            await EntryStream.CopyToAsync(entryStream);
-                            return true;
-                        }
+                        EntryStream.Seek(0, SeekOrigin.Begin);
+                        await EntryStream.CopyToAsync(entryStream);
+                        return true;
                     }
                 }
             }
@@ -121,14 +112,11 @@ namespace Core.IO.Storage
             try
             {
                 await semaphore.WaitAsync();
-                using (FileStream zipFile = new FileStream(FileName, FileMode.Open, FileAccess.ReadWrite, FileShare.None))
+                using (ZipArchive zipArchive = new ZipArchive(new FileStream(FileName, FileMode.Open, FileAccess.ReadWrite, FileShare.None), ZipArchiveMode.Update))
                 {
-                    using (ZipArchive zipArchive = new ZipArchive(zipFile, ZipArchiveMode.Update))
-                    {
-                        ZipArchiveEntry entry = zipArchive.GetEntry(EntryName);
-                        entry.Delete();
-                        return true;
-                    }
+                    ZipArchiveEntry entry = zipArchive.GetEntry(EntryName);
+                    entry.Delete();
+                    return true;
                 }
             }
             catch

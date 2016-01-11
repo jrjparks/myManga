@@ -27,8 +27,11 @@ namespace myManga_App.ViewModels.Pages
         {
             get
             {
-                if (!Equals(MangaObject, null))
-                    return Path.Combine(App.MANGA_ARCHIVE_DIRECTORY, MangaObject.MangaArchiveName(App.MANGA_ARCHIVE_EXTENSION));
+                if (Equals(initialMangaArchiveFilePath, null))
+                    if (!Equals(MangaObject, null))
+                        return Path.Combine(
+                            App.MANGA_ARCHIVE_DIRECTORY,
+                            MangaObject.MangaArchiveName(App.MANGA_ARCHIVE_EXTENSION));
                 return initialMangaArchiveFilePath;
             }
             set { initialMangaArchiveFilePath = value; }
@@ -39,46 +42,107 @@ namespace myManga_App.ViewModels.Pages
         {
             get
             {
-                String ChapterDirectoryPath = Path.Combine(App.CHAPTER_ARCHIVE_DIRECTORY, MangaObject.MangaFileName());
-                if (!Equals(ChapterObject, null))
-                    return Path.Combine(ChapterDirectoryPath, ChapterObject.ChapterArchiveName(App.CHAPTER_ARCHIVE_EXTENSION));
+                if (Equals(initialChapterArchiveFilePath, null))
+                    if (!Equals(MangaObject, null))
+                        if (!Equals(ChapterObject, null))
+                            return Path.Combine(
+                                App.CHAPTER_ARCHIVE_DIRECTORY,
+                                MangaObject.MangaFileName(),
+                                ChapterObject.ChapterArchiveName(App.CHAPTER_ARCHIVE_EXTENSION));
                 return initialChapterArchiveFilePath;
             }
             set { initialChapterArchiveFilePath = value; }
         }
+
+        private Boolean NextChapterPreloading;
+        private String initialNextChapterArchiveFilePath;
+        public String NextChapterArchiveFilePath
+        {
+            get
+            {
+                ChapterObject SiblingChapterObject = MangaObject.NextChapterObject(ChapterObject);
+                if (Equals(initialNextChapterArchiveFilePath, null))
+                    if (!Equals(MangaObject, null))
+                        if (!Equals(SiblingChapterObject, null))
+                            return Path.Combine(
+                                App.CHAPTER_ARCHIVE_DIRECTORY,
+                                MangaObject.MangaFileName(),
+                                SiblingChapterObject.ChapterArchiveName(App.CHAPTER_ARCHIVE_EXTENSION));
+                return initialNextChapterArchiveFilePath;
+            }
+            set { initialNextChapterArchiveFilePath = value; }
+        }
+
+        private Boolean PrevChapterPreloading;
+        private String initialPrevChapterArchiveFilePath;
+        public String PrevChapterArchiveFilePath
+        {
+            get
+            {
+                ChapterObject SiblingChapterObject = MangaObject.PrevChapterObject(ChapterObject);
+                if (Equals(initialPrevChapterArchiveFilePath, null))
+                    if (!Equals(MangaObject, null))
+                        if (!Equals(SiblingChapterObject, null))
+                            return Path.Combine(
+                                App.CHAPTER_ARCHIVE_DIRECTORY,
+                                MangaObject.MangaFileName(),
+                                SiblingChapterObject.ChapterArchiveName(App.CHAPTER_ARCHIVE_EXTENSION));
+                return initialPrevChapterArchiveFilePath;
+            }
+            set { initialPrevChapterArchiveFilePath = value; }
+        }
         #endregion
 
+        #region Constructors
         public ChapterReaderViewModel() : base()
         {
             PageCacheObjects = new ObservableCollection<PageCacheObject>();
             if (!IsInDesignMode)
             {
-                Messenger.Default.RegisterRecipient<ChapterCacheObject>(this, (cco) => { });
+                Messenger.Default.RegisterRecipient<ChapterCacheObject>(this, async ChapterCacheObject =>
+                await OpenForReading(ChapterCacheObject), "ReadChapterCacheObject");
+                Messenger.Default.RegisterRecipient<FileSystemEventArgs>(this, e =>
+                {
+                    // TODO: Fix handle for ChapterArchive file updating with pages
+                    if (Equals(e.FullPath, ChapterArchiveFilePath))
+                    {
+                        PageObject = ChapterObject.PageObjectOfBookmarkObject(BookmarkObject);
+                        //PageCacheObjects.Clear();
+                        //(await LoadPageCacheObjectsAsync()).ForEach(_ => PageCacheObjects.Add(_));
+                    }
+
+                }, "ChapterObjectArchiveWatcher");
             }
         }
+        #endregion
 
         #region Reader Objects
 
-        #region ChapterCacheObject
-        private static readonly DependencyProperty ChapterCacheObjectProperty = DependencyProperty.RegisterAttached(
-            "ChapterCacheObject",
-            typeof(ChapterCacheObject),
+        #region MangaObject
+        private static readonly DependencyProperty MangaObjectProperty = DependencyProperty.RegisterAttached(
+            "MangaObject",
+            typeof(MangaObject),
             typeof(ChapterReaderViewModel),
-            new PropertyMetadata(OnChapterCacheObjectChanged));
+            null);
 
-        public ChapterCacheObject ChapterCacheObject
+        public MangaObject MangaObject
         {
-            get { return (ChapterCacheObject)GetValue(ChapterCacheObjectProperty); }
-            set { SetValue(ChapterCacheObjectProperty, value); }
+            get { return (MangaObject)GetValue(MangaObjectProperty); }
+            set { SetValue(MangaObjectProperty, value); }
         }
+        #endregion
 
-        private async static void OnChapterCacheObjectChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        #region ChapterObject
+        private static readonly DependencyProperty ChapterObjectProperty = DependencyProperty.RegisterAttached(
+            "ChapterObject",
+            typeof(ChapterObject),
+            typeof(ChapterReaderViewModel),
+            null);
+
+        public ChapterObject ChapterObject
         {
-            ChapterReaderViewModel control = d as ChapterReaderViewModel;
-            ChapterCacheObject ChapterCacheObject = e.NewValue as ChapterCacheObject;
-            MangaCacheObject MangaCacheObject = control.App.MangaCacheObjects.FirstOrDefault(_ => Equals(_.MangaObject.Name, ChapterCacheObject.MangaObject.Name));
-            control.BookmarkObject = MangaCacheObject.BookmarkObject;
-            await control.LoadPageCacheObjectsAsync();
+            get { return (ChapterObject)GetValue(ChapterObjectProperty); }
+            set { SetValue(ChapterObjectProperty, value); }
         }
         #endregion
 
@@ -95,16 +159,21 @@ namespace myManga_App.ViewModels.Pages
             set { SetValue(BookmarkObjectProperty, value); }
         }
 
-        private async static void OnBookmarkObjectChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private static void OnBookmarkObjectChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             ChapterReaderViewModel control = d as ChapterReaderViewModel;
             BookmarkObject BookmarkObject = e.NewValue as BookmarkObject;
-            await control.App.ZipManager.Retry(
-                () => control.App.ZipManager.WriteAsync(
-                    control.MangaArchiveFilePath,
-                    nameof(myMangaSiteExtension.Objects.BookmarkObject),
-                    BookmarkObject.Serialize(control.App.UserConfig.SaveType)),
-                TimeSpan.FromMinutes(1));
+            control.SaveBookmarkObject();
+        }
+
+        private async void SaveBookmarkObject()
+        {
+            await App.ZipManager.Retry(
+                () => App.ZipManager.WriteAsync(
+                    MangaArchiveFilePath,
+                    typeof(BookmarkObject).Name,
+                    BookmarkObject.Serialize(App.UserConfig.SaveType)),
+                TIMEOUT);
         }
         #endregion
 
@@ -122,7 +191,11 @@ namespace myManga_App.ViewModels.Pages
         }
 
         private async static void OnPageObjectChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        { await (d as ChapterReaderViewModel).LoadPageImageAsync(); }
+        {
+            ChapterReaderViewModel control = d as ChapterReaderViewModel;
+            control.PageImage = await control.LoadPageImageAsync();
+            control.PreloadChapterObjects();
+        }
         #endregion
 
         #region PageCacheObjects
@@ -138,64 +211,63 @@ namespace myManga_App.ViewModels.Pages
             set { SetValue(ChapterOverviewProperty, value); }
         }
 
-        private CancellationTokenSource ChapterOverviewAsyncCTS { get; set; }
-        private async Task LoadPageCacheObjectsAsync()
+        private CancellationTokenSource PageCacheObjectsAsyncCTS { get; set; }
+        private async Task<List<PageCacheObject>> LoadPageCacheObjectsAsync()
         {
-            try { if (!Equals(ChapterOverviewAsyncCTS, null)) { ChapterOverviewAsyncCTS.Cancel(); } }
+            try
+            {
+                if (!Equals(PageCacheObjectsAsyncCTS, null))
+                    if (PageCacheObjectsAsyncCTS.Token.CanBeCanceled)
+                        PageCacheObjectsAsyncCTS.Cancel();
+            }
             catch { }
-            using (ChapterOverviewAsyncCTS = new CancellationTokenSource())
+            using (PageCacheObjectsAsyncCTS = new CancellationTokenSource())
+            {
+                List<PageCacheObject> PageCacheObjects = new List<PageCacheObject>();
+                foreach (PageObject PageObject in ChapterObject.Pages)
+                {
+                    PageCacheObject PageCacheObject = new PageCacheObject(MangaObject, ChapterObject, PageObject);
+                    PageCacheObject = await LoadPageCacheObjectThumbnailImage(PageCacheObject, PageCacheObjectsAsyncCTS.Token);
+                    PageCacheObjects.Add(PageCacheObject);
+                }
+                return PageCacheObjects;
+            }
+        }
+
+        private async Task<PageCacheObject> LoadPageCacheObjectThumbnailImage(PageCacheObject PageCacheObject, CancellationToken ct)
+        {
+            if (Equals(PageCacheObject.ThumbnailImage, null))
             {
                 try
                 {
-                    foreach (PageCacheObject PageCacheObject in PageCacheObjects)
+                    Stream PageImageStream = await App.ZipManager.Retry(() =>
                     {
-                        if (!Equals(PageCacheObject.ThumbnailImage, null))
-                            if (!Equals(PageCacheObject.ThumbnailImage.StreamSource, null))
-                            {
-                                PageCacheObject.ThumbnailImage.StreamSource.Close();
-                                PageCacheObject.ThumbnailImage.StreamSource.Dispose();
-                            }
-                    }
-                    PageCacheObjects.Clear();
-                    foreach (PageObject PageObject in ChapterCacheObject.ChapterObject.Pages)
-                    {
-                        PageCacheObject PageCacheObject = new PageCacheObject(ChapterCacheObject.MangaObject, ChapterCacheObject.ChapterObject, PageObject);
-                        PageCacheObject.ThumbnailImage = new BitmapImage();
-                        Stream ChapterOverviewImageStream = await App.ZipManager.Retry(() =>
+                        ct.ThrowIfCancellationRequested();
+                        return App.ZipManager.ReadAsync(ChapterArchiveFilePath, PageObject.Name);
+                    }, TIMEOUT);
+                    if (!Equals(PageImageStream, null))
+                        using (PageImageStream)
                         {
-                            PageAsyncCTS.Token.ThrowIfCancellationRequested();
-                            return App.ZipManager.ReadAsync(ChapterCacheObject.ArchiveFilePath, PageObject.Name);
-                        }, TIMEOUT);
-                        using (ChapterOverviewImageStream)
-                        {
+                            PageCacheObject.ThumbnailImage = new BitmapImage();
                             PageCacheObject.ThumbnailImage.BeginInit();
-                            PageCacheObject.ThumbnailImage.DecodePixelHeight = 100;
+                            PageCacheObject.ThumbnailImage.DecodePixelWidth = 100;
                             PageCacheObject.ThumbnailImage.CacheOption = BitmapCacheOption.OnLoad;
                             PageCacheObject.ThumbnailImage.CreateOptions = BitmapCreateOptions.PreservePixelFormat;
-                            using (PageCacheObject.ThumbnailImage.StreamSource = ChapterOverviewImageStream)
+                            using (PageCacheObject.ThumbnailImage.StreamSource = PageImageStream)
                             {
                                 PageCacheObject.ThumbnailImage.EndInit();
                                 PageCacheObject.ThumbnailImage.Freeze();
                             }
                         }
-                        PageAsyncCTS.Token.ThrowIfCancellationRequested();
-                        PageCacheObjects.Add(PageCacheObject);
-                    }
+                    ct.ThrowIfCancellationRequested();
+                    PageCacheObjects.Add(PageCacheObject);
                 }
-                catch (OperationCanceledException) { }
+                catch (OperationCanceledException) { PageCacheObject.ThumbnailImage = null; }
                 catch (Exception ex) { throw ex; }
                 finally { }
             }
+            return PageCacheObject;
         }
-        #endregion
-
-        #region Archive Paths
-        private String ArchiveFilePath
-        { get; set; }
-        private String NextArchiveFilePath
-        { get; set; }
-        private String PrevArchiveFilePath
-        { get; set; }
         #endregion
 
         #endregion
@@ -220,6 +292,8 @@ namespace myManga_App.ViewModels.Pages
         #endregion
 
         #region Page Zoom
+
+        #region Page Zoom Property
         private static readonly DependencyProperty PageZoomProperty = DependencyProperty.RegisterAttached(
             "PageZoom",
             typeof(Double),
@@ -238,44 +312,69 @@ namespace myManga_App.ViewModels.Pages
         { Double value = (Double)baseValue; return value < 0.5 ? 0.5 : value; }
         #endregion
 
+        #region Increase Zoom Command
+        private DelegateCommand increasePageZoomCommand;
+        public ICommand IncreasePageZoomCommand
+        { get { return increasePageZoomCommand ?? (increasePageZoomCommand = new DelegateCommand(() => PageZoom += 0.1, () => PageZoom < 2)); } }
+        #endregion
+
+        #region Decrease Zoom Command
+        private DelegateCommand decreasePageZoomCommand;
+        public ICommand DecreasePageZoomCommand
+        { get { return decreasePageZoomCommand ?? (decreasePageZoomCommand = new DelegateCommand(() => PageZoom -= 0.1, () => PageZoom > 0.5)); } }
+        #endregion
+
+        #region Reset Zoom Command
+        private DelegateCommand resetPageZoomCommand;
+        public ICommand ResetPageZoomCommand
+        { get { return resetPageZoomCommand ?? (resetPageZoomCommand = new DelegateCommand(() => PageZoom = App.UserConfig.DefaultPageZoom)); } }
+        #endregion
+
+        #endregion
+
         #endregion
 
         #region Page Image Async Load
-        private async Task LoadPageImageAsync()
+        private async Task<BitmapImage> LoadPageImageAsync()
         {
-            try { if (!Equals(PageAsyncCTS, null)) { PageAsyncCTS.Cancel(); } }
+            try
+            {
+                if (!Equals(PageAsyncCTS, null))
+                    if (PageAsyncCTS.Token.CanBeCanceled)
+                        PageAsyncCTS.Cancel();
+            }
             catch { }
             using (PageAsyncCTS = new CancellationTokenSource())
             {
+                BitmapImage pageImage = null;
                 try
                 {
-                    String ArchivePath = Path.Combine(
-                        App.CHAPTER_ARCHIVE_DIRECTORY,
-                        MangaObject.MangaFileName(),
-                        ChapterObject.ChapterArchiveName(App.CHAPTER_ARCHIVE_EXTENSION));
-                    BitmapImage _PageImage = new BitmapImage();
                     Stream PageImageStream = await App.ZipManager.Retry(() =>
                     {
                         PageAsyncCTS.Token.ThrowIfCancellationRequested();
-                        return App.ZipManager.ReadAsync(ArchivePath, PageObject.Name);
+                        return App.ZipManager.ReadAsync(ChapterArchiveFilePath, PageObject.Name);
                     }, TIMEOUT);
-                    using (PageImageStream)
-                    {
-                        _PageImage.BeginInit();
-                        using (_PageImage.StreamSource = PageImageStream)
+                    if (!Equals(PageImageStream, null))
+                        using (PageImageStream)
                         {
-                            _PageImage.CacheOption = BitmapCacheOption.OnLoad;
-                            _PageImage.CreateOptions = BitmapCreateOptions.IgnoreImageCache;
-                            _PageImage.EndInit();
+                            pageImage = new BitmapImage();
+                            pageImage.BeginInit();
+                            pageImage.CacheOption = BitmapCacheOption.OnLoad;
+                            pageImage.CreateOptions = BitmapCreateOptions.PreservePixelFormat;
+                            using (pageImage.StreamSource = PageImageStream)
+                            {
+                                pageImage.EndInit();
+                                pageImage.Freeze();
+                            }
                         }
-                    }
                     PageAsyncCTS.Token.ThrowIfCancellationRequested();
-                    PageImage = _PageImage;
+                    return pageImage;
                 }
-                catch (OperationCanceledException) { }
+                catch (OperationCanceledException) { pageImage = null; }
                 catch (Exception ex) { throw ex; }
                 finally { }
             }
+            return null;
         }
         #endregion
 
@@ -283,33 +382,54 @@ namespace myManga_App.ViewModels.Pages
 
         #region Load Chapter
 
-        private void OpenForReading(MangaObject MangaObject, ChapterObject ChapterObject, Boolean OpeningPreviousChapter = false)
+        private async Task OpenForReading(ChapterCacheObject ChapterCacheObject)
+        {
+            await OpenForReading(ChapterCacheObject.MangaObject, ChapterCacheObject.ChapterObject, false, true);
+        }
+
+        private async Task OpenForReading(MangaObject MangaObject, ChapterObject ChapterObject, Boolean OpeningPreviousChapter = false, Boolean ResumeChapter = false)
         {
             this.MangaObject = MangaObject;
             this.ChapterObject = ChapterObject;
 
-            String MangaChaptersDirectory = Path.Combine(App.CHAPTER_ARCHIVE_DIRECTORY, MangaObject.MangaFileName());
-            ArchiveFilePath = Path.Combine(MangaChaptersDirectory, ChapterObject.ChapterArchiveName(App.CHAPTER_ARCHIVE_EXTENSION));
+            String MangaChaptersDirectory = Path.Combine(
+                App.CHAPTER_ARCHIVE_DIRECTORY,
+                MangaObject.MangaFileName());
+            ChapterArchiveFilePath = Path.Combine(
+                MangaChaptersDirectory,
+                ChapterObject.ChapterArchiveName(App.CHAPTER_ARCHIVE_EXTENSION));
 
-            try // Check if there is a ChapterObject befor the current
-            { PrevArchiveFilePath = Path.Combine(MangaChaptersDirectory, MangaObject.PrevChapterObject(this.ChapterObject).ChapterArchiveName(App.CHAPTER_ARCHIVE_EXTENSION)); }
-            catch { PrevArchiveFilePath = null; }
+            PrevChapterPreloading = false;
+            ChapterObject PrevChapterObject = MangaObject.PrevChapterObject(ChapterObject);
+            if (!Equals(PrevChapterObject, null))   // Check if there is a ChapterObject before the current
+            { PrevChapterArchiveFilePath = Path.Combine(MangaChaptersDirectory, PrevChapterObject.ChapterArchiveName(App.CHAPTER_ARCHIVE_EXTENSION)); }
+            else { PrevChapterArchiveFilePath = null; }
 
-            try // Check if there is a ChapterObject after the current
-            { NextArchiveFilePath = Path.Combine(MangaChaptersDirectory, MangaObject.NextChapterObject(this.ChapterObject).ChapterArchiveName(App.CHAPTER_ARCHIVE_EXTENSION)); }
-            catch { NextArchiveFilePath = null; }
+            NextChapterPreloading = false;
+            ChapterObject NextChapterObject = MangaObject.NextChapterObject(ChapterObject);
+            if (!Equals(NextChapterObject, null))   // Check if there is a ChapterObject after the current
+            { NextChapterArchiveFilePath = Path.Combine(MangaChaptersDirectory, NextChapterObject.ChapterArchiveName(App.CHAPTER_ARCHIVE_EXTENSION)); }
+            else { NextChapterArchiveFilePath = null; }
 
-            Task.Run(() => LoadChapterObjectAsync())
-                .ContinueWith(t => LoadBookmarkObjectAsync(OpeningPreviousChapter))
-                .ContinueWith(t => LoadPageImageAsync())
-                .ContinueWith(t => PullFocus())
-                .ContinueWith(t => LoadChapterOverviewAsync());
+            this.ChapterObject = await LoadChapterObjectAsync();
+            BookmarkObject = await LoadBookmarkObjectAsync(OpeningPreviousChapter, ResumeChapter);
+            PageObject = this.ChapterObject.PageObjectOfBookmarkObject(BookmarkObject);
+            PullFocus();
+
+            PageCacheObjects.Clear();
+            (await LoadPageCacheObjectsAsync()).ForEach(_ => PageCacheObjects.Add(_));
         }
 
         private CancellationTokenSource LoadChapterObjectAsyncCTS { get; set; }
-        private async Task LoadChapterObjectAsync()
+        private async Task<ChapterObject> LoadChapterObjectAsync()
         {
-            try { if (!Equals(LoadChapterObjectAsyncCTS, null)) { LoadChapterObjectAsyncCTS.Cancel(); } }
+            ChapterObject ChapterObject = null;
+            try
+            {
+                if (!Equals(LoadChapterObjectAsyncCTS, null))
+                    if (LoadChapterObjectAsyncCTS.Token.CanBeCanceled)
+                        LoadChapterObjectAsyncCTS.Cancel();
+            }
             catch { }
             using (LoadChapterObjectAsyncCTS = new CancellationTokenSource())
             {
@@ -318,7 +438,7 @@ namespace myManga_App.ViewModels.Pages
                     Stream ChapterObjectStream = await App.ZipManager.Retry(() =>
                     {
                         LoadChapterObjectAsyncCTS.Token.ThrowIfCancellationRequested();
-                        return App.ZipManager.ReadAsync(ArchiveFilePath, typeof(ChapterObject).Name);
+                        return App.ZipManager.ReadAsync(ChapterArchiveFilePath, typeof(ChapterObject).Name);
                     }, TIMEOUT);
                     LoadChapterObjectAsyncCTS.Token.ThrowIfCancellationRequested();
                     using (ChapterObjectStream)
@@ -328,12 +448,19 @@ namespace myManga_App.ViewModels.Pages
                 catch (Exception ex) { throw ex; }
                 finally { }
             }
+            return ChapterObject;
         }
 
         private CancellationTokenSource LoadBookmarkObjectAsyncCTS { get; set; }
-        private async Task LoadBookmarkObjectAsync(Boolean OpeningPreviousChapter = false)
+        private async Task<BookmarkObject> LoadBookmarkObjectAsync(Boolean OpeningPreviousChapter = false, Boolean ResumeChapter = false)
         {
-            try { if (!Equals(LoadBookmarkObjectAsyncCTS, null)) { LoadBookmarkObjectAsyncCTS.Cancel(); } }
+            BookmarkObject BookmarkObject = null;
+            try
+            {
+                if (!Equals(LoadBookmarkObjectAsyncCTS, null))
+                    if (LoadBookmarkObjectAsyncCTS.Token.CanBeCanceled)
+                        LoadBookmarkObjectAsyncCTS.Cancel();
+            }
             catch { }
             using (LoadBookmarkObjectAsyncCTS = new CancellationTokenSource())
             {
@@ -342,7 +469,7 @@ namespace myManga_App.ViewModels.Pages
                     Stream BookmarkObjectStream = await App.ZipManager.Retry(() =>
                     {
                         LoadBookmarkObjectAsyncCTS.Token.ThrowIfCancellationRequested();
-                        return App.ZipManager.ReadAsync(ArchiveFilePath, typeof(BookmarkObject).Name);
+                        return App.ZipManager.ReadAsync(MangaArchiveFilePath, typeof(BookmarkObject).Name);
                     }, TIMEOUT);
                     LoadBookmarkObjectAsyncCTS.Token.ThrowIfCancellationRequested();
                     using (BookmarkObjectStream)
@@ -359,19 +486,52 @@ namespace myManga_App.ViewModels.Pages
 
                     if (OpeningPreviousChapter)
                     {
-                        if (BookmarkObject.Page <= 1)
+                        PageObject LastPageObject = ChapterObject.Pages.Last();
+                        if (BookmarkObject.Page < LastPageObject.PageNumber)
                         {
-                            BookmarkObject.Page = ChapterObject.Pages.Last().PageNumber;
+                            BookmarkObject.Page = LastPageObject.PageNumber;
                         }
                     }
-                    else { BookmarkObject.Page = ChapterObject.Pages.First().PageNumber; }
+                    else if (!ResumeChapter)
+                    { BookmarkObject.Page = ChapterObject.Pages.First().PageNumber; }
 
-                    PageObject = ChapterObject.PageObjectOfBookmarkObject(BookmarkObject);
+                    if (!Equals(ChapterObject, null))
+                    { BookmarkObject.LastPage = ChapterObject.Pages.Last().PageNumber; }
                 }
                 catch (OperationCanceledException) { BookmarkObject = new BookmarkObject(); }
                 catch (Exception ex) { throw ex; }
                 finally { }
             }
+
+            return BookmarkObject;
+        }
+
+        private void PreloadChapterObjects()
+        {
+            if (!Equals(PrevChapterArchiveFilePath, null) && !File.Exists(PrevChapterArchiveFilePath))
+            {
+                if (!PrevChapterPreloading)
+                {
+                    PreloadChapterObject(MangaObject, MangaObject.PrevChapterObject(ChapterObject));
+                    PrevChapterPreloading = true;
+                }
+            }
+            else PrevChapterPreloading = false;
+            if (!Equals(NextChapterArchiveFilePath, null) && !File.Exists(NextChapterArchiveFilePath))
+            {
+                if (!NextChapterPreloading)
+                {
+                    PreloadChapterObject(MangaObject, MangaObject.NextChapterObject(ChapterObject));
+                    NextChapterPreloading = true;
+                }
+            }
+            else NextChapterPreloading = false;
+        }
+
+        private void PreloadChapterObject(MangaObject MangaObject, ChapterObject ChapterObject)
+        {
+            if (!App.ContentDownloadManager.IsCacheKeyActive(App.ContentDownloadManager.CacheKey(MangaObject, ChapterObject)))
+            { App.ContentDownloadManager.Download(MangaObject, ChapterObject); }
         }
 
         #endregion
@@ -385,20 +545,25 @@ namespace myManga_App.ViewModels.Pages
 
         private Boolean CanPageNext()
         {
-            if (!Equals(NextArchiveFilePath, null))
-                if (File.Exists(NextArchiveFilePath))
+            if (!Equals(NextChapterArchiveFilePath, null))
+                if (File.Exists(NextChapterArchiveFilePath))
                     return true;
+            if (Equals(PageObject, null)) return false;
             if (PageObject.PageNumber < ChapterObject.Pages.Last().PageNumber)
                 return true;
             return false;
         }
 
-        private void PageNext()
+        private async void PageNext()
         {
             if (PageObject.PageNumber < ChapterObject.Pages.Last().PageNumber)
-            { BookmarkObject.Page = (PageObject = ChapterObject.NextPageObject(PageObject)).PageNumber; }
+            {
+                BookmarkObject.Page = (PageObject = ChapterObject.NextPageObject(PageObject)).PageNumber;
+                SaveBookmarkObject();
+
+            }
             else
-            { OpenForReading(MangaObject, MangaObject.NextChapterObject(ChapterObject), false); }
+            { await OpenForReading(MangaObject, MangaObject.NextChapterObject(ChapterObject), false); }
         }
         #endregion
 
@@ -409,20 +574,45 @@ namespace myManga_App.ViewModels.Pages
 
         private Boolean CanPagePrev()
         {
-            if (!Equals(PrevArchiveFilePath, null))
-                if (File.Exists(PrevArchiveFilePath))
+            if (!Equals(PrevChapterArchiveFilePath, null))
+                if (File.Exists(PrevChapterArchiveFilePath))
                     return true;
-            if (PageObject.PageNumber > ChapterObject.Pages.Last().PageNumber)
+            if (Equals(PageObject, null)) return false;
+            if (PageObject.PageNumber > ChapterObject.Pages.First().PageNumber)
                 return true;
             return false;
         }
 
-        private void PagePrev()
+        private async void PagePrev()
         {
-            if (PageObject.PageNumber > ChapterObject.Pages.Last().PageNumber)
-            { BookmarkObject.Page = (PageObject = ChapterObject.PrevPageObject(PageObject)).PageNumber; }
+            if (PageObject.PageNumber > ChapterObject.Pages.First().PageNumber)
+            {
+                BookmarkObject.Page = (PageObject = ChapterObject.PrevPageObject(PageObject)).PageNumber;
+                SaveBookmarkObject();
+            }
             else
-            { OpenForReading(MangaObject, MangaObject.PrevChapterObject(ChapterObject), true); }
+            { await OpenForReading(MangaObject, MangaObject.PrevChapterObject(ChapterObject), true); }
+        }
+        #endregion
+
+        #endregion
+
+        #region Context Menu Commands
+
+        #region Reload Page Command
+        private DelegateCommand<PageObject> reloadPageAsyncCommand;
+        public ICommand ReloadPageAsyncCommand
+        { get { return reloadPageAsyncCommand ?? (reloadPageAsyncCommand = new DelegateCommand<PageObject>(ReloadPageAsync, CanReloadPageAsync)); } }
+
+        private Boolean CanReloadPageAsync(PageObject PageObject)
+        {
+            if (Equals(PageObject, null)) return false;
+            return true;
+        }
+
+        private async void ReloadPageAsync(PageObject PageObject)
+        {
+            await App.ContentDownloadManager.DownloadAsync(MangaObject, ChapterObject, PageObject);
         }
         #endregion
 

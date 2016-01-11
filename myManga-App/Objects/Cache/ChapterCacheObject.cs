@@ -1,15 +1,14 @@
 ﻿using myMangaSiteExtension.Objects;
 using myMangaSiteExtension.Utilities;
 using System;
-using System.Collections.Generic;
+using System.IO;
 using System.Windows;
 
 namespace myManga_App.Objects.Cache
 {
     public sealed class ChapterCacheObject : DependencyObject
     {
-        #region Constructors
-        private readonly App App = App.Current as App;
+        #region ArchiveFileNames
         private String initialArchiveFileName;
         public String ArchiveFileName
         {
@@ -29,7 +28,7 @@ namespace myManga_App.Objects.Cache
             {
                 if (!Equals(MangaObject, null))
                     if (!Equals(ChapterObject, null))
-                        return System.IO.Path.Combine(
+                        return Path.Combine(
                             App.CHAPTER_ARCHIVE_DIRECTORY,
                             MangaObject.MangaFileName(),
                             ArchiveFileName);
@@ -37,6 +36,22 @@ namespace myManga_App.Objects.Cache
             }
             set { initialArchiveFilePath = value; }
         }
+
+        private String initialMangaArchiveFilePath;
+        public String MangaArchiveFilePath
+        {
+            get
+            {
+                if (!Equals(MangaObject, null))
+                    return Path.Combine(App.MANGA_ARCHIVE_DIRECTORY, MangaObject.MangaArchiveName(App.MANGA_ARCHIVE_EXTENSION));
+                return initialMangaArchiveFilePath;
+            }
+            set { initialMangaArchiveFilePath = value; }
+        }
+        #endregion
+
+        #region Constructors
+        private readonly App App = App.Current as App;
 
         public ChapterCacheObject(MangaObject MangaObject, ChapterObject ChapterObject, Boolean CreateProgressReporter = true)
             : base()

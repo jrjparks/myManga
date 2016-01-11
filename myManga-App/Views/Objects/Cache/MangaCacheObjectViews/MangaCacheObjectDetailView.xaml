@@ -1,10 +1,10 @@
 ﻿<UserControl
-    x:Class="myManga_App.Views.Objects.MangaCacheObjectView.MangaCacheObjectDetailView"
+    x:Class="myManga_App.Views.Objects.Cache.MangaCacheObjectViews.MangaCacheObjectDetailView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-    xmlns:local="clr-namespace:myManga_App.Views.Objects.MangaCacheObjectView"
+    xmlns:local="clr-namespace:myManga_App.Views.Objects.Cache.MangaCacheObjectViews"
     xmlns:Button="clr-namespace:myManga_App.Resources.Theme.Buttons"
     xmlns:Converters="clr-namespace:myManga_App.Converters"
     xmlns:Controls="clr-namespace:myManga_App.Controls"
@@ -21,7 +21,7 @@
                 <ResourceDictionary Source="/myManga;component/Themes/ListBox/ListBoxes.xaml"/>
                 <ResourceDictionary Source="/myManga;component/Themes/ListBox/ListBoxItems.xaml"/>
 
-                <ResourceDictionary Source="/myManga;component/Views/Objects/ChapterCacheObjectViews/ChapterCacheObjectListItems.xaml"/>
+                <ResourceDictionary Source="/myManga;component/Views/Objects/Cache/ChapterCacheObjectViews/ChapterCacheObjectListItems.xaml"/>
 
                 <ResourceDictionary Source="/myManga;component/Themes/ScrollBar/ScrollBar.xaml"/>
 

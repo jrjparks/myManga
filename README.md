@@ -20,8 +20,9 @@ Consolidates information from multiple sites.
 ### 3rd Party DLLs
 * HtmlAgilityPack
 * Microsoft.Windows.Shell
-* Ionic.Zip (Soon to be removed)
-* SmartThreadPool (Soon to be removed)
+* Ionic.Zip (Removed)
+ * Using [.NET 4.5 ZipArchive](https://msdn.microsoft.com/en-us/library/system.io.compression.ziparchive(v=vs.110).aspx)
+* SmartThreadPool (Removed)
 
 ## Features
 * Offline Storage of manga and chapters
@@ -31,7 +32,7 @@ Consolidates information from multiple sites.
 * **Manga Site Plugins.**
 * **Database Site Plugins.**
 * **Continuous Reading.**
-* Image Compression
+* Image Compression (Zip Archive)
 * Basic Reader Zoom - *Top of Reader (click the chapter information)*
 * **Laptop Screen Brightness Control**
 

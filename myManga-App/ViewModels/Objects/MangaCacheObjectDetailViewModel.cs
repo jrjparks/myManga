@@ -1,11 +1,8 @@
-﻿using Core.MVVM;
-using myManga_App.Objects;
+﻿using myManga_App.Objects;
 using myManga_App.Objects.Cache;
-using myMangaSiteExtension.Objects;
-using myMangaSiteExtension.Utilities;
 using System;
 using System.Collections;
-using System.IO;
+using System.Communication;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
@@ -138,8 +135,8 @@ namespace myManga_App.ViewModels.Objects
             ChapterCacheObject ChapterCacheObject = SelectedChapterObjects[0] as ChapterCacheObject;
             if (!ChapterCacheObject.IsLocal)
                 await App.ContentDownloadManager.DownloadAsync(ChapterCacheObject.MangaObject, ChapterCacheObject.ChapterObject, ChapterCacheObject.DownloadProgressReporter);
-            Messenger.Default.Send(new ReadChapterRequestObject(ChapterCacheObject.MangaObject, ChapterCacheObject.ChapterObject), "ReadChapterRequest");
-            Messenger.Default.Send(ChapterCacheObject, "ReadChapterCacheObject");
+            Messenger.Instance.Send(new ReadChapterRequestObject(ChapterCacheObject.MangaObject, ChapterCacheObject.ChapterObject), "ReadChapterRequest");
+            Messenger.Instance.Send(ChapterCacheObject, "ReadChapterCacheObject");
         }
         #endregion
 
@@ -163,8 +160,8 @@ namespace myManga_App.ViewModels.Objects
         {
             if (!ChapterCacheObject.IsLocal)
                 await App.ContentDownloadManager.DownloadAsync(ChapterCacheObject.MangaObject, ChapterCacheObject.ChapterObject, ChapterCacheObject.DownloadProgressReporter);
-            Messenger.Default.Send(new ReadChapterRequestObject(ChapterCacheObject.MangaObject, ChapterCacheObject.ChapterObject), "ReadChapterRequest");
-            Messenger.Default.Send(ChapterCacheObject, "ReadChapterCacheObject");
+            Messenger.Instance.Send(new ReadChapterRequestObject(ChapterCacheObject.MangaObject, ChapterCacheObject.ChapterObject), "ReadChapterRequest");
+            Messenger.Instance.Send(ChapterCacheObject, "ResumeChapterCacheObject");
         }
         #endregion
 

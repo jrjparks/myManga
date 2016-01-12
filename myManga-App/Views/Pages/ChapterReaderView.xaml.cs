@@ -1,5 +1,4 @@
-﻿using Core.Other;
-using myManga_App.ViewModels.Pages;
+﻿using myManga_App.ViewModels.Pages;
 using System.Windows.Controls;
 using System.Windows.Data;
 

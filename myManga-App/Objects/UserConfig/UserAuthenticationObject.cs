@@ -1,12 +1,10 @@
-﻿using Core.IO;
-using myManga_App.Objects.MVVM;
+﻿using myMangaSiteExtension.Primitives.Objects;
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
-using System.Windows;
 using System.Xml.Serialization;
 
 namespace myManga_App.Objects.UserConfig
@@ -15,11 +13,11 @@ namespace myManga_App.Objects.UserConfig
     public sealed class UserAuthenticationObject : SerializableObject, INotifyPropertyChanging, INotifyPropertyChanged
     {
         #region NotifyPropertyChange
-        public event EventHandler<String> UserConfigurationUpdated;
+        public event EventHandler<GenericEventArgs<String>> UserConfigurationUpdated;
         private void OnUserConfigurationUpdated(String e)
         {
             if (UserConfigurationUpdated != null)
-                UserConfigurationUpdated(this, e);
+                UserConfigurationUpdated(this, new GenericEventArgs<String>(e));
         }
 
         public event PropertyChangingEventHandler PropertyChanging;

@@ -10,7 +10,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>myManga_App</RootNamespace>
     <AssemblyName>myManga</AssemblyName>
-    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <TargetFrameworkProfile>
     </TargetFrameworkProfile>
     <FileAlignment>512</FileAlignment>
@@ -60,10 +60,6 @@
       <HintPath>..\packages\HtmlAgilityPack.1.4.9\lib\Net45\HtmlAgilityPack.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="Ionic.Zip, Version=1.9.6.0, Culture=neutral, PublicKeyToken=6583c7c814667745, processorArchitecture=MSIL">
-      <HintPath>..\packages\DotNetZip.1.9.6\lib\net20\Ionic.Zip.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
     <Reference Include="log4net, Version=1.2.15.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
       <HintPath>..\packages\log4net.2.0.5\lib\net45-full\log4net.dll</HintPath>
       <Private>True</Private>
@@ -77,6 +73,7 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.IO.Compression" />
     <Reference Include="System.IO.Compression.FileSystem" />
+    <Reference Include="System.Management" />
     <Reference Include="System.Runtime.Caching" />
     <Reference Include="System.Security" />
     <Reference Include="System.Web" />
@@ -97,9 +94,12 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Controls\Extensions\ItemsControlExtensions.cs" />
     <Compile Include="Controls\ListBoxExtentions.cs" />
-    <Compile Include="Controls\Primitives\DockingPopup.cs" />
+    <Compile Include="System\Windows\Controls\Primitives\DockingPopup.cs" />
     <Compile Include="Controls\InputBindingsBehavior.cs" />
+    <Compile Include="Controls\ScreenBrightness\MonitorBrightness.cs" />
+    <Compile Include="Controls\ScreenBrightness\ScreenBrightness.cs" />
     <Compile Include="Controls\Unsupported\RelativeAnimatingContentControl.cs" />
     <Compile Include="Converters\BooleanInverter.cs" />
     <Compile Include="Converters\BooleanToVisibilityConverter.cs" />
@@ -109,12 +109,24 @@
     <Compile Include="Converters\LocationListToCSV.cs" />
     <Compile Include="Converters\ObjectIsLocal.cs" />
     <Compile Include="Converters\StringArrayToCSV.cs" />
-    <Compile Include="IO\Local\VerifyArchiveFile.cs" />
+    <Compile Include="IO\DLL\Embedded.cs" />
+    <Compile Include="IO\DLL\Loader.cs" />
+    <Compile Include="IO\DLL\Manager.cs" />
+    <Compile Include="IO\Local\Object\Serializer.cs" />
+    <Compile Include="IO\Local\PathSafety.cs" />
     <Compile Include="IO\Local\ZipManager.cs" />
     <Compile Include="IO\Network\ContentDownloadManager.cs" />
     <Compile Include="IO\Network\WebDownloader.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="System\GenericEventArgs.cs" />
+    <Compile Include="System\Windows\Controls\BalancedWrapPanel\BalancedWrapPanel.cs" />
+    <Compile Include="System\Windows\Controls\BalancedWrapPanel\NumericExtensions.cs" />
+    <Compile Include="System\Windows\Controls\BalancedWrapPanel\OrientedSize.cs" />
+    <Compile Include="System\Windows\Controls\BalancedWrapPanel\TypeConverters.cs" />
+    <Compile Include="System\Windows\Input\DelegateCommand.cs" />
+    <Compile Include="System\Communication\Messenger.cs" />
+    <Compile Include="System\ComponentModel\NotifyPropertyChange.cs" />
     <Compile Include="Objects\About\AssemblyInformation.cs" />
     <Compile Include="Objects\Cache\ChapterCacheObject.cs" />
     <Compile Include="Objects\Cache\MangaArchiveCacheObject.cs" />
@@ -130,7 +142,9 @@
     <Compile Include="Objects\UserInterface\ReadChapterRequestObject.cs" />
     <Compile Include="Objects\UserInterface\SiteExtentionInformationObject.cs" />
     <Compile Include="Objects\UserConfig\UserConfigurationObject.cs" />
-    <Compile Include="Themes\Button\MetroButton.cs" />
+    <Compile Include="System\Runtime\Caching\RegionedMemoryCache.cs" />
+    <Compile Include="System\Threading\Tasks\Schedulers\LimitedConcurrencyTaskScheduler.cs" />
+    <Compile Include="System\Windows\Controls\MetroButton.cs" />
     <Compile Include="Controls\Window\myMangaWindow.cs" />
     <Compile Include="ViewModels\BaseViewModel.cs" />
     <Compile Include="ViewModels\Dialog\AuthenticationDialogViewModel.cs" />
@@ -342,11 +356,6 @@
     <Resource Include="Resources\Font\Font Awesome\fontawesome-webfont.ttf" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\myManga-DLL\Core\Core.csproj">
-      <Project>{1C67209C-E3C8-4FF9-9CB1-B788ECB4B284}</Project>
-      <Name>Core</Name>
-      <Private>True</Private>
-    </ProjectReference>
     <ProjectReference Include="..\myManga-Plugin\myMangaSiteExtension\myMangaSiteExtension.csproj">
       <Project>{088e2638-3bed-4b11-a548-36e3539d86f2}</Project>
       <Name>myMangaSiteExtension</Name>
@@ -357,8 +366,6 @@
     <Resource Include="Resources\Icon.ico" />
     <Resource Include="License.txt" />
     <EmbeddedResource Include="Resources\DLL\HtmlAgilityPack.dll" />
-    <EmbeddedResource Include="Resources\DLL\Ionic.Zip.dll" />
-    <EmbeddedResource Include="Resources\DLL\SmartThreadPool.dll" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.5">

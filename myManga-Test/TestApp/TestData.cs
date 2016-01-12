@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Xml.Serialization;
+﻿using myMangaSiteExtension.Primitives.Objects;
+using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.Serialization;
-using System.Reflection;
-using Core.IO;
+using System.Xml.Serialization;
 
 namespace TestApp
 {

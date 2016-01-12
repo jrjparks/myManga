@@ -1,5 +1,6 @@
-﻿using Core.IO;
+﻿using myManga_App.IO.Local.Object;
 using myManga_App.Objects.MVVM;
+using myMangaSiteExtension.Primitives.Objects;
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -15,11 +16,11 @@ namespace myManga_App.Objects.UserConfig
     public sealed class UserConfigurationObject : SerializableObject, INotifyPropertyChanging, INotifyPropertyChanged
     {
         #region NotifyPropertyChange
-        public event EventHandler<String> UserConfigurationUpdated;
+        public event EventHandler<GenericEventArgs<String>> UserConfigurationUpdated;
         private void OnUserConfigurationUpdated(String e)
         {
             if (UserConfigurationUpdated != null)
-                UserConfigurationUpdated(this, e);
+                UserConfigurationUpdated(this, new GenericEventArgs<String>(e));
         }
 
         public event PropertyChangingEventHandler PropertyChanging;
@@ -81,15 +82,15 @@ namespace myManga_App.Objects.UserConfig
         }
 
         [XmlIgnore]
-        private SaveType saveType = SaveType.XML;
+        private SerializeType serializeType = SerializeType.XML;
         [XmlElement]
-        public SaveType SaveType
+        public SerializeType SerializeType
         {
-            get { return saveType; }
+            get { return serializeType; }
             set
             {
                 OnPropertyChanging();
-                saveType = value;
+                serializeType = value;
                 OnPropertyChanged();
             }
         }

@@ -1,4 +1,4 @@
-﻿using Core.IO;
+﻿using myMangaSiteExtension.Primitives.Objects;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;

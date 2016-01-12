@@ -9,8 +9,8 @@
     xmlns:MVVM="clr-namespace:myManga_App.Objects.MVVM"
     xmlns:AssemblyInformation="clr-namespace:myManga_App.Objects.About"
     xmlns:App="clr-namespace:myManga_App"
-    xmlns:Button="clr-namespace:myManga_App.Resources.Theme.Buttons"
     xmlns:Converters="clr-namespace:myManga_App.Converters" 
+    xmlns:Controls="clr-namespace:System.Windows.Controls"
     x:Class="myManga_App.MainWindow"
     Title="{DynamicResource AppTitle}"
     WindowState="{Binding UserConfig.WindowState, Mode=TwoWay, Source={x:Static Application.Current}, UpdateSourceTrigger=PropertyChanged}"
@@ -64,19 +64,19 @@
 			    Orientation="Horizontal"
 			    TextElement.FontSize="20"
 			    TextElement.FontFamily="{DynamicResource OpenIconic}">
-                <Button:MetroButton
+                <Controls:MetroButton
                     Content="{DynamicResource HomeTabHeaderContent}"
 				    ToolTip="{DynamicResource HomeTabHeaderName}"
 				    Command="{Binding HomeCommand}"
 				    MinWidth="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"
                     Margin="3px 0px"/>
-                <Button:MetroButton
+                <Controls:MetroButton
 				    Content="{DynamicResource SearchTabHeaderContent}"
 				    ToolTip="{DynamicResource SearchTabHeaderName}"
 				    Command="{Binding SearchCommand}"
 				    MinWidth="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"
                     Margin="3px 0px"/>
-                <Button:MetroButton
+                <Controls:MetroButton
 				    Content="{DynamicResource ReaderTabHeaderContent}"
 				    ToolTip="{DynamicResource ReaderTabHeaderName}"
 				    Command="{Binding ReadCommand}"
@@ -98,14 +98,14 @@
                     TextElement.FontSize="20"
                     VerticalAlignment="Center"
                     Visibility="{Binding ContentViewModel.SupportsViewTypeChange, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
-                    <Button:MetroRadioButton 
+                    <Controls:MetroRadioButton 
                         Content="{DynamicResource oi-list}" 
                         IsChecked="{Binding ContentViewModel.ViewType, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static MVVM:ViewModelViewType.Normal}, Mode=TwoWay}"/>
-                    <Button:MetroRadioButton 
+                    <Controls:MetroRadioButton 
                         Content="{DynamicResource oi-grid-four-up}"
                         IsChecked="{Binding ContentViewModel.ViewType, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static MVVM:ViewModelViewType.Grid}, Mode=TwoWay}"/>
                 </StackPanel>
-                <Button:MetroButton
+                <Controls:MetroButton
 				    TextElement.FontSize="20"
 				    TextElement.FontFamily="{DynamicResource OpenIconic}"
 				    Content="{DynamicResource oi-wrench}"
@@ -173,7 +173,7 @@
             <StackPanel Orientation="Vertical" Margin="7">
                 <Grid Margin="5,0,0,-20" TextElement.FontSize="16" TextElement.FontWeight="Bold">
                     <TextBlock Text="{DynamicResource ProjectURL}" HorizontalAlignment="Left" />
-                    <TextBlock Text="{Binding Version, Source={x:Static AssemblyInformation:AssemblyInformation.Default}, StringFormat=v{0}}" HorizontalAlignment="Right" />
+                    <TextBlock Text="{Binding Version, Source={x:Static AssemblyInformation:AssemblyInformation.Instance}, StringFormat=v{0}}" HorizontalAlignment="Right" />
                 </Grid>
                 <TextBlock Text="{DynamicResource AppTitle}" FontSize="50" Margin="0,0,0,0"/>
             </StackPanel>

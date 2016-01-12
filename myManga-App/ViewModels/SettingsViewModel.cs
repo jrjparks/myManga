@@ -1,7 +1,4 @@
-﻿using Core.IO;
-using Core.IO.Storage.Manager.BaseInterfaceClasses;
-using Core.MVVM;
-using Core.Other.Singleton;
+﻿using myManga_App.IO.Local.Object;
 using myManga_App.Objects;
 using myManga_App.Objects.UserConfig;
 using myMangaSiteExtension.Attributes;
@@ -182,18 +179,18 @@ namespace myManga_App.ViewModels
         }
         #endregion
 
-        #region SaveType
-        public IEnumerable<SaveType> SaveTypes
-        { get { return Enum.GetValues(typeof(SaveType)).Cast<SaveType>(); } }
+        #region SerializeType
+        public IEnumerable<SerializeType> SerializeTypes
+        { get { return Enum.GetValues(typeof(SerializeType)).Cast<SerializeType>(); } }
 
-        private SaveType selectedSaveType;
-        public SaveType SelectedSaveType
+        private SerializeType selectedSerializeType;
+        public SerializeType SelectedSerializeType
         {
-            get { return selectedSaveType; }
+            get { return selectedSerializeType; }
             set
             {
                 OnPropertyChanging();
-                selectedSaveType = value;
+                selectedSerializeType = value;
                 OnPropertyChanged();
             }
         }
@@ -388,7 +385,7 @@ namespace myManga_App.ViewModels
                     IDatabaseExtensionDescriptionAttribute DatabaseExtensionDescriptionAttribute = DatabaseExtension.GetType().GetCustomAttribute<IDatabaseExtensionDescriptionAttribute>(false);
                     DatabaseExtensionInformationObjects.Add(new DatabaseExtensionInformationObject(DatabaseExtensionDescriptionAttribute) { Enabled = App.UserConfig.EnabledDatabaseExtentions.Contains(DatabaseExtensionDescriptionAttribute.Name) });
                 }
-                this.SelectedSaveType = App.UserConfig.SaveType;
+                this.SelectedSerializeType = App.UserConfig.SerializeType;
                 this.DefaultPageZoom = App.UserConfig.DefaultPageZoom;
                 this.RemoveBackChapters = App.UserConfig.RemoveBackChapters;
                 this.BackChaptersToKeep = App.UserConfig.BackChaptersToKeep;
@@ -409,8 +406,8 @@ namespace myManga_App.ViewModels
                 App.UserConfig.EnabledDatabaseExtentions.Add(DatabaseExtensionInformationName);
 
             App.UserConfig.DefaultPageZoom = this.DefaultPageZoom;
-            if (App.UserConfig.SaveType != SelectedSaveType) ConvertStoredFiles();
-            App.UserConfig.SaveType = SelectedSaveType;
+            if (App.UserConfig.SerializeType != SelectedSerializeType) ConvertStoredFiles();
+            App.UserConfig.SerializeType = SelectedSerializeType;
             App.UserConfig.RemoveBackChapters = this.RemoveBackChapters;
             App.UserConfig.BackChaptersToKeep = this.BackChaptersToKeep;
             App.UserConfig.Theme = this.Theme;
@@ -422,22 +419,22 @@ namespace myManga_App.ViewModels
             {
                 using (Stream MangaObjectStream = App.ZipManager.Read(filepath, typeof(MangaObject).Name))
                 {
-                    MangaObject MangaObject = MangaObjectStream.Deserialize<MangaObject>(App.UserConfig.SaveType);
-                    App.ZipManager.Write(filepath, typeof(MangaObject).Name, MangaObject.Serialize(SelectedSaveType));
+                    MangaObject MangaObject = MangaObjectStream.Deserialize<MangaObject>(App.UserConfig.SerializeType);
+                    App.ZipManager.Write(filepath, typeof(MangaObject).Name, MangaObject.Serialize(SelectedSerializeType));
                 }
 
                 using (Stream BookmarkObjectStream = App.ZipManager.Read(filepath, typeof(BookmarkObject).Name))
                 {
-                    BookmarkObject BookmarkObject = BookmarkObjectStream.Deserialize<BookmarkObject>(App.UserConfig.SaveType);
-                    App.ZipManager.Write(filepath, typeof(BookmarkObject).Name, BookmarkObject.Serialize(SelectedSaveType));
+                    BookmarkObject BookmarkObject = BookmarkObjectStream.Deserialize<BookmarkObject>(App.UserConfig.SerializeType);
+                    App.ZipManager.Write(filepath, typeof(BookmarkObject).Name, BookmarkObject.Serialize(SelectedSerializeType));
                 }
             }
             foreach (String filepath in Directory.EnumerateFiles(App.CHAPTER_ARCHIVE_DIRECTORY, App.CHAPTER_ARCHIVE_FILTER, SearchOption.AllDirectories))
             {
                 using (Stream ChapterObjectStream = App.ZipManager.Read(filepath, typeof(ChapterObject).Name))
                 {
-                    ChapterObject ChapterObject = ChapterObjectStream.Deserialize<ChapterObject>(App.UserConfig.SaveType);
-                    App.ZipManager.Write(filepath, typeof(ChapterObject).Name, ChapterObject.Serialize(SelectedSaveType));
+                    ChapterObject ChapterObject = ChapterObjectStream.Deserialize<ChapterObject>(App.UserConfig.SerializeType);
+                    App.ZipManager.Write(filepath, typeof(ChapterObject).Name, ChapterObject.Serialize(SelectedSerializeType));
                 }
             }
         }

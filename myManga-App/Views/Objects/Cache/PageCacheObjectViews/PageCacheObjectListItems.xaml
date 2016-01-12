@@ -5,6 +5,8 @@
 
     <Style TargetType="{x:Type ListBoxItem}" BasedOn="{StaticResource {x:Type ListBoxItem}}" x:Key="PageCacheObjectListBoxItem">
         <Setter Property="Foreground" Value="{DynamicResource window-theme-primary-disabled}"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource window-theme-primary}"/>
+        <Setter Property="BorderThickness" Value="3"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type ListBoxItem}">

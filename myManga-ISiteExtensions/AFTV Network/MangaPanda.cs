@@ -1,9 +1,9 @@
-﻿using Core.Other;
-using HtmlAgilityPack;
+﻿using HtmlAgilityPack;
 using myMangaSiteExtension.Attributes;
 using myMangaSiteExtension.Enums;
 using myMangaSiteExtension.Interfaces;
 using myMangaSiteExtension.Objects;
+using myMangaSiteExtension.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;

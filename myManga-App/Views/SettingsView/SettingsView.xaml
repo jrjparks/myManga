@@ -4,8 +4,8 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:Button="clr-namespace:myManga_App.Resources.Theme.Buttons"
     xmlns:Converters="clr-namespace:myManga_App.Converters"
+    xmlns:Controls="clr-namespace:System.Windows.Controls"
     xmlns:Objects="clr-namespace:myManga_App.Objects"
     xmlns:System="clr-namespace:System;assembly=mscorlib"
     xmlns:Dialog="clr-namespace:myManga_App.Views.Dialog"
@@ -47,7 +47,7 @@
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
                         <TextBlock Text="Site Extensions" VerticalAlignment="Top" TextWrapping="Wrap" FontSize="{StaticResource SettingNameFontSize}"/>
-                        <Button:MetroToggleButton 
+                        <Controls:MetroToggleButton 
                             Grid.Column="2"
                             Content="Authenticate"
                             IsChecked="{Binding ShowAuthentication}"/>
@@ -83,8 +83,8 @@
                     <TextBlock Text="Storage Serialization" VerticalAlignment="Center" TextWrapping="Wrap" FontSize="{StaticResource SettingNameFontSize}"/>
                     <ComboBox
                         Grid.Column="2"
-                        ItemsSource="{Binding SaveTypes}"
-                        SelectedItem="{Binding SelectedSaveType}"/>
+                        ItemsSource="{Binding SerializeTypes}"
+                        SelectedItem="{Binding SelectedSerializeType}"/>
                 </Grid>
                 <Grid Margin="0,3">
                     <Grid.ColumnDefinitions>
@@ -118,7 +118,7 @@
                         <ColumnDefinition/>
                     </Grid.ColumnDefinitions>
                     <TextBlock Text="Delete Older Chapters" VerticalAlignment="Center" TextWrapping="Wrap" FontSize="{StaticResource SettingNameFontSize}"/>
-                    <Button:MetroToggleButton
+                    <Controls:MetroToggleButton
                         Grid.Column="2"
                         x:Name="RemoveBackChaptersToggleButton"
                         HorizontalAlignment="Right"
@@ -173,11 +173,11 @@
 			Orientation="Horizontal"
 			TextElement.FontSize="20"
 			TextElement.FontFamily="{DynamicResource FontAwesome}">
-            <Button:MetroButton                
+            <Controls:MetroButton                
 				Content="{StaticResource fa-save}"
 				ContentStringFormat="{}{0} Save"
 				Command="{Binding SaveCommand}"/>
-            <Button:MetroButton
+            <Controls:MetroButton
 				Content="{StaticResource fa-times}"
 				ContentStringFormat="{}{0} Close"
 				Command="{Binding CloseCommand}"/>
@@ -195,7 +195,7 @@
                 <RowDefinition Height="250"/>
                 <RowDefinition Height="1*"/>
             </Grid.RowDefinitions>
-            <Button:MetroToggleButton
+            <Controls:MetroToggleButton
                 Grid.ColumnSpan="3"
                 Grid.RowSpan="3"
                 Background="{DynamicResource window-background}"

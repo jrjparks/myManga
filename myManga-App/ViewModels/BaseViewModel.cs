@@ -1,6 +1,6 @@
-﻿using Core.MVVM;
-using myManga_App.Objects.MVVM;
+﻿using myManga_App.Objects.MVVM;
 using System;
+using System.Communication;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -64,7 +64,7 @@ namespace myManga_App.ViewModels
         private Boolean? _IsInDesignMode = null;
         public Boolean IsInDesignMode { get { return (Boolean)(_IsInDesignMode ?? (_IsInDesignMode = DesignerProperties.GetIsInDesignMode(this))); } }
 
-        public void PullFocus() { Messenger.Default.Send(this, "FocusRequest"); }
+        public void PullFocus() { Messenger.Instance.Send(this, "FocusRequest"); }
 
         protected BaseViewModel(Boolean SupportsViewTypeChange = false)
         {
@@ -96,7 +96,7 @@ namespace myManga_App.ViewModels
                 if (disposing)
                 {
                     SubDispose();
-                    Messenger.Default.Send(this, "Dispose");
+                    Messenger.Instance.Send(this, "Dispose");
                 }
 
                 disposedValue = true;

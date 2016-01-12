@@ -5,7 +5,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
     xmlns:local="clr-namespace:myManga_App.Views.SettingsView"
-    xmlns:Button="clr-namespace:myManga_App.Resources.Theme.Buttons"
+    xmlns:Controls="clr-namespace:System.Windows.Controls"
     mc:Ignorable="d" 
     d:DesignHeight="250" d:DesignWidth="400"
     Background="{DynamicResource window-background}"
@@ -112,7 +112,7 @@
                     Text="Remember Me"
                     FontWeight="Bold" 
                     TextAlignment="Center"/>
-                <Button:MetroToggleButton
+                <Controls:MetroToggleButton
                     Grid.Column="1"
                     HorizontalAlignment="Right"
                     IsChecked="{Binding AuthenticationRememberMe}"
@@ -129,12 +129,12 @@
                     <ColumnDefinition Width="1.2*"/>
                     <ColumnDefinition Width="2*"/>
                 </Grid.ColumnDefinitions>
-                <Button:MetroButton
+                <Controls:MetroButton
                     Grid.Column="0"
                     Content="Login"
                     Command="{Binding AuthenticateCommand}"
                     CommandParameter="{Binding ElementName=AuthenticationPassword}"/>
-                <Button:MetroButton
+                <Controls:MetroButton
                     Grid.Column="2"
                     Content="Cancel"
                     Command="{Binding CancelAuthenticationCommand}"/>

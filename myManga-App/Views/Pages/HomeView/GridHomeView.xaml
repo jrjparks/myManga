@@ -5,9 +5,8 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
     xmlns:local="clr-namespace:myManga_App.Views.Pages.HomeView"
-    xmlns:Button="clr-namespace:myManga_App.Resources.Theme.Buttons"
     xmlns:Converters="clr-namespace:myManga_App.Converters"
-    xmlns:CoreWPF="clr-namespace:System.Windows.Controls;assembly=Core"
+    xmlns:Controls="clr-namespace:System.Windows.Controls"
     mc:Ignorable="d" 
     d:DesignHeight="768"
     d:DesignWidth="1024">
@@ -56,7 +55,7 @@
                             VirtualizingPanel.IsVirtualizing="True"
                             VirtualizingPanel.IsVirtualizingWhenGrouping="True"
                             VirtualizingPanel.VirtualizationMode="Recycling">
-                            <CoreWPF:BalancedWrapPanel
+                            <Controls:BalancedWrapPanel
                                 Margin="{TemplateBinding Padding}"
                                 IsItemsHost="True"
                                 VirtualizingPanel.IsVirtualizing="True"
@@ -91,7 +90,7 @@
                         <KeyBinding Command="{Binding Command, ElementName=ClearSearchButton}" Key="Esc"/>
                     </Grid.InputBindings>
 
-                    <Button:MetroButton
+                    <Controls:MetroButton
 				        x:Name="SearchButton"
                         Grid.Column="0"
 				        FontFamily="{DynamicResource OpenIconic}"
@@ -111,7 +110,7 @@
                         Background="{x:Null}"
 				        Text="{Binding SearchTerm, UpdateSourceTrigger=PropertyChanged}"/>
 
-                    <Button:MetroButton
+                    <Controls:MetroButton
 				        x:Name="ClearSearchButton"
                         Grid.Column="2"
 				        FontFamily="{DynamicResource OpenIconic}"
@@ -139,7 +138,7 @@
                     Orientation="Horizontal"
                     TextElement.FontSize="16">
 
-                    <Button:MetroButton
+                    <Controls:MetroButton
 			            x:Name="RefreshListButton"
 			            Content="Refresh List"
                         VerticalContentAlignment="Center"
@@ -147,7 +146,7 @@
 
                     <Rectangle Width="25"/>
 
-                    <Button:MetroToggleButton
+                    <Controls:MetroToggleButton
 			            x:Name="MoreInfoButton"
                         IsEnabled="{Binding SelectedMangaCacheObject, TargetNullValue=false}"
 			            Content="More Information"
@@ -170,7 +169,7 @@
                     <RowDefinition Height="Auto" MinHeight="600" MaxHeight="720"/>
                     <RowDefinition Height="1*"/>
                 </Grid.RowDefinitions>
-                <Button:MetroToggleButton
+                <Controls:MetroToggleButton
                     Grid.ColumnSpan="3"
                     Grid.RowSpan="3"
                     Background="{DynamicResource window-background}"
@@ -213,21 +212,21 @@
                             <StackPanel 
                                 Orientation="Vertical"
 			                    Grid.Column="2">
-                                <Button:MetroButton
+                                <Controls:MetroButton
 			                        FontFamily="{DynamicResource OpenIconic}"
 			                        Content="{DynamicResource oi-reload}"
 			                        Command="{Binding RefreshCommand}"
                                     CommandParameter="{Binding SelectedMangaCacheObject}"
 			                        Height="32"
 			                        Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"/>
-                                <Button:MetroButton
+                                <Controls:MetroButton
 			                        FontFamily="{DynamicResource OpenIconic}"
 			                        Content="{DynamicResource oi-trash}"
 			                        Command="{Binding DeleteCommand}"
                                     CommandParameter="{Binding SelectedMangaCacheObject}"
 			                        Height="32"
 			                        Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"/>
-                                <Button:MetroButton
+                                <Controls:MetroButton
 			                        FontFamily="{DynamicResource OpenIconic}"
 			                        Content="{DynamicResource oi-pencil}"
 			                        Command="{Binding EditCommand}"

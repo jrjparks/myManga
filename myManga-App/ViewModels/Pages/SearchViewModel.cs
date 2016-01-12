@@ -1,12 +1,10 @@
-﻿using Core.MVVM;
-using myMangaSiteExtension.Objects;
+﻿using myMangaSiteExtension.Objects;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Communication;
 using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 
@@ -24,7 +22,7 @@ namespace myManga_App.ViewModels.Pages
                     SearchProgressActive = (0 < ProgressValue && ProgressValue < 100);
                     SearchProgress = ProgressValue;
                 });
-                Messenger.Default.RegisterRecipient<String>(this, SearchTerm =>
+                Messenger.Instance.RegisterRecipient<String>(this, SearchTerm =>
                 {
                     SearchAsync(SearchTerm);
                     PullFocus();

@@ -189,7 +189,7 @@
                                     Grid.Row="4" 
                                     Foreground="{StaticResource text-muted}" 
                                     TextTrimming="CharacterEllipsis" 
-                                    Text="{Binding Locations, Converter={StaticResource LocationListToCSV}, Mode=OneWay, FallbackValue=No-Genre}" 
+                                    Text="{Binding MangaObject.Locations, Converter={StaticResource LocationListToCSV}, Mode=OneWay, FallbackValue=No-Locations}" 
                                     ToolTip="{Binding Text, RelativeSource={RelativeSource Self}}"/>
                             </Grid>
 

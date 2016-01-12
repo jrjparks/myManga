@@ -1,22 +1,15 @@
-﻿using Core.IO;
-using Core.MVVM;
-using myManga_App.Objects;
-using myManga_App.Objects.Cache;
-using myMangaSiteExtension.Objects;
+﻿using myManga_App.Objects.Cache;
+using myManga_App.ViewModels.Objects;
 using myMangaSiteExtension.Utilities;
 using System;
-using System.Collections;
 using System.Collections.Generic;
+using System.Communication;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
-using System.Runtime.Caching;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
-using myManga_App.ViewModels.Objects;
 
 namespace myManga_App.ViewModels.Pages
 {
@@ -31,7 +24,7 @@ namespace myManga_App.ViewModels.Pages
             if (!IsInDesignMode)
             {
                 ConfigureMangaArchiveCacheObjectView();
-                Messenger.Default.RegisterRecipient<MangaCacheObject>(this, SelectMangaCacheObject => SelectedMangaCacheObject = SelectMangaCacheObject, "SelectMangaCacheObject");
+                Messenger.Instance.RegisterRecipient<MangaCacheObject>(this, SelectMangaCacheObject => SelectedMangaCacheObject = SelectMangaCacheObject, "SelectMangaCacheObject");
             }
         }
 
@@ -80,7 +73,7 @@ namespace myManga_App.ViewModels.Pages
         }
 
         private void ForwardSearch(String SearchTerm)
-        { Messenger.Default.Send(SearchTerm, "SearchRequest"); }
+        { Messenger.Instance.Send(SearchTerm, "SearchRequest"); }
         #endregion
 
         #region SelectedMangaCacheObject

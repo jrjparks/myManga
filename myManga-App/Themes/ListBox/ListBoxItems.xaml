@@ -3,7 +3,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:system="clr-namespace:System;assembly=mscorlib"
     xmlns:converters="clr-namespace:myManga_App.Converters"
-    xmlns:button="clr-namespace:myManga_App.Resources.Theme.Buttons"
+    xmlns:Controls="clr-namespace:System.Windows.Controls"
     xmlns:objects="clr-namespace:myMangaSiteExtension.Objects;assembly=myMangaSiteExtension"
     xmlns:utils="clr-namespace:myMangaSiteExtension.Utilities;assembly=myMangaSiteExtension">
     <ResourceDictionary.MergedDictionaries>
@@ -93,476 +93,6 @@
         </Setter>
     </Style>
 
-    <Style TargetType="{x:Type ListBoxItem}" BasedOn="{StaticResource {x:Type ListBoxItem}}" x:Key="HomeView_List_MangaListBoxItem">
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="{x:Type ListBoxItem}">
-                    <Border
-                        x:Name="ItemBorder"
-                        BorderBrush="{TemplateBinding BorderBrush}"
-                        BorderThickness="0"
-                        Padding="{TemplateBinding BorderThickness}"
-                        Background="{TemplateBinding Background}"
-                        TextElement.Foreground="{TemplateBinding Foreground}">
-                        <Grid
-                            x:Name="Content"
-                            Margin="{TemplateBinding Padding}"
-                            SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
-                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                            TextBlock.TextAlignment="Left">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition/>
-                            </Grid.ColumnDefinitions>
-                            <Grid.RowDefinitions>
-                                <RowDefinition/>
-                                <RowDefinition/>
-                                <RowDefinition/>
-                                <RowDefinition/>
-                            </Grid.RowDefinitions>
-                            <Image
-                                x:Name="CoverImage"
-                                Grid.Column="0" 
-                                Grid.RowSpan="4" 
-                                Margin="6,2" 
-                                Width="48" 
-                                Height="72"
-                                Stretch="Uniform"
-                                Source="{Binding MangaObject, Converter={StaticResource LoadImageFromMangaArchive}, ConverterParameter=48, FallbackValue=/myManga;component/Resources/Images/FallbackMangaIcon.png}">
-                                <Image.CacheMode>
-                                    <BitmapCache/>
-                                </Image.CacheMode>
-                            </Image>
-                            <TextBlock Grid.Column="1" Grid.Row="0" VerticalAlignment="Center" Foreground="{StaticResource text-dark}" FontWeight="Bold" FontSize="14" TextTrimming="CharacterEllipsis" Text="{Binding MangaObject.Name, FallbackValue=No-Name}"/>
-                            <TextBlock Grid.Column="1" Grid.Row="1" VerticalAlignment="Center" Foreground="{StaticResource text-muted}" TextTrimming="CharacterEllipsis" Text="{Binding MangaObject.Locations, Converter={StaticResource LocationListToCSV}, Mode=OneWay, FallbackValue=No-Location}"/>
-                            <TextBlock Grid.Column="1" Grid.Row="2" VerticalAlignment="Center" Foreground="{StaticResource text-muted}" TextTrimming="CharacterEllipsis" Text="{Binding MangaObject.DatabaseLocations, Converter={StaticResource LocationListToCSV}, Mode=OneWay, FallbackValue=No-Database}"/>
-                            <TextBlock Grid.Column="1" Grid.Row="3" VerticalAlignment="Center" Foreground="{StaticResource text-muted}" TextTrimming="CharacterEllipsis" Text="{Binding MangaObject.Genres, Converter={StaticResource StringListToCSV}, Mode=OneWay, FallbackValue=No-Genre}"/>
-
-                            <TextBlock
-                                x:Name="Icon"
-                                Visibility="Collapsed"
-                                Grid.Column="0"
-                                Grid.Row="0"
-                                FontFamily="{DynamicResource OpenIconic}"
-                                FontSize="20">
-                                <TextBlock.Effect>
-                                    <DropShadowEffect Color="{DynamicResource window-background-color}" ShadowDepth="0"/>
-                                </TextBlock.Effect>
-                            </TextBlock>
-
-                            <ProgressBar
-                                HorizontalAlignment="Stretch"
-                                VerticalAlignment="Bottom"
-                                Visibility="{Binding ProgressActive, Converter={StaticResource BooleanToVisibilityConverter}, FallbackValue=Hidden}"
-                                Value="{Binding Progress, FallbackValue=0}"/>
-                        </Grid>
-                        <Border.InputBindings>
-                            <MouseBinding MouseAction="LeftDoubleClick" Command="{Binding Path=DataContext.ResumeReadingCommand, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl}}"/>
-                        </Border.InputBindings>
-                    </Border>
-                    <ControlTemplate.Triggers>
-                        <Trigger Property="IsSelected" Value="True">
-                            <Setter TargetName="ItemBorder" Property="BorderThickness" Value="{Binding Path=BorderThickness, RelativeSource={RelativeSource TemplatedParent}}"/>
-                            <Setter TargetName="ItemBorder" Property="Padding" Value="0"/>
-                        </Trigger>
-                        <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="ItemBorder" Property="Background" Value="{DynamicResource window-theme-secondary}"/>
-                            <Setter TargetName="ItemBorder" Property="TextElement.Foreground" Value="{DynamicResource window-theme-primary}"/>
-                        </Trigger>
-                        <DataTrigger Binding="{Binding IsNew}" Value="True">
-                            <Setter TargetName="Icon" Property="Visibility" Value="Visible"/>
-                            <Setter TargetName="Icon" Property="Text" Value="{DynamicResource oi-star}"/>
-                        </DataTrigger>
-                        <DataTrigger Binding="{Binding HasMoreToRead}" Value="True">
-                            <Setter TargetName="Icon" Property="Visibility" Value="Visible"/>
-                            <Setter TargetName="Icon" Property="Text" Value="{DynamicResource oi-badge}"/>
-                        </DataTrigger>
-                    </ControlTemplate.Triggers>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
-
-    <Style TargetType="{x:Type ListBoxItem}" BasedOn="{StaticResource {x:Type ListBoxItem}}" x:Key="HomeView_Grid_MangaListBoxItem">
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="{x:Type ListBoxItem}">
-                    <Border
-                        x:Name="ItemBorder"
-                        BorderBrush="{TemplateBinding BorderBrush}"
-                        BorderThickness="0"
-                        Padding="{TemplateBinding BorderThickness}"
-                        Background="{TemplateBinding Background}"
-                        TextElement.Foreground="{TemplateBinding Foreground}"
-                        ToolTip="{Binding MangaObject.Name, FallbackValue=No-Name}">
-                        <Grid
-                            x:Name="Content"
-                            Margin="{TemplateBinding Padding}"
-                            SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
-                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                            TextBlock.TextAlignment="Left">
-                            <Image
-                                x:Name="CoverImage"
-                                Grid.Column="0" 
-                                Grid.RowSpan="4"
-                                Width="150"
-                                Height="225"
-                                Stretch="Uniform"
-                                Source="{Binding MangaObject, Converter={StaticResource LoadImageFromMangaArchive}, ConverterParameter=150, FallbackValue=/myManga;component/Resources/Images/FallbackMangaIcon.png}" ClipToBounds="True">
-                                <Image.CacheMode>
-                                    <BitmapCache/>
-                                </Image.CacheMode>
-                            </Image>
-
-                            <StackPanel
-                                VerticalAlignment="Bottom"
-                                Orientation="Vertical"
-                                Opacity="0.9">
-                                <Border
-                                    Background="{DynamicResource window-background}"
-                                    Width="{Binding ElementName=Content, Path=ActualWidth, Mode=OneWay}"
-                                    Height="{Binding ElementName=Title, Path=ActualHeight, Mode=OneWay}"
-                                    MaxHeight="50">
-                                    <TextBlock 
-                                        x:Name="Title"
-                                        Foreground="{StaticResource text-dark}" 
-                                        FontWeight="Bold" 
-                                        FontSize="14" 
-                                        TextTrimming="CharacterEllipsis"
-                                        TextWrapping="Wrap"
-                                        TextAlignment="Center"
-                                        Text="{Binding MangaObject.Name, FallbackValue=No-Name}"/>
-                                </Border>
-                                <ProgressBar
-                                    Height="5"
-                                    Minimum="0"
-                                    Maximum="{Binding ChapterProgressMaximum, Mode=OneWay, FallbackValue=1}" 
-                                    Value="{Binding ChapterProgress, Mode=OneWay, FallbackValue=0}" 
-                                    Foreground="{DynamicResource window-theme-primary}" 
-                                    Background="{DynamicResource window-background}" 
-                                    BorderThickness="0"/>
-                            </StackPanel>
-                            <Path
-                                x:Name="IconBackground"
-                                Visibility="Collapsed"
-                                Grid.Column="0"
-                                Grid.Row="0"
-                                Data="M 0,0 v 48 L 48,0 Z"
-                                StrokeThickness="1"
-                                Opacity="0.9"
-                                Fill="{DynamicResource window-theme-primary}"
-                                Stroke="{DynamicResource window-theme-secondary}"
-                                SnapsToDevicePixels="True"/>
-                            <TextBlock
-                                x:Name="Icon"
-                                Visibility="Collapsed"
-                                Grid.Column="0"
-                                Grid.Row="0"
-                                FontFamily="{DynamicResource OpenIconic}"
-                                FontSize="20"
-                                Margin="8,4,0,0"
-                                SnapsToDevicePixels="True">
-                                <TextBlock.Effect>
-                                    <DropShadowEffect Color="{DynamicResource window-background-color}" ShadowDepth="0"/>
-                                </TextBlock.Effect>
-                            </TextBlock>
-
-                            <ProgressBar
-                                HorizontalAlignment="Stretch"
-                                VerticalAlignment="Bottom"
-                                Visibility="{Binding ProgressActive, Converter={StaticResource BooleanToVisibilityConverter}, FallbackValue=Hidden}"
-                                Value="{Binding Progress, FallbackValue=0}"/>
-                        </Grid>
-                        <Border.InputBindings>
-                            <MouseBinding MouseAction="LeftDoubleClick" Command="{Binding Path=DataContext.ResumeReadingCommand, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl}}"/>
-                        </Border.InputBindings>
-                    </Border>
-                    <ControlTemplate.Triggers>
-                        <Trigger Property="IsSelected" Value="True">
-                            <Setter TargetName="ItemBorder" Property="BorderThickness" Value="{Binding Path=BorderThickness, RelativeSource={RelativeSource TemplatedParent}}"/>
-                            <Setter TargetName="ItemBorder" Property="Padding" Value="0"/>
-                        </Trigger>
-                        <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="ItemBorder" Property="Background" Value="{DynamicResource window-theme-secondary}"/>
-                            <Setter TargetName="ItemBorder" Property="TextElement.Foreground" Value="{DynamicResource window-theme-primary}"/>
-                            <Setter TargetName="IconBackground" Property="Fill" Value="{DynamicResource window-theme-secondary}"/>
-                        </Trigger>
-                        <DataTrigger Binding="{Binding IsNew}" Value="True">
-                            <Setter TargetName="IconBackground" Property="Visibility" Value="Visible"/>
-                            <Setter TargetName="Icon" Property="Visibility" Value="Visible"/>
-                            <Setter TargetName="Icon" Property="Text" Value="{DynamicResource oi-star}"/>
-                        </DataTrigger>
-                        <DataTrigger Binding="{Binding HasMoreToRead}" Value="True">
-                            <Setter TargetName="IconBackground" Property="Visibility" Value="Visible"/>
-                            <Setter TargetName="Icon" Property="Visibility" Value="Visible"/>
-                            <Setter TargetName="Icon" Property="Text" Value="{DynamicResource oi-badge}"/>
-                        </DataTrigger>
-                    </ControlTemplate.Triggers>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
-
-    <Style TargetType="{x:Type ListBoxItem}" BasedOn="{StaticResource {x:Type ListBoxItem}}" x:Key="SearchView_List_MangaListBoxItem">
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="{x:Type ListBoxItem}">
-                    <Border
-                        x:Name="ItemBorder"
-                        BorderBrush="{TemplateBinding BorderBrush}"
-                        BorderThickness="0"
-                        Padding="{TemplateBinding BorderThickness}"
-                        Background="{TemplateBinding Background}"
-                        TextElement.Foreground="{TemplateBinding Foreground}">
-                        <Grid
-                            x:Name="Content"
-                            Margin="{TemplateBinding Padding}"
-                            SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
-                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                            TextBlock.TextAlignment="Left">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition/>
-                            </Grid.ColumnDefinitions>
-                            <Grid.RowDefinitions>
-                                <RowDefinition/>
-                                <RowDefinition/>
-                                <RowDefinition/>
-                                <RowDefinition/>
-                            </Grid.RowDefinitions>
-                            <Image
-                                Grid.Column="0" 
-                                Grid.RowSpan="4" 
-                                Margin="6,2" 
-                                Width="48" 
-                                Height="72"
-                                Source="{Binding Converter={StaticResource LoadImageFromMangaArchive}, FallbackValue=/myManga;component/Resources/Images/FallbackMangaIcon.png}"/>
-                            <TextBlock Grid.Column="1" Grid.Row="0" VerticalAlignment="Center" Foreground="{DynamicResource text-dark}" FontWeight="Bold" FontSize="14" TextTrimming="CharacterEllipsis" Text="{Binding Name, FallbackValue=No-Name}"/>
-                            <TextBlock Grid.Column="1" Grid.Row="1" VerticalAlignment="Center" Foreground="{DynamicResource text-muted}" TextTrimming="CharacterEllipsis" Text="{Binding Locations, Converter={StaticResource LocationListToCSV}, Mode=OneWay, FallbackValue=No-Location}"/>
-                            <TextBlock Grid.Column="1" Grid.Row="2" VerticalAlignment="Center" Foreground="{DynamicResource text-muted}" TextTrimming="CharacterEllipsis" Text="{Binding DatabaseLocations, Converter={StaticResource LocationListToCSV}, Mode=OneWay, FallbackValue=No-Database}"/>
-                            <TextBlock Grid.Column="1" Grid.Row="3" VerticalAlignment="Center" Foreground="{DynamicResource text-muted}" TextTrimming="CharacterEllipsis" Text="{Binding Genres, Converter={StaticResource StringListToCSV}, Mode=OneWay, FallbackValue=No-Genre}"/>
-                        </Grid>
-                    </Border>
-                    <ControlTemplate.Triggers>
-                        <Trigger Property="IsSelected" Value="True">
-                            <Setter TargetName="ItemBorder" Property="BorderThickness" Value="{Binding Path=BorderThickness, RelativeSource={RelativeSource TemplatedParent}}"/>
-                            <Setter TargetName="ItemBorder" Property="Padding" Value="0"/>
-                        </Trigger>
-                        <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="ItemBorder" Property="Background" Value="{DynamicResource window-theme-secondary}"/>
-                            <Setter TargetName="ItemBorder" Property="TextElement.Foreground" Value="{DynamicResource window-theme-primary}"/>
-                        </Trigger>
-                    </ControlTemplate.Triggers>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
-
-    <Style TargetType="{x:Type ListBoxItem}" BasedOn="{StaticResource {x:Type ListBoxItem}}" x:Key="HomeView_List_ChapterListBoxItem">
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="{x:Type ListBoxItem}">
-                    <Border
-                        x:Name="ItemBorder"
-                        BorderBrush="{TemplateBinding BorderBrush}"
-                        BorderThickness="0"
-                        Padding="{TemplateBinding BorderThickness}"
-                        Background="{TemplateBinding Background}"
-                        TextElement.Foreground="{TemplateBinding Foreground}">
-                        <Grid
-                            x:Name="Content"
-                            Margin="{TemplateBinding Padding}"
-                            SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
-                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                            TextBlock.TextAlignment="Left">
-                            <Grid.RowDefinitions>
-                                <RowDefinition/>
-                                <RowDefinition/>
-                            </Grid.RowDefinitions>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition/>
-                                <ColumnDefinition Width="Auto"/>
-                            </Grid.ColumnDefinitions>
-                            <TextBlock 
-                                Grid.Row="0" 
-                                VerticalAlignment="Center" 
-                                Foreground="{DynamicResource text-dark}" 
-                                FontWeight="Bold" FontSize="14" 
-                                TextTrimming="CharacterEllipsis" 
-                                Text="{Binding Name}"/>
-                            <TextBlock 
-                                Grid.Row="1" 
-                                VerticalAlignment="Center" 
-                                Foreground="{DynamicResource text-muted}" 
-                                TextTrimming="CharacterEllipsis">
-                                <TextBlock.Text>
-                                    <MultiBinding StringFormat="Vol {0} Chap {1}.{2}">
-                                        <Binding Path="Volume"/>
-                                        <Binding Path="Chapter"/>
-                                        <Binding Path="SubChapter"/>
-                                    </MultiBinding>
-                                </TextBlock.Text>
-                            </TextBlock>
-                            <!--<TextBlock
-                                x:Name="LocationIcon"
-                                Grid.Row="0"
-                                Grid.Column="1"
-                                FontFamily="{DynamicResource FontAwesome}"
-                                Text="{StaticResource fa-cloud}"
-                                TextAlignment="Center"
-                                VerticalAlignment="Center"/>-->
-                            <!--<button:MetroButton
-                                x:Name="ReadChapterButton"
-                                Grid.Row="0"
-                                Grid.Column="1"
-                                FontFamily="{DynamicResource OpenIconic}"
-                                Content="{StaticResource oi-book}"
-                                Command="{Binding Path=DataContext.ReadChapterCommand, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl}}"
-                                CommandParameter="{Binding}"/>
-                            <button:MetroButton
-                                x:Name="DownloadButton"
-                                Grid.Row="1"
-                                Grid.Column="1"
-                                FontFamily="{DynamicResource OpenIconic}"
-                                Content="{StaticResource oi-data-transfer-download}"
-                                Command="{Binding Path=DataContext.DownloadChapterCommand, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl}}"
-                                CommandParameter="{Binding}"/>-->
-                            <button:MetroButton
-                                x:Name="ChapterActionButton"
-                                Margin="0,2"
-                                Grid.RowSpan="2"
-                                Grid.Column="1"
-                                Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"
-                                FontFamily="{DynamicResource OpenIconic}"
-                                Content="{StaticResource oi-book}"
-                                Command="{Binding Path=DataContext.ReadChapterCommand, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl, AncestorLevel=2}}"
-                                CommandParameter="{Binding}"/>
-                        </Grid>
-                    </Border>
-                    <ControlTemplate.Triggers>
-                        <Trigger Property="IsSelected" Value="True">
-                            <Setter TargetName="ItemBorder" Property="BorderThickness" Value="{Binding Path=BorderThickness, RelativeSource={RelativeSource TemplatedParent}}"/>
-                            <Setter TargetName="ItemBorder" Property="Padding" Value="0"/>
-                        </Trigger>
-                        <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="ChapterActionButton" Property="Background" Value="{DynamicResource window-theme-secondary}"/>
-                            <Setter TargetName="ItemBorder" Property="Background" Value="{DynamicResource window-theme-secondary}"/>
-                            <Setter TargetName="ItemBorder" Property="TextElement.Foreground" Value="{DynamicResource window-theme-primary}"/>
-                        </Trigger>
-                        <DataTrigger Value="True">
-                            <DataTrigger.Binding>
-                                <MultiBinding Converter="{StaticResource EqualsConverter}">
-                                    <Binding/>
-                                    <Binding Path="DataContext.ResumeChapterObject" RelativeSource="{RelativeSource FindAncestor, AncestorType={x:Type ItemsControl}}"/>
-                                </MultiBinding>
-                            </DataTrigger.Binding>
-                            <DataTrigger.Setters>
-                                <Setter TargetName="ItemBorder" Property="BorderThickness" Value="{Binding Path=BorderThickness, RelativeSource={RelativeSource TemplatedParent}}"/>
-                                <Setter TargetName="ItemBorder" Property="Padding" Value="0"/>
-                                <Setter TargetName="ItemBorder" Property="BorderBrush" Value="{DynamicResource window-theme-primary-disabled}"/>
-                                <Setter TargetName="ItemBorder" Property="TextElement.Foreground" Value="{DynamicResource window-theme-primary}"/>
-                            </DataTrigger.Setters>
-                        </DataTrigger>
-                        <DataTrigger Binding="{Binding Read}" Value="True">
-
-                        </DataTrigger>
-                        <DataTrigger Value="False">
-                            <DataTrigger.Binding>
-                                <MultiBinding Converter="{StaticResource ObjectIsLocal}">
-                                    <Binding/>
-                                    <Binding Path="DataContext.MangaObject" RelativeSource="{RelativeSource FindAncestor, AncestorType={x:Type ItemsControl}}"/>
-                                    <Binding Path="DataContext.LastUpdate" RelativeSource="{RelativeSource FindAncestor, AncestorType={x:Type ItemsControl}}"/>
-                                </MultiBinding>
-                            </DataTrigger.Binding>
-                            <Setter TargetName="ChapterActionButton" Property="Content" Value="{StaticResource oi-cloud-download}"/>
-                            <Setter TargetName="ChapterActionButton" Property="Command" Value="{Binding Path=DataContext.DownloadChapterCommand, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl, AncestorLevel=2}}"/>
-                        </DataTrigger>
-                    </ControlTemplate.Triggers>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
-
-    <Style TargetType="{x:Type ListBoxItem}" BasedOn="{StaticResource {x:Type ListBoxItem}}" x:Key="SearchView_ChapterListBoxItem">
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="{x:Type ListBoxItem}">
-                    <Border
-                        x:Name="ItemBorder"
-                        BorderBrush="{TemplateBinding BorderBrush}"
-                        BorderThickness="0"
-                        Padding="{TemplateBinding BorderThickness}"
-                        Background="{TemplateBinding Background}"
-                        TextElement.Foreground="{TemplateBinding Foreground}">
-                        <Grid
-                            x:Name="Content"
-                            Margin="{TemplateBinding Padding}"
-                            SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
-                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                            TextBlock.TextAlignment="Left">
-                            <Grid.RowDefinitions>
-                                <RowDefinition/>
-                                <RowDefinition/>
-                            </Grid.RowDefinitions>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition/>
-                                <ColumnDefinition Width="Auto"/>
-                            </Grid.ColumnDefinitions>
-                            <TextBlock Grid.Row="0" VerticalAlignment="Center" Foreground="{DynamicResource text-dark}" FontWeight="Bold" FontSize="14" TextTrimming="CharacterEllipsis" Text="{Binding Name}"/>
-                            <TextBlock Grid.Row="1" VerticalAlignment="Center" Foreground="{DynamicResource text-muted}" TextTrimming="CharacterEllipsis">
-                                <TextBlock.Text>
-                                    <MultiBinding StringFormat="Vol {0} Chap {1}.{2}">
-                                        <Binding Path="Volume"/>
-                                        <Binding Path="Chapter"/>
-                                        <Binding Path="SubChapter"/>
-                                    </MultiBinding>
-                                </TextBlock.Text>
-                            </TextBlock>
-                            <TextBlock
-                                x:Name="LocationIcon"
-                                Grid.Row="0"
-                                Grid.Column="1"
-                                FontFamily="{DynamicResource FontAwesome}"
-                                Text="{StaticResource fa-cloud}"
-                                TextAlignment="Center"
-                                VerticalAlignment="Center"/>
-                            <button:MetroButton
-                                x:Name="DownloadButton"
-                                Grid.Row="1"
-                                Grid.Column="1"
-                                FontFamily="{DynamicResource FontAwesome}"
-                                Content="{StaticResource fa-download}"
-                                Command="{Binding Path=DataContext.DownloadChapterCommand, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl}}"
-                                CommandParameter="{Binding}"/>
-                        </Grid>
-                    </Border>
-                    <ControlTemplate.Triggers>
-                        <Trigger Property="IsSelected" Value="True">
-                            <Setter TargetName="ItemBorder" Property="BorderThickness" Value="{Binding Path=BorderThickness, RelativeSource={RelativeSource AncestorType={x:Type ListBoxItem}}}"/>
-                            <Setter TargetName="ItemBorder" Property="Padding" Value="0"/>
-                        </Trigger>
-                        <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="DownloadButton" Property="Background" Value="{DynamicResource window-theme-secondary}"/>
-                            <Setter TargetName="ItemBorder" Property="Background" Value="{DynamicResource window-theme-secondary}"/>
-                            <Setter TargetName="ItemBorder" Property="TextElement.Foreground" Value="{DynamicResource window-theme-primary}"/>
-                        </Trigger>
-                        <DataTrigger Binding="{Binding Read}" Value="True">
-
-                        </DataTrigger>
-                        <DataTrigger Binding="{Binding IsLocalContent}" Value="True">
-                            <Setter TargetName="LocationIcon" Property="Text" Value="{StaticResource fa-hdd-o}"/>
-                        </DataTrigger>
-                    </ControlTemplate.Triggers>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
-
     <Style TargetType="{x:Type ListBoxItem}" BasedOn="{StaticResource {x:Type ListBoxItem}}" x:Key="ReaderView_PageListBoxItem">
         <Setter Property="Foreground" Value="{DynamicResource window-theme-primary-disabled}"/>
         <Setter Property="Template">
@@ -646,7 +176,7 @@
                             VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
                             TextBlock.TextAlignment="Left">
                             <StackPanel Orientation="Horizontal">
-                                <button:MetroToggleButton 
+                                <Controls:MetroToggleButton 
                                     x:Name="EnabledButton"
                                     Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"
                                     Content="{DynamicResource oi-x}"
@@ -656,14 +186,14 @@
                             </StackPanel>
                             <!-- Start -->
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                                <button:MetroButton
+                                <Controls:MetroButton
                                     x:Name="UpArrow"
                                     Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"
 									FontFamily="{DynamicResource OpenIconic}" 
 									Content="{DynamicResource oi-arrow-thick-top}"
 									Command="{Binding DataContext.MoveUpCommand, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ItemsControl}}}"
 									CommandParameter="{Binding Name, ConverterParameter=Site:\{0\}, Converter={StaticResource CommandParameterStringFormat}}"/>
-                                <button:MetroButton
+                                <Controls:MetroButton
                                     x:Name="DownArrow"
                                     Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"
 									FontFamily="{DynamicResource OpenIconic}" 
@@ -717,7 +247,7 @@
                             VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
                             TextBlock.TextAlignment="Left">
                             <StackPanel Orientation="Horizontal">
-                                <button:MetroToggleButton 
+                                <Controls:MetroToggleButton 
                                     x:Name="EnabledButton"
                                     Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"
                                     Content="{DynamicResource oi-x}"
@@ -727,14 +257,14 @@
                             </StackPanel>
                             <!-- Start -->
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                                <button:MetroButton
+                                <Controls:MetroButton
                                     x:Name="UpArrow"
                                     Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"
 									FontFamily="{DynamicResource OpenIconic}" 
 									Content="{DynamicResource oi-arrow-thick-top}"
 									Command="{Binding DataContext.MoveUpCommand, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ItemsControl}}}"
 									CommandParameter="{Binding Name, ConverterParameter=Database:\{0\}, Converter={StaticResource CommandParameterStringFormat}}"/>
-                                <button:MetroButton
+                                <Controls:MetroButton
                                     x:Name="DownArrow"
                                     Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"
 									FontFamily="{DynamicResource OpenIconic}" 

@@ -1,22 +1,17 @@
-﻿using System;
+﻿using myManga_App.IO.Local;
+using myManga_App.IO.Local.Object;
+using myMangaSiteExtension.Attributes;
+using myMangaSiteExtension.Interfaces;
+using myMangaSiteExtension.Objects;
+using myMangaSiteExtension.Utilities;
+using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Net;
 using System.Linq;
+using System.Net;
 using System.Reflection;
-using myMangaSiteExtension;
-using myMangaSiteExtension.Attributes;
-using myMangaSiteExtension.Objects;
-using Core.IO;
-using Core.Other;
-using myMangaSiteExtension.Interfaces;
-using myMangaSiteExtension.Utilities;
-using HtmlAgilityPack;
-using System.Text;
-using Core.IO.Storage.Manager.BaseInterfaceClasses;
-using Core.IO.Storage;
-using System.Threading.Tasks;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace TestApp
 {
@@ -24,7 +19,6 @@ namespace TestApp
     {
         static Dictionary<String, ISiteExtension> SiteExtentions = new Dictionary<String, ISiteExtension>();
         static Dictionary<String, IDatabaseExtension> DatabaseExtentions = new Dictionary<String, IDatabaseExtension>();
-        static ZipStorage zip_storage;
         static ZipManager zipManager;
         static object _lock = new object();
 
@@ -34,12 +28,11 @@ namespace TestApp
             test.Name = "Test";
             test.MangaType = myMangaSiteExtension.Enums.MangaObjectType.Unknown;
 
-            Stream test_stream_1 = test.Serialize(SaveType.Binary);
-            MangaObject test2 = test_stream_1.Deserialize<MangaObject>(SaveType.Binary);
+            Stream test_stream_1 = test.Serialize(SerializeType.Binary);
+            MangaObject test2 = test_stream_1.Deserialize<MangaObject>(SerializeType.Binary);
 
-
-            zip_storage = Core.Other.Singleton.Singleton<ZipStorage>.Instance;
-            zipManager = Core.Other.Singleton.Singleton<ZipManager>.Instance;
+            
+            zipManager = new ZipManager();
 
             //SiteExtentions.Add("MangaReader", new AFTV_Network.MangaReader());
             //SiteExtentions.Add("MangaPanda", new AFTV_Network.MangaPanda());
@@ -66,7 +59,6 @@ namespace TestApp
             //LoadManga();
             //Search();
             LoadMangaAsync().Wait();
-            zip_storage.Dispose();
             zipManager.Dispose();
         }
 
@@ -121,7 +113,7 @@ namespace TestApp
                     MangaObject mObj = SearchResults[srIndex];
                     mObj.LoadMangaObject();
                     mObj.SortChapters();
-                    zip_storage.Write(String.Format("{0}/{1}", Environment.CurrentDirectory, String.Format("{0}.ma", mObj.Name).SafeFileName()), "MangaObject", mObj.Serialize(SaveType.XML));
+                    zipManager.Write(String.Format("{0}/{1}", Environment.CurrentDirectory, String.Format("{0}.ma", mObj.Name).SafeFileName()), "MangaObject", mObj.Serialize(SerializeType.XML));
                     //mObj.SaveToArchive(String.Format("{0}.ma", mObj.Name).SafeFileName(), "MangaObject", SaveType.XML);
                 }
                 else
@@ -292,7 +284,7 @@ namespace TestApp
             Console.ReadLine();
             Console.WriteLine("Loading...");
             cObj.LoadPageObjects(0);
-            zip_storage.Write(cObj.Name + ".xml.mca", "ChapterObject", cObj.Serialize(SaveType.XML));
+            zipManager.Write(cObj.Name + ".xml.mca", "ChapterObject", cObj.Serialize(SerializeType.XML));
             //cObj.SaveToArchive(cObj.Name + ".xml.mca", "ChapterObject", SaveType.XML);
             Console.WriteLine("Returned ChapterObject:");
             //*
@@ -360,7 +352,7 @@ namespace TestApp
             String StorageFileName = ChapterObject.Volume + "." + ChapterObject.Chapter + "." + ChapterObject.SubChapter + ".ca.zip";
             written = await zipManager.Retry(async () =>
             {
-                return await zipManager.WriteAsync(StorageFileName, "ChapterObject", ChapterObject.Serialize(SaveType.XML));
+                return await zipManager.WriteAsync(StorageFileName, "ChapterObject", ChapterObject.Serialize(SerializeType.XML));
             }, TimeSpan.FromMinutes(30));
             lock (_lock)
             {
@@ -383,7 +375,7 @@ namespace TestApp
                     {
                         written = await zipManager.Retry(async () =>
                         {
-                            return await zipManager.WriteAsync(StorageFileName, "ChapterObject", ChapterObject.Serialize(SaveType.XML));
+                            return await zipManager.WriteAsync(StorageFileName, "ChapterObject", ChapterObject.Serialize(SerializeType.XML));
                         }, TimeSpan.FromMinutes(30));
                         lock (_lock)
                         {

@@ -1,4 +1,4 @@
-﻿using Core.IO;
+﻿using myMangaSiteExtension.Primitives.Objects;
 using myMangaSiteExtension.Enums;
 using System;
 using System.ComponentModel;

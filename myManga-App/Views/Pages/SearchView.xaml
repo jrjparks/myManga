@@ -5,8 +5,8 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
     xmlns:local="clr-namespace:myManga_App.Views.Pages"
-    xmlns:Button="clr-namespace:myManga_App.Resources.Theme.Buttons"
     xmlns:Converters="clr-namespace:myManga_App.Converters"
+    xmlns:Controls="clr-namespace:System.Windows.Controls"
     xmlns:MangaObjectViews="clr-namespace:myManga_App.Views.Objects.MangaObjectViews"
     mc:Ignorable="d" 
     d:DesignHeight="600"
@@ -75,7 +75,7 @@
                     <KeyBinding Command="{Binding Command, ElementName=ClearSearchButton}" Key="Esc"/>
                 </Grid.InputBindings>
 
-                <Button:MetroButton
+                <Controls:MetroButton
 				    x:Name="SearchButton"
 				    Grid.Column="0"
 				    FontFamily="{DynamicResource OpenIconic}"
@@ -95,7 +95,7 @@
                     Background="{x:Null}"
 				    Text="{Binding SearchTerm, UpdateSourceTrigger=PropertyChanged}"/>
 
-                <Button:MetroButton
+                <Controls:MetroButton
 				    x:Name="ClearSearchButton"
 				    Grid.Column="2"
 				    FontFamily="{DynamicResource OpenIconic}"
@@ -112,7 +112,7 @@
                 <Rectangle Fill="Gray" Margin="3"/>
                 <MangaObjectViews:MangaObjectView
                     DataContext="{Binding SelectedSearchResultMangaObject}"/>
-                <Button:MetroButton
+                <Controls:MetroButton
                     VerticalAlignment="Bottom"
                     FontFamily="{DynamicResource OpenIconic}"
                     Content="{DynamicResource oi-data-transfer-download}"

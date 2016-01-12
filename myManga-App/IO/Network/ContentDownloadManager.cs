@@ -1,4 +1,4 @@
-﻿using Core.IO;
+﻿using myManga_App.IO.Local.Object;
 using myMangaSiteExtension.Enums;
 using myMangaSiteExtension.Interfaces;
 using myMangaSiteExtension.Objects;
@@ -10,11 +10,9 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Runtime.Caching;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Threading.Tasks.Schedulers;
 
 namespace myManga_App.IO.Network
 {
@@ -160,7 +158,7 @@ namespace myManga_App.IO.Network
             await App.ZipManager.Retry(() => App.ZipManager.WriteAsync(
                 SavePath(MangaObject),
                 MangaObject.GetType().Name,
-                MangaObject.Serialize(SaveType: App.UserConfig.SaveType)
+                MangaObject.Serialize(SerializeType: App.UserConfig.SerializeType)
                 ), FILE_ACCESS_TIMEOUT, DEFAULT_DELAY, DELAY_INCREMENT);
         }
         #endregion
@@ -250,7 +248,7 @@ namespace myManga_App.IO.Network
             await App.ZipManager.Retry(() => App.ZipManager.WriteAsync(
                 SavePath(MangaObject, ChapterObject),
                 ChapterObject.GetType().Name,
-                ChapterObject.Serialize(SaveType: App.UserConfig.SaveType)
+                ChapterObject.Serialize(SerializeType: App.UserConfig.SerializeType)
                 ), FILE_ACCESS_TIMEOUT, DEFAULT_DELAY, DELAY_INCREMENT);
         }
         #endregion
@@ -299,7 +297,7 @@ namespace myManga_App.IO.Network
             await App.ZipManager.Retry(() => App.ZipManager.WriteAsync(
                 SavePath(MangaObject, ChapterObject),
                 ChapterObject.GetType().Name,
-                ChapterObject.Serialize(SaveType: App.UserConfig.SaveType)
+                ChapterObject.Serialize(SerializeType: App.UserConfig.SerializeType)
                 ), FILE_ACCESS_TIMEOUT, DEFAULT_DELAY, DELAY_INCREMENT);
 
             return ChapterObject;

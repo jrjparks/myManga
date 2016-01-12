@@ -1,12 +1,9 @@
-﻿using Core.MVVM;
-using System;
-using System.IO;
+﻿using System;
+using System.Communication;
 using System.Net;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
-using System.Windows.Threading;
 
 namespace myManga_App.ViewModels
 {
@@ -139,7 +136,7 @@ namespace myManga_App.ViewModels
 
                 SetValue(SettingsViewModelPropertyKey, new SettingsViewModel());
 
-                Messenger.Default.RegisterRecipient<BaseViewModel>(this, v =>
+                Messenger.Instance.RegisterRecipient<BaseViewModel>(this, v =>
                 {
                     if (ContentViewModel != v)
                         ContentViewModel = v;

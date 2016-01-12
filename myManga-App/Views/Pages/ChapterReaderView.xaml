@@ -5,15 +5,16 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
     xmlns:local="clr-namespace:myManga_App.Views.Pages"
-    xmlns:Controls="clr-namespace:myManga_App.Controls"
+    xmlns:Controls="clr-namespace:System.Windows.Controls"
+    xmlns:PrimitiveControls="clr-namespace:System.Windows.Controls.Primitives"
+    xmlns:AppControls="clr-namespace:myManga_App.Controls"
     xmlns:Converters="clr-namespace:myManga_App.Converters"
-    xmlns:Button="clr-namespace:myManga_App.Resources.Theme.Buttons"
     mc:Ignorable="d" 
     d:DesignHeight="400"
     d:DesignWidth="600"
     Background="{DynamicResource window-background}" 
     Foreground="{DynamicResource window-foreground}"
-    Controls:InputBindingsBehavior.HasInputBindingPrecedence="True">
+    AppControls:InputBindingsBehavior.HasInputBindingPrecedence="True">
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -58,11 +59,11 @@
             <ColumnDefinition Width="48"/>
         </Grid.ColumnDefinitions>
 
-        <Button:MetroToggleButton 
+        <Controls:MetroToggleButton 
             x:Name="PageListDropdown"
             Grid.ColumnSpan="3"
             IsHitTestVisible="{Binding IsOpen, Converter={StaticResource BooleanInverter}, ElementName=PageListPopup, Mode=OneWay}">
-            <Button:MetroToggleButton.Content>
+            <Controls:MetroToggleButton.Content>
                 <StackPanel Orientation="Horizontal">
                     <TextBlock 
                         Text="{Binding MangaObject.Name, StringFormat={}{0}\ :, FallbackValue=Un-Named\ Manga\ :}" 
@@ -93,9 +94,9 @@
                     <TextBlock 
                         Text="{Binding ChapterObject.Pages.Count, FallbackValue={}0, StringFormat={}{0}}"/>
                 </StackPanel>
-            </Button:MetroToggleButton.Content>
-        </Button:MetroToggleButton>
-        <Controls:DockingPopup
+            </Controls:MetroToggleButton.Content>
+        </Controls:MetroToggleButton>
+        <PrimitiveControls:DockingPopup
             x:Name="PageListPopup"
             AllowsTransparency="True"
             Width="{Binding ActualWidth, ElementName=PageListDropdown, Mode=OneWay}"
@@ -154,7 +155,7 @@
                         SmallChange="0.1" 
                         IsMoveToPointEnabled="True" 
                         IsSnapToTickEnabled="True"/>
-                    <Button:MetroButton
+                    <Controls:MetroButton
                         Grid.Column="2"
                         Content="Reset"
                         FontSize="14"
@@ -162,7 +163,7 @@
                         Command="{Binding ResetPageZoomCommand}"/>
                 </Grid>
             </StackPanel>
-        </Controls:DockingPopup>
+        </PrimitiveControls:DockingPopup>
 
         <ScrollViewer
             x:Name="PageImageContentScrollViewer"
@@ -251,7 +252,7 @@
             </Grid>
         </ScrollViewer>
 
-        <Button:MetroButton
+        <Controls:MetroButton
             Grid.Column="0"
             Grid.Row="1"
             VerticalContentAlignment="Center"
@@ -260,7 +261,7 @@
             Content="{DynamicResource oi-arrow-thick-left}"
             Command="{Binding PagePrevCommand}"
             FontSize="24"/>
-        <Button:MetroButton
+        <Controls:MetroButton
             Grid.Column="2"
             Grid.Row="1"
             VerticalContentAlignment="Center"

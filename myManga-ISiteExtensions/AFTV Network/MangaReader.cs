@@ -1,17 +1,17 @@
-﻿using Core.Other;
-using HtmlAgilityPack;
+﻿using HtmlAgilityPack;
 using myMangaSiteExtension.Attributes;
 using myMangaSiteExtension.Enums;
 using myMangaSiteExtension.Interfaces;
 using myMangaSiteExtension.Objects;
+using myMangaSiteExtension.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Reflection;
 using System.Text.RegularExpressions;
-using System.Windows;
-using System.Net;
 using System.Threading;
+using System.Windows;
 
 namespace AFTV_Network
 {

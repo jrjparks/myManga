@@ -1,13 +1,29 @@
-﻿using Core.Other.Singleton;
-using System;
+﻿using System;
 using System.Reflection;
 
 namespace myManga_App.Objects.About
 {
     public sealed class AssemblyInformation
     {
-        public static AssemblyInformation Default
-        { get { return Singleton<AssemblyInformation>.Instance; } }
+        #region Instance
+        private static AssemblyInformation _Instance;
+        private static Object SyncObj = new Object();
+        public static AssemblyInformation Instance
+        {
+            get
+            {
+                if (_Instance == null)
+                {
+                    lock (SyncObj)
+                    {
+                        if (_Instance == null)
+                        { _Instance = new AssemblyInformation(); }
+                    }
+                }
+                return _Instance;
+            }
+        }
+        #endregion
 
         public String Title { get; private set; }
         public String Product { get; private set; }

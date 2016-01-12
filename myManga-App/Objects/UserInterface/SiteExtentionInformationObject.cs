@@ -1,6 +1,6 @@
-﻿using Core.IO;
-using myMangaSiteExtension.Attributes;
+﻿using myMangaSiteExtension.Attributes;
 using myMangaSiteExtension.Enums;
+using myMangaSiteExtension.Primitives.Objects;
 using System;
 using System.ComponentModel;
 using System.Diagnostics;

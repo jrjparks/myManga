@@ -1,37 +1,35 @@
-﻿using System;
-using System.IO;
-using System.Windows;
-using System.Linq;
-using Core.DLL;
-using Core.IO;
-using myMangaSiteExtension.Utilities;
+﻿using myManga_App.IO.DLL;
+using myManga_App.IO.Local;
+using myManga_App.IO.Local.Object;
+using myManga_App.IO.Network;
+using myManga_App.Objects;
+using myManga_App.Objects.About;
+using myManga_App.Objects.Cache;
+using myManga_App.Objects.UserConfig;
 using myMangaSiteExtension.Collections;
 using myMangaSiteExtension.Interfaces;
-using myManga_App.Objects;
-using Core.IO.Storage.Manager.BaseInterfaceClasses;
-using myManga_App.Objects.About;
-using System.Collections.ObjectModel;
-using myManga_App.Objects.Cache;
-using myManga_App.IO.Network;
-using myManga_App.Objects.UserConfig;
-using System.Threading;
-using System.Runtime.Caching;
-using System.Windows.Threading;
-using System.Threading.Tasks;
 using myMangaSiteExtension.Objects;
+using myMangaSiteExtension.Utilities;
+using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Communication;
 using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Runtime.Caching;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Media.Imaging;
-using Core.MVVM;
-using myManga_App.IO.Local;
-using System.Windows.Media;
+using System.Windows.Threading;
 
 namespace myManga_App
 {
     /// <summary>
     /// Interaction logic for App.xaml
     /// </summary>
-    public partial class App : Application, IDisposable
+    public partial class App : Application
     {
         #region Logging
         private readonly log4net.ILog logger = log4net.LogManager.GetLogger(typeof(App));
@@ -40,7 +38,7 @@ namespace myManga_App
         {
             if (Equals(LogLevel, null))
                 LogLevel = log4net.Core.Level.All;
-            log4net.Appender.FileAppender appender = new log4net.Appender.FileAppender();
+            log4net.Appender.RollingFileAppender appender = new log4net.Appender.RollingFileAppender();
             appender.Layout = new log4net.Layout.SimpleLayout();
             appender.File = LOG_FILE_PATH;
             appender.AppendToFile = true;
@@ -52,7 +50,7 @@ namespace myManga_App
         #endregion
 
         #region IO
-        public ZipManager ZipManager
+        public IO.Local.ZipManager ZipManager
         { get; private set; }
 
         public ContentDownloadManager ContentDownloadManager
@@ -65,14 +63,27 @@ namespace myManga_App
         { get; set; }
         #endregion
 
-        #region DLL Storage
-        private readonly EmbeddedDLL emdll;
+        #region DLL Management
+        private readonly Embedded embedded = new Embedded();
 
-        public DLL_Manager<ISiteExtension, ISiteExtensionCollection> SiteExtensions
+        #region Storage
+        public Manager<ISiteExtension, ISiteExtensionCollection> SiteExtensions
         { get; private set; }
 
-        public DLL_Manager<IDatabaseExtension, IDatabaseExtensionCollection> DatabaseExtensions
+        public Manager<IDatabaseExtension, IDatabaseExtensionCollection> DatabaseExtensions
         { get; private set; }
+        #endregion
+
+        private void InitializeEmbedded()
+        {
+            SiteExtensions = new Manager<ISiteExtension, ISiteExtensionCollection>();
+            DatabaseExtensions = new Manager<IDatabaseExtension, IDatabaseExtensionCollection>();
+
+            AppDomain.CurrentDomain.AssemblyResolve += embedded.ResolveAssembly;
+            SiteExtensions.ManagerAppDomain.AssemblyResolve += embedded.ResolveAssembly;
+            DatabaseExtensions.ManagerAppDomain.AssemblyResolve += embedded.ResolveAssembly;
+        }
+
         #endregion
 
         #region Cache
@@ -101,12 +112,12 @@ namespace myManga_App
                 // Load BookmarkObject Data
                 Stream BookmarkObjectStream = ZipManager.UnsafeRead(ArchivePath, typeof(BookmarkObject).Name);
                 if (!Equals(BookmarkObjectStream, null))
-                { using (BookmarkObjectStream) { MangaCacheObject.BookmarkObject = BookmarkObjectStream.Deserialize<BookmarkObject>(UserConfig.SaveType); } }
+                { using (BookmarkObjectStream) { MangaCacheObject.BookmarkObject = BookmarkObjectStream.Deserialize<BookmarkObject>(UserConfig.SerializeType); } }
 
                 // Load MangaObject Data
                 Stream MangaObjectStream = ZipManager.UnsafeRead(ArchivePath, typeof(MangaObject).Name);
                 if (!Equals(MangaObjectStream, null))
-                { using (MangaObjectStream) { MangaCacheObject.MangaObject = MangaObjectStream.Deserialize<MangaObject>(UserConfig.SaveType); } }
+                { using (MangaObjectStream) { MangaCacheObject.MangaObject = MangaObjectStream.Deserialize<MangaObject>(UserConfig.SerializeType); } }
                 if (!Equals(MangaCacheObject.MangaObject, null))
                     MangaCacheObject.MangaObject = await MigrateCovers(ArchivePath, MangaCacheObject.MangaObject);
 
@@ -160,12 +171,12 @@ namespace myManga_App
                 // Load BookmarkObject Data
                 Stream BookmarkObjectStream = await ZipManager.Retry(() => ZipManager.ReadAsync(ArchivePath, typeof(BookmarkObject).Name), TimeSpan.FromMinutes(1));
                 if (!Equals(BookmarkObjectStream, null))
-                { using (BookmarkObjectStream) { MangaCacheObject.BookmarkObject = BookmarkObjectStream.Deserialize<BookmarkObject>(UserConfig.SaveType); } }
+                { using (BookmarkObjectStream) { MangaCacheObject.BookmarkObject = BookmarkObjectStream.Deserialize<BookmarkObject>(UserConfig.SerializeType); } }
 
                 // Load MangaObject Data
                 Stream MangaObjectStream = await ZipManager.Retry(() => ZipManager.ReadAsync(ArchivePath, typeof(MangaObject).Name), TimeSpan.FromMinutes(1));
                 if (!Equals(MangaObjectStream, null))
-                { using (MangaObjectStream) { MangaCacheObject.MangaObject = MangaObjectStream.Deserialize<MangaObject>(UserConfig.SaveType); } }
+                { using (MangaObjectStream) { MangaCacheObject.MangaObject = MangaObjectStream.Deserialize<MangaObject>(UserConfig.SerializeType); } }
                 if (!Equals(MangaCacheObject.MangaObject, null))
                     MangaCacheObject.MangaObject = await MigrateCovers(ArchivePath, MangaCacheObject.MangaObject);
 
@@ -231,7 +242,7 @@ namespace myManga_App
                         { Url = Cover, ExtensionName = DatabaseExtension.DatabaseExtensionDescriptionAttribute.Name });
                 }
 
-                await ZipManager.Retry(() => ZipManager.WriteAsync(ArchivePath, typeof(MangaObject).Name, MangaObject.Serialize(UserConfig.SaveType)), TimeSpan.FromMinutes(1));
+                await ZipManager.Retry(() => ZipManager.WriteAsync(ArchivePath, typeof(MangaObject).Name, MangaObject.Serialize(UserConfig.SerializeType)), TimeSpan.FromMinutes(1));
             }
             return MangaObject;
         }
@@ -239,10 +250,10 @@ namespace myManga_App
         /// <summary>
         /// Warning, this will completely reload the cache.
         /// </summary>
-        private async Task FullMangaCacheObject()
+        private async Task<TimeSpan> FullMangaCacheObject()
         {
-            String[] MangaArchivePaths = Directory.GetFiles(MANGA_ARCHIVE_DIRECTORY, MANGA_ARCHIVE_FILTER, SearchOption.TopDirectoryOnly);
             Stopwatch loadWatch = Stopwatch.StartNew();
+            String[] MangaArchivePaths = Directory.GetFiles(MANGA_ARCHIVE_DIRECTORY, MANGA_ARCHIVE_FILTER, SearchOption.TopDirectoryOnly);
 
             IEnumerable<Task<MangaCacheObject>> MangaCacheObjectTasksQuery = from MangaArchivePath in MangaArchivePaths select UnsafeLoadMangaCacheObjectAsync(MangaArchivePath);
             List<Task<MangaCacheObject>> MangaCacheObjectTasks = MangaCacheObjectTasksQuery.ToList();
@@ -262,6 +273,7 @@ namespace myManga_App
 
             TimeSpan loadTime = loadWatch.Elapsed;
             loadWatch.Stop();
+            return loadTime;
         }
         #endregion
 
@@ -280,7 +292,8 @@ namespace myManga_App
             USER_AUTH_FILENAME = "mymanga.auth.conf",
             USER_CONFIG_PATH = Path.Combine(Environment.CurrentDirectory, "mymanga.conf".SafeFileName()),
             USER_AUTH_PATH = Path.Combine(Environment.CurrentDirectory, "mymanga.auth.conf".SafeFileName()),
-            LOG_FILE_PATH = Path.Combine(Environment.CurrentDirectory, String.Format("mymanga-{0}-{1}.log", DateTime.Now.ToShortDateString(), DateTime.Now.ToShortTimeString()).SafeFileName());
+            LOG_DIRECTORY = Path.Combine(Environment.CurrentDirectory, "Logs").SafeFolder(),
+            LOG_FILE_PATH = Path.Combine(Environment.CurrentDirectory, "Logs", "mymanga.log");
 
         public UserConfigurationObject UserConfig
         { get; private set; }
@@ -311,26 +324,19 @@ namespace myManga_App
         }
         #endregion
 
-        private readonly AssemblyInformation assemblyInfo;
         public AssemblyInformation AssemblyInfo
-        { get { return assemblyInfo; } }
+        { get; private set; }
 
         public App()
         {
             AppMemoryCache = new RegionedMemoryCache("AppMemoryCache");
+            AssemblyInfo = new AssemblyInformation();
+
+            // Load Embedded DLLs from Resources.
+            InitializeEmbedded();
 
             // Configure log4net
             ConfigureLog4Net();
-
-            // Load Embedded DLLs from Resources.
-            emdll = new EmbeddedDLL();
-            SiteExtensions = new DLL_Manager<ISiteExtension, ISiteExtensionCollection>();
-            DatabaseExtensions = new DLL_Manager<IDatabaseExtension, IDatabaseExtensionCollection>();
-            assemblyInfo = new AssemblyInformation();
-
-            AppDomain.CurrentDomain.AssemblyResolve += emdll.ResolveAssembly;
-            SiteExtensions.DllAppDomain.AssemblyResolve += emdll.ResolveAssembly;
-            DatabaseExtensions.DllAppDomain.AssemblyResolve += emdll.ResolveAssembly;
 
             // Handle unhandled exceptions
             DispatcherUnhandledException += App_DispatcherUnhandledException;
@@ -356,6 +362,7 @@ namespace myManga_App
             ContentDownloadManager = new ContentDownloadManager(); // v2 - Async/Await based
 
             Startup += App_Startup;
+            Exit += App_Exit;
 
             InitializeComponent();
         }
@@ -371,10 +378,11 @@ namespace myManga_App
             e.Handled = true;
         }
 
-        async void App_Startup(object sender, StartupEventArgs e)
+        #region Application Events
+        private async void App_Startup(object sender, StartupEventArgs e)
         {
-            SiteExtensions.LoadDLL(PLUGIN_DIRECTORY, Filter: "*.mymanga.dll");
-            DatabaseExtensions.LoadDLL(PLUGIN_DIRECTORY, Filter: "*.mymanga.dll");
+            SiteExtensions.Load(PLUGIN_DIRECTORY, Filter: "*.mymanga.dll");
+            DatabaseExtensions.Load(PLUGIN_DIRECTORY, Filter: "*.mymanga.dll");
 
             LoadUserConfig();
             LoadUserAuthenticate();
@@ -388,6 +396,20 @@ namespace myManga_App
             MangaObjectArchiveWatcher.EnableRaisingEvents = true;
             ChapterObjectArchiveWatcher.EnableRaisingEvents = true;
         }
+
+        private void App_Exit(object sender, ExitEventArgs e)
+        {
+            AppMemoryCache.Dispose();
+            MangaObjectArchiveWatcher.Dispose();
+            ChapterObjectArchiveWatcher.Dispose();
+
+            ContentDownloadManager.Dispose();
+            ZipManager.Dispose();
+
+            SiteExtensions.Unload();
+            DatabaseExtensions.Unload();
+        }
+        #endregion
 
         #region File Watcher Events
         private void ConfigureFileWatchers()
@@ -436,13 +458,13 @@ namespace myManga_App
                         // If delete was the last item subtract from index
                         if (ExistingIndex >= MangaCacheObjects.Count) --ExistingIndex;
 
-                        Messenger.Default.Send((ExistingIndex >= 0) ? MangaCacheObjects[ExistingIndex] : null, "SelectMangaCacheObject");
+                        Messenger.Instance.Send((ExistingIndex >= 0) ? MangaCacheObjects[ExistingIndex] : null, "SelectMangaCacheObject");
                         break;
 
                     default:
                         break;
                 }
-                Messenger.Default.Send(e, "MangaObjectArchiveWatcher");
+                Messenger.Instance.Send(e, "MangaObjectArchiveWatcher");
             }
             else Dispatcher.Invoke(DispatcherPriority.Send, new Action(() => MangaObjectArchiveWatcher_Event(sender, e)));
         }
@@ -468,7 +490,7 @@ namespace myManga_App
                         break;
                 }
 
-                Messenger.Default.Send(e, "ChapterObjectArchiveWatcher");
+                Messenger.Instance.Send(e, "ChapterObjectArchiveWatcher");
             });
         }
         #endregion
@@ -476,17 +498,16 @@ namespace myManga_App
         #region User Config Files
         private void LoadUserAuthenticate()
         {
-            if (!File.Exists(USER_AUTH_PATH))
-                return;
-            using (Stream UserAuthenticationStream = File.OpenRead(USER_AUTH_PATH))
-            {
-                try { UserAuthentication = UserAuthenticationStream.Deserialize<UserAuthenticationObject>(SaveType: SaveType.XML); }
-                catch { }
-            }
+            if (File.Exists(USER_AUTH_PATH))
+                using (Stream UserAuthenticationStream = File.OpenRead(USER_AUTH_PATH))
+                {
+                    try { UserAuthentication = UserAuthenticationStream.Deserialize<UserAuthenticationObject>(SerializeType: SerializeType.XML); }
+                    catch { }
+                }
 
-            if (UserAuthenticationObject.Equals(this.UserAuthentication, null))
+            if (UserAuthenticationObject.Equals(UserAuthentication, null))
             {
-                this.UserAuthentication = new UserAuthenticationObject();
+                UserAuthentication = new UserAuthenticationObject();
             }
 
             CancellationTokenSource cts = new CancellationTokenSource();
@@ -494,7 +515,7 @@ namespace myManga_App
             {
                 try
                 {
-                    ISiteExtension siteExtension = this.SiteExtensions.DLLCollection[upa.PluginName];
+                    ISiteExtension siteExtension = SiteExtensions.DLLCollection[upa.PluginName];
                     siteExtension.Authenticate(new System.Net.NetworkCredential(upa.Username, upa.Password), cts.Token, null);
                 }
                 catch
@@ -507,27 +528,26 @@ namespace myManga_App
 
         private void LoadUserConfig()
         {
-            if (!File.Exists(USER_CONFIG_PATH))
-                return;
-            using (Stream UserConfigStream = File.OpenRead(USER_CONFIG_PATH))
-            {
-                try { UserConfig = UserConfigStream.Deserialize<UserConfigurationObject>(SaveType: SaveType.XML); }
-                catch { }
-            }
+            if (File.Exists(USER_CONFIG_PATH))
+                using (Stream UserConfigStream = File.OpenRead(USER_CONFIG_PATH))
+                {
+                    try { UserConfig = UserConfigStream.Deserialize<UserConfigurationObject>(SerializeType: SerializeType.XML); }
+                    catch { }
+                }
             if (UserConfigurationObject.Equals(this.UserConfig, null))
             {
-                this.UserConfig = new UserConfigurationObject();
+                UserConfig = new UserConfigurationObject();
 
                 // Enable all available Database Extentions
                 foreach (IDatabaseExtension DatabaseExtension in DatabaseExtensions.DLLCollection)
-                    this.UserConfig.EnabledDatabaseExtentions.Add(DatabaseExtension.DatabaseExtensionDescriptionAttribute.Name);
+                    UserConfig.EnabledDatabaseExtentions.Add(DatabaseExtension.DatabaseExtensionDescriptionAttribute.Name);
 
                 // Enable the first Site Extention if available
                 if (SiteExtensions.DLLCollection.Count > 0)
-                    this.UserConfig.EnabledSiteExtensions.Add(SiteExtensions.DLLCollection[0].SiteExtensionDescriptionAttribute.Name);
+                    UserConfig.EnabledSiteExtensions.Add(SiteExtensions.DLLCollection[0].SiteExtensionDescriptionAttribute.Name);
                 SaveUserConfig();
             }
-            ApplyTheme(this.UserConfig.Theme);
+            ApplyTheme(UserConfig.Theme);
         }
 
         public void SaveUserConfig()
@@ -535,7 +555,7 @@ namespace myManga_App
             using (FileStream fs = File.Open(USER_CONFIG_PATH, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None))
             {
                 fs.SetLength(0);
-                using (Stream UserConfigStream = UserConfig.Serialize(SaveType: SaveType.XML))
+                using (Stream UserConfigStream = UserConfig.Serialize(SerializeType: SerializeType.XML))
                 { UserConfigStream.CopyTo(fs); }
             }
         }
@@ -545,7 +565,7 @@ namespace myManga_App
             using (FileStream fs = File.Open(USER_AUTH_PATH, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None))
             {
                 fs.SetLength(0);
-                using (Stream UserAuthenticationStream = UserAuthentication.Serialize(SaveType: SaveType.XML))
+                using (Stream UserAuthenticationStream = UserAuthentication.Serialize(SerializeType: SerializeType.XML))
                 { UserAuthenticationStream.CopyTo(fs); }
             }
         }
@@ -556,38 +576,5 @@ namespace myManga_App
             if (Dispatcher.Thread == Thread.CurrentThread) action();
             else Dispatcher.Invoke(DispatcherPriority.Send, action);
         }
-
-        #region IDisposable Support
-        private bool disposedValue = false; // To detect redundant calls
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!disposedValue)
-            {
-                if (disposing)
-                {
-                    AppMemoryCache.Dispose();
-                    MangaObjectArchiveWatcher.Dispose();
-                    ChapterObjectArchiveWatcher.Dispose();
-
-                    ContentDownloadManager.Dispose();
-                    ZipManager.Dispose();
-
-                    try { SiteExtensions.Unload(); }
-                    catch { }
-                    try { DatabaseExtensions.Unload(); }
-                    catch { }
-                }
-
-                disposedValue = true;
-            }
-        }
-
-        public void Dispose()
-        { Dispose(true); }
-
-        ~App()
-        { Dispose(true); }
-        #endregion
     }
 }

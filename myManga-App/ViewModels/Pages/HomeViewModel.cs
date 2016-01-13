@@ -1,5 +1,5 @@
 ﻿using myManga_App.Objects.Cache;
-using myManga_App.ViewModels.Objects;
+using myManga_App.ViewModels.Objects.Cache.MangaCacheObjectViewModels;
 using myMangaSiteExtension.Utilities;
 using System;
 using System.Collections.Generic;

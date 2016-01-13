@@ -7,7 +7,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 
-namespace myManga_App.ViewModels.Objects
+namespace myManga_App.ViewModels.Objects.Cache.MangaCacheObjectViewModels
 {
     public sealed class MangaCacheObjectDetailViewModel : BaseViewModel
     {

@@ -124,16 +124,16 @@ namespace myManga_App.Objects.UserConfig
         }
 
         [XmlIgnore]
-        private readonly ObservableCollection<String> enabledDatabaseExtentions = new ObservableCollection<String>();
+        private readonly ObservableCollection<String> enabledDatabaseExtensions = new ObservableCollection<String>();
         [XmlArray, XmlArrayItem("DatabaseExtentionName")]
-        public ObservableCollection<String> EnabledDatabaseExtentions
+        public ObservableCollection<String> EnabledDatabaseExtensions
         {
-            get { return enabledDatabaseExtentions; }
+            get { return enabledDatabaseExtensions; }
             set
             {
-                enabledDatabaseExtentions.Clear();
+                enabledDatabaseExtensions.Clear();
                 foreach (String _value in value)
-                    enabledDatabaseExtentions.Add(_value);
+                    enabledDatabaseExtensions.Add(_value);
             }
         }
 
@@ -223,8 +223,8 @@ namespace myManga_App.Objects.UserConfig
             ViewTypes.CollectionChanged += (s, e) => OnPropertyChanged("ViewTypes");
             EnabledSiteExtensions.CollectionChanged += (s, e) => OnUserConfigurationUpdated("EnabledSiteExtensions");
             EnabledSiteExtensions.CollectionChanged += (s, e) => OnPropertyChanged("EnabledSiteExtensions");
-            EnabledDatabaseExtentions.CollectionChanged += (s, e) => OnUserConfigurationUpdated("EnabledDatabaseExtentions");
-            EnabledDatabaseExtentions.CollectionChanged += (s, e) => OnPropertyChanged("EnabledDatabaseExtentions");
+            EnabledDatabaseExtensions.CollectionChanged += (s, e) => OnUserConfigurationUpdated("EnabledDatabaseExtensions");
+            EnabledDatabaseExtensions.CollectionChanged += (s, e) => OnPropertyChanged("EnabledDatabaseExtensions");
         }
     }
 }

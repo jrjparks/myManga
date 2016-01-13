@@ -8,6 +8,7 @@
     xmlns:Converters="clr-namespace:myManga_App.Converters"
     xmlns:Controls="clr-namespace:System.Windows.Controls"
     xmlns:Objects="clr-namespace:myManga_App.Objects"
+    xmlns:DragDrop="clr-namespace:System.Windows.Controls.Behaviors.DragDrop"
     mc:Ignorable="d" 
     d:DesignHeight="600"
     d:DesignWidth="800"
@@ -21,10 +22,16 @@
                 <ResourceDictionary Source="/myManga;component/Resources/Localization/Dictionary_en-US.xaml"/>
                 <ResourceDictionary Source="/myManga;component/Themes/CoreResourceDictionary.xaml"/>
                 <ResourceDictionary Source="/myManga;component/Themes/Button/MetroButton.xaml"/>
-                <ResourceDictionary Source="/myManga;component/Themes/TextBox/TextBox.xaml"/>
+
+                <ResourceDictionary Source="/myManga;component/Themes/ListBox/ListBoxes.xaml"/>
 
                 <ResourceDictionary Source="/myManga;component/Themes/ScrollBar/ScrollBar.xaml"/>
                 <ResourceDictionary Source="/myManga;component/Themes/Slider/Slider.xaml"/>
+
+                <ResourceDictionary Source="/myManga;component/Themes/TabControl/TabControl.xaml"/>
+                <ResourceDictionary Source="/myManga;component/Themes/TabControl/TabItems.xaml"/>
+
+                <ResourceDictionary Source="/myManga;component/Views/Objects/Extensions/ExtensionObjectListItems.xaml"/>
             </ResourceDictionary.MergedDictionaries>
             <Converters:EnumToBooleanConverter x:Key="EnumToBooleanConverter"/>
             <Converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" TrueValue="Visible" FalseValue="Collapsed"/>
@@ -38,96 +45,194 @@
         BorderThickness="0,1,0,0"
         TextElement.FontSize="16">
 
-        <TabControl
-            TabStripPlacement="Left"
-            Padding="10,0,0,0">
+        <Grid>
 
-            <TabItem Header="General" Height="40" Width="90">
-                <ScrollViewer HorizontalScrollBarVisibility="Disabled">
+            <TabControl
+                TabStripPlacement="Left"
+                Padding="10,0,0,0"
+                BorderThickness="1,0,0,0">
 
-                    <StackPanel>
+                <TabItem Header="General" Height="40" Width="100">
+                    <ScrollViewer HorizontalScrollBarVisibility="Disabled">
 
-                        <HeaderedContentControl 
-                            Header="{Binding Value, ElementName=DefaultPageZoomSlider}" 
-                            HeaderStringFormat="Default Zoom Amount: {0:0.0}x">
-                            <Slider
-                                x:Name="DefaultPageZoomSlider"
-                                Grid.Column="2"
-                                Orientation="Horizontal"
-                                Minimum="0.5"
-                                Maximum="2"
-                                Value="{Binding Path=DefaultPageZoom, Mode=TwoWay, FallbackValue=1}" 
-                                TickPlacement="BottomRight"
-                                TickFrequency="0.1"
-                                LargeChange="0.5" 
-                                SmallChange="0.1" 
-                                IsMoveToPointEnabled="True" 
-                                IsSnapToTickEnabled="True"/>
+                        <StackPanel>
+
+                            <HeaderedContentControl 
+                                Header="{Binding Value, ElementName=DefaultPageZoomSlider}" 
+                                HeaderStringFormat="Default Zoom Amount: {0:0.0}x"
+                                Margin="2,6">
+                                <Slider
+                                    x:Name="DefaultPageZoomSlider"
+                                    Grid.Column="2"
+                                    Orientation="Horizontal"
+                                    Minimum="0.5"
+                                    Maximum="2"
+                                    Value="{Binding Path=UserConfiguration.DefaultPageZoom, Mode=TwoWay, FallbackValue=1}" 
+                                    TickPlacement="BottomRight"
+                                    TickFrequency="0.1"
+                                    LargeChange="0.5" 
+                                    SmallChange="0.1" 
+                                    IsMoveToPointEnabled="True" 
+                                    IsSnapToTickEnabled="True"/>
+                            </HeaderedContentControl>
+
+                            <HeaderedContentControl Header="Theme" Margin="2,6">
+                                <StackPanel Orientation="Horizontal">
+                                    <RadioButton 
+                                        Margin="0,0,5,0"
+                                        GroupName="Theme" 
+                                        VerticalContentAlignment="Center"
+                                        IsChecked="{Binding Path=UserConfiguration.Theme, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static Objects:ThemeType.Light}}">
+                                        <RadioButton.Resources>
+                                            <ResourceDictionary Source="/myManga;component/Themes/LightTheme.xaml"/>
+                                        </RadioButton.Resources>
+                                        <Border
+                                            Height="100"
+                                            Width="100"
+                                            BorderThickness="1"
+                                            BorderBrush="{DynamicResource window-theme-primary}"
+                                            Background="{DynamicResource window-background}"
+                                            TextElement.Foreground="{DynamicResource window-foreground}">
+                                            <Grid Margin="3">
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition/>
+                                                    <RowDefinition/>
+                                                    <RowDefinition/>
+                                                    <RowDefinition/>
+                                                </Grid.RowDefinitions>
+                                                <Rectangle Grid.Row="0" Fill="{DynamicResource window-theme-primary}"/>
+                                                <Rectangle Grid.Row="1" Fill="{DynamicResource window-theme-primary-disabled}"/>
+                                                <Rectangle Grid.Row="2" Fill="{DynamicResource window-theme-secondary}"/>
+                                                <Rectangle Grid.Row="3" Fill="{DynamicResource window-theme-secondary-disabled}"/>
+                                                <TextBlock Grid.Row="0" TextAlignment="Center" Text="Light" Foreground="{DynamicResource text-dark}"/>
+                                                <TextBlock Grid.Row="1" TextAlignment="Center" Text="Light" Foreground="{DynamicResource text-light}"/>
+                                                <TextBlock Grid.Row="2" TextAlignment="Center" Text="Light" Foreground="{DynamicResource text-muted}"/>
+                                            </Grid>
+                                        </Border>
+                                    </RadioButton>
+                                    <RadioButton 
+                                        Margin="0,0,5,0"
+                                        GroupName="Theme" 
+                                        VerticalContentAlignment="Center"
+                                        IsChecked="{Binding Path=UserConfiguration.Theme, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static Objects:ThemeType.Dark}}">
+                                        <RadioButton.Resources>
+                                            <ResourceDictionary Source="/myManga;component/Themes/DarkTheme.xaml"/>
+                                        </RadioButton.Resources>
+                                        <Border
+                                            Height="100"
+                                            Width="100"
+                                            BorderThickness="1"
+                                            BorderBrush="{DynamicResource window-theme-primary}"
+                                            Background="{DynamicResource window-background}"
+                                            TextElement.Foreground="{DynamicResource window-foreground}">
+                                            <Grid Margin="3">
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition/>
+                                                    <RowDefinition/>
+                                                    <RowDefinition/>
+                                                    <RowDefinition/>
+                                                </Grid.RowDefinitions>
+                                                <Rectangle Grid.Row="0" Fill="{DynamicResource window-theme-primary}"/>
+                                                <Rectangle Grid.Row="1" Fill="{DynamicResource window-theme-primary-disabled}"/>
+                                                <Rectangle Grid.Row="2" Fill="{DynamicResource window-theme-secondary}"/>
+                                                <Rectangle Grid.Row="3" Fill="{DynamicResource window-theme-secondary-disabled}"/>
+                                                <TextBlock Grid.Row="0" TextAlignment="Center" Text="Dark" Foreground="{DynamicResource text-dark}"/>
+                                                <TextBlock Grid.Row="1" TextAlignment="Center" Text="Dark" Foreground="{DynamicResource text-light}"/>
+                                                <TextBlock Grid.Row="2" TextAlignment="Center" Text="Dark" Foreground="{DynamicResource text-muted}"/>
+                                            </Grid>
+                                        </Border>
+                                    </RadioButton>
+                                </StackPanel>
+                            </HeaderedContentControl>
+
+                        </StackPanel>
+
+                    </ScrollViewer>
+                </TabItem>
+
+                <TabItem Header="Extensions" Height="40" Width="100">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition Width="5"/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+
+                        <HeaderedContentControl
+                            Header="Site Extensions"
+                            Grid.Column="0"
+                            VerticalContentAlignment="Stretch" 
+                            HorizontalContentAlignment="Stretch">
+
+                            <ListBox
+                                ItemsSource="{Binding SiteExtensionObjects}"
+                                ItemContainerStyle="{StaticResource ExtensionObjectListBoxItem}"
+                                HorizontalContentAlignment="Stretch"
+                                DragDrop:Helper.IsDragSource="True"
+                                DragDrop:Helper.IsDropTarget="True"
+                                DragDrop:Helper.DragDropTemplate="{StaticResource ExtensionObjectTemplate}"/>
+
                         </HeaderedContentControl>
 
-                        <HeaderedContentControl Header="Theme">
-                            <StackPanel Orientation="Horizontal">
-                                <RadioButton 
-                                    Margin="0,0,5,0"
-                                    GroupName="Theme" 
-                                    VerticalContentAlignment="Center"
-                                    IsChecked="{Binding Path=Theme, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static Objects:ThemeType.Light}}">
-                                    <TextBlock Text="Light" Foreground="{DynamicResource text-dark}"/>
-                                </RadioButton>
-                                <RadioButton 
-                                    Margin="0,0,5,0"
-                                    GroupName="Theme" 
-                                    VerticalContentAlignment="Center"
-                                    IsChecked="{Binding Path=Theme, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static Objects:ThemeType.Dark}}">
-                                    <TextBlock Text="Dark" Foreground="{DynamicResource text-dark}"/>
-                                </RadioButton>
-                            </StackPanel>
+                        <HeaderedContentControl
+                            Header="Database Extensions"
+                            Grid.Column="2"
+                            VerticalContentAlignment="Stretch" 
+                            HorizontalContentAlignment="Stretch">
+
+                            <ListBox
+                                ItemsSource="{Binding DatabaseExtensionObjects}"
+                                ItemContainerStyle="{StaticResource ExtensionObjectListBoxItem}"
+                                HorizontalContentAlignment="Stretch"
+                                DragDrop:Helper.IsDragSource="True"
+                                DragDrop:Helper.IsDropTarget="True"
+                                DragDrop:Helper.DragDropTemplate="{StaticResource ExtensionObjectTemplate}"/>
+
                         </HeaderedContentControl>
 
-                    </StackPanel>
+                    </Grid>
+                </TabItem>
 
-                </ScrollViewer>
-            </TabItem>
+                <TabItem Header="Advanced" Height="40" Width="100">
+                    <ScrollViewer HorizontalScrollBarVisibility="Disabled">
 
-            <TabItem Header="Extensions" Height="40" Width="90">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition/>
-                        <ColumnDefinition/>
-                    </Grid.ColumnDefinitions>
+                        <HeaderedContentControl
+                                Header="Storage Serialization"
+                                Margin="2,6" VerticalAlignment="Top">
+                            <ComboBox
+                                x:Name="StorageSerialization"
+                                ItemsSource="{Binding SerializeTypes}"
+                                SelectedItem="{Binding UserConfiguration.SerializeType}"/>
+                        </HeaderedContentControl>
 
-                    <HeaderedContentControl
-                        Header="Site Extensions">
+                    </ScrollViewer>
+                </TabItem>
 
-                        <ListBox
-                            ItemsSource="{Binding SiteExtensionObjects}"/>
+                <TabItem Header="Status" Height="40" Width="100">
+                    <ScrollViewer HorizontalScrollBarVisibility="Disabled">
+                    </ScrollViewer>
+                </TabItem>
 
-                    </HeaderedContentControl>
+            </TabControl>
 
-                    <HeaderedContentControl
-                        Header="Database Extensions"
-                        Grid.Column="1">
 
-                        <ListBox
-                            ItemsSource="{Binding DatabaseExtensionObjects}"/>
+            <StackPanel
+                Orientation="Vertical"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Bottom"
+                Width="92">
 
-                    </HeaderedContentControl>
+                <Controls:MetroButton
+                    Content="Save"
+                    Command="{Binding SaveUserConfigurationCommand}"/>
 
-                </Grid>
-            </TabItem>
+                <Controls:MetroButton
+                    Content="Cancel"
+                    Command="{Binding CancelConfigurationCommand}"/>
 
-            <TabItem Header="Advanced" Height="40" Width="90">
-                <ScrollViewer HorizontalScrollBarVisibility="Disabled">
+            </StackPanel>
 
-                </ScrollViewer>
-            </TabItem>
-
-            <TabItem Header="Status" Height="40" Width="90">
-                <ScrollViewer HorizontalScrollBarVisibility="Disabled">
-                </ScrollViewer>
-            </TabItem>
-
-        </TabControl>
+        </Grid>
 
     </Border>
 </UserControl>

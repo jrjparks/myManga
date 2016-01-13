@@ -107,7 +107,7 @@ namespace myManga_App.Objects.UserInterface
         #endregion
     }
 
-    public static class MangaArchiveInformationObjectExtentions
+    public static class MangaArchiveInformationObjectExtensions
     {
         #region Static Methods
         public static void Merge(this MangaArchiveInformationObject obj, MangaArchiveInformationObject value)

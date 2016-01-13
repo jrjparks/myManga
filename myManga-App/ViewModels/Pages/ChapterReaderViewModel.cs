@@ -179,7 +179,7 @@ namespace myManga_App.ViewModels.Pages
                 () => App.ZipManager.WriteAsync(
                     MangaArchiveFilePath,
                     typeof(BookmarkObject).Name,
-                    BookmarkObject.Serialize(App.UserConfig.SerializeType)),
+                    BookmarkObject.Serialize(App.UserConfiguration.SerializeType)),
                 TIMEOUT);
         }
         #endregion
@@ -332,7 +332,7 @@ namespace myManga_App.ViewModels.Pages
         #region Reset Zoom Command
         private DelegateCommand resetPageZoomCommand;
         public ICommand ResetPageZoomCommand
-        { get { return resetPageZoomCommand ?? (resetPageZoomCommand = new DelegateCommand(() => PageZoom = App.UserConfig.DefaultPageZoom)); } }
+        { get { return resetPageZoomCommand ?? (resetPageZoomCommand = new DelegateCommand(() => PageZoom = App.UserConfiguration.DefaultPageZoom)); } }
         #endregion
 
         #endregion
@@ -440,7 +440,7 @@ namespace myManga_App.ViewModels.Pages
                     }, TIMEOUT);
                     LoadChapterObjectAsyncCTS.Token.ThrowIfCancellationRequested();
                     using (ChapterObjectStream)
-                    { ChapterObject = ChapterObjectStream.Deserialize<ChapterObject>(SerializeType: App.UserConfig.SerializeType); }
+                    { ChapterObject = ChapterObjectStream.Deserialize<ChapterObject>(SerializeType: App.UserConfiguration.SerializeType); }
                 }
                 catch (OperationCanceledException) { }
                 catch (Exception ex) { throw ex; }
@@ -471,7 +471,7 @@ namespace myManga_App.ViewModels.Pages
                     }, TIMEOUT);
                     LoadBookmarkObjectAsyncCTS.Token.ThrowIfCancellationRequested();
                     using (BookmarkObjectStream)
-                    { BookmarkObject = BookmarkObjectStream.Deserialize<BookmarkObject>(SerializeType: App.UserConfig.SerializeType); }
+                    { BookmarkObject = BookmarkObjectStream.Deserialize<BookmarkObject>(SerializeType: App.UserConfiguration.SerializeType); }
 
                     if (Equals(BookmarkObject, null)) BookmarkObject = new BookmarkObject();
 

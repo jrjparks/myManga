@@ -158,7 +158,7 @@ namespace myManga_App.IO.Network
             await App.ZipManager.Retry(() => App.ZipManager.WriteAsync(
                 SavePath(MangaObject),
                 MangaObject.GetType().Name,
-                MangaObject.Serialize(SerializeType: App.UserConfig.SerializeType)
+                MangaObject.Serialize(SerializeType: App.UserConfiguration.SerializeType)
                 ), FILE_ACCESS_TIMEOUT, DEFAULT_DELAY, DELAY_INCREMENT);
         }
         #endregion
@@ -248,7 +248,7 @@ namespace myManga_App.IO.Network
             await App.ZipManager.Retry(() => App.ZipManager.WriteAsync(
                 SavePath(MangaObject, ChapterObject),
                 ChapterObject.GetType().Name,
-                ChapterObject.Serialize(SerializeType: App.UserConfig.SerializeType)
+                ChapterObject.Serialize(SerializeType: App.UserConfiguration.SerializeType)
                 ), FILE_ACCESS_TIMEOUT, DEFAULT_DELAY, DELAY_INCREMENT);
         }
         #endregion
@@ -297,7 +297,7 @@ namespace myManga_App.IO.Network
             await App.ZipManager.Retry(() => App.ZipManager.WriteAsync(
                 SavePath(MangaObject, ChapterObject),
                 ChapterObject.GetType().Name,
-                ChapterObject.Serialize(SerializeType: App.UserConfig.SerializeType)
+                ChapterObject.Serialize(SerializeType: App.UserConfiguration.SerializeType)
                 ), FILE_ACCESS_TIMEOUT, DEFAULT_DELAY, DELAY_INCREMENT);
 
             return ChapterObject;
@@ -424,12 +424,12 @@ namespace myManga_App.IO.Network
                 ct.ThrowIfCancellationRequested();
 
                 // Store valid ISiteExtension
-                IEnumerable<ISiteExtension> ValidSiteExtentions = App.SiteExtensions.DLLCollection.Where(SiteExtension =>
+                IEnumerable<ISiteExtension> ValidSiteExtensions = App.SiteExtensions.DLLCollection.Where(SiteExtension =>
                 {
                     if (!SiteExtension.SiteExtensionDescriptionAttribute.SupportedObjects.HasFlag(SupportedObjects.Manga)) return false;
                     if (SiteExtension.SiteExtensionDescriptionAttribute.RequiresAuthentication)
                         if (!SiteExtension.IsAuthenticated) return false;
-                    if (!App.UserConfig.EnabledSiteExtensions.Contains(SiteExtension.SiteExtensionDescriptionAttribute.Name)) return false;
+                    if (!App.UserConfiguration.EnabledSiteExtensions.Contains(SiteExtension.SiteExtensionDescriptionAttribute.Name)) return false;
                     return true;
                 });
                 // Store valid IDatabaseExtension
@@ -438,11 +438,11 @@ namespace myManga_App.IO.Network
                     if (!DatabaseExtension.DatabaseExtensionDescriptionAttribute.SupportedObjects.HasFlag(SupportedObjects.Manga)) return false;
                     if (DatabaseExtension.DatabaseExtensionDescriptionAttribute.RequiresAuthentication)
                         if (!DatabaseExtension.IsAuthenticated) return false;
-                    if (!App.UserConfig.EnabledDatabaseExtentions.Contains(DatabaseExtension.DatabaseExtensionDescriptionAttribute.Name)) return false;
+                    if (!App.UserConfiguration.EnabledDatabaseExtensions.Contains(DatabaseExtension.DatabaseExtensionDescriptionAttribute.Name)) return false;
                     return true;
                 });
                 List<IExtension> ValidExtensions = new List<IExtension>();
-                ValidExtensions.AddRange(ValidSiteExtentions);
+                ValidExtensions.AddRange(ValidSiteExtensions);
                 ValidExtensions.AddRange(ValidDatabaseExtension);
 
                 if (!Equals(progress, null)) progress.Report(5);
@@ -554,20 +554,20 @@ namespace myManga_App.IO.Network
                 ct.ThrowIfCancellationRequested();
 
                 // Store valid ISiteExtension
-                IEnumerable<ISiteExtension> ValidSiteExtentions = App.SiteExtensions.DLLCollection.Where(_ =>
+                IEnumerable<ISiteExtension> ValidSiteExtensions = App.SiteExtensions.DLLCollection.Where(_ =>
                 {
                     if (!_.SiteExtensionDescriptionAttribute.SupportedObjects.HasFlag(SupportedObjects.Manga)) return false;
                     if (_.SiteExtensionDescriptionAttribute.RequiresAuthentication)
                         if (!_.IsAuthenticated) return false;
-                    if (!App.UserConfig.EnabledSiteExtensions.Contains(_.SiteExtensionDescriptionAttribute.Name)) return false;
+                    if (!App.UserConfiguration.EnabledSiteExtensions.Contains(_.SiteExtensionDescriptionAttribute.Name)) return false;
                     return true;
                 });
 
-                IEnumerable<LocationObject> OrderedChapterObjectLocations = ChapterObject.Locations.OrderBy(_ => App.UserConfig.EnabledSiteExtensions.IndexOf(_.ExtensionName));
+                IEnumerable<LocationObject> OrderedChapterObjectLocations = ChapterObject.Locations.OrderBy(_ => App.UserConfiguration.EnabledSiteExtensions.IndexOf(_.ExtensionName));
                 foreach(LocationObject LocationObject in OrderedChapterObjectLocations)
                 {
                     ct.ThrowIfCancellationRequested();
-                    ISiteExtension SiteExtension = ValidSiteExtentions.FirstOrDefault(_ => Equals(_.SiteExtensionDescriptionAttribute.Name, LocationObject.ExtensionName));
+                    ISiteExtension SiteExtension = ValidSiteExtensions.FirstOrDefault(_ => Equals(_.SiteExtensionDescriptionAttribute.Name, LocationObject.ExtensionName));
                     if (Equals(SiteExtension, null)) continue;  // Continue with the foreach loop
 
                     ct.ThrowIfCancellationRequested();
@@ -675,12 +675,12 @@ namespace myManga_App.IO.Network
             List<MangaObject> SearchResults = new List<MangaObject>();
 
             // Store valid ISiteExtension
-            IEnumerable<ISiteExtension> ValidSiteExtentions = App.SiteExtensions.DLLCollection.Where(SiteExtension =>
+            IEnumerable<ISiteExtension> ValidSiteExtensions = App.SiteExtensions.DLLCollection.Where(SiteExtension =>
             {
                 if (!SiteExtension.SiteExtensionDescriptionAttribute.SupportedObjects.HasFlag(SupportedObjects.Manga)) return false;
                 if (SiteExtension.SiteExtensionDescriptionAttribute.RequiresAuthentication)
                     if (!SiteExtension.IsAuthenticated) return false;
-                if (!App.UserConfig.EnabledSiteExtensions.Contains(SiteExtension.SiteExtensionDescriptionAttribute.Name)) return false;
+                if (!App.UserConfiguration.EnabledSiteExtensions.Contains(SiteExtension.SiteExtensionDescriptionAttribute.Name)) return false;
                 return true;
             });
             // Store valid IDatabaseExtension
@@ -689,11 +689,11 @@ namespace myManga_App.IO.Network
                 if (!DatabaseExtension.DatabaseExtensionDescriptionAttribute.SupportedObjects.HasFlag(SupportedObjects.Manga)) return false;
                 if (DatabaseExtension.DatabaseExtensionDescriptionAttribute.RequiresAuthentication)
                     if (!DatabaseExtension.IsAuthenticated) return false;
-                if (!App.UserConfig.EnabledDatabaseExtentions.Contains(DatabaseExtension.DatabaseExtensionDescriptionAttribute.Name)) return false;
+                if (!App.UserConfiguration.EnabledDatabaseExtensions.Contains(DatabaseExtension.DatabaseExtensionDescriptionAttribute.Name)) return false;
                 return true;
             });
             List<IExtension> ValidExtensions = new List<IExtension>();
-            ValidExtensions.AddRange(ValidSiteExtentions);
+            ValidExtensions.AddRange(ValidSiteExtensions);
             ValidExtensions.AddRange(ValidDatabaseExtension);
 
             if (!Equals(progress, null)) progress.Report(5);

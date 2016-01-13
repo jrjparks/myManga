@@ -11,6 +11,7 @@ namespace Batoto
         Author = "James Parks",
         Version = "0.0.1",
         SupportedObjects = SupportedObjects.All,
-        Language = "Spanish")]
+        Language = "Spanish",
+        RequiresAuthentication = true)]
     public sealed class Batoto_Spanish : Batoto { }
 }

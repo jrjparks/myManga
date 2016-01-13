@@ -112,12 +112,12 @@ namespace myManga_App
                 // Load BookmarkObject Data
                 Stream BookmarkObjectStream = ZipManager.UnsafeRead(ArchivePath, typeof(BookmarkObject).Name);
                 if (!Equals(BookmarkObjectStream, null))
-                { using (BookmarkObjectStream) { MangaCacheObject.BookmarkObject = BookmarkObjectStream.Deserialize<BookmarkObject>(UserConfig.SerializeType); } }
+                { using (BookmarkObjectStream) { MangaCacheObject.BookmarkObject = BookmarkObjectStream.Deserialize<BookmarkObject>(UserConfiguration.SerializeType); } }
 
                 // Load MangaObject Data
                 Stream MangaObjectStream = ZipManager.UnsafeRead(ArchivePath, typeof(MangaObject).Name);
                 if (!Equals(MangaObjectStream, null))
-                { using (MangaObjectStream) { MangaCacheObject.MangaObject = MangaObjectStream.Deserialize<MangaObject>(UserConfig.SerializeType); } }
+                { using (MangaObjectStream) { MangaCacheObject.MangaObject = MangaObjectStream.Deserialize<MangaObject>(UserConfiguration.SerializeType); } }
                 if (!Equals(MangaCacheObject.MangaObject, null))
                     MangaCacheObject.MangaObject = await MigrateCovers(ArchivePath, MangaCacheObject.MangaObject);
 
@@ -171,12 +171,12 @@ namespace myManga_App
                 // Load BookmarkObject Data
                 Stream BookmarkObjectStream = await ZipManager.Retry(() => ZipManager.ReadAsync(ArchivePath, typeof(BookmarkObject).Name), TimeSpan.FromMinutes(1));
                 if (!Equals(BookmarkObjectStream, null))
-                { using (BookmarkObjectStream) { MangaCacheObject.BookmarkObject = BookmarkObjectStream.Deserialize<BookmarkObject>(UserConfig.SerializeType); } }
+                { using (BookmarkObjectStream) { MangaCacheObject.BookmarkObject = BookmarkObjectStream.Deserialize<BookmarkObject>(UserConfiguration.SerializeType); } }
 
                 // Load MangaObject Data
                 Stream MangaObjectStream = await ZipManager.Retry(() => ZipManager.ReadAsync(ArchivePath, typeof(MangaObject).Name), TimeSpan.FromMinutes(1));
                 if (!Equals(MangaObjectStream, null))
-                { using (MangaObjectStream) { MangaCacheObject.MangaObject = MangaObjectStream.Deserialize<MangaObject>(UserConfig.SerializeType); } }
+                { using (MangaObjectStream) { MangaCacheObject.MangaObject = MangaObjectStream.Deserialize<MangaObject>(UserConfiguration.SerializeType); } }
                 if (!Equals(MangaCacheObject.MangaObject, null))
                     MangaCacheObject.MangaObject = await MigrateCovers(ArchivePath, MangaCacheObject.MangaObject);
 
@@ -242,7 +242,7 @@ namespace myManga_App
                         { Url = Cover, ExtensionName = DatabaseExtension.DatabaseExtensionDescriptionAttribute.Name });
                 }
 
-                await ZipManager.Retry(() => ZipManager.WriteAsync(ArchivePath, typeof(MangaObject).Name, MangaObject.Serialize(UserConfig.SerializeType)), TimeSpan.FromMinutes(1));
+                await ZipManager.Retry(() => ZipManager.WriteAsync(ArchivePath, typeof(MangaObject).Name, MangaObject.Serialize(UserConfiguration.SerializeType)), TimeSpan.FromMinutes(1));
             }
             return MangaObject;
         }
@@ -295,7 +295,7 @@ namespace myManga_App
             LOG_DIRECTORY = Path.Combine(Environment.CurrentDirectory, "Logs").SafeFolder(),
             LOG_FILE_PATH = Path.Combine(Environment.CurrentDirectory, "Logs", "mymanga.log");
 
-        public UserConfigurationObject UserConfig
+        public UserConfigurationObject UserConfiguration
         { get; private set; }
 
         public UserAuthenticationObject UserAuthentication
@@ -386,7 +386,7 @@ namespace myManga_App
 
             LoadUserConfig();
             LoadUserAuthenticate();
-            UserConfig.UserConfigurationUpdated += (_s, _e) => SaveUserConfig();
+            UserConfiguration.UserConfigurationUpdated += (_s, _e) => SaveUserConfig();
 
             // Enable FileSystemWatchers
             ConfigureFileWatchers();
@@ -531,23 +531,23 @@ namespace myManga_App
             if (File.Exists(USER_CONFIG_PATH))
                 using (Stream UserConfigStream = File.OpenRead(USER_CONFIG_PATH))
                 {
-                    try { UserConfig = UserConfigStream.Deserialize<UserConfigurationObject>(SerializeType: SerializeType.XML); }
+                    try { UserConfiguration = UserConfigStream.Deserialize<UserConfigurationObject>(SerializeType: SerializeType.XML); }
                     catch { }
                 }
-            if (UserConfigurationObject.Equals(this.UserConfig, null))
+            if (UserConfigurationObject.Equals(this.UserConfiguration, null))
             {
-                UserConfig = new UserConfigurationObject();
+                UserConfiguration = new UserConfigurationObject();
 
-                // Enable all available Database Extentions
+                // Enable all available Database Extensions
                 foreach (IDatabaseExtension DatabaseExtension in DatabaseExtensions.DLLCollection)
-                    UserConfig.EnabledDatabaseExtentions.Add(DatabaseExtension.DatabaseExtensionDescriptionAttribute.Name);
+                    UserConfiguration.EnabledDatabaseExtensions.Add(DatabaseExtension.DatabaseExtensionDescriptionAttribute.Name);
 
                 // Enable the first Site Extention if available
                 if (SiteExtensions.DLLCollection.Count > 0)
-                    UserConfig.EnabledSiteExtensions.Add(SiteExtensions.DLLCollection[0].SiteExtensionDescriptionAttribute.Name);
+                    UserConfiguration.EnabledSiteExtensions.Add(SiteExtensions.DLLCollection[0].SiteExtensionDescriptionAttribute.Name);
                 SaveUserConfig();
             }
-            ApplyTheme(UserConfig.Theme);
+            ApplyTheme(UserConfiguration.Theme);
         }
 
         public void SaveUserConfig()
@@ -555,7 +555,7 @@ namespace myManga_App
             using (FileStream fs = File.Open(USER_CONFIG_PATH, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None))
             {
                 fs.SetLength(0);
-                using (Stream UserConfigStream = UserConfig.Serialize(SerializeType: SerializeType.XML))
+                using (Stream UserConfigStream = UserConfiguration.Serialize(SerializeType: SerializeType.XML))
                 { UserConfigStream.CopyTo(fs); }
             }
         }

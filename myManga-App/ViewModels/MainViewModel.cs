@@ -21,17 +21,6 @@ namespace myManga_App.ViewModels
             set { PreviousContentViewModel = ContentViewModel; SetValue(ContentViewModelProperty, value); }
         }
 
-        #region SettingsViewModelProperty
-        private static readonly DependencyPropertyKey SettingsViewModelPropertyKey = DependencyProperty.RegisterAttachedReadOnly(
-            "SettingsViewModel",
-            typeof(SettingsViewModel),
-            typeof(MainViewModel),
-            null);
-        private static readonly DependencyProperty SettingsViewModelProperty = SettingsViewModelPropertyKey.DependencyProperty;
-        public SettingsViewModel SettingsViewModel
-        { get { return (SettingsViewModel)GetValue(SettingsViewModelProperty); } }
-        #endregion
-
         #region Pages
 
         #region PagesHomeViewModelProperty
@@ -76,19 +65,45 @@ namespace myManga_App.ViewModels
         }
         #endregion
 
+        #region PagesSettingsViewModelProperty
+        private static readonly DependencyPropertyKey PagesSettingsViewModelPropertyKey = DependencyProperty.RegisterAttachedReadOnly(
+            "PagesSettingsViewModel",
+            typeof(Pages.SettingsViewModel),
+            typeof(MainViewModel),
+            null);
+        private static readonly DependencyProperty PagesSettingsViewModelProperty = PagesSettingsViewModelPropertyKey.DependencyProperty;
+        public Pages.SettingsViewModel PagesSettingsViewModel
+        {
+            get { return (Pages.SettingsViewModel)GetValue(PagesSettingsViewModelProperty); }
+            private set { SetValue(PagesSettingsViewModelPropertyKey, value); }
+        }
+        #endregion
+
         #endregion
 
         #endregion
 
         #region Header Buttons
+
+        #region Home
         private DelegateCommand homeCommand;
         public ICommand HomeCommand
         { get { return homeCommand ?? (homeCommand = new DelegateCommand(PagesHomeViewModel.PullFocus)); } }
+        #endregion
 
+        #region Search
         private DelegateCommand searchCommand;
         public ICommand SearchCommand
         { get { return searchCommand ?? (searchCommand = new DelegateCommand(PagesSearchViewModel.PullFocus)); } }
+        #endregion
 
+        #region Settings
+        private DelegateCommand _SettingsCommand;
+        public ICommand SettingsCommand
+        { get { return _SettingsCommand ?? (_SettingsCommand = new DelegateCommand(PagesSettingsViewModel.PullFocus)); } }
+        #endregion
+
+        #region Read
         private DelegateCommand readCommand;
         public ICommand ReadCommand
         { get { return readCommand ?? (readCommand = new DelegateCommand(PagesChapterReaderViewModel.PullFocus, CanOpenRead)); } }
@@ -102,10 +117,6 @@ namespace myManga_App.ViewModels
         }
         #endregion
 
-        #region Settings
-        private DelegateCommand _SettingsCommand;
-        public ICommand SettingsCommand
-        { get { return _SettingsCommand ?? (_SettingsCommand = new DelegateCommand(SettingsViewModel.PullFocus)); } }
         #endregion
 
         #region Download Active
@@ -133,8 +144,9 @@ namespace myManga_App.ViewModels
                 PagesHomeViewModel = new Pages.HomeViewModel();
                 PagesSearchViewModel = new Pages.SearchViewModel();
                 PagesChapterReaderViewModel = new Pages.ChapterReaderViewModel();
+                PagesSettingsViewModel = new Pages.SettingsViewModel();
 
-                SetValue(SettingsViewModelPropertyKey, new SettingsViewModel());
+                // SetValue(SettingsViewModelPropertyKey, new SettingsViewModel());
 
                 Messenger.Instance.RegisterRecipient<BaseViewModel>(this, v =>
                 {
@@ -142,8 +154,12 @@ namespace myManga_App.ViewModels
                         ContentViewModel = v;
                 }, "FocusRequest");
 
-                SettingsViewModel.CloseEvent += (s, e) => PreviousContentViewModel.PullFocus();
-
+                Messenger.Instance.RegisterRecipient<Boolean>(this, b =>
+                {
+                    if (!Equals(PreviousContentViewModel, null) && b)
+                        PreviousContentViewModel.PullFocus();
+                }, "PreviousFocusRequest");
+                
                 ServicePointManager.DefaultConnectionLimit = App.ContentDownloadManager.DownloadConcurrency;
 
                 ActiveDownloadsTime = new Timer(state =>
@@ -162,11 +178,10 @@ namespace myManga_App.ViewModels
 
         protected override void SubDispose()
         {
-            SettingsViewModel.Dispose();
-
             PagesHomeViewModel.Dispose();
             PagesSearchViewModel.Dispose();
             PagesChapterReaderViewModel.Dispose();
+            PagesSettingsViewModel.Dispose();
         }
     }
 }

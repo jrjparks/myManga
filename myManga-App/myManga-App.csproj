@@ -92,6 +92,11 @@
     </ApplicationDefinition>
     <Compile Include="Controls\Extensions\ItemsControlExtensions.cs" />
     <Compile Include="Controls\ListBoxExtentions.cs" />
+    <Compile Include="Objects\Extensions\DatabaseExtensionObject.cs" />
+    <Compile Include="Objects\Extensions\SiteExtensionObject.cs" />
+    <Compile Include="System\Windows\Controls\Behaviors\DragDrop\DragAdorner.cs" />
+    <Compile Include="System\Windows\Controls\Behaviors\DragDrop\Helper.cs" />
+    <Compile Include="System\Windows\Controls\Behaviors\DragDrop\InsertAdorner.cs" />
     <Compile Include="System\Windows\Controls\Primitives\DockingPopup.cs" />
     <Compile Include="Controls\InputBindingsBehavior.cs" />
     <Compile Include="Controls\ScreenBrightness\MonitorBrightness.cs" />
@@ -145,12 +150,15 @@
     <Compile Include="ViewModels\BaseViewModel.cs" />
     <Compile Include="ViewModels\Dialog\AuthenticationDialogViewModel.cs" />
     <Compile Include="ViewModels\Dialog\DialogViewModel.cs" />
-    <Compile Include="ViewModels\Objects\MangaCacheObjectDetailViewModel.cs" />
+    <Compile Include="ViewModels\Objects\Cache\MangaCacheObjectViewModels\MangaCacheObjectDetailViewModel.cs" />
     <Compile Include="ViewModels\Pages\ChapterReaderViewModel.cs" />
     <Compile Include="ViewModels\Pages\HomeViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="ViewModels\Pages\SearchViewModel.cs" />
-    <Compile Include="ViewModels\SettingsViewModel.cs" />
+    <Compile Include="ViewModels\Pages\SettingsViewModel.cs" />
+    <Compile Include="Views\Dialog\AuthenticationDialogView.xaml.cs">
+      <DependentUpon>AuthenticationDialogView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Objects\Cache\MangaCacheObjectViews\MangaCacheObjectDetailView.xaml.cs">
       <DependentUpon>MangaCacheObjectDetailView.xaml</DependentUpon>
     </Compile>
@@ -174,9 +182,6 @@
     </Compile>
     <Compile Include="Views\Dialog\LoginDialog.xaml.cs">
       <DependentUpon>LoginDialog.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\SettingsView\SettingsView.xaml.cs">
-      <DependentUpon>SettingsView.xaml</DependentUpon>
     </Compile>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -250,6 +255,14 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Themes\TabControl\TabControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Themes\TabControl\TabItems.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Themes\TextBox\TextBox.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -263,6 +276,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\Window\myMangaWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Dialog\AuthenticationDialogView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -283,6 +300,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Objects\Cache\MangaCacheObjectViews\MangaCacheObjectViewListItems.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Objects\Extensions\ExtensionObjectListItems.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -315,10 +336,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Dialog\LoginDialog.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\SettingsView\SettingsView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

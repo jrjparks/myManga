@@ -169,14 +169,24 @@
             <Border
                 BorderThickness="3"
                 BorderBrush="{DynamicResource window-theme-primary}"
-                Background="{DynamicResource window-background}"/>
-            <StackPanel Orientation="Vertical" Margin="7">
-                <Grid Margin="5,0,0,-20" TextElement.FontSize="16" TextElement.FontWeight="Bold">
-                    <TextBlock Text="{DynamicResource ProjectURL}" HorizontalAlignment="Left" />
-                    <TextBlock Text="{Binding Version, Source={x:Static AssemblyInformation:AssemblyInformation.Instance}, StringFormat=v{0}}" HorizontalAlignment="Right" />
+                Background="{DynamicResource window-background}">
+                <Grid>
+                    <TextBlock 
+                        Text="{DynamicResource ProjectURL}" 
+                        FontSize="16" FontWeight="Bold"
+                        HorizontalAlignment="Left" 
+                        VerticalAlignment="Top"/>
+                    <TextBlock 
+                        Text="{DynamicResource AppTitle}" 
+                        FontSize="50" FontWeight="Normal"
+                        Margin="0,3,0,3"/>
+                    <TextBlock 
+                        Text="{Binding Version, Source={x:Static AssemblyInformation:AssemblyInformation.Instance}, StringFormat=v{0}}" 
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Bottom"
+                        FontSize="12" FontWeight="Bold"/>
                 </Grid>
-                <TextBlock Text="{DynamicResource AppTitle}" FontSize="50" Margin="0,0,0,0"/>
-            </StackPanel>
+            </Border>
         </Grid>
     </Grid>
 </window:myMangaWindow>

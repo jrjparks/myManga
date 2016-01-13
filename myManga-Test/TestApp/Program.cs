@@ -17,8 +17,8 @@ namespace TestApp
 {
     static class Program
     {
-        static Dictionary<String, ISiteExtension> SiteExtentions = new Dictionary<String, ISiteExtension>();
-        static Dictionary<String, IDatabaseExtension> DatabaseExtentions = new Dictionary<String, IDatabaseExtension>();
+        static Dictionary<String, ISiteExtension> SiteExtensions = new Dictionary<String, ISiteExtension>();
+        static Dictionary<String, IDatabaseExtension> DatabaseExtensions = new Dictionary<String, IDatabaseExtension>();
         static ZipManager zipManager;
         static object _lock = new object();
 
@@ -34,23 +34,23 @@ namespace TestApp
             
             zipManager = new ZipManager();
 
-            //SiteExtentions.Add("MangaReader", new AFTV_Network.MangaReader());
-            //SiteExtentions.Add("MangaPanda", new AFTV_Network.MangaPanda());
-            //SiteExtentions.Add("MangaHere", new MangaHere.MangaHere());
-            //SiteExtentions.Add("Batoto", new Batoto.Batoto());
-            SiteExtentions.Add("MangaTraders", new MangaTraders.MangaTraders());
-            //SiteExtentions.Add("Batoto-Spanish", new Batoto.Batoto_Spanish());
-            //SiteExtentions.Add("Batoto-German", new Batoto.Batoto_German());
-            //SiteExtentions.Add("Batoto-French", new Batoto.Batoto_French());
-            DatabaseExtentions.Add("MangaHelpers", new MangaHelpers.MangaHelpers());
-            DatabaseExtentions.Add("AnimeNewsNetwork", new AnimeNewsNetwork.AnimeNewsNetwork());
-            DatabaseExtentions.Add("MangaUpdatesBakaUpdates", new MangaUpdatesBakaUpdates.MangaUpdatesBakaUpdates());
-            foreach (ISiteExtension ise in SiteExtentions.Values)
+            //SiteExtensions.Add("MangaReader", new AFTV_Network.MangaReader());
+            //SiteExtensions.Add("MangaPanda", new AFTV_Network.MangaPanda());
+            //SiteExtensions.Add("MangaHere", new MangaHere.MangaHere());
+            //SiteExtensions.Add("Batoto", new Batoto.Batoto());
+            SiteExtensions.Add("MangaTraders", new MangaTraders.MangaTraders());
+            //SiteExtensions.Add("Batoto-Spanish", new Batoto.Batoto_Spanish());
+            //SiteExtensions.Add("Batoto-German", new Batoto.Batoto_German());
+            //SiteExtensions.Add("Batoto-French", new Batoto.Batoto_French());
+            DatabaseExtensions.Add("MangaHelpers", new MangaHelpers.MangaHelpers());
+            DatabaseExtensions.Add("AnimeNewsNetwork", new AnimeNewsNetwork.AnimeNewsNetwork());
+            DatabaseExtensions.Add("MangaUpdatesBakaUpdates", new MangaUpdatesBakaUpdates.MangaUpdatesBakaUpdates());
+            foreach (ISiteExtension ise in SiteExtensions.Values)
             {
                 ISiteExtensionDescriptionAttribute isea = ise.GetType().GetCustomAttribute<ISiteExtensionDescriptionAttribute>(false);
                 Console.WriteLine("Loaded Site Extention {0}", isea.Name);
             }
-            foreach (IDatabaseExtension ise in DatabaseExtentions.Values)
+            foreach (IDatabaseExtension ise in DatabaseExtensions.Values)
             {
                 IDatabaseExtensionDescriptionAttribute isea = ise.GetType().GetCustomAttribute<IDatabaseExtensionDescriptionAttribute>(false);
                 Console.WriteLine("Loaded Database Extention {0}", isea.Name);
@@ -70,11 +70,11 @@ namespace TestApp
             String Password = Console.ReadLine();
 
             CancellationTokenSource cts = new CancellationTokenSource();
-            Boolean authenticated = SiteExtentions["Batoto"].Authenticate(new NetworkCredential(Username, Password), cts.Token, null);
+            Boolean authenticated = SiteExtensions["Batoto"].Authenticate(new NetworkCredential(Username, Password), cts.Token, null);
             Console.WriteLine("Authenticated: " + (authenticated ? "Success" : "Failed"));
 
             Console.WriteLine("Testing manga loading...");
-            MangaObject mObj = LoadMangaObject("https://bato.to/comic/_/comics/no-guns-life-r13414", SiteExtentions["Batoto"]);
+            MangaObject mObj = LoadMangaObject("https://bato.to/comic/_/comics/no-guns-life-r13414", SiteExtensions["Batoto"]);
             Console.WriteLine("Returned MangaObject:");
             Console.WriteLine("\tName:{0}", mObj.Name);
             Console.WriteLine("\tReleased:{0}", mObj.Released.ToString("yyyy"));
@@ -95,7 +95,7 @@ namespace TestApp
                 Console.WriteLine();
             }
 
-            SiteExtentions["Batoto"].Deauthenticate();
+            SiteExtensions["Batoto"].Deauthenticate();
             Console.Write("Done...(press enter)");
             Console.ReadLine();
         }
@@ -119,7 +119,7 @@ namespace TestApp
                 else
                 {
                     Dictionary<String, List<SearchResultObject>> RawSearchResults = new Dictionary<String, List<SearchResultObject>>();
-                    foreach (ISiteExtension ise in SiteExtentions.Values)
+                    foreach (ISiteExtension ise in SiteExtensions.Values)
                     {
                         ISiteExtensionDescriptionAttribute isea = ise.GetType().GetCustomAttribute<ISiteExtensionDescriptionAttribute>(false);
                         SearchRequestObject sro = ise.GetSearchRequestObject(searchTerm: SearchTerm);
@@ -186,7 +186,7 @@ namespace TestApp
                     }
 
                     Dictionary<String, List<DatabaseObject>> RawDatabaseSearchResults = new Dictionary<String, List<DatabaseObject>>();
-                    foreach (IDatabaseExtension ide in DatabaseExtentions.Values)
+                    foreach (IDatabaseExtension ide in DatabaseExtensions.Values)
                     {
                         IDatabaseExtensionDescriptionAttribute idea = ide.GetType().GetCustomAttribute<IDatabaseExtensionDescriptionAttribute>(false);
                         SearchRequestObject SearchRequestObject = ide.GetSearchRequestObject(searchTerm: SearchTerm);
@@ -254,7 +254,7 @@ namespace TestApp
 
         static void LoadManga()
         {
-            MangaObject mObj = LoadMangaObject("http://mangatraders.org/read-online/TheGamer", SiteExtentions["MangaTraders"]);
+            MangaObject mObj = LoadMangaObject("http://mangatraders.org/read-online/TheGamer", SiteExtensions["MangaTraders"]);
             Console.WriteLine("Returned MangaObject:");
             Console.WriteLine("\tName:{0}", mObj.Name);
             Console.WriteLine("\tReleased:{0}", mObj.Released.ToString("yyyy"));
@@ -307,7 +307,7 @@ namespace TestApp
         static async Task LoadMangaAsync()
         {
             String mangaUrl = "http://mangatraders.org/read-online/TheGamer";
-            ISiteExtension extension = SiteExtentions["MangaTraders"];
+            ISiteExtension extension = SiteExtensions["MangaTraders"];
             CancellationTokenSource cts = new CancellationTokenSource();
             Boolean written = false;
             Progress<int> progress = new Progress<int>(percent => { DrawProgressBarTopWindow(percent, 100, "Progress"); });
@@ -436,7 +436,7 @@ namespace TestApp
         {
             foreach (LocationObject LocationObj in MangaObj.Locations.FindAll(l => l.Enabled))
             {
-                ISiteExtension ise = SiteExtentions[LocationObj.ExtensionName];
+                ISiteExtension ise = SiteExtensions[LocationObj.ExtensionName];
                 ISiteExtensionDescriptionAttribute isea = ise.GetType().GetCustomAttribute<ISiteExtensionDescriptionAttribute>(false);
 
                 HttpWebRequest request = WebRequest.Create(LocationObj.Url) as HttpWebRequest;
@@ -462,7 +462,7 @@ namespace TestApp
         static ChapterObject LoadChapterObject(String Link)
         {
             ChapterObject ChapterObj = null;
-            ISiteExtension ise = SiteExtentions["MangaReader"];
+            ISiteExtension ise = SiteExtensions["MangaReader"];
             ISiteExtensionDescriptionAttribute isea = ise.GetType().GetCustomAttribute<ISiteExtensionDescriptionAttribute>(false);
 
             HttpWebRequest request = WebRequest.Create(Link) as HttpWebRequest;
@@ -481,7 +481,7 @@ namespace TestApp
         static ChapterObject LoadChapterObject(ChapterObject chapterObject, Int32 LocationId = 0)
         {
             ChapterObject ChapterObj = null;
-            ISiteExtension ise = SiteExtentions[chapterObject.Locations[LocationId].ExtensionName];
+            ISiteExtension ise = SiteExtensions[chapterObject.Locations[LocationId].ExtensionName];
             ISiteExtensionDescriptionAttribute isea = ise.GetType().GetCustomAttribute<ISiteExtensionDescriptionAttribute>(false);
 
             HttpWebRequest request = WebRequest.Create(chapterObject.Locations[LocationId].Url) as HttpWebRequest;
@@ -499,7 +499,7 @@ namespace TestApp
 
         public static void LoadPageObjects(this ChapterObject chapterObject, Int32 LocationId = 0)
         {
-            ISiteExtension ise = SiteExtentions[chapterObject.Locations[LocationId].ExtensionName];
+            ISiteExtension ise = SiteExtensions[chapterObject.Locations[LocationId].ExtensionName];
             ISiteExtensionDescriptionAttribute isea = ise.GetType().GetCustomAttribute<ISiteExtensionDescriptionAttribute>(false);
 
             List<PageObject> ParsedPages = new List<PageObject>();
@@ -524,7 +524,7 @@ namespace TestApp
 
         public static void DownloadPageObjects(this ChapterObject chapterObject, Int32 LocationId = 0)
         {
-            ISiteExtension ise = SiteExtentions[chapterObject.Locations[LocationId].ExtensionName];
+            ISiteExtension ise = SiteExtensions[chapterObject.Locations[LocationId].ExtensionName];
             ISiteExtensionDescriptionAttribute isea = ise.GetType().GetCustomAttribute<ISiteExtensionDescriptionAttribute>(false);
 
             List<PageObject> ParsedPages = new List<PageObject>();
@@ -681,7 +681,7 @@ namespace TestApp
 
         private static async Task LoadChapterObjectAsync(this ChapterObject ChapterObject, CancellationToken ct, Int32 LocationId = 0, IProgress<int> progress = null)
         {
-            ISiteExtension ise = SiteExtentions[ChapterObject.Locations[LocationId].ExtensionName];
+            ISiteExtension ise = SiteExtensions[ChapterObject.Locations[LocationId].ExtensionName];
             using (WebDownloader wD = new WebDownloader(ise.Cookies))
             {
                 wD.Referer = ise.SiteExtensionDescriptionAttribute.RefererHeader;
@@ -709,7 +709,7 @@ namespace TestApp
 
         private static async Task<PageObject> LoadPageObjectAsync(ChapterObject ChapterObject, PageObject PageObject, CancellationToken ct, Int32 LocationId = 0, IProgress<int> progress = null)
         {
-            ISiteExtension ise = SiteExtentions[ChapterObject.Locations[LocationId].ExtensionName];
+            ISiteExtension ise = SiteExtensions[ChapterObject.Locations[LocationId].ExtensionName];
             using (WebDownloader wD = new WebDownloader(ise.Cookies))
             {
                 wD.Referer = ise.SiteExtensionDescriptionAttribute.RefererHeader;
@@ -729,7 +729,7 @@ namespace TestApp
 
         private static async Task<Stream> LoadPageObjectImageAsync(ChapterObject ChapterObject, PageObject PageObject, CancellationToken ct, Int32 LocationId = 0, IProgress<int> progress = null)
         {
-            ISiteExtension ise = SiteExtentions[ChapterObject.Locations[LocationId].ExtensionName];
+            ISiteExtension ise = SiteExtensions[ChapterObject.Locations[LocationId].ExtensionName];
             using (WebDownloader wD = new WebDownloader(ise.Cookies))
             {
                 wD.Referer = ise.SiteExtensionDescriptionAttribute.RefererHeader;

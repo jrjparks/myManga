@@ -6,7 +6,7 @@ using System.Text.RegularExpressions;
 
 namespace myMangaSiteExtension.Utilities
 {
-    public static class ChapterObjectExtentions
+    public static class ChapterObjectExtensions
     {
         public static void Merge(this ChapterObject chapterObject, params ChapterObject[] list) { chapterObject.Merge(list.AsEnumerable()); }
         public static void Merge(this ChapterObject chapterObject, IEnumerable<ChapterObject> list)

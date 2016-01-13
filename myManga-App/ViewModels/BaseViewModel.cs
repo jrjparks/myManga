@@ -64,22 +64,23 @@ namespace myManga_App.ViewModels
         private Boolean? _IsInDesignMode = null;
         public Boolean IsInDesignMode { get { return (Boolean)(_IsInDesignMode ?? (_IsInDesignMode = DesignerProperties.GetIsInDesignMode(this))); } }
 
-        public void PullFocus() { Messenger.Instance.Send(this, "FocusRequest"); }
+        protected virtual void SubPullFocus() { }
+        public void PullFocus() { Messenger.Instance.Send(this, "FocusRequest"); SubPullFocus(); }
 
         protected BaseViewModel(Boolean SupportsViewTypeChange = false)
         {
             if (!IsInDesignMode)
                 if (this.SupportsViewTypeChange = SupportsViewTypeChange)
-                    try { this.ViewType = App.UserConfig.ViewTypes.FirstOrDefault(vt => vt.ViewModelName.Equals(this.GetType().Name)).ViewType; }
-                    catch { App.UserConfig.ViewTypes.Add(new SerializableViewModelViewType() { ViewModelName = this.GetType().Name, ViewType = this.ViewType = ViewModelViewType.Normal }); }
+                    try { ViewType = App.UserConfiguration.ViewTypes.FirstOrDefault(vt => vt.ViewModelName.Equals(GetType().Name)).ViewType; }
+                    catch { App.UserConfiguration.ViewTypes.Add(new SerializableViewModelViewType() { ViewModelName = GetType().Name, ViewType = ViewType = ViewModelViewType.Normal }); }
         }
 
         private void SaveViewType()
         {
-            if (!IsInDesignMode && this.SupportsViewTypeChange)
+            if (!IsInDesignMode && SupportsViewTypeChange)
             {
-                SerializableViewModelViewType CurrentSerializableViewModelViewType = App.UserConfig.ViewTypes.FirstOrDefault(vt => vt.ViewModelName.Equals(this.GetType().Name));
-                if (CurrentSerializableViewModelViewType != null) CurrentSerializableViewModelViewType.ViewType = this.ViewType;
+                SerializableViewModelViewType CurrentSerializableViewModelViewType = App.UserConfiguration.ViewTypes.FirstOrDefault(vt => vt.ViewModelName.Equals(GetType().Name));
+                if (CurrentSerializableViewModelViewType != null) CurrentSerializableViewModelViewType.ViewType = ViewType;
                 App.SaveUserConfig();
             }
         }

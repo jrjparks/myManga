@@ -22,7 +22,15 @@ namespace myManga_App.Views.Dialog
     {
         public AuthenticationDialogView()
         {
+            AuthenticationPassword.PasswordChanged += AuthenticationPassword_PasswordChanged;
             InitializeComponent();
+        }
+
+        private void AuthenticationPassword_PasswordChanged(object sender, RoutedEventArgs e)
+        {
+            PasswordBox control = sender as PasswordBox;
+            try { ((dynamic)DataContext).AuthenticationPassword = control.SecurePassword; }
+            catch { }
         }
     }
 }

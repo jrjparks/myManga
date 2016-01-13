@@ -31,6 +31,8 @@
                 <ResourceDictionary Source="/myManga;component/Themes/TabControl/TabControl.xaml"/>
                 <ResourceDictionary Source="/myManga;component/Themes/TabControl/TabItems.xaml"/>
 
+                <ResourceDictionary Source="/myManga;component/Themes/HeaderedContentControl/HeaderedContentControls.xaml"/>
+
                 <ResourceDictionary Source="/myManga;component/Views/Objects/Extensions/ExtensionObjectListItems.xaml"/>
             </ResourceDictionary.MergedDictionaries>
             <Converters:EnumToBooleanConverter x:Key="EnumToBooleanConverter"/>
@@ -160,34 +162,58 @@
 
                         <HeaderedContentControl
                             Header="Site Extensions"
-                            Grid.Column="0"
-                            VerticalContentAlignment="Stretch" 
-                            HorizontalContentAlignment="Stretch">
+                            Grid.Column="0">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition/>
+                                </Grid.RowDefinitions>
 
-                            <ListBox
-                                ItemsSource="{Binding SiteExtensionObjects}"
-                                ItemContainerStyle="{StaticResource ExtensionObjectListBoxItem}"
-                                HorizontalContentAlignment="Stretch"
-                                DragDrop:Helper.IsDragSource="True"
-                                DragDrop:Helper.IsDropTarget="True"
-                                DragDrop:Helper.DragDropTemplate="{StaticResource ExtensionObjectTemplate}"/>
+                                <Controls:MetroButton
+                                    Grid.Row="0"
+                                    Content="Authenticate Selected"
+                                    Command="{Binding AuthenticateExtensionAsyncCommand}"
+                                    CommandParameter="{Binding ElementName=SiteExtensionObjects, Path=SelectedItem.SiteExtension}"/>
+                                
+                                <ListBox
+                                    Grid.Row="1"
+                                    x:Name="SiteExtensionObjects"
+                                    ItemsSource="{Binding SiteExtensionObjects}"
+                                    ItemContainerStyle="{StaticResource ExtensionObjectListBoxItem}"
+                                    HorizontalContentAlignment="Stretch"
+                                    DragDrop:Helper.IsDragSource="True"
+                                    DragDrop:Helper.IsDropTarget="True"
+                                    DragDrop:Helper.DragDropTemplate="{StaticResource ExtensionObjectTemplate}"/>
+                            </Grid>
 
                         </HeaderedContentControl>
 
                         <HeaderedContentControl
                             Header="Database Extensions"
-                            Grid.Column="2"
-                            VerticalContentAlignment="Stretch" 
-                            HorizontalContentAlignment="Stretch">
+                            Grid.Column="2">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition/>
+                                </Grid.RowDefinitions>
 
-                            <ListBox
-                                ItemsSource="{Binding DatabaseExtensionObjects}"
-                                ItemContainerStyle="{StaticResource ExtensionObjectListBoxItem}"
-                                HorizontalContentAlignment="Stretch"
-                                DragDrop:Helper.IsDragSource="True"
-                                DragDrop:Helper.IsDropTarget="True"
-                                DragDrop:Helper.DragDropTemplate="{StaticResource ExtensionObjectTemplate}"/>
+                                <Controls:MetroButton
+                                    Grid.Row="0"
+                                    Content="Authenticate Selected"
+                                    Command="{Binding AuthenticateExtensionAsyncCommand}"
+                                    CommandParameter="{Binding ElementName=DatabaseExtensionObjects, Path=SelectedItem.DatabaseExtension}"/>
 
+                                <ListBox
+                                    Grid.Row="1"
+                                    x:Name="DatabaseExtensionObjects"
+                                    ItemsSource="{Binding DatabaseExtensionObjects}"
+                                    ItemContainerStyle="{StaticResource ExtensionObjectListBoxItem}"
+                                    HorizontalContentAlignment="Stretch"
+                                    DragDrop:Helper.IsDragSource="True"
+                                    DragDrop:Helper.IsDropTarget="True"
+                                    DragDrop:Helper.DragDropTemplate="{StaticResource ExtensionObjectTemplate}"/>
+                            </Grid>
+                            
                         </HeaderedContentControl>
 
                     </Grid>

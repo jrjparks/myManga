@@ -140,5 +140,23 @@ namespace myManga_App.ViewModels.Pages
             Messenger.Instance.Send(true, "PreviousFocusRequest");
         }
         #endregion
+
+        #region AuthenticateExtensionAsyncCommand
+        private DelegateCommand<IExtension> authenticateExtensionAsyncCommand;
+        public ICommand AuthenticateExtensionAsyncCommand
+        { get { return authenticateExtensionAsyncCommand ?? (authenticateExtensionAsyncCommand = new DelegateCommand<IExtension>(AuthenticateExtensionAsync, CanAuthenticateExtensionAsync)); } }
+
+        private Boolean CanAuthenticateExtensionAsync(IExtension Extension)
+        {
+            if (Equals(Extension, null)) return false;
+            if (Equals(Extension.IsAuthenticated, false)) return false;
+            return true;
+        }
+
+        private void AuthenticateExtensionAsync(IExtension Extension)
+        {
+            
+        }
+        #endregion
     }
 }

@@ -118,9 +118,14 @@ namespace myManga_App.Objects.Cache
                     ResumeChapterObject = control.MangaObject.ChapterObjectOfBookmarkObject(control.BookmarkObject);
 
                     Double ChapterProgressMaxValue = control.MangaObject.Chapters.Count,
-                        ChapterProgressValue = control.MangaObject.IndexOfChapterObject(ResumeChapterObject) + 1;
+                        ChapterProgressValue = control.MangaObject.IndexOfChapterObject(ResumeChapterObject),
+                        ChapterProgressStep = 1 / ChapterProgressMaxValue,
+                        ChapterProgress = ChapterProgressValue / ChapterProgressMaxValue,
+                        ChapterSubProgress = 1;
+                    if (control.BookmarkObject.LastPage > 0)
+                        ChapterSubProgress = (Double)control.BookmarkObject.Page / (Double)control.BookmarkObject.LastPage;
                     // Calculate and round the readers progress for chapters
-                    control.ChapterProgress = (Int32)Math.Round((ChapterProgressValue / ChapterProgressMaxValue) * 100);
+                    control.ChapterProgress = (Int32)Math.Round((ChapterProgress + (ChapterSubProgress * ChapterProgressStep)) * 100);
 
                     ChapterObject LastChapterObject = control.MangaObject.Chapters.LastOrDefault();
                     if (!Equals(LastChapterObject, null))

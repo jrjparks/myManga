@@ -92,11 +92,6 @@ namespace myManga_App
         #endregion
 
         #region DataObjects
-        public MangaArchiveCacheObject SelectedMangaArchiveCacheObject
-        { get; set; }
-
-        public ObservableCollection<MangaArchiveCacheObject> MangaArchiveCacheCollection
-        { get; private set; }
 
         #region MangaObject Cache
         public ObservableCollection<MangaCacheObject> MangaCacheObjects
@@ -106,85 +101,26 @@ namespace myManga_App
         {
             try
             {
-                MangaCacheObject MangaCacheObject = new MangaCacheObject();
-                MangaCacheObject.ArchiveFileName = Path.GetFileName(ArchivePath);
-
-                // Load BookmarkObject Data
-                Stream BookmarkObjectStream = ZipManager.UnsafeRead(ArchivePath, typeof(BookmarkObject).Name);
-                if (!Equals(BookmarkObjectStream, null))
-                { using (BookmarkObjectStream) { MangaCacheObject.BookmarkObject = BookmarkObjectStream.Deserialize<BookmarkObject>(UserConfiguration.SerializeType); } }
-
-                // Load MangaObject Data
-                Stream MangaObjectStream = ZipManager.UnsafeRead(ArchivePath, typeof(MangaObject).Name);
-                if (!Equals(MangaObjectStream, null))
-                { using (MangaObjectStream) { MangaCacheObject.MangaObject = MangaObjectStream.Deserialize<MangaObject>(UserConfiguration.SerializeType); } }
-                if (!Equals(MangaCacheObject.MangaObject, null))
-                    MangaCacheObject.MangaObject = await MigrateCovers(ArchivePath, MangaCacheObject.MangaObject);
-
-                // Load Cover Image
-                String CoverImageFileName = Path.GetFileName(MangaCacheObject.MangaObject.SelectedCover().Url);
-                Stream CoverImageStream = ZipManager.UnsafeRead(ArchivePath, CoverImageFileName);
-                if (!Equals(CoverImageStream, null))
+                return await await Current.Dispatcher.InvokeAsync(async () =>
                 {
-                    using (CoverImageStream)
-                    {
-                        if (Equals(MangaCacheObject.CoverImage, null))
-                            MangaCacheObject.CoverImage = new BitmapImage();
+                    MangaCacheObject MangaCacheObject = new MangaCacheObject();
+                    MangaCacheObject.ArchiveFileName = Path.GetFileName(ArchivePath);
 
-                        if (!Equals(MangaCacheObject.CoverImage.StreamSource, null))
-                        {
-                            MangaCacheObject.CoverImage.StreamSource.Close();
-                            MangaCacheObject.CoverImage.StreamSource.Dispose();
-                            MangaCacheObject.CoverImage.StreamSource = null;
-                        }
+                    // Load BookmarkObject Data
+                    Stream BookmarkObjectStream = ZipManager.UnsafeRead(ArchivePath, typeof(BookmarkObject).Name);
+                    if (!Equals(BookmarkObjectStream, null))
+                    { using (BookmarkObjectStream) { MangaCacheObject.BookmarkObject = BookmarkObjectStream.Deserialize<BookmarkObject>(UserConfiguration.SerializeType); } }
 
-                        MangaCacheObject.CoverImage.BeginInit();
-                        MangaCacheObject.CoverImage.DecodePixelWidth = 300;
-                        MangaCacheObject.CoverImage.CacheOption = BitmapCacheOption.OnLoad;
-                        MangaCacheObject.CoverImage.CreateOptions = BitmapCreateOptions.PreservePixelFormat;
-                        using (MangaCacheObject.CoverImage.StreamSource = CoverImageStream)
-                        {
-                            MangaCacheObject.CoverImage.EndInit();
-                            MangaCacheObject.CoverImage.Freeze();
-                        }
-                        CoverImageStream.Close();
-                    }
-                }
+                    // Load MangaObject Data
+                    Stream MangaObjectStream = ZipManager.UnsafeRead(ArchivePath, typeof(MangaObject).Name);
+                    if (!Equals(MangaObjectStream, null))
+                    { using (MangaObjectStream) { MangaCacheObject.MangaObject = MangaObjectStream.Deserialize<MangaObject>(UserConfiguration.SerializeType); } }
+                    if (!Equals(MangaCacheObject.MangaObject, null))
+                        MangaCacheObject.MangaObject = await MigrateCovers(ArchivePath, MangaCacheObject.MangaObject);
 
-                return MangaCacheObject;
-            }
-            catch (Exception ex)
-            {
-                logger.Warn("Unable to read Manga Archive.", ex);
-                MessageBox.Show(String.Format("Unable to read Manga Archive.\nFile: {0}\nException:\n{1}\n\n{2}", ArchivePath, ex.Message, ex.StackTrace));
-                return null;
-            }
-        }
-
-        private async Task<MangaCacheObject> ReloadMangaCacheObjectAsync(String ArchivePath, Boolean ReloadCoverImage = false)
-        {
-            try
-            {
-                MangaCacheObject MangaCacheObject = new MangaCacheObject();
-                MangaCacheObject.ArchiveFileName = Path.GetFileName(ArchivePath);
-
-                // Load BookmarkObject Data
-                Stream BookmarkObjectStream = await ZipManager.Retry(() => ZipManager.ReadAsync(ArchivePath, typeof(BookmarkObject).Name), TimeSpan.FromMinutes(1));
-                if (!Equals(BookmarkObjectStream, null))
-                { using (BookmarkObjectStream) { MangaCacheObject.BookmarkObject = BookmarkObjectStream.Deserialize<BookmarkObject>(UserConfiguration.SerializeType); } }
-
-                // Load MangaObject Data
-                Stream MangaObjectStream = await ZipManager.Retry(() => ZipManager.ReadAsync(ArchivePath, typeof(MangaObject).Name), TimeSpan.FromMinutes(1));
-                if (!Equals(MangaObjectStream, null))
-                { using (MangaObjectStream) { MangaCacheObject.MangaObject = MangaObjectStream.Deserialize<MangaObject>(UserConfiguration.SerializeType); } }
-                if (!Equals(MangaCacheObject.MangaObject, null))
-                    MangaCacheObject.MangaObject = await MigrateCovers(ArchivePath, MangaCacheObject.MangaObject);
-
-                if (ReloadCoverImage)
-                {
                     // Load Cover Image
                     String CoverImageFileName = Path.GetFileName(MangaCacheObject.MangaObject.SelectedCover().Url);
-                    Stream CoverImageStream = await ZipManager.Retry(() => ZipManager.ReadAsync(ArchivePath, CoverImageFileName), TimeSpan.FromMinutes(1));
+                    Stream CoverImageStream = ZipManager.UnsafeRead(ArchivePath, CoverImageFileName);
                     if (!Equals(CoverImageStream, null))
                     {
                         using (CoverImageStream)
@@ -211,9 +147,74 @@ namespace myManga_App
                             CoverImageStream.Close();
                         }
                     }
-                }
 
-                return MangaCacheObject;
+                    return MangaCacheObject;
+                });
+            }
+            catch (Exception ex)
+            {
+                logger.Warn("Unable to read Manga Archive.", ex);
+                MessageBox.Show(String.Format("Unable to read Manga Archive.\nFile: {0}\nException:\n{1}\n\n{2}", ArchivePath, ex.Message, ex.StackTrace));
+                return null;
+            }
+        }
+
+        private async Task<MangaCacheObject> ReloadMangaCacheObjectAsync(String ArchivePath, Boolean ReloadCoverImage = false)
+        {
+            try
+            {
+                return await await Current.Dispatcher.InvokeAsync(async () =>
+                {
+                    MangaCacheObject MangaCacheObject = new MangaCacheObject();
+                    MangaCacheObject.ArchiveFileName = Path.GetFileName(ArchivePath);
+
+                    // Load BookmarkObject Data
+                    Stream BookmarkObjectStream = await ZipManager.Retry(() => ZipManager.ReadAsync(ArchivePath, typeof(BookmarkObject).Name), TimeSpan.FromMinutes(1));
+                    if (!Equals(BookmarkObjectStream, null))
+                    { using (BookmarkObjectStream) { MangaCacheObject.BookmarkObject = BookmarkObjectStream.Deserialize<BookmarkObject>(UserConfiguration.SerializeType); } }
+
+                    // Load MangaObject Data
+                    Stream MangaObjectStream = await ZipManager.Retry(() => ZipManager.ReadAsync(ArchivePath, typeof(MangaObject).Name), TimeSpan.FromMinutes(1));
+                    if (!Equals(MangaObjectStream, null))
+                    { using (MangaObjectStream) { MangaCacheObject.MangaObject = MangaObjectStream.Deserialize<MangaObject>(UserConfiguration.SerializeType); } }
+                    if (!Equals(MangaCacheObject.MangaObject, null))
+                        MangaCacheObject.MangaObject = await MigrateCovers(ArchivePath, MangaCacheObject.MangaObject);
+
+                    if (ReloadCoverImage)
+                    {
+                        // Load Cover Image
+                        String CoverImageFileName = Path.GetFileName(MangaCacheObject.MangaObject.SelectedCover().Url);
+                        Stream CoverImageStream = await ZipManager.Retry(() => ZipManager.ReadAsync(ArchivePath, CoverImageFileName), TimeSpan.FromMinutes(1));
+                        if (!Equals(CoverImageStream, null))
+                        {
+                            using (CoverImageStream)
+                            {
+                                if (Equals(MangaCacheObject.CoverImage, null))
+                                    MangaCacheObject.CoverImage = new BitmapImage();
+
+                                if (!Equals(MangaCacheObject.CoverImage.StreamSource, null))
+                                {
+                                    MangaCacheObject.CoverImage.StreamSource.Close();
+                                    MangaCacheObject.CoverImage.StreamSource.Dispose();
+                                    MangaCacheObject.CoverImage.StreamSource = null;
+                                }
+
+                                MangaCacheObject.CoverImage.BeginInit();
+                                MangaCacheObject.CoverImage.DecodePixelWidth = 300;
+                                MangaCacheObject.CoverImage.CacheOption = BitmapCacheOption.OnLoad;
+                                MangaCacheObject.CoverImage.CreateOptions = BitmapCreateOptions.PreservePixelFormat;
+                                using (MangaCacheObject.CoverImage.StreamSource = CoverImageStream)
+                                {
+                                    MangaCacheObject.CoverImage.EndInit();
+                                    MangaCacheObject.CoverImage.Freeze();
+                                }
+                                CoverImageStream.Close();
+                            }
+                        }
+                    }
+
+                    return MangaCacheObject;
+                });
             }
             catch (Exception ex)
             {
@@ -250,15 +251,17 @@ namespace myManga_App
         /// <summary>
         /// Warning, this will completely reload the cache.
         /// </summary>
-        private async Task<TimeSpan> FullMangaCacheObject()
+        public async Task<TimeSpan> FullMangaCacheObject()
         {
             Stopwatch loadWatch = Stopwatch.StartNew();
             String[] MangaArchivePaths = Directory.GetFiles(MANGA_ARCHIVE_DIRECTORY, MANGA_ARCHIVE_FILTER, SearchOption.TopDirectoryOnly);
 
-            IEnumerable<Task<MangaCacheObject>> MangaCacheObjectTasksQuery = from MangaArchivePath in MangaArchivePaths select UnsafeLoadMangaCacheObjectAsync(MangaArchivePath);
+            IEnumerable<Task<MangaCacheObject>> MangaCacheObjectTasksQuery =
+                from MangaArchivePath in MangaArchivePaths
+                select UnsafeLoadMangaCacheObjectAsync(MangaArchivePath);
             List<Task<MangaCacheObject>> MangaCacheObjectTasks = MangaCacheObjectTasksQuery.ToList();
 
-            MangaCacheObjects.Clear();
+            await Current.Dispatcher.InvokeAsync(() => MangaCacheObjects.Clear());
             while (MangaCacheObjectTasks.Count > 0)
             {
                 Task<MangaCacheObject> completedTask = await Task.WhenAny(MangaCacheObjectTasks);
@@ -267,7 +270,7 @@ namespace myManga_App
                 MangaCacheObject LoadedMangaCacheObject = await completedTask;
                 if (!Equals(LoadedMangaCacheObject, null))
                 {
-                    MangaCacheObjects.Add(LoadedMangaCacheObject);
+                    await Current.Dispatcher.InvokeAsync(() => MangaCacheObjects.Add(LoadedMangaCacheObject));
                 }
             }
 
@@ -342,8 +345,7 @@ namespace myManga_App
             DispatcherUnhandledException += App_DispatcherUnhandledException;
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
 
-            // Initialize Collections
-            MangaArchiveCacheCollection = new ObservableCollection<MangaArchiveCacheObject>();
+            // Initialize Collection
             MangaCacheObjects = new ObservableCollection<MangaCacheObject>();
 
             // Create a File System Watcher for Manga Objects
@@ -357,8 +359,6 @@ namespace myManga_App
 
             // Create IO class objects
             ZipManager = new ZipManager(); // v2 - Async/Await based
-
-            // DownloadManager = new DownloadManager(); // v1 - Thread based
             ContentDownloadManager = new ContentDownloadManager(); // v2 - Async/Await based
 
             Startup += App_Startup;
@@ -367,19 +367,19 @@ namespace myManga_App
             InitializeComponent();
         }
 
-        void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
             logger.Error(sender.GetType().FullName, e.ExceptionObject as Exception);
         }
 
-        void App_DispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
+        private void App_DispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
         {
             logger.Error(sender.GetType().FullName, e.Exception);
             e.Handled = true;
         }
 
         #region Application Events
-        private async void App_Startup(object sender, StartupEventArgs e)
+        private void App_Startup(object sender, StartupEventArgs e)
         {
             SiteExtensions.Load(PLUGIN_DIRECTORY, Filter: "*.mymanga.dll");
             DatabaseExtensions.Load(PLUGIN_DIRECTORY, Filter: "*.mymanga.dll");
@@ -392,7 +392,8 @@ namespace myManga_App
             ConfigureFileWatchers();
 
             // Run initial load of cache
-            await FullMangaCacheObject();
+            Task.Factory.StartNew(FullMangaCacheObject);
+
             MangaObjectArchiveWatcher.EnableRaisingEvents = true;
             ChapterObjectArchiveWatcher.EnableRaisingEvents = true;
         }

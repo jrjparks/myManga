@@ -114,7 +114,7 @@
     <Compile Include="IO\DLL\Loader.cs" />
     <Compile Include="IO\DLL\Manager.cs" />
     <Compile Include="IO\Local\Object\Serializer.cs" />
-    <Compile Include="IO\Local\PathSafety.cs" />
+    <Compile Include="System\IO\PathSafety.cs" />
     <Compile Include="IO\Local\ZipManager.cs" />
     <Compile Include="IO\Network\ContentDownloadManager.cs" />
     <Compile Include="IO\Network\WebDownloader.cs">
@@ -130,7 +130,6 @@
     <Compile Include="System\ComponentModel\NotifyPropertyChange.cs" />
     <Compile Include="Objects\About\AssemblyInformation.cs" />
     <Compile Include="Objects\Cache\ChapterCacheObject.cs" />
-    <Compile Include="Objects\Cache\MangaArchiveCacheObject.cs" />
     <Compile Include="Objects\Cache\MangaCacheObject.cs" />
     <Compile Include="Objects\Cache\PageCacheObject.cs" />
     <Compile Include="Objects\MVVM\NotifyTaskCompletion.cs" />

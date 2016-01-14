@@ -390,7 +390,7 @@ namespace myManga_App
 
             LoadUserConfig();
             LoadUserAuthenticate();
-            UserConfiguration.UserConfigurationUpdated += (_s, _e) => SaveUserConfig();
+            UserConfiguration.UserConfigurationUpdated += (_s, _e) => SaveUserConfiguration();
 
             // Enable FileSystemWatchers
             ConfigureFileWatchers();
@@ -551,12 +551,12 @@ namespace myManga_App
                 // Enable the first Site Extention if available
                 if (SiteExtensions.DLLCollection.Count > 0)
                     UserConfiguration.EnabledSiteExtensions.Add(SiteExtensions.DLLCollection[0].SiteExtensionDescriptionAttribute.Name);
-                SaveUserConfig();
+                SaveUserConfiguration();
             }
             ApplyTheme(UserConfiguration.Theme);
         }
 
-        public void SaveUserConfig()
+        public void SaveUserConfiguration()
         {
             using (FileStream fs = File.Open(USER_CONFIG_PATH, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None))
             {

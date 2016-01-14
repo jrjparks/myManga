@@ -94,7 +94,7 @@ namespace myManga_App.ViewModels.Pages
 
         #region MangaCacheObjects
 
-        #region Search Term
+        #region MangaCacheObjectDetail
         private static readonly DependencyPropertyKey MangaCacheObjectDetailPropertyKey = DependencyProperty.RegisterAttachedReadOnly(
             "MangaCacheObjectDetail",
             typeof(MangaCacheObjectDetailViewModel),

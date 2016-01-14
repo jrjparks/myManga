@@ -18,4 +18,8 @@
 
     <system:String x:Key="DownloadQueueTabHeaderName">Download Queue</system:String>
     <system:String x:Key="DownloadQueueTabHeaderContent">&#xe03c; Download Queue</system:String>
+
+    <!-- Dialog Boxes -->
+    <system:String x:Key="DialogOK">OK</system:String>
+    <system:String x:Key="DialogCancel">Cancel</system:String>
 </ResourceDictionary>

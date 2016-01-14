@@ -45,7 +45,10 @@ namespace Batoto
 
         public bool Authenticate(NetworkCredential Credentials, CancellationToken ct, IProgress<Int32> ProgressReporter)
         {
-            if (IsAuthenticated) return true;
+            // DO NOT RETURN TRUE IF `IsAuthenticated`
+            // ALLOW USERS TO REAUTHENTICATE
+            // if (IsAuthenticated) return true;
+
             CookieContainer cookieContainer = new CookieContainer();
             StringBuilder urlString = new StringBuilder();
             urlString.Append("https://bato.to/forums/index.php?");

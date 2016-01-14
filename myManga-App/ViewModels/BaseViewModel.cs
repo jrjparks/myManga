@@ -81,7 +81,7 @@ namespace myManga_App.ViewModels
             {
                 SerializableViewModelViewType CurrentSerializableViewModelViewType = App.UserConfiguration.ViewTypes.FirstOrDefault(vt => vt.ViewModelName.Equals(GetType().Name));
                 if (CurrentSerializableViewModelViewType != null) CurrentSerializableViewModelViewType.ViewType = ViewType;
-                App.SaveUserConfig();
+                App.SaveUserConfiguration();
             }
         }
 

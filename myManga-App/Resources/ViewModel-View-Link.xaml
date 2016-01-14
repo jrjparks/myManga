@@ -51,6 +51,16 @@
         <PagesViews:SettingsView/>
     </DataTemplate>
 
+    <!-- Dialog -->
+
+    <DataTemplate DataType="{x:Type DialogViewModels:AuthenticationDialogViewModel}">
+        <DialogViews:AuthenticationDialogView/>
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type DialogViewModels:MessageDialogViewModel}">
+        <DialogViews:MessageDialogView/>
+    </DataTemplate>
+
     <!-- Objects -->
 
     <DataTemplate DataType="{x:Type MangaCacheObjectViewModels:MangaCacheObjectDetailViewModel}">

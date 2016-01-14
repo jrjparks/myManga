@@ -37,6 +37,7 @@
             </ResourceDictionary.MergedDictionaries>
             <Converters:EnumToBooleanConverter x:Key="EnumToBooleanConverter"/>
             <Converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" TrueValue="Visible" FalseValue="Collapsed"/>
+            <Converters:BooleanToVisibilityConverter x:Key="BooleanToCollapsedConverter" TrueValue="Collapsed" FalseValue="Visible"/>
         </ResourceDictionary>
     </UserControl.Resources>
     <Border
@@ -48,6 +49,7 @@
         TextElement.FontSize="16">
 
         <Grid>
+            <ContentPresenter Panel.ZIndex="10" Content="{Binding AuthenticationDialog}"/>
 
             <TabControl
                 TabStripPlacement="Left"
@@ -76,6 +78,55 @@
                                     SmallChange="0.1" 
                                     IsMoveToPointEnabled="True" 
                                     IsSnapToTickEnabled="True"/>
+                            </HeaderedContentControl>
+
+                            <HeaderedContentControl 
+                                Header="Recent Chapters"
+                                Margin="2,6">
+                                <Grid Margin="15,0,0,0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="15"/>
+                                        <ColumnDefinition/>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition/>
+                                        <RowDefinition/>
+                                    </Grid.RowDefinitions>
+
+                                    <TextBlock 
+                                        Grid.Row="0"
+                                        Text="Keep" 
+                                        VerticalAlignment="Center" 
+                                        TextWrapping="Wrap"/>
+                                    <Controls:MetroToggleButton
+                                        Grid.Row="0"
+                                        Grid.Column="2"
+                                        x:Name="RemoveBackChaptersToggleButton"
+                                        HorizontalAlignment="Left"
+                                        Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"
+                                        IsChecked="{Binding UserConfiguration.RemoveBackChapters, FallbackValue=False}" 
+                                        FontFamily="{DynamicResource OpenIconic}"
+                                        Content="{DynamicResource oi-check}"/>
+
+                                    <TextBlock 
+                                        Grid.Row="1"
+                                        Text="{Binding Value, ElementName=BackChaptersToKeepSlider, StringFormat=Amount\ to\ Keep:\ {0,3:#,0}}"
+                                        VerticalAlignment="Center" 
+                                        TextWrapping="Wrap"/>
+                                    <Slider
+                                        Grid.Row="1"
+                                        Grid.Column="2"
+                                        x:Name="BackChaptersToKeepSlider"
+                                        IsEnabled="{Binding ElementName=RemoveBackChaptersToggleButton, Path=IsChecked}"
+                                        Value="{Binding UserConfiguration.BackChaptersToKeep, FallbackValue=3}"
+                                        Minimum="2" Maximum="20"
+                                        TickPlacement="BottomRight"
+                                        TickFrequency="1"
+                                        LargeChange="5" 
+                                        SmallChange="1" />
+                                </Grid>
+
                             </HeaderedContentControl>
 
                             <HeaderedContentControl Header="Theme" Margin="2,6">
@@ -174,7 +225,7 @@
                                     Content="Authenticate Selected"
                                     Command="{Binding AuthenticateExtensionAsyncCommand}"
                                     CommandParameter="{Binding ElementName=SiteExtensionObjects, Path=SelectedItem.SiteExtension}"/>
-                                
+
                                 <ListBox
                                     Grid.Row="1"
                                     x:Name="SiteExtensionObjects"
@@ -213,7 +264,7 @@
                                     DragDrop:Helper.IsDropTarget="True"
                                     DragDrop:Helper.DragDropTemplate="{StaticResource ExtensionObjectTemplate}"/>
                             </Grid>
-                            
+
                         </HeaderedContentControl>
 
                     </Grid>
@@ -234,7 +285,7 @@
                     </ScrollViewer>
                 </TabItem>
 
-                <TabItem Header="Status" Height="40" Width="100">
+                <TabItem Header="Status" Height="40" Width="100" IsEnabled="False">
                     <ScrollViewer HorizontalScrollBarVisibility="Disabled">
                     </ScrollViewer>
                 </TabItem>

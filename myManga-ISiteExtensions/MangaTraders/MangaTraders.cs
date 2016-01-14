@@ -40,7 +40,10 @@ namespace MangaTraders
 
         public bool Authenticate(NetworkCredential credentials, CancellationToken ct, IProgress<Int32> ProgressReporter)
         {
-            if (IsAuthenticated) return true;
+            // DO NOT RETURN TRUE IF `IsAuthenticated`
+            // ALLOW USERS TO REAUTHENTICATE
+            // if (IsAuthenticated) return true;
+
             CookieContainer cookieContainer = new CookieContainer();
             HttpWebRequest request = HttpWebRequest.CreateHttp("http://mangatraders.org/login/process.php");
             request.Method = WebRequestMethods.Http.Post;

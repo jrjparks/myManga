@@ -97,6 +97,7 @@
     <Compile Include="System\Windows\Controls\Behaviors\DragDrop\DragAdorner.cs" />
     <Compile Include="System\Windows\Controls\Behaviors\DragDrop\Helper.cs" />
     <Compile Include="System\Windows\Controls\Behaviors\DragDrop\InsertAdorner.cs" />
+    <Compile Include="System\Windows\Controls\DialogUserControl.cs" />
     <Compile Include="System\Windows\Controls\Primitives\DockingPopup.cs" />
     <Compile Include="Controls\InputBindingsBehavior.cs" />
     <Compile Include="Controls\ScreenBrightness\MonitorBrightness.cs" />
@@ -149,6 +150,7 @@
     <Compile Include="ViewModels\BaseViewModel.cs" />
     <Compile Include="ViewModels\Dialog\AuthenticationDialogViewModel.cs" />
     <Compile Include="ViewModels\Dialog\DialogViewModel.cs" />
+    <Compile Include="ViewModels\Dialog\MessageDialogViewModel.cs" />
     <Compile Include="ViewModels\Objects\Cache\MangaCacheObjectViewModels\MangaCacheObjectDetailViewModel.cs" />
     <Compile Include="ViewModels\Pages\ChapterReaderViewModel.cs" />
     <Compile Include="ViewModels\Pages\HomeViewModel.cs" />
@@ -157,6 +159,9 @@
     <Compile Include="ViewModels\Pages\SettingsViewModel.cs" />
     <Compile Include="Views\Dialog\AuthenticationDialogView.xaml.cs">
       <DependentUpon>AuthenticationDialogView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Dialog\MessageDialogView.xaml.cs">
+      <DependentUpon>MessageDialogView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Objects\Cache\MangaCacheObjectViews\MangaCacheObjectDetailView.xaml.cs">
       <DependentUpon>MangaCacheObjectDetailView.xaml</DependentUpon>
@@ -178,9 +183,6 @@
     </Compile>
     <Compile Include="Views\Pages\SettingsView.xaml.cs">
       <DependentUpon>SettingsView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Dialog\LoginDialog.xaml.cs">
-      <DependentUpon>LoginDialog.xaml</DependentUpon>
     </Compile>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -258,6 +260,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Themes\System\Windows\Controls\DialogUserControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Themes\TabControl\TabControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -283,6 +289,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Dialog\AuthenticationDialogView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Dialog\MessageDialogView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -335,10 +345,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Pages\SettingsView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\Dialog\LoginDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

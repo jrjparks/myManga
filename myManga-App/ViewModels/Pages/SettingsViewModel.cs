@@ -1,6 +1,7 @@
 ﻿using myManga_App.IO.Local.Object;
 using myManga_App.Objects.Extensions;
 using myManga_App.Objects.UserConfig;
+using myManga_App.ViewModels.Dialog;
 using myMangaSiteExtension.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -8,8 +9,6 @@ using System.Collections.ObjectModel;
 using System.Communication;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 
@@ -22,6 +21,7 @@ namespace myManga_App.ViewModels.Pages
         {
             SiteExtensionObjects = new ObservableCollection<SiteExtensionObject>();
             DatabaseExtensionObjects = new ObservableCollection<DatabaseExtensionObject>();
+            AuthenticationDialog = new AuthenticationDialogViewModel();
             if (!IsInDesignMode)
             {
                 ResetData();
@@ -112,6 +112,13 @@ namespace myManga_App.ViewModels.Pages
 
         private void SaveUserConfiguration()
         {
+            String[] IgnoreProperties = new String[] {
+                "WindowSizeHeight",
+                "WindowSizeWidth",
+                "WindowState",
+                "ViewTypes"
+            };
+
             UserConfiguration.EnabledSiteExtensions.Clear();
             foreach (SiteExtensionObject SiteExtensionObject in SiteExtensionObjects)
             { if (SiteExtensionObject.Enabled) UserConfiguration.EnabledSiteExtensions.Add(SiteExtensionObject.Name); }
@@ -122,7 +129,7 @@ namespace myManga_App.ViewModels.Pages
 
             PropertyInfo[] UserConfigurationProperties = typeof(UserConfigurationObject).GetProperties();
             foreach (PropertyInfo Property in UserConfigurationProperties)
-            { Property.SetValue(App.UserConfiguration, Property.GetValue(UserConfiguration)); }
+            { if(!IgnoreProperties.Contains(Property.Name)) Property.SetValue(App.UserConfiguration, Property.GetValue(UserConfiguration)); }
 
             Messenger.Instance.Send(true, "PreviousFocusRequest");
         }
@@ -141,6 +148,21 @@ namespace myManga_App.ViewModels.Pages
         }
         #endregion
 
+        #region Authentication Dialog
+        private static readonly DependencyPropertyKey AuthenticationDialogPropertyKey = DependencyProperty.RegisterAttachedReadOnly(
+            "AuthenticationDialog",
+            typeof(AuthenticationDialogViewModel),
+            typeof(SettingsViewModel),
+            null);
+        private static readonly DependencyProperty AuthenticationDialogProperty = AuthenticationDialogPropertyKey.DependencyProperty;
+
+        public AuthenticationDialogViewModel AuthenticationDialog
+        {
+            get { return (AuthenticationDialogViewModel)GetValue(AuthenticationDialogProperty); }
+            private set { SetValue(AuthenticationDialogPropertyKey, value); }
+        }
+        #endregion
+
         #region AuthenticateExtensionAsyncCommand
         private DelegateCommand<IExtension> authenticateExtensionAsyncCommand;
         public ICommand AuthenticateExtensionAsyncCommand
@@ -149,13 +171,12 @@ namespace myManga_App.ViewModels.Pages
         private Boolean CanAuthenticateExtensionAsync(IExtension Extension)
         {
             if (Equals(Extension, null)) return false;
-            if (Equals(Extension.IsAuthenticated, false)) return false;
             return true;
         }
 
         private void AuthenticateExtensionAsync(IExtension Extension)
         {
-            
+            Messenger.Instance.Send(Extension, "ShowExtensionAuthenticationDialog");
         }
         #endregion
     }

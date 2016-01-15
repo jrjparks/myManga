@@ -1,0 +1,73 @@
+﻿<Controls:DialogUserControl 
+    x:Class="myManga_App.Views.Dialog.MangaCacheObjectDialogView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+    xmlns:local="clr-namespace:myManga_App.Views.Dialog"
+    xmlns:Controls="clr-namespace:System.Windows.Controls"
+    xmlns:Converters="clr-namespace:myManga_App.Converters"
+    xmlns:MangaCacheObjectView="clr-namespace:myManga_App.Views.Objects.Cache.MangaCacheObjectViews"
+    mc:Ignorable="d" 
+    d:DesignHeight="1024" d:DesignWidth="1024"
+    DialogHeight="800" DialogWidth="800"
+    Style="{DynamicResource DialogUserControlStyle}"
+    Background="{DynamicResource window-background}"
+    Foreground="{DynamicResource text-dark}"
+    TextBlock.Foreground="{DynamicResource text-dark}"
+    TextElement.Foreground="{DynamicResource text-dark}">
+    <Controls:DialogUserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/myManga;component/Resources/Localization/Dictionary_en-US.xaml"/>
+                <ResourceDictionary Source="/myManga;component/Themes/CoreResourceDictionary.xaml"/>
+                <ResourceDictionary Source="/myManga;component/Themes/System/Windows/Controls/DialogUserControl.xaml"/>
+
+                <ResourceDictionary Source="/myManga;component/Themes/Button/MetroButton.xaml"/>
+                <ResourceDictionary Source="/myManga;component/Themes/TextBox/TextBox.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+            <Converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" TrueValue="Visible" FalseValue="Collapsed"/>
+        </ResourceDictionary>
+    </Controls:DialogUserControl.Resources>
+    <Grid>
+        <Border
+            BorderThickness="1"
+            BorderBrush="{DynamicResource window-theme-primary}">
+            <ContentPresenter DataContext="{Binding MangaCacheObjectDetail}"/>
+        </Border>
+        <Border
+			HorizontalAlignment="Left" 
+			VerticalAlignment="Top"
+            Background="{DynamicResource window-background}"
+            BorderBrush="{DynamicResource window-theme-primary}"
+            BorderThickness="1,1,0,1"
+            Margin="-32,0,0,0">
+            <StackPanel 
+                Orientation="Vertical"
+			    Grid.Column="2">
+                <Controls:MetroButton
+			        FontFamily="{DynamicResource OpenIconic}"
+			        Content="{DynamicResource oi-reload}"
+			        Command="{Binding RefreshCommand}"
+                    CommandParameter="{Binding SelectedMangaCacheObject}"
+			        Height="32"
+			        Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"/>
+                <Controls:MetroButton
+			        FontFamily="{DynamicResource OpenIconic}"
+			        Content="{DynamicResource oi-trash}"
+			        Command="{Binding DeleteCommand}"
+                    CommandParameter="{Binding SelectedMangaCacheObject}"
+			        Height="32"
+			        Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"/>
+                <Controls:MetroButton
+			        FontFamily="{DynamicResource OpenIconic}"
+			        Content="{DynamicResource oi-pencil}"
+			        Command="{Binding EditCommand}"
+                    CommandParameter="{Binding SelectedMangaCacheObject}"
+			        Height="32"
+			        Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"
+                    IsEnabled="False"/>
+            </StackPanel>
+        </Border>
+    </Grid>
+</Controls:DialogUserControl>

@@ -150,6 +150,7 @@
     <Compile Include="ViewModels\BaseViewModel.cs" />
     <Compile Include="ViewModels\Dialog\AuthenticationDialogViewModel.cs" />
     <Compile Include="ViewModels\Dialog\DialogViewModel.cs" />
+    <Compile Include="ViewModels\Dialog\MangaCacheObjectDialogViewModel.cs" />
     <Compile Include="ViewModels\Dialog\MessageDialogViewModel.cs" />
     <Compile Include="ViewModels\Objects\Cache\MangaCacheObjectViewModels\MangaCacheObjectDetailViewModel.cs" />
     <Compile Include="ViewModels\Pages\ChapterReaderViewModel.cs" />
@@ -159,6 +160,9 @@
     <Compile Include="ViewModels\Pages\SettingsViewModel.cs" />
     <Compile Include="Views\Dialog\AuthenticationDialogView.xaml.cs">
       <DependentUpon>AuthenticationDialogView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Dialog\MangaCacheObjectDialogView.xaml.cs">
+      <DependentUpon>MangaCacheObjectDialogView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Dialog\MessageDialogView.xaml.cs">
       <DependentUpon>MessageDialogView.xaml</DependentUpon>
@@ -289,6 +293,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Dialog\AuthenticationDialogView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Dialog\MangaCacheObjectDialogView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

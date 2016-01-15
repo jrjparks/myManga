@@ -1,4 +1,5 @@
 ﻿using myManga_App.Objects.Cache;
+using myManga_App.ViewModels.Dialog;
 using myManga_App.ViewModels.Objects.Cache.MangaCacheObjectViewModels;
 using myMangaSiteExtension.Utilities;
 using System;
@@ -21,6 +22,8 @@ namespace myManga_App.ViewModels.Pages
             : base(SupportsViewTypeChange: true)
         {
             MangaCacheObjectDetail = new MangaCacheObjectDetailViewModel();
+            MangaCacheObjectDialog = new MangaCacheObjectDialogViewModel()
+            { MangaCacheObjectDetail = MangaCacheObjectDetail };
             if (!IsInDesignMode)
             {
                 ConfigureMangaArchiveCacheObjectView();
@@ -81,7 +84,8 @@ namespace myManga_App.ViewModels.Pages
             "SelectedMangaCacheObject",
             typeof(MangaCacheObject),
             typeof(HomeViewModel),
-            new PropertyMetadata((d,e) => {
+            new PropertyMetadata((d, e) =>
+            {
                 (d as HomeViewModel).MangaCacheObjectDetail.MangaCacheObject = e.NewValue as MangaCacheObject;
             }));
 
@@ -93,6 +97,21 @@ namespace myManga_App.ViewModels.Pages
         #endregion
 
         #region MangaCacheObjects
+
+        #region MangaCacheObjectDialog
+        private static readonly DependencyPropertyKey MangaCacheObjectDialogPropertyKey = DependencyProperty.RegisterAttachedReadOnly(
+            "MangaCacheObjectDialog",
+            typeof(MangaCacheObjectDialogViewModel),
+            typeof(HomeViewModel),
+            null);
+        private static readonly DependencyProperty MangaCacheObjectDialogProperty = MangaCacheObjectDialogPropertyKey.DependencyProperty;
+
+        public MangaCacheObjectDialogViewModel MangaCacheObjectDialog
+        {
+            get { return (MangaCacheObjectDialogViewModel)GetValue(MangaCacheObjectDialogProperty); }
+            private set { SetValue(MangaCacheObjectDialogPropertyKey, value); }
+        }
+        #endregion
 
         #region MangaCacheObjectDetail
         private static readonly DependencyPropertyKey MangaCacheObjectDetailPropertyKey = DependencyProperty.RegisterAttachedReadOnly(

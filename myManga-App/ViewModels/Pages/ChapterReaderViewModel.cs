@@ -416,6 +416,8 @@ namespace myManga_App.ViewModels.Pages
 
             PageCacheObjects.Clear();
             (await LoadPageCacheObjectsAsync()).ForEach(_ => PageCacheObjects.Add(_));
+
+            ChapterCleanup(MangaObject, ChapterObject);
         }
 
         private CancellationTokenSource LoadChapterObjectAsyncCTS { get; set; }
@@ -614,6 +616,27 @@ namespace myManga_App.ViewModels.Pages
         }
         #endregion
 
+        #endregion
+
+        #region Chapter Cleanup
+        private void ChapterCleanup(MangaObject MangaObject, ChapterObject ChapterObject)
+        {
+            if (App.UserConfiguration.RemoveBackChapters)
+            {
+                Int32 Idx = MangaObject.IndexOfChapterObject(ChapterObject) - App.UserConfiguration.BackChaptersToKeep;
+                if (--Idx > 0)
+                {
+                    for (; Idx >= 0; --Idx)
+                    {
+                        String ChapterPath = Path.Combine(
+                            App.CHAPTER_ARCHIVE_DIRECTORY,
+                            MangaObject.MangaFileName(),
+                            MangaObject.Chapters[Idx].ChapterArchiveName(App.CHAPTER_ARCHIVE_EXTENSION));
+                        if (File.Exists(ChapterPath)) File.Delete(ChapterPath);
+                    }
+                }
+            }
+        }
         #endregion
     }
 }

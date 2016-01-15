@@ -33,6 +33,7 @@ namespace myManga_App.ViewModels
         }
         #endregion
 
+        #region ViewType
         private static readonly DependencyProperty ViewTypeProperty = DependencyProperty.RegisterAttached(
             "ViewType",
             typeof(ViewModelViewType),
@@ -47,8 +48,9 @@ namespace myManga_App.ViewModels
 
         private static void OnViewTypeChenged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         { (d as BaseViewModel).SaveViewType(); }
+        #endregion
 
-
+        #region SupportsViewTypeChange
         private static readonly DependencyProperty SupportsViewTypeChangeProperty = DependencyProperty.RegisterAttached(
             "SupportsViewTypeChange",
             typeof(Boolean),
@@ -60,6 +62,7 @@ namespace myManga_App.ViewModels
             get { return (Boolean)GetValue(SupportsViewTypeChangeProperty); }
             private set { SetValue(SupportsViewTypeChangeProperty, value); }
         }
+        #endregion
 
         private Boolean? _IsInDesignMode = null;
         public Boolean IsInDesignMode { get { return (Boolean)(_IsInDesignMode ?? (_IsInDesignMode = DesignerProperties.GetIsInDesignMode(this))); } }

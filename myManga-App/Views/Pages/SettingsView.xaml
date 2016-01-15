@@ -96,7 +96,7 @@
 
                                     <TextBlock 
                                         Grid.Row="0"
-                                        Text="Keep" 
+                                        Text="Remove" 
                                         VerticalAlignment="Center" 
                                         TextWrapping="Wrap"/>
                                     <Controls:MetroToggleButton
@@ -222,8 +222,8 @@
 
                                 <Controls:MetroButton
                                     Grid.Row="0"
-                                    Content="Authenticate Selected"
-                                    Command="{Binding AuthenticateExtensionAsyncCommand}"
+                                    Content="Authenticate Selected Site"
+                                    Command="{Binding AuthenticateExtensionCommand}"
                                     CommandParameter="{Binding ElementName=SiteExtensionObjects, Path=SelectedItem.SiteExtension}"/>
 
                                 <ListBox
@@ -250,8 +250,8 @@
 
                                 <Controls:MetroButton
                                     Grid.Row="0"
-                                    Content="Authenticate Selected"
-                                    Command="{Binding AuthenticateExtensionAsyncCommand}"
+                                    Content="Authenticate Selected Database"
+                                    Command="{Binding AuthenticateExtensionCommand}"
                                     CommandParameter="{Binding ElementName=DatabaseExtensionObjects, Path=SelectedItem.DatabaseExtension}"/>
 
                                 <ListBox

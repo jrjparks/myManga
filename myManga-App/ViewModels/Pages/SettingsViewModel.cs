@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Communication;
+using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using System.Windows;
@@ -28,22 +29,27 @@ namespace myManga_App.ViewModels.Pages
             }
         }
 
+        private void UserConfiguration_PropertyChanged(Object sender, PropertyChangedEventArgs e)
+        {
+            UserConfigurationObject UserConfiguration = sender as UserConfigurationObject;
+            switch (e.PropertyName)
+            {
+                case "Theme":
+                    App.ApplyTheme(UserConfiguration.Theme);
+                    break;
+            }
+        }
+
         private void ResetData()
         {
+            if (!Equals(UserConfiguration, null))   // Cleanup any events from old UserConfigurationObject
+            { UserConfiguration.PropertyChanged -= UserConfiguration_PropertyChanged; }
+
             UserConfiguration = new UserConfigurationObject();
             PropertyInfo[] UserConfigurationProperties = typeof(UserConfigurationObject).GetProperties();
             foreach (PropertyInfo Property in UserConfigurationProperties)
             { Property.SetValue(UserConfiguration, Property.GetValue(App.UserConfiguration)); }
-            UserConfiguration.PropertyChanged += (s, e) =>
-            {
-                UserConfigurationObject UserConfiguration = s as UserConfigurationObject;
-                switch (e.PropertyName)
-                {
-                    case "Theme":
-                        App.ApplyTheme(UserConfiguration.Theme);
-                        break;
-                }
-            };
+            UserConfiguration.PropertyChanged += UserConfiguration_PropertyChanged;
 
             SiteExtensionObjects.Clear();
             DatabaseExtensionObjects.Clear();
@@ -129,7 +135,7 @@ namespace myManga_App.ViewModels.Pages
 
             PropertyInfo[] UserConfigurationProperties = typeof(UserConfigurationObject).GetProperties();
             foreach (PropertyInfo Property in UserConfigurationProperties)
-            { if(!IgnoreProperties.Contains(Property.Name)) Property.SetValue(App.UserConfiguration, Property.GetValue(UserConfiguration)); }
+            { if (!IgnoreProperties.Contains(Property.Name)) Property.SetValue(App.UserConfiguration, Property.GetValue(UserConfiguration)); }
 
             Messenger.Instance.Send(true, "PreviousFocusRequest");
         }
@@ -163,18 +169,18 @@ namespace myManga_App.ViewModels.Pages
         }
         #endregion
 
-        #region AuthenticateExtensionAsyncCommand
-        private DelegateCommand<IExtension> authenticateExtensionAsyncCommand;
-        public ICommand AuthenticateExtensionAsyncCommand
-        { get { return authenticateExtensionAsyncCommand ?? (authenticateExtensionAsyncCommand = new DelegateCommand<IExtension>(AuthenticateExtensionAsync, CanAuthenticateExtensionAsync)); } }
+        #region AuthenticateExtensionCommand
+        private DelegateCommand<IExtension> authenticateExtensionCommand;
+        public ICommand AuthenticateExtensionCommand
+        { get { return authenticateExtensionCommand ?? (authenticateExtensionCommand = new DelegateCommand<IExtension>(AuthenticateExtension, CanAuthenticateExtension)); } }
 
-        private Boolean CanAuthenticateExtensionAsync(IExtension Extension)
+        private Boolean CanAuthenticateExtension(IExtension Extension)
         {
             if (Equals(Extension, null)) return false;
             return true;
         }
 
-        private void AuthenticateExtensionAsync(IExtension Extension)
+        private void AuthenticateExtension(IExtension Extension)
         {
             Messenger.Instance.Send(Extension, "ShowExtensionAuthenticationDialog");
         }

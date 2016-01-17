@@ -48,6 +48,8 @@
                 ItemsSource="{Binding MangaCacheObject.ChapterCacheObjects}"
                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                 ScrollViewer.VerticalScrollBarVisibility="Visible"
+                VirtualizingPanel.ScrollUnit="Pixel"
+                VirtualizingPanel.VirtualizationMode="Recycling"
                 HorizontalContentAlignment="Stretch"
                 SelectionMode="Extended" 
                 ItemContainerStyle="{DynamicResource ChapterCacheObjectListBoxItem}"/>

@@ -53,6 +53,8 @@
                 Grid.ColumnSpan="2"
 				ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                 ScrollViewer.VerticalScrollBarVisibility="Auto"
+                VirtualizingPanel.ScrollUnit="Pixel"
+                VirtualizingPanel.VirtualizationMode="Recycling"
                 ItemContainerStyle="{StaticResource DetailsMangaObjectListBoxItem}"
                 SelectedItem="{Binding SelectedSearchResultMangaObject}"
                 ItemsSource="{Binding Path=SearchResultMangaObjectCollection, Mode=OneWay}"

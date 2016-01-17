@@ -1,24 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+﻿using System.Windows.Controls;
 
 namespace myManga_App.Views.Dialog
 {
     /// <summary>
     /// Interaction logic for MangaCacheObjectDialogView.xaml
     /// </summary>
-    public partial class MangaCacheObjectDialogView : UserControl
+    public partial class MangaCacheObjectDialogView : DialogUserControl
     {
         public MangaCacheObjectDialogView()
         {

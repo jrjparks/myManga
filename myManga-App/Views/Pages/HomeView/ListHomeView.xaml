@@ -55,22 +55,22 @@
                     <Controls:MetroButton
 			            FontFamily="{DynamicResource OpenIconic}"
 			            Content="{DynamicResource oi-reload}"
-			            Command="{Binding RefreshCommand}"
-                        CommandParameter="{Binding SelectedMangaCacheObject}"
+			            Command="{Binding MangaCacheObjectDialog.RefreshCommand}"
+                        CommandParameter="{Binding MangaCacheObjectDialog.MangaCacheObjectDetail.MangaCacheObject}"
 			            Height="32"
 			            Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"/>
                     <Controls:MetroButton
 			            FontFamily="{DynamicResource OpenIconic}"
 			            Content="{DynamicResource oi-trash}"
-			            Command="{Binding DeleteCommand}"
-                        CommandParameter="{Binding SelectedMangaCacheObject}"
+			            Command="{Binding MangaCacheObjectDialog.DeleteCommand}"
+                        CommandParameter="{Binding MangaCacheObjectDialog.MangaCacheObjectDetail.MangaCacheObject}"
 			            Height="32"
 			            Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"/>
                     <Controls:MetroButton
 			            FontFamily="{DynamicResource OpenIconic}"
 			            Content="{DynamicResource oi-pencil}"
-			            Command="{Binding EditCommand}"
-                        CommandParameter="{Binding SelectedMangaCacheObject}"
+			            Command="{Binding MangaCacheObjectDialog.EditCommand}"
+                        CommandParameter="{Binding MangaCacheObjectDialog.MangaCacheObjectDetail.MangaCacheObject}"
 			            Height="32"
 			            Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"
                         IsEnabled="False"/>
@@ -153,7 +153,7 @@
                 Grid.Column="2"
                 Visibility="{Binding MangaCacheObjectDetail.MangaCacheObject, TargetNullValue=Collapsed, FallbackValue=Visible}">
                 <Rectangle Fill="Gray" Margin="3"/>
-                <ContentPresenter Content="{Binding MangaCacheObjectDetail}"/>
+                <ContentPresenter Content="{Binding MangaCacheObjectDialog.MangaCacheObjectDetail}"/>
                 <!-- DETAIL VIEW -->
                 <ProgressBar
                     Height="5"

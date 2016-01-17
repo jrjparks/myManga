@@ -46,7 +46,7 @@ namespace myManga_App.Controls.ScreenBrightness
             if (Equals(Dispatcher.Thread, Thread.CurrentThread))
                 UpdateBrightness(e.Value);
             else
-                Dispatcher.Invoke(new UpdateBrightnessDelegate(UpdateBrightness), e);
+                Dispatcher.Invoke(new UpdateBrightnessDelegate(UpdateBrightness), e.Value);
         }
         private delegate void UpdateBrightnessDelegate(Byte b);
         private void UpdateBrightness(Byte b)

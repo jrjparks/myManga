@@ -247,7 +247,8 @@ namespace myManga_App.Controls.ScreenBrightness
 
         private void MonitorWatcher_EventArrived(object sender, EventArrivedEventArgs e)
         {
-            OnMonitorBrightnessChange((Byte)e.NewEvent.Properties["Brightness"].Value);
+            Byte BrightnessValue = (Byte)e.NewEvent.Properties["Brightness"].Value;
+            OnMonitorBrightnessChange(BrightnessValue);
         }
         #endregion
 

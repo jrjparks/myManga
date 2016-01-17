@@ -21,9 +21,9 @@ namespace myManga_App.ViewModels.Pages
         public HomeViewModel()
             : base(SupportsViewTypeChange: true)
         {
-            MangaCacheObjectDetail = new MangaCacheObjectDetailViewModel();
-            MangaCacheObjectDialog = new MangaCacheObjectDialogViewModel()
-            { MangaCacheObjectDetail = MangaCacheObjectDetail };
+            MangaCacheObjectDialog = new MangaCacheObjectDialogViewModel();
+            MangaCacheObjectDialog.MangaCacheObjectDetail = new MangaCacheObjectDetailViewModel();
+
             if (!IsInDesignMode)
             {
                 ConfigureMangaArchiveCacheObjectView();
@@ -33,7 +33,7 @@ namespace myManga_App.ViewModels.Pages
 
         protected override void SubDispose()
         {
-
+            MangaCacheObjectDialog.MangaCacheObjectDetail.Dispose();
         }
 
         #region Search Term
@@ -86,7 +86,11 @@ namespace myManga_App.ViewModels.Pages
             typeof(HomeViewModel),
             new PropertyMetadata((d, e) =>
             {
-                (d as HomeViewModel).MangaCacheObjectDetail.MangaCacheObject = e.NewValue as MangaCacheObject;
+                HomeViewModel control = d as HomeViewModel;
+                MangaCacheObject NewValue = e.NewValue as MangaCacheObject;
+                if (!Equals(control.MangaCacheObjectDialog, null))
+                    if (!Equals(control.MangaCacheObjectDialog.MangaCacheObjectDetail, null))
+                        control.MangaCacheObjectDialog.MangaCacheObjectDetail.MangaCacheObject = NewValue;
             }));
 
         public MangaCacheObject SelectedMangaCacheObject
@@ -113,21 +117,27 @@ namespace myManga_App.ViewModels.Pages
         }
         #endregion
 
-        #region MangaCacheObjectDetail
-        private static readonly DependencyPropertyKey MangaCacheObjectDetailPropertyKey = DependencyProperty.RegisterAttachedReadOnly(
-            "MangaCacheObjectDetail",
-            typeof(MangaCacheObjectDetailViewModel),
-            typeof(HomeViewModel),
-            null);
-        private static readonly DependencyProperty MangaCacheObjectDetailProperty = MangaCacheObjectDetailPropertyKey.DependencyProperty;
+        #region Show MangaCacheObject Dialog
+        private DelegateCommand<MangaCacheObject> showMangaCacheObjectDialogCommand;
+        public ICommand ShowMangaCacheObjectDialogCommand
+        { get { return showMangaCacheObjectDialogCommand ?? (showMangaCacheObjectDialogCommand = new DelegateCommand<MangaCacheObject>(ShowMangaCacheObjectDialog, CanShowMangaCacheObjectDialog)); } }
 
-        public MangaCacheObjectDetailViewModel MangaCacheObjectDetail
+        private Boolean CanShowMangaCacheObjectDialog(MangaCacheObject MangaCacheObject)
         {
-            get { return (MangaCacheObjectDetailViewModel)GetValue(MangaCacheObjectDetailProperty); }
-            private set { SetValue(MangaCacheObjectDetailPropertyKey, value); }
+            if (Equals(MangaCacheObject, null)) return false;
+            return true;
+        }
+
+        private void ShowMangaCacheObjectDialog(MangaCacheObject MangaCacheObject)
+        {
+            MangaCacheObjectDialog.MangaCacheObjectDetail.MangaCacheObject = MangaCacheObject;
+            MangaCacheObjectDialog.ShowDialog();
         }
         #endregion
 
+        #endregion
+
+        #region MangaCacheObject
         private ICollectionView MangaCacheObjectView
         { get; set; }
 
@@ -203,41 +213,6 @@ namespace myManga_App.ViewModels.Pages
                 { collectionViewLiveShaping.LiveFilteringProperties.Add(propertyName); }
                 collectionViewLiveShaping.IsLiveFiltering = true;
             }
-        }
-        #endregion
-
-        #region Refresh Command
-        private DelegateCommand<MangaCacheObject> refreshCommand;
-        public ICommand RefreshCommand
-        { get { return refreshCommand ?? (refreshCommand = new DelegateCommand<MangaCacheObject>(Refresh, CanRefresh)); } }
-
-        private Boolean CanRefresh(MangaCacheObject MangaCacheObject)
-        {
-            if (Equals(MangaCacheObject, null)) return false;
-            return true;
-        }
-
-        private void Refresh(MangaCacheObject MangaCacheObject)
-        { App.ContentDownloadManager.Download(MangaCacheObject.MangaObject, true, MangaCacheObject.DownloadProgressReporter); }
-        #endregion
-
-        #region Delete Command
-        private DelegateCommand<MangaCacheObject> deleteCommand;
-        public ICommand DeleteCommand
-        { get { return deleteCommand ?? (deleteCommand = new DelegateCommand<MangaCacheObject>(DeleteAsync, CanDeleteAsync)); } }
-
-        private Boolean CanDeleteAsync(MangaCacheObject MangaCacheObject)
-        {
-            if (Equals(MangaCacheObject, null)) return false;
-            return true;
-        }
-
-        private void DeleteAsync(MangaCacheObject MangaCacheObject)
-        {
-            String SavePath = Path.Combine(App.MANGA_ARCHIVE_DIRECTORY, MangaCacheObject.MangaObject.MangaArchiveName(App.MANGA_ARCHIVE_EXTENSION));
-            MessageBoxResult msgboxResult = MessageBox.Show(String.Format("Are you sure you wish to delete \"{0}\"?", MangaCacheObject.MangaObject.Name), "Delete Manga?", MessageBoxButton.YesNo);
-            if (Equals(msgboxResult, MessageBoxResult.Yes))
-                File.Delete(SavePath);
         }
         #endregion
 

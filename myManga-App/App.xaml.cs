@@ -382,7 +382,7 @@ namespace myManga_App
             e.Handled = true;
         }
 
-        #region Application Events
+#region Application Events
         private async void App_Startup(object sender, StartupEventArgs e)
         {
             SiteExtensions.Load(PLUGIN_DIRECTORY, Filter: "*.mymanga.dll");
@@ -415,9 +415,9 @@ namespace myManga_App
             SiteExtensions.Unload();
             DatabaseExtensions.Unload();
         }
-        #endregion
+#endregion
 
-        #region File Watcher Events
+#region File Watcher Events
         private void ConfigureFileWatchers()
         {
             MangaObjectArchiveWatcher.Changed += MangaObjectArchiveWatcher_Event;
@@ -499,9 +499,9 @@ namespace myManga_App
                 Messenger.Instance.Send(e, "ChapterObjectArchiveWatcher");
             });
         }
-        #endregion
+#endregion
 
-        #region User Config Files
+#region User Config Files
         private void LoadUserAuthenticate()
         {
             if (File.Exists(USER_AUTH_PATH))
@@ -575,7 +575,7 @@ namespace myManga_App
                 { UserAuthenticationStream.CopyTo(fs); }
             }
         }
-        #endregion
+#endregion
 
         public void RunOnUiThread(Action action)
         {

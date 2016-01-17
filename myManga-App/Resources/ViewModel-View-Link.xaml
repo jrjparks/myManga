@@ -61,6 +61,10 @@
         <DialogViews:MessageDialogView/>
     </DataTemplate>
 
+    <DataTemplate DataType="{x:Type DialogViewModels:MangaCacheObjectDialogViewModel}">
+        <DialogViews:MangaCacheObjectDialogView/>
+    </DataTemplate>
+
     <!-- Objects -->
 
     <DataTemplate DataType="{x:Type MangaCacheObjectViewModels:MangaCacheObjectDetailViewModel}">

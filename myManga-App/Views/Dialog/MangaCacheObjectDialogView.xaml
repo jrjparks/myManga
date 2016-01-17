@@ -10,7 +10,7 @@
     xmlns:MangaCacheObjectView="clr-namespace:myManga_App.Views.Objects.Cache.MangaCacheObjectViews"
     mc:Ignorable="d" 
     d:DesignHeight="1024" d:DesignWidth="1024"
-    DialogHeight="800" DialogWidth="800"
+    DialogHeight="620" DialogWidth="900"
     Style="{DynamicResource DialogUserControlStyle}"
     Background="{DynamicResource window-background}"
     Foreground="{DynamicResource text-dark}"
@@ -33,7 +33,7 @@
         <Border
             BorderThickness="1"
             BorderBrush="{DynamicResource window-theme-primary}">
-            <ContentPresenter DataContext="{Binding MangaCacheObjectDetail}"/>
+            <ContentPresenter Content="{Binding MangaCacheObjectDetail}"/>
         </Border>
         <Border
 			HorizontalAlignment="Left" 
@@ -49,21 +49,21 @@
 			        FontFamily="{DynamicResource OpenIconic}"
 			        Content="{DynamicResource oi-reload}"
 			        Command="{Binding RefreshCommand}"
-                    CommandParameter="{Binding SelectedMangaCacheObject}"
+                    CommandParameter="{Binding MangaCacheObjectDetail.MangaCacheObject}"
 			        Height="32"
 			        Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"/>
                 <Controls:MetroButton
 			        FontFamily="{DynamicResource OpenIconic}"
 			        Content="{DynamicResource oi-trash}"
 			        Command="{Binding DeleteCommand}"
-                    CommandParameter="{Binding SelectedMangaCacheObject}"
+                    CommandParameter="{Binding MangaCacheObjectDetail.MangaCacheObject}"
 			        Height="32"
 			        Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"/>
                 <Controls:MetroButton
 			        FontFamily="{DynamicResource OpenIconic}"
 			        Content="{DynamicResource oi-pencil}"
 			        Command="{Binding EditCommand}"
-                    CommandParameter="{Binding SelectedMangaCacheObject}"
+                    CommandParameter="{Binding MangaCacheObjectDetail.MangaCacheObject}"
 			        Height="32"
 			        Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"
                     IsEnabled="False"/>

@@ -146,99 +146,16 @@
 
                     <Rectangle Width="25"/>
 
-                    <Controls:MetroToggleButton
+                    <Controls:MetroButton
 			            x:Name="MoreInfoButton"
-                        IsEnabled="{Binding SelectedMangaCacheObject, TargetNullValue=false}"
 			            Content="More Information"
-                        VerticalContentAlignment="Center"/>
+                        VerticalContentAlignment="Center"
+                        Command="{Binding ShowMangaCacheObjectDialogCommand}"
+                        CommandParameter="{Binding SelectedMangaCacheObject}"/>
 
                 </StackPanel>
 
             </Border>
-
-            <Grid
-                Grid.ColumnSpan="3"
-                Visibility="{Binding IsChecked, ElementName=MoreInfoButton, Converter={StaticResource BooleanToVisibilityConverter}, FallbackValue=Collapsed}">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="1*"/>
-                    <ColumnDefinition Width="Auto" MinWidth="800" MaxWidth="1280"/>
-                    <ColumnDefinition Width="1*"/>
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="1*"/>
-                    <RowDefinition Height="Auto" MinHeight="600" MaxHeight="720"/>
-                    <RowDefinition Height="1*"/>
-                </Grid.RowDefinitions>
-                <Controls:MetroToggleButton
-                    Grid.ColumnSpan="3"
-                    Grid.RowSpan="3"
-                    Background="{DynamicResource window-background}"
-                    PrimaryBrush="{DynamicResource window-background}"
-                    PrimaryDisabledBrush="{DynamicResource window-background}"
-                    SecondaryBrush="{DynamicResource window-background}"
-                    SecondaryDisabledBrush="{DynamicResource window-background}"
-                    Opacity="0.6"
-                    IsChecked="{Binding IsChecked, ElementName=MoreInfoButton}"/>
-                <Border
-                    Background="{DynamicResource window-background}"
-                    BorderBrush="{DynamicResource window-theme-primary}" 
-                    BorderThickness="1"
-                    Grid.Column="1"
-                    Grid.Row="1">
-                    <Grid>
-                        <Rectangle Fill="Gray" Margin="3"/>
-                        <ContentPresenter
-                            Height="620"
-                            Width="900"
-                            Content="{Binding MangaCacheObjectDetail}"/>
-                        <!-- DETAIL VIEW -->
-                        <ProgressBar
-                            Height="5"
-                            Minimum="0"
-                            Maximum="100"
-                            Value="{Binding SelectedMangaCacheObject.DownloadProgress, Mode=OneWay, FallbackValue=25}"
-                            Visibility="{Binding SelectedMangaCacheObject.DownloadProgressActive, Converter={StaticResource BooleanToVisibilityConverter}, FallbackValue=Hidden}"
-                            VerticalAlignment="Top"
-                            Foreground="{DynamicResource window-theme-primary}" 
-                            Background="{DynamicResource window-background}" 
-                            BorderThickness="0"/>
-                        <Border
-			                HorizontalAlignment="Left" 
-			                VerticalAlignment="Top"
-                            Background="{DynamicResource window-background}"
-                            BorderBrush="{DynamicResource window-theme-primary}"
-                            BorderThickness="1,1,0,1"
-                            Margin="-33,-1,0,0">
-                            <StackPanel 
-                                Orientation="Vertical"
-			                    Grid.Column="2">
-                                <Controls:MetroButton
-			                        FontFamily="{DynamicResource OpenIconic}"
-			                        Content="{DynamicResource oi-reload}"
-			                        Command="{Binding RefreshCommand}"
-                                    CommandParameter="{Binding SelectedMangaCacheObject}"
-			                        Height="32"
-			                        Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"/>
-                                <Controls:MetroButton
-			                        FontFamily="{DynamicResource OpenIconic}"
-			                        Content="{DynamicResource oi-trash}"
-			                        Command="{Binding DeleteCommand}"
-                                    CommandParameter="{Binding SelectedMangaCacheObject}"
-			                        Height="32"
-			                        Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"/>
-                                <Controls:MetroButton
-			                        FontFamily="{DynamicResource OpenIconic}"
-			                        Content="{DynamicResource oi-pencil}"
-			                        Command="{Binding EditCommand}"
-                                    CommandParameter="{Binding SelectedMangaCacheObject}"
-			                        Height="32"
-			                        Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"
-                                    IsEnabled="False"/>
-                            </StackPanel>
-                        </Border>
-                    </Grid>
-                </Border>
-            </Grid>
 
             <ContentPresenter Content="{Binding MangaCacheObjectDialog}"/>
 

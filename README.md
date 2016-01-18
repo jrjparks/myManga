@@ -18,8 +18,8 @@ Consolidates information from multiple sites.
 4. Profit?
 
 ### 3rd Party DLLs
-* HtmlAgilityPack
-* Microsoft.Windows.Shell
+* [HtmlAgilityPack](https://htmlagilitypack.codeplex.com/)
+* [log4net](https://logging.apache.org/log4net/)
 
 ## Features
 * Offline Storage of manga and chapters

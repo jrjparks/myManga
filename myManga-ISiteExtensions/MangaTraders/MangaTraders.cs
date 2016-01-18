@@ -3,11 +3,16 @@ using myMangaSiteExtension.Attributes;
 using myMangaSiteExtension.Enums;
 using myMangaSiteExtension.Interfaces;
 using myMangaSiteExtension.Objects;
+using myMangaSiteExtension.Utilities;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Net;
 using System.Reflection;
+using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 
 namespace MangaTraders
 {
@@ -25,6 +30,91 @@ namespace MangaTraders
         private ISiteExtensionDescriptionAttribute siteExtensionDescriptionAttribute;
         public ISiteExtensionDescriptionAttribute SiteExtensionDescriptionAttribute
         { get { return siteExtensionDescriptionAttribute ?? (siteExtensionDescriptionAttribute = GetType().GetCustomAttribute<ISiteExtensionDescriptionAttribute>(false)); } }
+
+        #region Extension
+        public CookieCollection Cookies
+        { get; private set; }
+
+        public Boolean IsAuthenticated
+        { get; private set; }
+
+        public bool Authenticate(NetworkCredential credentials, CancellationToken ct, IProgress<Int32> ProgressReporter)
+        {
+            // DO NOT RETURN TRUE IF `IsAuthenticated`
+            // ALLOW USERS TO REAUTHENTICATE
+            // if (IsAuthenticated) return true;
+
+            CookieContainer cookieContainer = new CookieContainer();
+            HttpWebRequest request = HttpWebRequest.CreateHttp("http://mangatraders.org/login/process.php");
+            request.Method = WebRequestMethods.Http.Post;
+
+            if (!Equals(ProgressReporter, null)) ProgressReporter.Report(5);
+            ct.ThrowIfCancellationRequested();
+
+            StringBuilder loginData = new StringBuilder();
+            loginData.AppendUrlEncoded("email_Login", credentials.UserName, true);
+            loginData.AppendUrlEncoded("password_Login", credentials.Password);
+
+            if (!Equals(ProgressReporter, null)) ProgressReporter.Report(10);
+            ct.ThrowIfCancellationRequested();
+
+            Byte[] loginDataBytes = Encoding.UTF8.GetBytes(loginData.ToString());
+            request.ContentType = "application/x-www-form-urlencoded";
+            request.ContentLength = loginDataBytes.Length;
+            request.CookieContainer = cookieContainer;
+
+            if (!Equals(ProgressReporter, null)) ProgressReporter.Report(30);
+            ct.ThrowIfCancellationRequested();
+
+            using (Stream requestStream = request.GetRequestStream())
+            { requestStream.Write(loginDataBytes, 0, loginDataBytes.Length); }
+
+            if (!Equals(ProgressReporter, null)) ProgressReporter.Report(50);
+            ct.ThrowIfCancellationRequested();
+
+            HttpWebResponse response = request.GetResponse() as HttpWebResponse;
+            String responseContent = null;
+            if (!Equals(ProgressReporter, null)) ProgressReporter.Report(75);
+            using (StreamReader streamReader = new StreamReader(response.GetResponseStream()))
+            { responseContent = streamReader.ReadToEnd(); }
+
+            if (!Equals(ProgressReporter, null)) ProgressReporter.Report(90);
+            ct.ThrowIfCancellationRequested();
+            Cookies = response.Cookies;
+
+            IsAuthenticated = responseContent.IndexOf("username or password incorrect", StringComparison.OrdinalIgnoreCase) < 0;
+            if (!Equals(ProgressReporter, null)) ProgressReporter.Report(100);
+            return IsAuthenticated;
+        }
+
+        public void Deauthenticate()
+        {
+            if (!IsAuthenticated) return;
+            CookieContainer cookieContainer = new CookieContainer();
+            HttpWebRequest request = HttpWebRequest.CreateHttp("http://mangatraders.org/logout.php");
+            request.Method = WebRequestMethods.Http.Get;
+            request.CookieContainer = cookieContainer;
+            request.CookieContainer.Add(Cookies);
+            HttpWebResponse response = request.GetResponse() as HttpWebResponse;
+            Cookies = null;
+            IsAuthenticated = false;
+        }
+
+        public List<MangaObject> GetUserFavorites()
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool AddUserFavorites(MangaObject MangaObject)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool RemoveUserFavorites(MangaObject MangaObject)
+        {
+            throw new NotImplementedException();
+        }
+        #endregion
 
         public SearchRequestObject GetSearchRequestObject(String searchTerm)
         {
@@ -108,6 +198,22 @@ namespace MangaTraders
                 String ChapterNumber = Regex.Match(ChapterNumberNode.InnerText, @"\d+(\.\d+)?").Value;
                 String[] ChapterSub = ChapterNumber.Trim().Split('.');
 
+
+                DateTime Released = DateTime.Now;
+                String ReleasedTxt = ReleaseDate.InnerText.ToLower();
+                if (ReleasedTxt.StartsWith("today"))
+                    Released = DateTime.Today;
+                else if (ReleasedTxt.StartsWith("yesterday"))
+                    Released = DateTime.Today.AddDays(-1);
+                else if (ReleasedTxt.EndsWith("hours ago"))
+                {
+                    Int32 hours = 0;
+                    Int32.TryParse(ReleasedTxt.Split(' ')[0], out hours);
+                    Released = DateTime.Now.AddHours(0 - hours);
+                }
+                else
+                    Released = DateTime.Parse(ReleasedTxt);
+
                 ChapterObject Chapter = new ChapterObject()
                 {
                     Name = HtmlEntity.DeEntitize(RawChapterNode.SelectSingleNode(".//div[1]/gray").InnerText),
@@ -115,11 +221,11 @@ namespace MangaTraders
                     Locations =
                     {
                         new LocationObject(){
-                            ExtensionName = SiteExtensionDescriptionAttribute.Name, 
+                            ExtensionName = SiteExtensionDescriptionAttribute.Name,
                             Url = SiteExtensionDescriptionAttribute.RootUrl + ChapterNumberNode.Attributes["href"].Value
                         },
                     },
-                    Released = ReleaseDate.InnerText.ToLower().StartsWith("today") ? DateTime.Today : ReleaseDate.InnerText.ToLower().StartsWith("yesterday") ? DateTime.Today.AddDays(-1) : DateTime.Parse(ReleaseDate.InnerText.ToLower())
+                    Released = Released
                 };
                 if (ChapterSub.Length == 2)
                     Chapter.SubChapter = UInt32.Parse(ChapterSub[1]);
@@ -131,7 +237,7 @@ namespace MangaTraders
                 Name = MangaName,
                 Description = Description,
                 AlternateNames = AlternateNames.ToList(),
-                Covers = { Cover },
+                CoverLocations = { new LocationObject() { Url = Cover, ExtensionName = SiteExtensionDescriptionAttribute.Name } },
                 Authors = AuthorsArtists.ToList(),
                 Artists = AuthorsArtists.ToList(),
                 Genres = Genres.ToList(),
@@ -199,71 +305,75 @@ namespace MangaTraders
             HtmlNode MainContainer = SearchResultDocument.DocumentNode.SelectSingleNode("//div[contains(@class,'mainContainer')]");
             HtmlNodeCollection SearchResultNodes = MainContainer.SelectNodes(".//div[contains(@class,'well')]/div[contains(@class,'row') and (contains(@class,'available') or contains(@class,'unavailable'))]");
 
-            foreach (HtmlNode SearchResultNode in SearchResultNodes)
+            if (!Equals(SearchResultNodes, null))
             {
-                String ImgUrl = SiteExtensionDescriptionAttribute.RootUrl + SearchResultNode.SelectSingleNode(".//img").Attributes["src"].Value.Substring(2),
-                    Name = String.Empty,
-                    Link = String.Empty;
-                List<String> AlternateNames = new List<String>(),
-                    AuthorsArtists = new List<String>(),
-                    Genres = new List<String>();
-
-                foreach (HtmlNode DetailNode in SearchResultNode.SelectNodes(".//div[2]/div[contains(@class,'row')]"))
+                foreach (HtmlNode SearchResultNode in SearchResultNodes)
                 {
-                    HtmlNode DetailTypeNode = DetailNode.SelectSingleNode(".//div[1]/b[1] | .//div[1]/strong[1]"),
-                        DetailTextNode = (DetailTypeNode != null) ? DetailTypeNode.NextSibling : null,
-                        DetailDescriptionNode = (DetailTextNode != null) ? DetailTextNode.NextSibling : null,
-                        MangaNameNode = DetailNode.SelectSingleNode(".//div[1]/h1/a");
-                    HtmlNodeCollection DetailLinkNodes = DetailNode.SelectNodes(".//div[1]/a");
-                    String DetailType = (DetailTypeNode != null) ? DetailTypeNode.InnerText.Trim().TrimEnd(':') : "MangaName",
-                        DetailValue = String.Empty;
-                    String[] DetailValues = { };
-                    if (DetailLinkNodes != null)
+                    String ImgUrl = SiteExtensionDescriptionAttribute.RootUrl + SearchResultNode.SelectSingleNode(".//img").Attributes["src"].Value.Substring(2),
+                        Name = String.Empty,
+                        Link = String.Empty;
+                    LocationObject Cover = new LocationObject() { Url = ImgUrl, ExtensionName = SiteExtensionDescriptionAttribute.Name };
+                    List<String> AlternateNames = new List<String>(),
+                        AuthorsArtists = new List<String>(),
+                        Genres = new List<String>();
+
+                    foreach (HtmlNode DetailNode in SearchResultNode.SelectNodes(".//div[2]/div[contains(@class,'row')]"))
                     {
-                        DetailValues = (from HtmlNode LinkNode in DetailLinkNodes select LinkNode.InnerText).ToArray();
-                    }
-                    else if (MangaNameNode != null)
-                    {
-                        DetailValue = HtmlEntity.DeEntitize(MangaNameNode.InnerText.Trim());
-                    }
-                    else if (DetailDescriptionNode != null)
-                    {
-                        DetailValue = HtmlEntity.DeEntitize(DetailDescriptionNode.InnerText.Trim());
-                    }
-                    else if (DetailTextNode != null)
-                    {
-                        DetailValue = HtmlEntity.DeEntitize(DetailTextNode.InnerText.Trim());
+                        HtmlNode DetailTypeNode = DetailNode.SelectSingleNode(".//div[1]/b[1] | .//div[1]/strong[1]"),
+                            DetailTextNode = (DetailTypeNode != null) ? DetailTypeNode.NextSibling : null,
+                            DetailDescriptionNode = (DetailTextNode != null) ? DetailTextNode.NextSibling : null,
+                            MangaNameNode = DetailNode.SelectSingleNode(".//div[1]/h1/a");
+                        HtmlNodeCollection DetailLinkNodes = DetailNode.SelectNodes(".//div[1]/a");
+                        String DetailType = (DetailTypeNode != null) ? DetailTypeNode.InnerText.Trim().TrimEnd(':') : "MangaName",
+                            DetailValue = String.Empty;
+                        String[] DetailValues = { };
+                        if (DetailLinkNodes != null)
+                        {
+                            DetailValues = (from HtmlNode LinkNode in DetailLinkNodes select LinkNode.InnerText).ToArray();
+                        }
+                        else if (MangaNameNode != null)
+                        {
+                            DetailValue = HtmlEntity.DeEntitize(MangaNameNode.InnerText.Trim());
+                        }
+                        else if (DetailDescriptionNode != null)
+                        {
+                            DetailValue = HtmlEntity.DeEntitize(DetailDescriptionNode.InnerText.Trim());
+                        }
+                        else if (DetailTextNode != null)
+                        {
+                            DetailValue = HtmlEntity.DeEntitize(DetailTextNode.InnerText.Trim());
+                        }
+
+                        switch (DetailType)
+                        {
+                            default: break;
+                            case "MangaName":
+                                Name = DetailValue;
+                                Link = MangaNameNode.Attributes["href"].Value;
+                                if (Link.StartsWith("../manga/?series="))
+                                    Link = Link.Substring("../manga/?series=".Length);
+                                else if (Link.StartsWith("../read-online/"))
+                                    Link = Link.Substring("../read-online/".Length);
+                                else
+                                    Link = Name.Replace(" ", String.Empty);
+                                break;
+                            case "Alternate Names": AlternateNames = (from String AltName in DetailValue.Split(',') select AltName.Trim()).ToList(); break;
+                            case "Author": AuthorsArtists = DetailValues.ToList(); break;
+                            case "Genre": Genres = DetailValues.ToList(); break;
+                        }
                     }
 
-                    switch (DetailType)
+                    SearchResults.Add(new SearchResultObject()
                     {
-                        default: break;
-                        case "MangaName": 
-                            Name = DetailValue; 
-                            Link = MangaNameNode.Attributes["href"].Value;
-                            if (Link.StartsWith("../manga/?series="))
-                                Link = Link.Substring("../manga/?series=".Length);
-                            else if (Link.StartsWith("../read-online/"))
-                                Link = Link.Substring("../read-online/".Length);
-                            else
-                                Link = Name.Replace(" ", String.Empty);
-                            break;
-                        case "Alternate Names": AlternateNames = (from String AltName in DetailValue.Split(',') select AltName.Trim()).ToList(); break;
-                        case "Author": AuthorsArtists = DetailValues.ToList(); break;
-                        case "Genre": Genres = DetailValues.ToList(); break;
-                    }
+                        Cover = Cover,
+                        Name = Name,
+                        Url = String.Format("{0}/read-online/{1}", SiteExtensionDescriptionAttribute.RootUrl, Link),
+                        ExtensionName = SiteExtensionDescriptionAttribute.Name,
+                        Rating = -1,
+                        Artists = AuthorsArtists,
+                        Authors = AuthorsArtists
+                    });
                 }
-
-                SearchResults.Add(new SearchResultObject()
-                {
-                    CoverUrl = ImgUrl,
-                    Name = Name,
-                    Url = String.Format("{0}/read-online/{1}", SiteExtensionDescriptionAttribute.RootUrl, Link),
-                    ExtensionName = SiteExtensionDescriptionAttribute.Name,
-                    Rating = -1,
-                    Artists = AuthorsArtists,
-                    Authors = AuthorsArtists
-                });
             }
 
             return SearchResults;

@@ -54,6 +54,7 @@
     <Compile Include="Enums\SearchMethod.cs" />
     <Compile Include="Enums\SupportedObjects.cs" />
     <Compile Include="Interfaces\IDatabaseExtension.cs" />
+    <Compile Include="Interfaces\IExtension.cs" />
     <Compile Include="Interfaces\ISiteExtension.cs" />
     <Compile Include="Objects\BookmarkObject.cs" />
     <Compile Include="Objects\ChapterObject.cs" />
@@ -63,18 +64,16 @@
     <Compile Include="Objects\PageObject.cs" />
     <Compile Include="Objects\SearchRequestObject.cs" />
     <Compile Include="Objects\SearchResultObject.cs" />
+    <Compile Include="Primitives\Objects\SerializableObject.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Utilities\ChapterObjectExtentions.cs" />
+    <Compile Include="Utilities\ChapterObjectExtensions.cs" />
     <Compile Include="Utilities\DatabaseObjectExtensions.cs" />
+    <Compile Include="Utilities\HtmlAgilityPackExtensions.cs" />
+    <Compile Include="Utilities\IComparableExtensions.cs" />
     <Compile Include="Utilities\MangaObjectExtensions.cs" />
     <Compile Include="Utilities\SearchResultObjectExtensions.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\myManga-DLL\Core\Core.csproj">
-      <Project>{1c67209c-e3c8-4ff9-9cb1-b788ecb4b284}</Project>
-      <Name>Core</Name>
-      <Private>False</Private>
-    </ProjectReference>
+    <Compile Include="Utilities\StringBuilderExtensions.cs" />
+    <Compile Include="Utilities\StringExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

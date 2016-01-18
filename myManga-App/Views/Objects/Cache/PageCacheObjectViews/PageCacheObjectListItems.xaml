@@ -1,0 +1,57 @@
+﻿<ResourceDictionary 
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:myManga_App.Views.Objects.Cache.PageCacheObjectViews">
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="/myManga;component/Themes/CoreResourceDictionary.xaml"/>
+        <ResourceDictionary Source="/myManga;component/Themes/ListBox/ListBoxItems.xaml"/>
+    </ResourceDictionary.MergedDictionaries>
+    <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+
+    <Style TargetType="{x:Type ListBoxItem}" BasedOn="{StaticResource {x:Type ListBoxItem}}" x:Key="PageCacheObjectListBoxItem">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type ListBoxItem}">
+                    <Border
+                        x:Name="ItemBorder"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="0"
+                        Padding="{TemplateBinding BorderThickness}"
+                        Background="{TemplateBinding Background}"
+                        TextElement.Foreground="{TemplateBinding Foreground}">
+                        <Grid
+                            x:Name="Content"
+                            Margin="{TemplateBinding Padding}"
+                            SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                            TextBlock.TextAlignment="Left">
+                            <Image MaxHeight="200" MaxWidth="200" 
+                                   RenderOptions.BitmapScalingMode="NearestNeighbor" 
+                                   RenderOptions.EdgeMode="Aliased"
+                                   Source="{Binding ThumbnailImage}"/>
+                            <TextBlock 
+                                VerticalAlignment="Bottom" 
+                                Text="{Binding PageObject.PageNumber}" 
+                                FontSize="20"
+                                Padding="3"
+                                TextAlignment="Center" 
+                                Background="#BF000000"/>
+                        </Grid>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter TargetName="ItemBorder" Property="BorderThickness" Value="{Binding Path=BorderThickness, RelativeSource={RelativeSource AncestorType={x:Type ListBoxItem}}}"/>
+                            <Setter TargetName="ItemBorder" Property="Padding" Value="0"/>
+                        </Trigger>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="ItemBorder" Property="Background" Value="{DynamicResource window-theme-secondary}"/>
+                            <Setter TargetName="ItemBorder" Property="TextElement.Foreground" Value="{DynamicResource window-theme-primary}"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+</ResourceDictionary>

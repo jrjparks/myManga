@@ -1,8 +1,7 @@
-﻿using Core.IO;
+﻿using myMangaSiteExtension.Primitives.Objects;
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using System.Xml.Serialization;
@@ -55,7 +54,14 @@ namespace myManga_App.Objects.MVVM
             set { OnPropertyChanging(); viewType = value; OnPropertyChanged(); }
         }
 
-        public SerializableViewModelViewType() : base() { }
-        public SerializableViewModelViewType(SerializationInfo info, StreamingContext context) : base(info, context) { }
+        public SerializableViewModelViewType()
+            : base()
+        { }
+        protected SerializableViewModelViewType(SerializationInfo info, StreamingContext context)
+            : base(info, context)
+        { }
+
+        public override void GetObjectData(SerializationInfo info, StreamingContext context)
+        { base.GetObjectData(info, context); }
     }
 }

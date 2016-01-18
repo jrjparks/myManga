@@ -1,4 +1,4 @@
-﻿using Core.IO;
+﻿using myMangaSiteExtension.Primitives.Objects;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -46,7 +46,7 @@ namespace myMangaSiteExtension.Objects
         protected List<String> genres;
 
         [NonSerialized, XmlIgnore, EditorBrowsable(EditorBrowsableState.Never)]
-        protected List<String> covers;
+        protected List<LocationObject> covers;
 
         [NonSerialized, XmlIgnore, EditorBrowsable(EditorBrowsableState.Never)]
         protected List<LocationObject> locations;
@@ -126,9 +126,9 @@ namespace myMangaSiteExtension.Objects
         }
 
         [XmlArray, XmlArrayItem("Cover")]
-        public List<String> Covers
+        public List<LocationObject> Covers
         {
-            get { return covers ?? (covers = new List<String>()); }
+            get { return covers ?? (covers = new List<LocationObject>()); }
             set
             {
                 OnPropertyChanging();

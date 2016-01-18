@@ -1,27 +1,26 @@
-﻿using System;
+﻿using myManga_App.IO.Local;
+using myManga_App.IO.Local.Object;
+using myMangaSiteExtension.Attributes;
+using myMangaSiteExtension.Interfaces;
+using myMangaSiteExtension.Objects;
+using myMangaSiteExtension.Utilities;
+using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Net;
 using System.Linq;
+using System.Net;
 using System.Reflection;
-using myMangaSiteExtension;
-using myMangaSiteExtension.Attributes;
-using myMangaSiteExtension.Objects;
-using Core.IO;
-using Core.Other;
-using myMangaSiteExtension.Interfaces;
-using myMangaSiteExtension.Utilities;
-using HtmlAgilityPack;
-using System.Text;
-using Core.IO.Storage.Manager.BaseInterfaceClasses;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace TestApp
 {
     static class Program
     {
-        static Dictionary<String, ISiteExtension> SiteExtentions = new Dictionary<String, ISiteExtension>();
-        static Dictionary<String, IDatabaseExtension> DatabaseExtentions = new Dictionary<String, IDatabaseExtension>();
-        static ZipStorage zip_storage;
+        static Dictionary<String, ISiteExtension> SiteExtensions = new Dictionary<String, ISiteExtension>();
+        static Dictionary<String, IDatabaseExtension> DatabaseExtensions = new Dictionary<String, IDatabaseExtension>();
+        static ZipManager zipManager;
+        static object _lock = new object();
 
         static void Main(string[] args)
         {
@@ -29,36 +28,76 @@ namespace TestApp
             test.Name = "Test";
             test.MangaType = myMangaSiteExtension.Enums.MangaObjectType.Unknown;
 
-            Stream test_stream_1 = test.Serialize(SaveType.Binary);
-            MangaObject test2 = test_stream_1.Deserialize<MangaObject>(SaveType.Binary);
+            Stream test_stream_1 = test.Serialize(SerializeType.Binary);
+            MangaObject test2 = test_stream_1.Deserialize<MangaObject>(SerializeType.Binary);
 
+            
+            zipManager = new ZipManager();
 
-            zip_storage = Core.Other.Singleton.Singleton<ZipStorage>.Instance;
-
-            //SiteExtentions.Add("MangaReader", new AFTV_Network.MangaReader());
-            //SiteExtentions.Add("MangaPanda", new AFTV_Network.MangaPanda());
-            //SiteExtentions.Add("MangaHere", new MangaHere.MangaHere());
-            //SiteExtentions.Add("Batoto", new Batoto.Batoto());
-            SiteExtentions.Add("MangaTraders", new MangaTraders.MangaTraders());
-            //SiteExtentions.Add("Batoto-Spanish", new Batoto.Batoto_Spanish());
-            //SiteExtentions.Add("Batoto-German", new Batoto.Batoto_German());
-            //SiteExtentions.Add("Batoto-French", new Batoto.Batoto_French());
-            DatabaseExtentions.Add("MangaHelpers", new MangaHelpers.MangaHelpers());
-            DatabaseExtentions.Add("AnimeNewsNetwork", new AnimeNewsNetwork.AnimeNewsNetwork());
-            DatabaseExtentions.Add("MangaUpdatesBakaUpdates", new MangaUpdatesBakaUpdates.MangaUpdatesBakaUpdates());
-            foreach (ISiteExtension ise in SiteExtentions.Values)
+            //SiteExtensions.Add("MangaReader", new AFTV_Network.MangaReader());
+            //SiteExtensions.Add("MangaPanda", new AFTV_Network.MangaPanda());
+            //SiteExtensions.Add("MangaHere", new MangaHere.MangaHere());
+            //SiteExtensions.Add("Batoto", new Batoto.Batoto());
+            SiteExtensions.Add("MangaTraders", new MangaTraders.MangaTraders());
+            //SiteExtensions.Add("Batoto-Spanish", new Batoto.Batoto_Spanish());
+            //SiteExtensions.Add("Batoto-German", new Batoto.Batoto_German());
+            //SiteExtensions.Add("Batoto-French", new Batoto.Batoto_French());
+            DatabaseExtensions.Add("MangaHelpers", new MangaHelpers.MangaHelpers());
+            DatabaseExtensions.Add("AnimeNewsNetwork", new AnimeNewsNetwork.AnimeNewsNetwork());
+            DatabaseExtensions.Add("MangaUpdatesBakaUpdates", new MangaUpdatesBakaUpdates.MangaUpdatesBakaUpdates());
+            foreach (ISiteExtension ise in SiteExtensions.Values)
             {
                 ISiteExtensionDescriptionAttribute isea = ise.GetType().GetCustomAttribute<ISiteExtensionDescriptionAttribute>(false);
                 Console.WriteLine("Loaded Site Extention {0}", isea.Name);
             }
-            foreach (IDatabaseExtension ise in DatabaseExtentions.Values)
+            foreach (IDatabaseExtension ise in DatabaseExtensions.Values)
             {
                 IDatabaseExtensionDescriptionAttribute isea = ise.GetType().GetCustomAttribute<IDatabaseExtensionDescriptionAttribute>(false);
                 Console.WriteLine("Loaded Database Extention {0}", isea.Name);
             }
-            LoadManga();
+            //Authenticate();
+            //LoadManga();
             //Search();
-            zip_storage.Dispose();
+            LoadMangaAsync().Wait();
+            zipManager.Dispose();
+        }
+
+        static void Authenticate()
+        {
+            Console.Write("Username: ");
+            String Username = Console.ReadLine();
+            Console.Write("Password: ");
+            String Password = Console.ReadLine();
+
+            CancellationTokenSource cts = new CancellationTokenSource();
+            Boolean authenticated = SiteExtensions["Batoto"].Authenticate(new NetworkCredential(Username, Password), cts.Token, null);
+            Console.WriteLine("Authenticated: " + (authenticated ? "Success" : "Failed"));
+
+            Console.WriteLine("Testing manga loading...");
+            MangaObject mObj = LoadMangaObject("https://bato.to/comic/_/comics/no-guns-life-r13414", SiteExtensions["Batoto"]);
+            Console.WriteLine("Returned MangaObject:");
+            Console.WriteLine("\tName:{0}", mObj.Name);
+            Console.WriteLine("\tReleased:{0}", mObj.Released.ToString("yyyy"));
+            Console.WriteLine("\tAlternate Names:{0}", String.Join(", ", mObj.AlternateNames));
+            Console.WriteLine("\tAuthors:{0}", String.Join(", ", mObj.Authors));
+            Console.WriteLine("\tArtists:{0}", String.Join(", ", mObj.Artists));
+            Console.WriteLine("\tGenres:{0}", String.Join(", ", mObj.Genres));
+            Console.WriteLine("\tLocations:{0}", String.Join(", ", mObj.Locations));
+            Console.WriteLine("\tNumber of Chapters:{0}", mObj.Chapters.Count);
+            Console.WriteLine("\tDescription:{0}", mObj.Description);
+
+            Console.WriteLine();
+            foreach (ChapterObject cObj in mObj.Chapters)
+            {
+                Console.WriteLine("\tName:{0}", cObj.Name);
+                Console.WriteLine("\tChapter:{0}", cObj.Chapter);
+                Console.WriteLine("\tReleased:{0}", cObj.Released.ToString("d"));
+                Console.WriteLine();
+            }
+
+            SiteExtensions["Batoto"].Deauthenticate();
+            Console.Write("Done...(press enter)");
+            Console.ReadLine();
         }
 
         static void Search()
@@ -74,13 +113,13 @@ namespace TestApp
                     MangaObject mObj = SearchResults[srIndex];
                     mObj.LoadMangaObject();
                     mObj.SortChapters();
-                    zip_storage.Write(String.Format("{0}/{1}", Environment.CurrentDirectory, String.Format("{0}.ma", mObj.Name).SafeFileName()), "MangaObject", mObj.Serialize(SaveType.XML));
+                    zipManager.Write(String.Format("{0}/{1}", Environment.CurrentDirectory, String.Format("{0}.ma", mObj.Name).SafeFileName()), "MangaObject", mObj.Serialize(SerializeType.XML));
                     //mObj.SaveToArchive(String.Format("{0}.ma", mObj.Name).SafeFileName(), "MangaObject", SaveType.XML);
                 }
                 else
                 {
                     Dictionary<String, List<SearchResultObject>> RawSearchResults = new Dictionary<String, List<SearchResultObject>>();
-                    foreach (ISiteExtension ise in SiteExtentions.Values)
+                    foreach (ISiteExtension ise in SiteExtensions.Values)
                     {
                         ISiteExtensionDescriptionAttribute isea = ise.GetType().GetCustomAttribute<ISiteExtensionDescriptionAttribute>(false);
                         SearchRequestObject sro = ise.GetSearchRequestObject(searchTerm: SearchTerm);
@@ -147,7 +186,7 @@ namespace TestApp
                     }
 
                     Dictionary<String, List<DatabaseObject>> RawDatabaseSearchResults = new Dictionary<String, List<DatabaseObject>>();
-                    foreach (IDatabaseExtension ide in DatabaseExtentions.Values)
+                    foreach (IDatabaseExtension ide in DatabaseExtensions.Values)
                     {
                         IDatabaseExtensionDescriptionAttribute idea = ide.GetType().GetCustomAttribute<IDatabaseExtensionDescriptionAttribute>(false);
                         SearchRequestObject SearchRequestObject = ide.GetSearchRequestObject(searchTerm: SearchTerm);
@@ -200,7 +239,7 @@ namespace TestApp
                         Console.WriteLine(String.Format("[{0}]Name: {1}", i++, SearchResult.Name));
                         Console.WriteLine(String.Format("\tUrl: {0}", String.Join("\n\t     ", (from LocationObject location in SearchResult.Locations select location.Url).ToArray())));
                         Console.WriteLine(String.Format("\tDatabase: {0}", String.Join("\n\t          ", (from LocationObject location in SearchResult.DatabaseLocations select location.Url).ToArray())));
-                        Console.WriteLine(String.Format("\tCover Url: {0}", String.Join("\n\t           ", SearchResult.Covers)));
+                        Console.WriteLine(String.Format("\tCover Url: {0}", String.Join("\n\t           ", SearchResult.CoverLocations)));
                         Console.WriteLine(String.Format("\tDescription: {0}", String.Join("\n\t           ", SearchResult.Description)));
                         Console.WriteLine(String.Format("\tReleased: {0}", String.Join("\n\t           ", SearchResult.Released.ToLongDateString())));
                     }
@@ -215,7 +254,7 @@ namespace TestApp
 
         static void LoadManga()
         {
-            MangaObject mObj = LoadMangaObject("http://mangatraders.org/read-online/AkaAkatoretachiNoMonogatari", SiteExtentions["MangaTraders"]);
+            MangaObject mObj = LoadMangaObject("http://mangatraders.org/read-online/TheGamer", SiteExtensions["MangaTraders"]);
             Console.WriteLine("Returned MangaObject:");
             Console.WriteLine("\tName:{0}", mObj.Name);
             Console.WriteLine("\tReleased:{0}", mObj.Released.ToString("yyyy"));
@@ -245,16 +284,17 @@ namespace TestApp
             Console.ReadLine();
             Console.WriteLine("Loading...");
             cObj.LoadPageObjects(0);
-            zip_storage.Write(cObj.Name + ".xml.mca", "ChapterObject", cObj.Serialize(SaveType.XML));
+            zipManager.Write(cObj.Name + ".xml.mca", "ChapterObject", cObj.Serialize(SerializeType.XML));
             //cObj.SaveToArchive(cObj.Name + ".xml.mca", "ChapterObject", SaveType.XML);
             Console.WriteLine("Returned ChapterObject:");
+            //*
             foreach (PageObject pageObject in cObj.Pages)
             {
                 Console.WriteLine("\t[{0}]:", pageObject.PageNumber);
                 Console.WriteLine("\t\tUrl: {0}", pageObject.Url);
                 Console.WriteLine("\t\tImage: {0}", pageObject.ImgUrl);
             }
-
+            //*/
             Console.WriteLine();
             Console.Write("Test Page Download...(press enter)");
             Console.ReadLine();
@@ -264,12 +304,121 @@ namespace TestApp
             Console.ReadLine();
         }
 
+        static async Task LoadMangaAsync()
+        {
+            String mangaUrl = "http://mangatraders.org/read-online/TheGamer";
+            ISiteExtension extension = SiteExtensions["MangaTraders"];
+            CancellationTokenSource cts = new CancellationTokenSource();
+            Boolean written = false;
+            Progress<int> progress = new Progress<int>(percent => { DrawProgressBarTopWindow(percent, 100, "Progress"); });
+
+            Console.WriteLine();
+            Console.Write("Test Loading MangaObject via Async...(press enter)");
+            Console.ReadLine();
+
+            Console.WriteLine("Loading Manga vis Async...");
+            MangaObject MangaObject = await LoadMangaObjectAsync(mangaUrl, extension, cts.Token, progress);
+            lock (_lock)
+            {
+                Console.WriteLine();
+                Console.WriteLine("[MangaObject] Name:{0}", MangaObject.Name);
+                Console.WriteLine("[MangaObject] Released:{0}", MangaObject.Released.ToString("yyyy"));
+                Console.WriteLine("[MangaObject] Alternate Names:{0}", String.Join(", ", MangaObject.AlternateNames));
+                Console.WriteLine("[MangaObject] Authors:{0}", String.Join(", ", MangaObject.Authors));
+                Console.WriteLine("[MangaObject] Artists:{0}", String.Join(", ", MangaObject.Artists));
+                Console.WriteLine("[MangaObject] Genres:{0}", String.Join(", ", MangaObject.Genres));
+                Console.WriteLine("[MangaObject] Locations:{0}", String.Join(", ", MangaObject.Locations));
+                Console.WriteLine("[MangaObject] Number of Chapters:{0}", MangaObject.Chapters.Count);
+                Console.WriteLine("[MangaObject] Description:{0}", MangaObject.Description);
+
+                Console.WriteLine();
+                Console.Write("Test Loading ChapterObject via Async...(press enter)");
+            }
+            Console.ReadLine();
+            ChapterObject ChapterObject = MangaObject.Chapters.Last();
+            await ChapterObject.LoadChapterObjectAsync(cts.Token, 0, progress);
+            lock (_lock)
+            {
+                Console.WriteLine();
+                Console.WriteLine("[ChapterObject] Name:{0}", ChapterObject.Name);
+                Console.WriteLine("[ChapterObject] Released:{0}", ChapterObject.Released.ToString("yyyy"));
+                Console.WriteLine("[ChapterObject] V.Ch.SCh:{0}.{1}.{2}", ChapterObject.Volume, ChapterObject.Chapter, ChapterObject.SubChapter);
+                Console.WriteLine("[ChapterObject] Page Count:{0}", ChapterObject.Pages.Count);
+
+                Console.WriteLine();
+                Console.Write("Test Loading ChapterObject's PageObjects and Images via Async...(press enter)");
+            }
+            Console.ReadLine();
+            String StorageFileName = ChapterObject.Volume + "." + ChapterObject.Chapter + "." + ChapterObject.SubChapter + ".ca.zip";
+            written = await zipManager.Retry(async () =>
+            {
+                return await zipManager.WriteAsync(StorageFileName, "ChapterObject", ChapterObject.Serialize(SerializeType.XML));
+            }, TimeSpan.FromMinutes(30));
+            lock (_lock)
+            {
+                Console.WriteLine();
+                Console.WriteLine("[ChapterObject] Saved ChapterObject: {0}", written ? "Success" : "Failed");
+            }
+
+            Int32 concurrent = Environment.ProcessorCount * 2;
+            SemaphoreSlim semaphore = new SemaphoreSlim(0, concurrent);
+            List<Task> PageLoadTasks = new List<Task>();
+            for (Int32 idx = 0; idx < ChapterObject.Pages.Count; ++idx)
+            {
+                Int32 index = idx;
+                PageLoadTasks.Add(Task.Run(async () =>
+                {
+                    await semaphore.WaitAsync();
+                    Console.WriteLine("[PageObject] Working on Index: {0}", index);
+                    ChapterObject.Pages[index] = await LoadPageObjectAsync(ChapterObject, ChapterObject.Pages[index], cts.Token, 0, progress);
+                    using (Stream imgStream = await LoadPageObjectImageAsync(ChapterObject, ChapterObject.Pages[index], cts.Token, 0, progress))
+                    {
+                        written = await zipManager.Retry(async () =>
+                        {
+                            return await zipManager.WriteAsync(StorageFileName, "ChapterObject", ChapterObject.Serialize(SerializeType.XML));
+                        }, TimeSpan.FromMinutes(30));
+                        lock (_lock)
+                        {
+                            Console.WriteLine();
+                            Console.WriteLine("[ChapterObject] Saved ChapterObject: {0}", written ? "Success" : "Failed");
+                        }
+
+                        written = await zipManager.Retry(async () =>
+                        {
+                            return await zipManager.WriteAsync(StorageFileName, ChapterObject.Pages[index].Name, imgStream);
+                        }, TimeSpan.FromMinutes(30));
+                        lock (_lock)
+                        {
+                            Console.WriteLine();
+                            Console.WriteLine("[PageObject] Saved Image: {0}", written ? "Success" : "Failed");
+                        }
+                    }
+                    semaphore.Release();
+                }));
+            }
+            lock (_lock)
+            {
+                Console.WriteLine();
+                Console.Write("Ready to test concurrent page loading [{0}]...(press enter)", concurrent);
+                Console.ReadLine();
+                semaphore.Release(concurrent);
+                Console.Write("Waiting for pages...");
+            }
+            Task.WaitAll(PageLoadTasks.ToArray());
+
+            Console.WriteLine();
+            Console.Write("Test Loading via Async Complete...(press enter)");
+            Console.ReadLine();
+        }
+
         static MangaObject LoadMangaObject(String Link, ISiteExtension ise)
         {
             MangaObject MangaObj = null;
             ISiteExtensionDescriptionAttribute isea = ise.GetType().GetCustomAttribute<ISiteExtensionDescriptionAttribute>(false);
 
             HttpWebRequest request = WebRequest.Create(Link) as HttpWebRequest;
+            request.CookieContainer = new CookieContainer();
+            request.CookieContainer.Add(ise.Cookies);
             request.Referer = isea.RefererHeader ?? request.Host;
             request.AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip;
             using (HttpWebResponse response = request.GetResponse() as HttpWebResponse)
@@ -287,7 +436,7 @@ namespace TestApp
         {
             foreach (LocationObject LocationObj in MangaObj.Locations.FindAll(l => l.Enabled))
             {
-                ISiteExtension ise = SiteExtentions[LocationObj.ExtensionName];
+                ISiteExtension ise = SiteExtensions[LocationObj.ExtensionName];
                 ISiteExtensionDescriptionAttribute isea = ise.GetType().GetCustomAttribute<ISiteExtensionDescriptionAttribute>(false);
 
                 HttpWebRequest request = WebRequest.Create(LocationObj.Url) as HttpWebRequest;
@@ -313,7 +462,7 @@ namespace TestApp
         static ChapterObject LoadChapterObject(String Link)
         {
             ChapterObject ChapterObj = null;
-            ISiteExtension ise = SiteExtentions["MangaReader"];
+            ISiteExtension ise = SiteExtensions["MangaReader"];
             ISiteExtensionDescriptionAttribute isea = ise.GetType().GetCustomAttribute<ISiteExtensionDescriptionAttribute>(false);
 
             HttpWebRequest request = WebRequest.Create(Link) as HttpWebRequest;
@@ -332,7 +481,7 @@ namespace TestApp
         static ChapterObject LoadChapterObject(ChapterObject chapterObject, Int32 LocationId = 0)
         {
             ChapterObject ChapterObj = null;
-            ISiteExtension ise = SiteExtentions[chapterObject.Locations[LocationId].ExtensionName];
+            ISiteExtension ise = SiteExtensions[chapterObject.Locations[LocationId].ExtensionName];
             ISiteExtensionDescriptionAttribute isea = ise.GetType().GetCustomAttribute<ISiteExtensionDescriptionAttribute>(false);
 
             HttpWebRequest request = WebRequest.Create(chapterObject.Locations[LocationId].Url) as HttpWebRequest;
@@ -350,7 +499,7 @@ namespace TestApp
 
         public static void LoadPageObjects(this ChapterObject chapterObject, Int32 LocationId = 0)
         {
-            ISiteExtension ise = SiteExtentions[chapterObject.Locations[LocationId].ExtensionName];
+            ISiteExtension ise = SiteExtensions[chapterObject.Locations[LocationId].ExtensionName];
             ISiteExtensionDescriptionAttribute isea = ise.GetType().GetCustomAttribute<ISiteExtensionDescriptionAttribute>(false);
 
             List<PageObject> ParsedPages = new List<PageObject>();
@@ -375,47 +524,55 @@ namespace TestApp
 
         public static void DownloadPageObjects(this ChapterObject chapterObject, Int32 LocationId = 0)
         {
-            ISiteExtension ise = SiteExtentions[chapterObject.Locations[LocationId].ExtensionName];
+            ISiteExtension ise = SiteExtensions[chapterObject.Locations[LocationId].ExtensionName];
             ISiteExtensionDescriptionAttribute isea = ise.GetType().GetCustomAttribute<ISiteExtensionDescriptionAttribute>(false);
 
             List<PageObject> ParsedPages = new List<PageObject>();
+            List<Task> pageTasks = new List<Task>();
             foreach (PageObject pageObject in chapterObject.Pages)
             {
-                HttpWebRequest request = WebRequest.Create(pageObject.ImgUrl) as HttpWebRequest;
-                request.Referer = isea.RefererHeader ?? request.Host;
-                request.AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip;
-                using (HttpWebResponse response = request.GetResponse() as HttpWebResponse)
+                pageTasks.Add(Task.Run(async () =>
                 {
-                    DrawProgressBar(String.Format("[{1}]Downloading: {0}", pageObject.Name, pageObject.PageNumber), 0, (Int32)response.ContentLength, 60);
-                    using (Stream imgStream = new MemoryStream())
+                    HttpWebRequest request = WebRequest.Create(pageObject.ImgUrl) as HttpWebRequest;
+                    request.Referer = isea.RefererHeader ?? request.Host;
+                    request.AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip;
+                    using (HttpWebResponse response = request.GetResponse() as HttpWebResponse)
                     {
-                        using (Stream webStream = response.GetResponseStream())
+                        DrawProgressBar(String.Format("[{1}]Downloading: {0}", pageObject.Name, pageObject.PageNumber), 0, (Int32)response.ContentLength, 60);
+                        using (Stream imgStream = new MemoryStream())
                         {
-                            try
+                            using (Stream webStream = response.GetResponseStream())
                             {
-                                int read, bufferSize = 4 * 1024;
-                                byte[] buffer = new byte[bufferSize];
-                                while ((read = webStream.Read(buffer, 0, bufferSize)) > 0)
+                                try
                                 {
-                                    imgStream.Write(buffer, 0, read);
-                                    DrawProgressBar(String.Format("[{1}]Downloading: {0}", pageObject.Name, pageObject.PageNumber), (Int32)imgStream.Position, (Int32)response.ContentLength, 60);
+                                    int read, bufferSize = 4 * 1024;
+                                    byte[] buffer = new byte[bufferSize];
+                                    while ((read = await webStream.ReadAsync(buffer, 0, bufferSize)) > 0)
+                                    {
+                                        await imgStream.WriteAsync(buffer, 0, read);
+                                        DrawProgressBar(String.Format("[{1}]Downloading: {0}", pageObject.Name, pageObject.PageNumber), (Int32)imgStream.Position, (Int32)response.ContentLength, 60);
+                                    }
+                                }
+                                catch
+                                {
+                                    DrawProgressBar(String.Format("[{1}]Error: {0}", pageObject.Name, pageObject.PageNumber), (Int32)imgStream.Position, (Int32)response.ContentLength, 60);
                                 }
                             }
-                            catch
+                            if (imgStream.CanSeek)
+                                imgStream.Seek(0, SeekOrigin.Begin);
+                            Console.WriteLine();
+                            Console.Write("\tSaving: {0}...", pageObject.Name);
+                            Boolean written = await zipManager.Retry(async () =>
                             {
-                                DrawProgressBar(String.Format("[{1}]Error: {0}", pageObject.Name, pageObject.PageNumber), (Int32)imgStream.Position, (Int32)response.ContentLength, 60);
-                            }
+                                return await zipManager.WriteAsync(chapterObject.Volume + "." + chapterObject.Chapter + "." + chapterObject.SubChapter + ".ca.zip", pageObject.Name, imgStream);
+                            }, TimeSpan.FromMinutes(30));
+                            // imgStream.SaveStreamToArchive(chapterObject.Name + ".xml.mca", pageObject.Name, new Ionic.Zip.ReadOptions());
+                            Console.WriteLine(written ? "Saved" : "Not Saved");
                         }
-                        if (imgStream.CanSeek)
-                            imgStream.Seek(0, SeekOrigin.Begin);
-                        Console.WriteLine();
-                        Console.Write("\tSaving: {0}...", pageObject.Name);
-                        zip_storage.Write(chapterObject.Name + ".xml.mca", pageObject.Name, imgStream);
-                        // imgStream.SaveStreamToArchive(chapterObject.Name + ".xml.mca", pageObject.Name, new Ionic.Zip.ReadOptions());
-                        Console.WriteLine("Saved");
                     }
-                }
+                }));
             }
+            Task.WaitAll(pageTasks.ToArray());
             chapterObject.Pages = ParsedPages;
         }
 
@@ -447,6 +604,149 @@ namespace TestApp
 
             Console.ResetColor();
         }
+
+        private static void DrawProgressBarTopWindow(Int32 progress, Int32 total, String content = "")
+        {
+            Decimal perc = (Decimal)progress / (Decimal)total;
+            String percStr = (perc * 100).ToString("F2") + "%";
+            content = content.PadRight(Console.BufferWidth, ' ');
+            content = content.Remove(content.Length - percStr.Length) + percStr;
+            int chars = (int)Math.Ceiling(perc / ((Decimal)1 / (Decimal)Console.BufferWidth));
+
+            // Start of draw
+            lock (_lock)
+            {
+                Boolean initCursorVisible = Console.CursorVisible;
+                Int32 initLeft = Console.CursorLeft, initTop = Console.CursorTop;
+                ConsoleColor initForeground = Console.ForegroundColor, initBackground = Console.BackgroundColor;
+
+                Console.CursorVisible = false;
+                Console.SetCursorPosition(0, 0);
+                Console.Write(new String(' ', Console.BufferWidth));
+                Console.SetCursorPosition(0, 0);
+                Console.ForegroundColor = ConsoleColor.Black;
+                Console.BackgroundColor = ConsoleColor.White;
+                Console.Write(content.Substring(0, chars));
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.BackgroundColor = ConsoleColor.Black;
+                Console.Write(content.Substring(chars));
+
+                Console.SetCursorPosition(initLeft, initTop);
+                Console.CursorVisible = initCursorVisible;
+                Console.ForegroundColor = initForeground;
+                Console.BackgroundColor = initBackground;
+            }
+        }
+
+        #region Async
+        private static async Task<MangaObject> LoadMangaObjectAsync(String Link, ISiteExtension ise)
+        {
+            CancellationTokenSource cts = new CancellationTokenSource();
+            return await LoadMangaObjectAsync(Link, ise, cts.Token);
+        }
+
+        private static async Task<MangaObject> LoadMangaObjectAsync(String Link, ISiteExtension ise, CancellationToken ct, IProgress<int> progress = null)
+        {
+            using (WebDownloader wD = new WebDownloader(ise.Cookies))
+            {
+                wD.Referer = ise.SiteExtensionDescriptionAttribute.RefererHeader;
+                ct.ThrowIfCancellationRequested();
+                if (progress != null) progress.Report(10);
+                String content = await wD.DownloadStringTaskAsync(Link);
+                ct.ThrowIfCancellationRequested();
+                if (progress != null) progress.Report(50);
+                return await Task.Run(() =>
+                {
+                    if (progress != null) progress.Report(75);
+                    MangaObject MangaObject = ise.ParseMangaObject(content);
+                    ct.ThrowIfCancellationRequested();
+                    if (progress != null) progress.Report(90);
+                    MangaObject.Locations.Add(new LocationObject()
+                    {
+                        ExtensionName = ise.SiteExtensionDescriptionAttribute.Name,
+                        Url = Link
+                    });
+                    ct.ThrowIfCancellationRequested();
+                    if (progress != null) progress.Report(100);
+                    return MangaObject;
+                });
+            }
+        }
+
+        private static async Task LoadChapterObjectAsync(this ChapterObject ChapterObject, Int32 LocationId = 0)
+        {
+            CancellationTokenSource cts = new CancellationTokenSource();
+            await LoadChapterObjectAsync(ChapterObject, cts.Token, LocationId, null);
+        }
+
+        private static async Task LoadChapterObjectAsync(this ChapterObject ChapterObject, CancellationToken ct, Int32 LocationId = 0, IProgress<int> progress = null)
+        {
+            ISiteExtension ise = SiteExtensions[ChapterObject.Locations[LocationId].ExtensionName];
+            using (WebDownloader wD = new WebDownloader(ise.Cookies))
+            {
+                wD.Referer = ise.SiteExtensionDescriptionAttribute.RefererHeader;
+                ct.ThrowIfCancellationRequested();
+                if (progress != null) progress.Report(10);
+                String content = await wD.DownloadStringTaskAsync(ChapterObject.Locations[LocationId].Url);
+                ct.ThrowIfCancellationRequested();
+                if (progress != null) progress.Report(50);
+                await Task.Run(() =>
+                {
+                    ct.ThrowIfCancellationRequested();
+                    if (progress != null) progress.Report(75);
+                    ChapterObject.Merge(ise.ParseChapterObject(content));
+                    ct.ThrowIfCancellationRequested();
+                    if (progress != null) progress.Report(100);
+                });
+            }
+        }
+
+        private static async Task<PageObject> LoadPageObjectAsync(ChapterObject ChapterObject, PageObject PageObject, Int32 LocationId = 0)
+        {
+            CancellationTokenSource cts = new CancellationTokenSource();
+            return await LoadPageObjectAsync(ChapterObject, PageObject, cts.Token, LocationId);
+        }
+
+        private static async Task<PageObject> LoadPageObjectAsync(ChapterObject ChapterObject, PageObject PageObject, CancellationToken ct, Int32 LocationId = 0, IProgress<int> progress = null)
+        {
+            ISiteExtension ise = SiteExtensions[ChapterObject.Locations[LocationId].ExtensionName];
+            using (WebDownloader wD = new WebDownloader(ise.Cookies))
+            {
+                wD.Referer = ise.SiteExtensionDescriptionAttribute.RefererHeader;
+                ct.ThrowIfCancellationRequested();
+                if (progress != null) progress.Report(10);
+                String content = await wD.DownloadStringTaskAsync(PageObject.Url);
+                ct.ThrowIfCancellationRequested();
+                if (progress != null) progress.Report(50);
+                return await Task.Run(() =>
+                {
+                    ct.ThrowIfCancellationRequested();
+                    if (progress != null) progress.Report(100);
+                    return ise.ParsePageObject(content);
+                });
+            }
+        }
+
+        private static async Task<Stream> LoadPageObjectImageAsync(ChapterObject ChapterObject, PageObject PageObject, CancellationToken ct, Int32 LocationId = 0, IProgress<int> progress = null)
+        {
+            ISiteExtension ise = SiteExtensions[ChapterObject.Locations[LocationId].ExtensionName];
+            using (WebDownloader wD = new WebDownloader(ise.Cookies))
+            {
+                wD.Referer = ise.SiteExtensionDescriptionAttribute.RefererHeader;
+                ct.ThrowIfCancellationRequested();
+                if (progress != null) progress.Report(10);
+                Stream content = new MemoryStream();
+                using (Stream webStream = await wD.OpenReadTaskAsync(PageObject.ImgUrl))
+                {
+                    if (progress != null) progress.Report(75);
+                    await webStream.CopyToAsync(content);
+                }
+                content.Seek(0, SeekOrigin.Begin);
+                if (progress != null) progress.Report(100);
+                return content;
+            }
+        }
+        #endregion
 
         /// <summary>
         /// Longitudinal Redundancy Check (LRC) calculator for a byte array. 

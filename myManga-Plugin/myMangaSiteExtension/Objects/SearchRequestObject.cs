@@ -1,4 +1,4 @@
-﻿using Core.IO;
+﻿using myMangaSiteExtension.Primitives.Objects;
 using myMangaSiteExtension.Enums;
 using System;
 using System.ComponentModel;
@@ -87,10 +87,6 @@ namespace myMangaSiteExtension.Objects
                 OnPropertyChanged();
             }
         }
-
-        public SearchRequestObject() : base() { }
-        public SearchRequestObject(SerializationInfo info, StreamingContext context)
-            : base(info, context) { }
         #endregion
     }
 }

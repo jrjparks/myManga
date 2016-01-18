@@ -1,11 +1,16 @@
 # myManga
 
-[![Join the chat at https://gitter.im/BakaBox/myManga](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/BakaBox/myManga?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![Gitter](https://img.shields.io/gitter/room/nwjs/nw.js.svg?style=flat-square)](https://gitter.im/jrjparks/myManga?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![Issues](https://img.shields.io/github/issues/jrjparks/myManga.svg?style=flat-square)](https://github.com/jrjparks/myManga/issues)
+[![Stars](https://img.shields.io/github/stars/jrjparks/myManga.svg?style=flat-square)](https://github.com/jrjparks/myManga/stargazers)
+[![Forks](https://img.shields.io/github/forks/jrjparks/myManga.svg?style=flat-square)](https://github.com/jrjparks/myManga/network)
+
+[![Latest Release](https://img.shields.io/github/release/jrjparks/myManga.svg?style=flat-square) ![Downloads](https://img.shields.io/github/downloads/jrjparks/myManga/latest/total.svg?style=flat-square)](https://github.com/jrjparks/myManga/releases/latest)
 
 Consolidates information from multiple sites.
 
 ## Installing
-1. Download the [latest release](https://github.com/jrjparks/myManga/releases/latest).
+1. Download [![Latest Release](https://img.shields.io/github/release/jrjparks/myManga.svg?style=flat-square)](https://github.com/jrjparks/myManga/releases/latest).
  * If you have already downloaded myManga previously download **myManga.\*.UpdateOnly.***
  * Otherwise download **myManga.*** (note the lack of UpdateOnly in the title).
 2. Extract all files and folders.
@@ -14,26 +19,22 @@ Consolidates information from multiple sites.
 
 ### 3rd Party DLLs
 * HtmlAgilityPack
-* Ionic.Zip
 * Microsoft.Windows.Shell
-* SmartThreadPool
 
 ## Features
-* Search all sites at the same time
+* Offline Storage of manga and chapters
+* Asynchronous downloads
+* Search multiple sites at once and merge results
 * Uses manga databases in conjunction to the manga sites
-* Multi-threaded downloads
-* Redesigned plugin interfaces
 * **Manga Site Plugins.**
 * **Database Site Plugins.**
 * **Continuous Reading.**
-* Offline Storage
-* Image Compression
-* **Laptop Screen Brightness Control**
+* Image Compression (Zip Archive)
 * Basic Reader Zoom - *Top of Reader (click the chapter information)*
+* **Laptop Screen Brightness Control**
 
 ### Planned Features
 * Bookmarks
-* Archive Chapters
 * Language Support
 * ...
 
@@ -41,7 +42,7 @@ Consolidates information from multiple sites.
 ## Supported Sites - myManga Plugins
 * Manga
  * [MangaTraders.org](http://mangatraders.org/)
- * [Batoto](http://bato.to/) *(currently broken)*
+ * [Batoto](http://bato.to/) *(Requires Authentication)*
  * [MangaReader.net](http://www.mangareader.net/)
  * [MangaPanda.com](http://www.mangapanda.com/)
  * [MangaHere.com](http://www.mangahere.com/)

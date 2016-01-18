@@ -6,7 +6,9 @@ using myMangaSiteExtension.Objects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Reflection;
+using System.Threading;
 
 namespace AnimeNewsNetwork
 {
@@ -24,6 +26,42 @@ namespace AnimeNewsNetwork
         protected IDatabaseExtensionDescriptionAttribute databaseExtensionDescriptionAttribute;
         public IDatabaseExtensionDescriptionAttribute DatabaseExtensionDescriptionAttribute
         { get { return databaseExtensionDescriptionAttribute ?? (databaseExtensionDescriptionAttribute = GetType().GetCustomAttribute<IDatabaseExtensionDescriptionAttribute>(false)); } }
+
+        #region IExtesion
+        public CookieCollection Cookies
+        { get; private set; }
+
+        public Boolean IsAuthenticated
+        { get; private set; }
+
+        public bool Authenticate(NetworkCredential credentials, CancellationToken ct, IProgress<Int32> ProgressReporter)
+        {
+            if (IsAuthenticated) return true;
+            throw new NotImplementedException();
+        }
+
+        public void Deauthenticate()
+        {
+            if (!IsAuthenticated) return;
+            Cookies = null;
+            IsAuthenticated = false;
+        }
+
+        public List<MangaObject> GetUserFavorites()
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool AddUserFavorites(MangaObject MangaObject)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool RemoveUserFavorites(MangaObject MangaObject)
+        {
+            throw new NotImplementedException();
+        }
+        #endregion
 
         public SearchRequestObject GetSearchRequestObject(string searchTerm)
         {
@@ -47,9 +85,9 @@ namespace AnimeNewsNetwork
             HtmlNodeCollection AlternateNameNodes = DatabaseObjectDocument.DocumentNode.SelectNodes("//info[contains(@type,'Alternative title')]"),
                 GenreNodes = DatabaseObjectDocument.DocumentNode.SelectNodes("//info[contains(@type,'Genres')]"),
                 StaffNodes = DatabaseObjectDocument.DocumentNode.SelectNodes("//staff/person");
-            List<String> Covers = new List<String>();
+            List<LocationObject> Covers = new List<LocationObject>();
             if (CoverNode != null)
-                Covers.Add(CoverNode.Attributes["src"].Value);
+                Covers.Add(new LocationObject() { Url = CoverNode.Attributes["src"].Value, ExtensionName = DatabaseExtensionDescriptionAttribute.Name });
 
             return new DatabaseObject()
             {
@@ -57,12 +95,12 @@ namespace AnimeNewsNetwork
                 Covers = Covers,
                 AlternateNames = (AlternateNameNodes != null) ? (from HtmlNode InfoNode in AlternateNameNodes select HtmlEntity.DeEntitize(InfoNode.InnerText.Trim())).ToList() : new List<String>(),
                 Genres = (GenreNodes != null) ? (from HtmlNode InfoNode in GenreNodes select HtmlEntity.DeEntitize(InfoNode.InnerText.Trim())).ToList() : new List<String>(),
-                Locations = { new LocationObject() { 
-                    ExtensionName = DatabaseExtensionDescriptionAttribute.Name, 
+                Locations = { new LocationObject() {
+                    ExtensionName = DatabaseExtensionDescriptionAttribute.Name,
                     Url = String.Format("{0}/encyclopedia/api.xml?manga={1}", DatabaseExtensionDescriptionAttribute.RootUrl, DatabaseObjectDocument.DocumentNode.SelectSingleNode("//manga[@id]").Attributes["id"].Value) } },
                 Staff = (StaffNodes != null) ? (from HtmlNode InfoNode in StaffNodes select HtmlEntity.DeEntitize(InfoNode.InnerText.Trim())).ToList() : new List<String>(),
                 Description = (DescriptionNode != null) ? HtmlEntity.DeEntitize(DescriptionNode.InnerText.Trim()) : String.Empty,
-                ReleaseYear = Int32.Parse(ReleaseNode.FirstChild.InnerText.Substring(0,4))
+                ReleaseYear = Int32.Parse(ReleaseNode.FirstChild.InnerText.Substring(0, 4))
             };
         }
 

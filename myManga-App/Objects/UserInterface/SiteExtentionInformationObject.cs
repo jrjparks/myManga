@@ -1,6 +1,6 @@
-﻿using Core.IO;
-using myMangaSiteExtension.Attributes;
+﻿using myMangaSiteExtension.Attributes;
 using myMangaSiteExtension.Enums;
+using myMangaSiteExtension.Primitives.Objects;
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -94,9 +94,18 @@ namespace myManga_App.Objects
             }
         }
 
-        public SiteExtensionInformationObject() : base() { }
-        public SiteExtensionInformationObject(ISiteExtensionDescriptionAttribute attribute) : base() { iSiteExtensionDescriptionAttribute = attribute; }
-        public SiteExtensionInformationObject(SerializationInfo info, StreamingContext context) : base(info, context) { }
+        public SiteExtensionInformationObject()
+            : base()
+        { }
+        public SiteExtensionInformationObject(ISiteExtensionDescriptionAttribute attribute)
+            : base()
+        { iSiteExtensionDescriptionAttribute = attribute; }
+        protected SiteExtensionInformationObject(SerializationInfo info, StreamingContext context)
+            : base(info, context)
+        { }
+
+        public override void GetObjectData(SerializationInfo info, StreamingContext context)
+        { base.GetObjectData(info, context); }
         #endregion
     }
 }

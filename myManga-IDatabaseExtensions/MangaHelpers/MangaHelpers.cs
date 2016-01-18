@@ -6,7 +6,9 @@ using myMangaSiteExtension.Objects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Reflection;
+using System.Threading;
 
 namespace MangaHelpers
 {
@@ -24,6 +26,42 @@ namespace MangaHelpers
         protected IDatabaseExtensionDescriptionAttribute databaseExtensionDescriptionAttribute;
         public IDatabaseExtensionDescriptionAttribute DatabaseExtensionDescriptionAttribute
         { get { return databaseExtensionDescriptionAttribute ?? (databaseExtensionDescriptionAttribute = GetType().GetCustomAttribute<IDatabaseExtensionDescriptionAttribute>(false)); } }
+
+        #region IExtesion
+        public CookieCollection Cookies
+        { get; private set; }
+
+        public Boolean IsAuthenticated
+        { get; private set; }
+
+        public bool Authenticate(NetworkCredential credentials, CancellationToken ct, IProgress<Int32> ProgressReporter)
+        {
+            if (IsAuthenticated) return true;
+            throw new NotImplementedException();
+        }
+
+        public void Deauthenticate()
+        {
+            if (!IsAuthenticated) return;
+            Cookies = null;
+            IsAuthenticated = false;
+        }
+
+        public List<MangaObject> GetUserFavorites()
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool AddUserFavorites(MangaObject MangaObject)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool RemoveUserFavorites(MangaObject MangaObject)
+        {
+            throw new NotImplementedException();
+        }
+        #endregion
 
         public SearchRequestObject GetSearchRequestObject(String searchTerm)
         {
@@ -88,8 +126,8 @@ namespace MangaHelpers
                 }
             }
 
-            List<String> Covers = new List<String>();
-            if (CoverNode != null) Covers.Add(String.Format("{0}{1}", DatabaseExtensionDescriptionAttribute.RootUrl, CoverNode.Attributes["src"].Value));
+            List<LocationObject> Covers = new List<LocationObject>();
+            if (CoverNode != null) Covers.Add(new LocationObject() { Url = String.Format("{0}{1}", DatabaseExtensionDescriptionAttribute.RootUrl, CoverNode.Attributes["src"].Value), ExtensionName = DatabaseExtensionDescriptionAttribute.Name });
 
             return new DatabaseObject()
             {

@@ -6,13 +6,13 @@ using System.Windows;
 
 namespace myManga_App.Controls
 {
-    public static class ListBoxExtentions
+    public static class ListBoxExtensions
     {
         public static readonly DependencyProperty HasBindableSelectedItemsProperty;
         public static readonly DependencyProperty BindableSelectedItemsProperty;
         static DependencyProperty SelectionChangedHandlerProperty;
 
-        static ListBoxExtentions()
+        static ListBoxExtensions()
         {
             BindableSelectedItemsProperty = DependencyProperty.Register("BindableSelectedItems", typeof(IList), typeof(ListBox));
             HasBindableSelectedItemsProperty = DependencyProperty.RegisterAttached("HasBindableSelectedItems", typeof(bool), typeof(ListBox), new PropertyMetadata(false));
@@ -40,15 +40,15 @@ namespace myManga_App.Controls
         {
             Binding = new Binding("SelectedItems");
             Binding.Source = owner;
-            owner.SetBinding(ListBoxExtentions.BindableSelectedItemsProperty, Binding);
+            owner.SetBinding(ListBoxExtensions.BindableSelectedItemsProperty, Binding);
             owner.SelectionChanged += new SelectionChangedEventHandler(Owner_SelectionChanged);
         }
 
         void Owner_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             ListBox Owner = sender as ListBox;
-            BindingOperations.ClearBinding(Owner, ListBoxExtentions.BindableSelectedItemsProperty);
-            Owner.SetBinding(ListBoxExtentions.BindableSelectedItemsProperty, Binding);
+            BindingOperations.ClearBinding(Owner, ListBoxExtensions.BindableSelectedItemsProperty);
+            Owner.SetBinding(ListBoxExtensions.BindableSelectedItemsProperty, Binding);
         }
     }
 }

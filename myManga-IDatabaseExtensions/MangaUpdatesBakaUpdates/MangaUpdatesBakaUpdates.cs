@@ -6,8 +6,10 @@ using myMangaSiteExtension.Objects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Reflection;
 using System.Text.RegularExpressions;
+using System.Threading;
 
 namespace MangaUpdatesBakaUpdates
 {
@@ -26,6 +28,42 @@ namespace MangaUpdatesBakaUpdates
         protected IDatabaseExtensionDescriptionAttribute databaseExtensionDescriptionAttribute;
         public IDatabaseExtensionDescriptionAttribute DatabaseExtensionDescriptionAttribute
         { get { return databaseExtensionDescriptionAttribute ?? (databaseExtensionDescriptionAttribute = GetType().GetCustomAttribute<IDatabaseExtensionDescriptionAttribute>(false)); } }
+
+        #region IExtesion
+        public CookieCollection Cookies
+        { get; private set; }
+
+        public Boolean IsAuthenticated
+        { get; private set; }
+
+        public bool Authenticate(NetworkCredential credentials, CancellationToken ct, IProgress<Int32> ProgressReporter)
+        {
+            if (IsAuthenticated) return true;
+            throw new NotImplementedException();
+        }
+
+        public void Deauthenticate()
+        {
+            if (!IsAuthenticated) return;
+            Cookies = null;
+            IsAuthenticated = false;
+        }
+
+        public List<MangaObject> GetUserFavorites()
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool AddUserFavorites(MangaObject MangaObject)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool RemoveUserFavorites(MangaObject MangaObject)
+        {
+            throw new NotImplementedException();
+        }
+        #endregion
 
         public SearchRequestObject GetSearchRequestObject(string searchTerm)
         {
@@ -54,9 +92,9 @@ namespace MangaUpdatesBakaUpdates
 
             List<String> AssociatedNames = (from HtmlNode TextNode in AssociatedNamesNode.ChildNodes where TextNode.Name.Equals("#text") && !TextNode.InnerText.Trim().Equals(String.Empty) && !TextNode.InnerText.Trim().Equals("N/A") select HtmlEntity.DeEntitize(TextNode.InnerText.Trim())).ToList<String>();
             
-            List<String> Covers = new List<String>();
+            List<LocationObject> Covers = new List<LocationObject>();
             if (CoverNode != null && CoverNode.SelectSingleNode(".//img") != null)
-                Covers.Add(CoverNode.SelectSingleNode(".//img").Attributes["src"].Value);
+                Covers.Add(new LocationObject() { Url = CoverNode.SelectSingleNode(".//img").Attributes["src"].Value, ExtensionName = DatabaseExtensionDescriptionAttribute.Name });
 
             Match DatabaseObjectIdMatch = Regex.Match(content, @"id=(?<DatabaseObjectId>\d+)&");
             Int32 DatabaseObjectId = Int32.Parse(DatabaseObjectIdMatch.Groups["DatabaseObjectId"].Value),

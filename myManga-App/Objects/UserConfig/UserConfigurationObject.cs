@@ -1,5 +1,6 @@
-﻿using Core.IO;
+﻿using myManga_App.IO.Local.Object;
 using myManga_App.Objects.MVVM;
+using myMangaSiteExtension.Primitives.Objects;
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -9,17 +10,17 @@ using System.Runtime.Serialization;
 using System.Windows;
 using System.Xml.Serialization;
 
-namespace myManga_App.Objects
+namespace myManga_App.Objects.UserConfig
 {
     [Serializable, XmlRoot, DebuggerStepThrough]
-    public sealed class UserConfigurationObject : SerializableObject
+    public sealed class UserConfigurationObject : SerializableObject, INotifyPropertyChanging, INotifyPropertyChanged
     {
         #region NotifyPropertyChange
-        public event EventHandler<String> UserConfigurationUpdated;
+        public event EventHandler<GenericEventArgs<String>> UserConfigurationUpdated;
         private void OnUserConfigurationUpdated(String e)
         {
             if (UserConfigurationUpdated != null)
-                UserConfigurationUpdated(this, e);
+                UserConfigurationUpdated(this, new GenericEventArgs<String>(e));
         }
 
         public event PropertyChangingEventHandler PropertyChanging;
@@ -81,15 +82,15 @@ namespace myManga_App.Objects
         }
 
         [XmlIgnore]
-        private SaveType saveType = SaveType.XML;
+        private SerializeType serializeType = SerializeType.XML;
         [XmlElement]
-        public SaveType SaveType
+        public SerializeType SerializeType
         {
-            get { return saveType; }
+            get { return serializeType; }
             set
             {
                 OnPropertyChanging();
-                saveType = value;
+                serializeType = value;
                 OnPropertyChanged();
             }
         }
@@ -123,16 +124,16 @@ namespace myManga_App.Objects
         }
 
         [XmlIgnore]
-        private readonly ObservableCollection<String> enabledDatabaseExtentions = new ObservableCollection<String>();
+        private readonly ObservableCollection<String> enabledDatabaseExtensions = new ObservableCollection<String>();
         [XmlArray, XmlArrayItem("DatabaseExtentionName")]
-        public ObservableCollection<String> EnabledDatabaseExtentions
+        public ObservableCollection<String> EnabledDatabaseExtensions
         {
-            get { return enabledDatabaseExtentions; }
+            get { return enabledDatabaseExtensions; }
             set
             {
-                enabledDatabaseExtentions.Clear();
+                enabledDatabaseExtensions.Clear();
                 foreach (String _value in value)
-                    enabledDatabaseExtentions.Add(_value);
+                    enabledDatabaseExtensions.Add(_value);
             }
         }
 
@@ -206,8 +207,15 @@ namespace myManga_App.Objects
             }
         }
 
-        public UserConfigurationObject() : base() { CreateEventLinks(); }
-        public UserConfigurationObject(SerializationInfo info, StreamingContext context) : base(info, context) { CreateEventLinks(); }
+        public UserConfigurationObject()
+            : base()
+        { CreateEventLinks(); }
+        private UserConfigurationObject(SerializationInfo info, StreamingContext context)
+            : base(info, context)
+        { CreateEventLinks(); }
+
+        public override void GetObjectData(SerializationInfo info, StreamingContext context)
+        { base.GetObjectData(info, context); }
 
         private void CreateEventLinks()
         {
@@ -215,8 +223,8 @@ namespace myManga_App.Objects
             ViewTypes.CollectionChanged += (s, e) => OnPropertyChanged("ViewTypes");
             EnabledSiteExtensions.CollectionChanged += (s, e) => OnUserConfigurationUpdated("EnabledSiteExtensions");
             EnabledSiteExtensions.CollectionChanged += (s, e) => OnPropertyChanged("EnabledSiteExtensions");
-            EnabledDatabaseExtentions.CollectionChanged += (s, e) => OnUserConfigurationUpdated("EnabledDatabaseExtentions");
-            EnabledDatabaseExtentions.CollectionChanged += (s, e) => OnPropertyChanged("EnabledDatabaseExtentions");
+            EnabledDatabaseExtensions.CollectionChanged += (s, e) => OnUserConfigurationUpdated("EnabledDatabaseExtensions");
+            EnabledDatabaseExtensions.CollectionChanged += (s, e) => OnPropertyChanged("EnabledDatabaseExtensions");
         }
     }
 }

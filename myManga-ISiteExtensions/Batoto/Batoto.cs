@@ -1,5 +1,4 @@
-﻿using Core.Other;
-using HtmlAgilityPack;
+﻿using HtmlAgilityPack;
 using myMangaSiteExtension.Attributes;
 using myMangaSiteExtension.Enums;
 using myMangaSiteExtension.Interfaces;
@@ -7,9 +6,13 @@ using myMangaSiteExtension.Objects;
 using myMangaSiteExtension.Utilities;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Net;
 using System.Reflection;
+using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Windows;
 
 namespace Batoto
@@ -17,17 +20,128 @@ namespace Batoto
     [ISiteExtensionDescription(
         "Batoto",
         "bato.to",
-        "http://bato.to/",
-        RootUrl = "http://bato.to",
+        "https://bato.to/reader",
+        RootUrl = "https://bato.to",
         Author = "James Parks",
         Version = "0.0.1",
         SupportedObjects = SupportedObjects.All,
-        Language = "English")]
+        Language = "English",
+        RequiresAuthentication = true)]
     public class Batoto : ISiteExtension
     {
+        protected const String AUTH_KEY = "880ea6a14ea49e853634fbdc5015a024",
+            SECURE_KEY = "ff65abdb3406e0c4459ab7f1c873b621";
+
         protected ISiteExtensionDescriptionAttribute siteExtensionDescriptionAttribute;
         public ISiteExtensionDescriptionAttribute SiteExtensionDescriptionAttribute
         { get { return siteExtensionDescriptionAttribute ?? (siteExtensionDescriptionAttribute = GetType().GetCustomAttribute<ISiteExtensionDescriptionAttribute>(false)); } }
+
+        #region IExtension
+        public CookieCollection Cookies
+        { get; private set; }
+
+        public Boolean IsAuthenticated
+        { get; private set; }
+
+        public bool Authenticate(NetworkCredential Credentials, CancellationToken ct, IProgress<Int32> ProgressReporter)
+        {
+            // DO NOT RETURN TRUE IF `IsAuthenticated`
+            // ALLOW USERS TO REAUTHENTICATE
+            // if (IsAuthenticated) return true;
+
+            CookieContainer cookieContainer = new CookieContainer();
+            StringBuilder urlString = new StringBuilder();
+            urlString.Append("https://bato.to/forums/index.php?");
+            urlString.AppendUrlEncoded("app", "core", true);
+            urlString.AppendUrlEncoded("module", "global");
+            urlString.AppendUrlEncoded("section", "login");
+            urlString.AppendUrlEncoded("do", "process");
+            HttpWebRequest request = HttpWebRequest.CreateHttp(urlString.ToString());
+            request.Method = WebRequestMethods.Http.Post;
+
+            if (!Equals(ProgressReporter, null)) ProgressReporter.Report(10);
+            ct.ThrowIfCancellationRequested();
+
+            // Generate login data
+            StringBuilder loginData = new StringBuilder();
+            loginData.AppendUrlEncoded("auth_key", AUTH_KEY, true);
+            loginData.AppendUrlEncoded("anonymous", "1");
+            loginData.AppendUrlEncoded("rememberMe", "1");
+            loginData.AppendUrlEncoded("referer", this.SiteExtensionDescriptionAttribute.RefererHeader);
+            loginData.AppendUrlEncoded("ips_username", Credentials.UserName);
+            loginData.AppendUrlEncoded("ips_password", Credentials.Password);
+
+            if (!Equals(ProgressReporter, null)) ProgressReporter.Report(20);
+            ct.ThrowIfCancellationRequested();
+
+            // Apply loginData to request
+            Byte[] loginDataBytes = Encoding.UTF8.GetBytes(loginData.ToString());
+            request.ContentType = "application/x-www-form-urlencoded";
+            request.ContentLength = loginDataBytes.Length;
+            request.CookieContainer = cookieContainer;
+
+            if (!Equals(ProgressReporter, null)) ProgressReporter.Report(30);
+            ct.ThrowIfCancellationRequested();
+
+            // Write loginData to request
+            using (Stream requestStream = request.GetRequestStream())
+            { requestStream.Write(loginDataBytes, 0, loginDataBytes.Length); }
+
+            if (!Equals(ProgressReporter, null)) ProgressReporter.Report(55);
+            ct.ThrowIfCancellationRequested();
+
+            // Get response and store cookies
+            HttpWebResponse response = request.GetResponse() as HttpWebResponse;
+            String responseContent = null;
+            if (!Equals(ProgressReporter, null)) ProgressReporter.Report(75);
+            using (StreamReader streamReader = new StreamReader(response.GetResponseStream()))
+            { responseContent = streamReader.ReadToEnd(); }
+
+            if (!Equals(ProgressReporter, null)) ProgressReporter.Report(95);
+            ct.ThrowIfCancellationRequested();
+            Cookies = response.Cookies;
+
+            IsAuthenticated = responseContent.IndexOf("username or password incorrect", StringComparison.OrdinalIgnoreCase) < 0;
+            if (!Equals(ProgressReporter, null)) ProgressReporter.Report(100);
+            return IsAuthenticated;
+        }
+
+        public void Deauthenticate()
+        {
+            if (!IsAuthenticated) return;
+            CookieContainer cookieContainer = new CookieContainer();
+            StringBuilder urlString = new StringBuilder();
+            urlString.Append("https://bato.to/forums/index.php?");
+            urlString.AppendUrlEncoded("app", "core", true);
+            urlString.AppendUrlEncoded("module", "global");
+            urlString.AppendUrlEncoded("section", "login");
+            urlString.AppendUrlEncoded("do", "logout");
+            urlString.AppendUrlEncoded("k", SECURE_KEY);
+            HttpWebRequest request = HttpWebRequest.CreateHttp(urlString.ToString());
+            request.Method = WebRequestMethods.Http.Get;
+            request.CookieContainer = cookieContainer;
+            request.CookieContainer.Add(Cookies);
+            HttpWebResponse response = request.GetResponse() as HttpWebResponse;
+            Cookies = null;
+            IsAuthenticated = false;
+        }
+
+        public List<MangaObject> GetUserFavorites()
+        {
+            // https://bato.to/myfollows
+            throw new NotImplementedException();
+        }
+
+        public bool AddUserFavorites(MangaObject MangaObject)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool RemoveUserFavorites(MangaObject MangaObject)
+        {
+            throw new NotImplementedException();
+        }
+        #endregion
 
         public SearchRequestObject GetSearchRequestObject(string searchTerm)
         {
@@ -45,7 +159,7 @@ namespace Batoto
             MangaObjectDocument.LoadHtml(content);
 
             HtmlNode InformationNode = MangaObjectDocument.DocumentNode.SelectSingleNode("//div[contains(@class,'ipsBox')]/div");
-            String MangaCover = InformationNode.SelectSingleNode(".//div[1]/img").Attributes["src"].Value;
+            String Cover = InformationNode.SelectSingleNode(".//div[1]/img").Attributes["src"].Value;
 
             HtmlNode MangaProperties = InformationNode.SelectSingleNode(".//table[contains(@class,'ipb_table')]"),
                 ChapterListing = MangaObjectDocument.DocumentNode.SelectSingleNode("//table[contains(@class,'chapters_list')]");
@@ -113,10 +227,8 @@ namespace Batoto
                         ReleaseData = ReleaseData.Split(new String[] { " - " }, StringSplitOptions.RemoveEmptyEntries)[0];
                     DateTime.TryParse(ReleaseData, out Released);
                     String ChapterUrl = VolChapNameNode.Attributes["href"].Value;
-                    if (!ChapterUrl.Contains("?"))
-                    { ChapterUrl += "?supress_webtoon=t"; }
-                    else if (ChapterUrl.Contains("?"))
-                    { ChapterUrl += "&supress_webtoon=t"; }
+                    String ChapterHash = ChapterUrl.Split('#').Last().Split('_').First();
+                    ChapterUrl = String.Format("https://bato.to/areader?id={0}&p=1&supress_webtoon=t", ChapterHash);
                     ChapterObject chapterObject = new ChapterObject()
                     {
                         Name = HtmlEntity.DeEntitize(ChapterName),
@@ -155,7 +267,7 @@ namespace Batoto
                 PageFlowDirection = PageFlowDirection,
                 Description = HtmlEntity.DeEntitize(Desciption),
                 AlternateNames = AlternateNames.ToList(),
-                Covers = new List<String>(new String[] { MangaCover }),
+                CoverLocations = { new LocationObject() { Url = Cover, ExtensionName = SiteExtensionDescriptionAttribute.Name } },
                 Authors = Authors.ToList(),
                 Artists = Artists.ToList(),
                 Genres = Genres.ToList(),
@@ -187,22 +299,23 @@ namespace Batoto
                         NextPageUrl = (NextNode != null) ? NextNode.Attributes["value"].Value : null,
                         PrevPageUrl = (PrevNode != null) ? PrevNode.Attributes["value"].Value : null;
 
-                    if (!PageUrl.Contains("?"))
-                    { PageUrl += "?supress_webtoon=t"; }
-                    else if (PageUrl.Contains("?"))
-                    { PageUrl += "&supress_webtoon=t"; }
+                    if (!String.IsNullOrWhiteSpace(PageUrl))
+                    {
+                        String PageHash = PageUrl.Split('#').Last().Split('_').First();
+                        PageUrl = String.Format("https://bato.to/areader?id={0}&p={1}&supress_webtoon=t", PageHash, PageNumber);
+                    }
 
-                    if (NextPageUrl == null) { }
-                    else if (!NextPageUrl.Contains("?"))
-                    { NextPageUrl += "?supress_webtoon=t"; }
-                    else if (NextPageUrl.Contains("?"))
-                    { NextPageUrl += "&supress_webtoon=t"; }
+                    if (!String.IsNullOrWhiteSpace(NextPageUrl))
+                    {
+                        String PageHash = NextPageUrl.Split('#').Last().Split('_').First();
+                        NextPageUrl = String.Format("https://bato.to/areader?id={0}&p={1}&supress_webtoon=t", PageHash, PageNumber + 1);
+                    }
 
-                    if (PrevPageUrl == null) { }
-                    else if (!PrevPageUrl.Contains("?"))
-                    { PrevPageUrl += "?supress_webtoon=t"; }
-                    else if (PrevPageUrl.Contains("?"))
-                    { PrevPageUrl += "&supress_webtoon=t"; }
+                    if (!String.IsNullOrWhiteSpace(PrevPageUrl))
+                    {
+                        String PageHash = PrevPageUrl.Split('#').Last().Split('_').First();
+                        PrevPageUrl = String.Format("https://bato.to/areader?id={0}&p={1}&supress_webtoon=t", PageHash, PageNumber - 1);
+                    }
 
                     ParsedChapterObject.Pages.Add(new PageObject()
                     {
@@ -230,31 +343,33 @@ namespace Batoto
             Uri ImageLink = new Uri(PageObjectDocument.GetElementbyId("comic_page").Attributes["src"].Value);
             String Name = ImageLink.ToString().Split('/').Last();
 
+            UInt32 PageNumber = UInt32.Parse(PageNode.NextSibling.InnerText.Substring(5));
             String PageUrl = PageNode.Attributes["value"].Value,
                 NextPageUrl = (NextNode != null) ? NextNode.Attributes["value"].Value : null,
                 PrevPageUrl = (PrevNode != null) ? PrevNode.Attributes["value"].Value : null;
 
-            if (!PageUrl.Contains("?"))
-            { PageUrl += "?supress_webtoon=t"; }
-            else if (PageUrl.Contains("?"))
-            { PageUrl += "&supress_webtoon=t"; }
+            if (!String.IsNullOrWhiteSpace(PageUrl))
+            {
+                String PageHash = PageUrl.Split('#').Last().Split('_').First();
+                PageUrl = String.Format("https://bato.to/areader?id={0}&p={1}&supress_webtoon=t", PageHash, PageNumber);
+            }
 
-            if (NextPageUrl == null) { }
-            else if (!NextPageUrl.Contains("?"))
-            { NextPageUrl += "?supress_webtoon=t"; }
-            else if (NextPageUrl.Contains("?"))
-            { NextPageUrl += "&supress_webtoon=t"; }
+            if (!String.IsNullOrWhiteSpace(NextPageUrl))
+            {
+                String PageHash = NextPageUrl.Split('#').Last().Split('_').First();
+                NextPageUrl = String.Format("https://bato.to/areader?id={0}&p={1}&supress_webtoon=t", PageHash, PageNumber + 1);
+            }
 
-            if (PrevPageUrl == null) { }
-            else if (!PrevPageUrl.Contains("?"))
-            { PrevPageUrl += "?supress_webtoon=t"; }
-            else if (PrevPageUrl.Contains("?"))
-            { PrevPageUrl += "&supress_webtoon=t"; }
+            if (!String.IsNullOrWhiteSpace(PrevPageUrl))
+            {
+                String PageHash = PrevPageUrl.Split('#').Last().Split('_').First();
+                PrevPageUrl = String.Format("https://bato.to/areader?id={0}&p={1}&supress_webtoon=t", PageHash, PageNumber - 1);
+            }
 
             return new PageObject()
             {
                 Name = Name,
-                PageNumber = UInt32.Parse(PageNode.NextSibling.InnerText.Substring(5)),
+                PageNumber = PageNumber,
                 Url = PageUrl,
                 NextUrl = NextPageUrl,
                 PrevUrl = PrevPageUrl,
@@ -270,7 +385,7 @@ namespace Batoto
             SearchResultDocument.LoadHtml(content);
             HtmlWeb HtmlWeb = new HtmlWeb();
             HtmlNodeCollection HtmlSearchResults = SearchResultDocument.DocumentNode.SelectNodes("//table[contains(@class,'ipb_table chapters_list')]/tbody/tr[not(contains(@class,'header'))]");
-            if (HtmlSearchResults != null)
+            if (!Equals(HtmlSearchResults, null))
                 foreach (HtmlNode SearchResultNode in HtmlSearchResults)
                 {
                     HtmlNode NameLink = SearchResultNode.SelectSingleNode(".//td[1]/strong/a");
@@ -279,20 +394,20 @@ namespace Batoto
                         Int32 Id = -1;
                         String Name = HtmlEntity.DeEntitize(NameLink.InnerText).Trim(),
                             Link = NameLink.Attributes["href"].Value,
-                            Cover = null,
                             Description = null;
+                        LocationObject Cover = null;
                         if (Int32.TryParse(IdMatch.Match(Link).Value.Substring(1), out Id))
                         {
                             HtmlDocument PopDocument = HtmlWeb.Load(String.Format("{0}/comic_pop?id={1}", SiteExtensionDescriptionAttribute.RootUrl, Id));
                             HtmlNode CoverNode = PopDocument.DocumentNode.SelectSingleNode("//img"),
                                 DescriptionNode = PopDocument.DocumentNode.SelectSingleNode("//table/tbody/tr[6]/td[2]");
-                            if (!HtmlNode.Equals(CoverNode, null)) Cover = CoverNode.Attributes["src"].Value;
+                            if (!HtmlNode.Equals(CoverNode, null)) Cover = new LocationObject() { Url = CoverNode.Attributes["src"].Value, ExtensionName = SiteExtensionDescriptionAttribute.Name };
                             if (!HtmlNode.Equals(DescriptionNode, null)) Description = DescriptionNode.InnerText.Trim();
                         }
                         String[] Author_Artists = { SearchResultNode.SelectSingleNode(".//td[2]").InnerText.Trim() };
                         SearchResults.Add(new SearchResultObject()
                         {
-                            CoverUrl = Cover,
+                            Cover = Cover,
                             Description = Description,
                             ExtensionName = SiteExtensionDescriptionAttribute.Name,
                             Name = Name,

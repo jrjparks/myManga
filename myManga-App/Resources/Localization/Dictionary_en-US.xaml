@@ -4,8 +4,8 @@
     xmlns:system="clr-namespace:System;assembly=mscorlib">
 
     <!-- Application Information -->
-    <system:String x:Key="AppTitle">myManga Beta v3</system:String>
-    <system:String x:Key="ProjectURL">mymanga.codeplex.com</system:String>
+    <system:String x:Key="AppTitle">myManga v3</system:String>
+    <system:String x:Key="ProjectURL">github.com/jrjparks/myManga</system:String>
 
     <system:String x:Key="HomeTabHeaderName">Home</system:String>
     <system:String x:Key="HomeTabHeaderContent">&#xe078; Home</system:String>
@@ -18,4 +18,8 @@
 
     <system:String x:Key="DownloadQueueTabHeaderName">Download Queue</system:String>
     <system:String x:Key="DownloadQueueTabHeaderContent">&#xe03c; Download Queue</system:String>
+
+    <!-- Dialog Boxes -->
+    <system:String x:Key="DialogOK">OK</system:String>
+    <system:String x:Key="DialogCancel">Cancel</system:String>
 </ResourceDictionary>

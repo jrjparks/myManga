@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace myMangaSiteExtension.Interfaces
 {
-    public interface IDatabaseExtension
+    public interface IDatabaseExtension : IExtension
     {
         IDatabaseExtensionDescriptionAttribute DatabaseExtensionDescriptionAttribute { get; }
 

@@ -1,4 +1,4 @@
-﻿using Core.IO;
+﻿using myMangaSiteExtension.Primitives.Objects;
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -114,9 +114,6 @@ namespace myMangaSiteExtension.Objects
                 OnPropertyChanged();
             }
         }
-
-        public PageObject() : base() { }
-        public PageObject(SerializationInfo info, StreamingContext context) : base(info, context) { }
         #endregion
     }
 }

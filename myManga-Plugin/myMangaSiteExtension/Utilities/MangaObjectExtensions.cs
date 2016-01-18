@@ -89,12 +89,12 @@ namespace myMangaSiteExtension.Utilities
                             mangaObject.Authors.Add(Author);
 
                 // Covers
-                foreach (List<String> Covers in (from MangaObject obj in list where obj != null select obj.Covers))
-                    foreach (String Cover in Covers)
+                foreach (List<LocationObject> Covers in (from MangaObject obj in list where obj != null select obj.CoverLocations))
+                    foreach (LocationObject Cover in Covers)
                         if (Cover != null &&
-                            !mangaObject.Covers.Any(o => o == Cover))
-                            mangaObject.Covers.Add(Cover);
-                mangaObject.Covers.RemoveAll(c => String.IsNullOrWhiteSpace(c));
+                            !mangaObject.CoverLocations.Any(o => Equals(o.Url, Cover.Url)))
+                            mangaObject.CoverLocations.Add(Cover);
+                mangaObject.CoverLocations.RemoveAll(c => String.IsNullOrWhiteSpace(c.Url));
 
                 // AlternateNames
                 foreach (String Name in (from MangaObject obj in list where obj != null select obj.Name))
@@ -172,10 +172,10 @@ namespace myMangaSiteExtension.Utilities
                     value.DatabaseLocations.Add(DatabaseLocation);
 
             // Covers
-            foreach (String Cover in databaseObject.Covers)
-                if (!String.IsNullOrWhiteSpace(Cover) &&
-                    !value.Covers.Any(o => o == Cover))
-                    value.Covers.Insert(0, Cover);
+            foreach (LocationObject Cover in databaseObject.Covers)
+                if (!String.IsNullOrWhiteSpace(Cover.Url) &&
+                    !value.CoverLocations.Any(o => Equals(o.Url, Cover.Url)))
+                    value.CoverLocations.Insert(0, Cover);
 
             // Released
             if (value.Released.Equals(DateTime.MinValue) && databaseObject.ReleaseYear > 0)
@@ -218,8 +218,8 @@ namespace myMangaSiteExtension.Utilities
             return false;
         }
 
-        public static String SelectedCover(this MangaObject value)
-        { return value.Covers.Count > value.PreferredCover ? value.Covers[value.PreferredCover] : value.Covers.FirstOrDefault(); }
+        public static LocationObject SelectedCover(this MangaObject value)
+        { return value.CoverLocations.Count > value.PreferredCover ? value.CoverLocations[value.PreferredCover] : value.CoverLocations.FirstOrDefault(); }
 
         public static Int32 IndexOfChapterObject(this MangaObject value, ChapterObject chapter_object)
         { return value.Chapters.FindIndex(c => c.Volume == chapter_object.Volume && c.Chapter == chapter_object.Chapter && c.SubChapter == chapter_object.SubChapter); }

@@ -1,41 +1,74 @@
 ﻿<ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:ViewModels="clr-namespace:myManga_App.ViewModels"
-    xmlns:Views="clr-namespace:myManga_App.Views"
-    xmlns:HomeViews="clr-namespace:myManga_App.Views.HomeView"
+    
+    xmlns:DialogViewModels="clr-namespace:myManga_App.ViewModels.Dialog"
+    xmlns:DialogViews="clr-namespace:myManga_App.Views.Dialog"
+        
+    xmlns:PagesViewModels="clr-namespace:myManga_App.ViewModels.Pages"
+    xmlns:PagesViews="clr-namespace:myManga_App.Views.Pages"
+    xmlns:PagesHomeViews="clr-namespace:myManga_App.Views.Pages.HomeView"
+    
+    xmlns:MangaCacheObjectViewModels="clr-namespace:myManga_App.ViewModels.Objects.Cache.MangaCacheObjectViewModels"
+    xmlns:MangaCacheObjectViews="clr-namespace:myManga_App.Views.Objects.Cache.MangaCacheObjectViews"
+    
     xmlns:MVVM="clr-namespace:myManga_App.Objects.MVVM">
 
-    <DataTemplate x:Key="HomeView_List" DataType="{x:Type ViewModels:HomeViewModel}">
-        <HomeViews:HomeView_List/>
+    <!-- Pages -->
+
+    <DataTemplate x:Key="ListHomeView" DataType="{x:Type PagesViewModels:HomeViewModel}">
+        <PagesHomeViews:ListHomeView/>
     </DataTemplate>
-    <DataTemplate x:Key="HomeView_Grid" DataType="{x:Type ViewModels:HomeViewModel}">
-        <HomeViews:HomeView_Grid/>
+
+    <DataTemplate x:Key="GridHomeView" DataType="{x:Type PagesViewModels:HomeViewModel}">
+        <PagesHomeViews:GridHomeView/>
     </DataTemplate>
-    <DataTemplate DataType="{x:Type ViewModels:HomeViewModel}">
+
+    <DataTemplate DataType="{x:Type PagesViewModels:HomeViewModel}">
         <ContentControl Content="{Binding}">
             <ContentControl.Style>
                 <Style TargetType="{x:Type ContentControl}">
-                    <Setter Property="ContentTemplate" Value="{StaticResource HomeView_List}"/>
+                    <Setter Property="ContentTemplate" Value="{StaticResource ListHomeView}"/>
                     <Style.Triggers>
                         <DataTrigger Binding="{Binding ViewType}" Value="{x:Static MVVM:ViewModelViewType.Grid}">
-                            <Setter Property="ContentTemplate" Value="{StaticResource HomeView_Grid}"/>
+                            <Setter Property="ContentTemplate" Value="{StaticResource GridHomeView}"/>
                         </DataTrigger>
                     </Style.Triggers>
                 </Style>
             </ContentControl.Style>
         </ContentControl>
     </DataTemplate>
-    
-    <DataTemplate DataType="{x:Type ViewModels:SettingsViewModel}">
-        <Views:SettingsView/>
-    </DataTemplate>
-    
-    <DataTemplate DataType="{x:Type ViewModels:SearchViewModel}">
-        <Views:SearchView/>
+
+    <DataTemplate DataType="{x:Type PagesViewModels:SearchViewModel}">
+        <PagesViews:SearchView/>
     </DataTemplate>
 
-    <DataTemplate DataType="{x:Type ViewModels:ReaderViewModel}">
-        <Views:ReaderView/>
+    <DataTemplate DataType="{x:Type PagesViewModels:ChapterReaderViewModel}">
+        <PagesViews:ChapterReaderView/>
     </DataTemplate>
+
+    <DataTemplate DataType="{x:Type PagesViewModels:SettingsViewModel}">
+        <PagesViews:SettingsView/>
+    </DataTemplate>
+
+    <!-- Dialog -->
+
+    <DataTemplate DataType="{x:Type DialogViewModels:AuthenticationDialogViewModel}">
+        <DialogViews:AuthenticationDialogView/>
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type DialogViewModels:MessageDialogViewModel}">
+        <DialogViews:MessageDialogView/>
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type DialogViewModels:MangaCacheObjectDialogViewModel}">
+        <DialogViews:MangaCacheObjectDialogView/>
+    </DataTemplate>
+
+    <!-- Objects -->
+
+    <DataTemplate DataType="{x:Type MangaCacheObjectViewModels:MangaCacheObjectDetailViewModel}">
+        <MangaCacheObjectViews:MangaCacheObjectDetailView/>
+    </DataTemplate>
+
 </ResourceDictionary>

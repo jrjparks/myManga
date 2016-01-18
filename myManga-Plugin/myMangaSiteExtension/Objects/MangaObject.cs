@@ -1,4 +1,4 @@
-﻿using Core.IO;
+﻿using myMangaSiteExtension.Primitives.Objects;
 using myMangaSiteExtension.Enums;
 using System;
 using System.Collections.Generic;
@@ -59,8 +59,12 @@ namespace myMangaSiteExtension.Objects
         [NonSerialized, XmlIgnore, EditorBrowsable(EditorBrowsableState.Never)]
         protected List<LocationObject> databaseLocations;
 
+
         [NonSerialized, XmlIgnore, EditorBrowsable(EditorBrowsableState.Never)]
         protected List<String> covers;
+
+        [NonSerialized, XmlIgnore, EditorBrowsable(EditorBrowsableState.Never)]
+        protected List<LocationObject> coverLocations;
         [NonSerialized, XmlIgnore, EditorBrowsable(EditorBrowsableState.Never)]
         protected Int32 preferredcover;
 
@@ -206,6 +210,18 @@ namespace myMangaSiteExtension.Objects
             }
         }
 
+        [XmlArray, XmlArrayItem("Cover")]
+        public List<LocationObject> CoverLocations
+        {
+            get { return coverLocations ?? (coverLocations = new List<LocationObject>()); }
+            set
+            {
+                OnPropertyChanging();
+                coverLocations = value;
+                OnPropertyChanged();
+            }
+        }
+
         [XmlAttribute]
         public Int32 PreferredCover
         {
@@ -251,9 +267,6 @@ namespace myMangaSiteExtension.Objects
                 OnPropertyChanged();
             }
         }
-
-        public MangaObject() : base() { }
-        public MangaObject(SerializationInfo info, StreamingContext context) : base(info, context) { }
         #endregion
     }
 }

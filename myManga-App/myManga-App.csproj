@@ -10,7 +10,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>myManga_App</RootNamespace>
     <AssemblyName>myManga</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <TargetFrameworkProfile>
     </TargetFrameworkProfile>
     <FileAlignment>512</FileAlignment>
@@ -60,17 +60,18 @@
       <HintPath>..\packages\HtmlAgilityPack.1.4.9\lib\Net45\HtmlAgilityPack.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="Ionic.Zip, Version=1.9.6.0, Culture=neutral, PublicKeyToken=6583c7c814667745, processorArchitecture=MSIL">
-      <HintPath>..\packages\DotNetZip.1.9.6\lib\net20\Ionic.Zip.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="SmartThreadPool">
-      <HintPath>..\packages\SmartThreadPool.dll.2.2.3\lib\SmartThreadPool.dll</HintPath>
-      <Private>False</Private>
+    <Reference Include="log4net, Version=1.2.15.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
+      <HintPath>..\packages\log4net.2.0.5\lib\net45-full\log4net.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.IO.Compression" />
+    <Reference Include="System.IO.Compression.FileSystem" />
+    <Reference Include="System.Management" />
+    <Reference Include="System.Runtime.Caching" />
+    <Reference Include="System.Security" />
     <Reference Include="System.Web" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
@@ -89,53 +90,102 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Controls\Extensions\ItemsControlExtensions.cs" />
     <Compile Include="Controls\ListBoxExtentions.cs" />
-    <Compile Include="Controls\Primitives\DockingPopup.cs" />
+    <Compile Include="Objects\Extensions\DatabaseExtensionObject.cs" />
+    <Compile Include="Objects\Extensions\SiteExtensionObject.cs" />
+    <Compile Include="System\Windows\Controls\Behaviors\DragDrop\DragAdorner.cs" />
+    <Compile Include="System\Windows\Controls\Behaviors\DragDrop\Helper.cs" />
+    <Compile Include="System\Windows\Controls\Behaviors\DragDrop\InsertAdorner.cs" />
+    <Compile Include="System\Windows\Controls\DialogUserControl.cs" />
+    <Compile Include="System\Windows\Controls\Primitives\DockingPopup.cs" />
     <Compile Include="Controls\InputBindingsBehavior.cs" />
+    <Compile Include="Controls\ScreenBrightness\MonitorBrightness.cs" />
+    <Compile Include="Controls\ScreenBrightness\ScreenBrightness.cs" />
+    <Compile Include="Controls\Unsupported\RelativeAnimatingContentControl.cs" />
     <Compile Include="Converters\BooleanInverter.cs" />
+    <Compile Include="Converters\BooleanToVisibilityConverter.cs" />
     <Compile Include="Converters\CommandParameterStringFormat.cs" />
     <Compile Include="Converters\EnumToBooleanConverter.cs" />
     <Compile Include="Converters\EqualsConverter.cs" />
-    <Compile Include="Converters\LoadImageFromChapterArchive.cs" />
-    <Compile Include="Converters\LoadImageFromMangaArchive.cs" />
     <Compile Include="Converters\LocationListToCSV.cs" />
     <Compile Include="Converters\ObjectIsLocal.cs" />
     <Compile Include="Converters\StringArrayToCSV.cs" />
-    <Compile Include="IO\Local\VerifyArchiveFile.cs" />
-    <Compile Include="IO\Network\DownloadManager.cs" />
+    <Compile Include="IO\DLL\Embedded.cs" />
+    <Compile Include="IO\DLL\Loader.cs" />
+    <Compile Include="IO\DLL\Manager.cs" />
+    <Compile Include="IO\Local\Object\Serializer.cs" />
+    <Compile Include="System\IO\PathSafety.cs" />
+    <Compile Include="IO\Local\ZipManager.cs" />
+    <Compile Include="IO\Network\ContentDownloadManager.cs" />
+    <Compile Include="IO\Network\WebDownloader.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="System\GenericEventArgs.cs" />
+    <Compile Include="System\Windows\Controls\BalancedWrapPanel\BalancedWrapPanel.cs" />
+    <Compile Include="System\Windows\Controls\BalancedWrapPanel\NumericExtensions.cs" />
+    <Compile Include="System\Windows\Controls\BalancedWrapPanel\OrientedSize.cs" />
+    <Compile Include="System\Windows\Controls\BalancedWrapPanel\TypeConverters.cs" />
+    <Compile Include="System\Windows\Input\DelegateCommand.cs" />
+    <Compile Include="System\Communication\Messenger.cs" />
+    <Compile Include="System\ComponentModel\NotifyPropertyChange.cs" />
     <Compile Include="Objects\About\AssemblyInformation.cs" />
-    <Compile Include="Objects\Cache\MangaArchiveCacheObject.cs" />
+    <Compile Include="Objects\Cache\ChapterCacheObject.cs" />
+    <Compile Include="Objects\Cache\MangaCacheObject.cs" />
+    <Compile Include="Objects\Cache\PageCacheObject.cs" />
+    <Compile Include="Objects\MVVM\NotifyTaskCompletion.cs" />
     <Compile Include="Objects\UserConfig\ThemeType.cs" />
+    <Compile Include="Objects\UserConfig\UserAuthenticationObject.cs" />
+    <Compile Include="Objects\UserConfig\UserPluginAuthenticationObject.cs" />
     <Compile Include="Objects\UserInterface\DatabaseExtensionInformationObject.cs" />
     <Compile Include="Objects\MVVM\ViewModelViewType.cs" />
     <Compile Include="Objects\UserInterface\MangaArchiveInformationObject.cs" />
     <Compile Include="Objects\UserInterface\ReadChapterRequestObject.cs" />
     <Compile Include="Objects\UserInterface\SiteExtentionInformationObject.cs" />
     <Compile Include="Objects\UserConfig\UserConfigurationObject.cs" />
-    <Compile Include="Themes\Button\MetroButton.cs" />
+    <Compile Include="System\Runtime\Caching\RegionedMemoryCache.cs" />
+    <Compile Include="System\Threading\Tasks\Schedulers\LimitedConcurrencyTaskScheduler.cs" />
+    <Compile Include="System\Windows\Controls\MetroButton.cs" />
     <Compile Include="Controls\Window\myMangaWindow.cs" />
     <Compile Include="ViewModels\BaseViewModel.cs" />
-    <Compile Include="ViewModels\HomeViewModel.cs" />
+    <Compile Include="ViewModels\Dialog\AuthenticationDialogViewModel.cs" />
+    <Compile Include="ViewModels\Dialog\DialogViewModel.cs" />
+    <Compile Include="ViewModels\Dialog\MangaCacheObjectDialogViewModel.cs" />
+    <Compile Include="ViewModels\Dialog\MessageDialogViewModel.cs" />
+    <Compile Include="ViewModels\Objects\Cache\MangaCacheObjectViewModels\MangaCacheObjectDetailViewModel.cs" />
+    <Compile Include="ViewModels\Pages\ChapterReaderViewModel.cs" />
+    <Compile Include="ViewModels\Pages\HomeViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
-    <Compile Include="ViewModels\ReaderViewModel.cs" />
-    <Compile Include="ViewModels\SearchViewModel.cs" />
-    <Compile Include="ViewModels\SettingsViewModel.cs" />
-    <Compile Include="Views\HomeView\HomeView_Grid.xaml.cs">
-      <DependentUpon>HomeView_Grid.xaml</DependentUpon>
+    <Compile Include="ViewModels\Pages\SearchViewModel.cs" />
+    <Compile Include="ViewModels\Pages\SettingsViewModel.cs" />
+    <Compile Include="Views\Dialog\AuthenticationDialogView.xaml.cs">
+      <DependentUpon>AuthenticationDialogView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\HomeView\HomeView_List.xaml.cs">
-      <DependentUpon>HomeView_List.xaml</DependentUpon>
+    <Compile Include="Views\Dialog\MangaCacheObjectDialogView.xaml.cs">
+      <DependentUpon>MangaCacheObjectDialogView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\HomeView\ObjectViews\MangaObjectView.xaml.cs">
+    <Compile Include="Views\Dialog\MessageDialogView.xaml.cs">
+      <DependentUpon>MessageDialogView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Objects\Cache\MangaCacheObjectViews\MangaCacheObjectDetailView.xaml.cs">
+      <DependentUpon>MangaCacheObjectDetailView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Objects\MangaObjectViews\MangaObjectView.xaml.cs">
       <DependentUpon>MangaObjectView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\ReaderView.xaml.cs">
-      <DependentUpon>ReaderView.xaml</DependentUpon>
+    <Compile Include="Views\Pages\ChapterReaderView.xaml.cs">
+      <DependentUpon>ChapterReaderView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\SearchView.xaml.cs">
+    <Compile Include="Views\Pages\HomeView\GridHomeView.xaml.cs">
+      <DependentUpon>GridHomeView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Pages\HomeView\ListHomeView.xaml.cs">
+      <DependentUpon>ListHomeView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Pages\SearchView.xaml.cs">
       <DependentUpon>SearchView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\SettingsView.xaml.cs">
+    <Compile Include="Views\Pages\SettingsView.xaml.cs">
       <DependentUpon>SettingsView.xaml</DependentUpon>
     </Compile>
     <Page Include="MainWindow.xaml">
@@ -171,6 +221,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Themes\DarkTheme.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Themes\HeaderedContentControl\HeaderedContentControls.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -210,6 +264,18 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Themes\System\Windows\Controls\DialogUserControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Themes\TabControl\TabControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Themes\TabControl\TabItems.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Themes\TextBox\TextBox.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -226,27 +292,67 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\HomeView\HomeView_Grid.xaml">
+    <Page Include="Views\Dialog\AuthenticationDialogView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\HomeView\HomeView_List.xaml">
+    <Page Include="Views\Dialog\MangaCacheObjectDialogView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\HomeView\ObjectViews\MangaObjectView.xaml">
+    <Page Include="Views\Dialog\MessageDialogView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\ReaderView.xaml">
+    <Page Include="Views\Objects\Cache\PageCacheObjectViews\PageCacheObjectListItems.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\SearchView.xaml">
+    <Page Include="Views\Objects\Cache\ChapterCacheObjectViews\ChapterCacheObjectListItems.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\SettingsView.xaml">
+    <Page Include="Views\Objects\ChapterObjectViews\ChapterObjectListItems.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Objects\Cache\MangaCacheObjectViews\MangaCacheObjectDetailView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Objects\Cache\MangaCacheObjectViews\MangaCacheObjectViewListItems.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Objects\Extensions\ExtensionObjectListItems.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Objects\MangaObjectViews\MangaObjectView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Objects\MangaObjectViews\MangaObjectViewListItems.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Pages\ChapterReaderView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Pages\HomeView\GridHomeView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Pages\HomeView\ListHomeView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Pages\SearchView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Pages\SettingsView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -280,11 +386,6 @@
     <Resource Include="Resources\Font\Font Awesome\fontawesome-webfont.ttf" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\myManga-DLL\Core\Core.csproj">
-      <Project>{1C67209C-E3C8-4FF9-9CB1-B788ECB4B284}</Project>
-      <Name>Core</Name>
-      <Private>True</Private>
-    </ProjectReference>
     <ProjectReference Include="..\myManga-Plugin\myMangaSiteExtension\myMangaSiteExtension.csproj">
       <Project>{088e2638-3bed-4b11-a548-36e3539d86f2}</Project>
       <Name>myMangaSiteExtension</Name>
@@ -295,13 +396,11 @@
     <Resource Include="Resources\Icon.ico" />
     <Resource Include="License.txt" />
     <EmbeddedResource Include="Resources\DLL\HtmlAgilityPack.dll" />
-    <EmbeddedResource Include="Resources\DLL\Ionic.Zip.dll" />
-    <EmbeddedResource Include="Resources\DLL\SmartThreadPool.dll" />
   </ItemGroup>
   <ItemGroup>
-    <BootstrapperPackage Include=".NETFramework,Version=v4.5">
+    <BootstrapperPackage Include=".NETFramework,Version=v4.6">
       <Visible>False</Visible>
-      <ProductName>Microsoft .NET Framework 4.5 %28x86 and x64%29</ProductName>
+      <ProductName>Microsoft .NET Framework 4.6 %28x86 and x64%29</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">

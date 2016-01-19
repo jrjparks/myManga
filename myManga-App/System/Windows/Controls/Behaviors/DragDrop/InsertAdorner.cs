@@ -56,6 +56,7 @@ namespace System.Windows.Controls.Behaviors.DragDrop
         {
             Point Start, End;
             CalculateStartAndEndPoint(out Start, out End);
+            drawingContext.DrawLine(Pen, Start, End);
 
             if (IsSeparatorHorizontal)
             {

@@ -175,7 +175,7 @@ namespace myManga_App.Objects.Cache
             "CoverImage",
             typeof(BitmapImage),
             typeof(MangaCacheObject),
-            new PropertyMetadata(null));
+            null);
 
         public BitmapImage CoverImage
         {
@@ -198,7 +198,7 @@ namespace myManga_App.Objects.Cache
             "IsNewManga",
             typeof(Boolean),
             typeof(MangaCacheObject),
-            new PropertyMetadata(null));
+            null);
         private static readonly DependencyProperty IsNewMangaProperty = IsNewMangaPropertyKey.DependencyProperty;
 
         public Boolean IsNewManga
@@ -213,7 +213,7 @@ namespace myManga_App.Objects.Cache
             "HasMoreToRead",
             typeof(Boolean),
             typeof(MangaCacheObject),
-            new PropertyMetadata(null));
+            null);
         private static readonly DependencyProperty HasMoreToReadProperty = HasMoreToReadPropertyKey.DependencyProperty;
 
         public Boolean HasMoreToRead

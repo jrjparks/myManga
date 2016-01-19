@@ -5,8 +5,6 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.Serialization;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace myManga_App.IO.DLL
 {
@@ -77,7 +75,8 @@ namespace myManga_App.IO.DLL
                     {
                         Byte[] rawAssembly = new Byte[stream.Length];
                         stream.Read(rawAssembly, 0, rawAssembly.Length);
-                        EmbeddedDLLs.Add(ResourceName, Assembly.Load(rawAssembly));
+                        Assembly LoadedAssembly = Assembly.Load(rawAssembly);
+                        EmbeddedDLLs.Add(ResourceName, LoadedAssembly);
                         rawAssembly = null;
                     }
                 }

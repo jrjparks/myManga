@@ -72,10 +72,6 @@
       <Project>{490a4004-2340-414a-9f03-fefff81577ac}</Project>
       <Name>MangaUpdatesBakaUpdates</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\myManga-ISiteExtensions\AFTV Network\AFTV Network.csproj">
-      <Project>{e7af89e1-1359-4f5b-b2eb-a4613be7c6df}</Project>
-      <Name>AFTV Network</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\myManga-ISiteExtensions\Batoto\Batoto.csproj">
       <Project>{64eb88be-0dba-47f7-b282-b248cda87e79}</Project>
       <Name>Batoto</Name>

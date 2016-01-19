@@ -18,7 +18,8 @@
                         BorderThickness="0"
                         Padding="{TemplateBinding BorderThickness}"
                         Background="{TemplateBinding Background}"
-                        TextElement.Foreground="{TemplateBinding Foreground}">
+                        TextElement.Foreground="{TemplateBinding Foreground}"
+                        ToolTip="{Binding Text, ElementName=Name}">
                         <Grid
                             x:Name="Content"
                             Margin="{TemplateBinding Padding}"
@@ -26,22 +27,33 @@
                             HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                             VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
                             TextBlock.TextAlignment="Left">
-                            <StackPanel Orientation="Horizontal">
-                                <Controls:MetroToggleButton 
-                                    x:Name="EnabledButton"
-                                    Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"
-                                    Content="{DynamicResource oi-x}"
+                            <Grid Margin="1">
+                                <StackPanel Orientation="Horizontal">
+                                    <Controls:MetroToggleButton 
+                                        x:Name="EnabledButton"
+                                        Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"
+                                        Content="{DynamicResource oi-x}"
+                                        FontFamily="{StaticResource OpenIconic}"
+                                        Margin="1,0"
+                                        IsChecked="{Binding Enabled}"/>
+                                    <Image
+                                        x:Name="IconImage"
+                                        MinHeight="32"
+                                        MinWidth="32"
+                                        Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"
+                                        Stretch="Uniform"
+                                        Margin="2,0"
+                                        Source="{Binding Icon}"/>
+                                    <TextBlock x:Name="Name" Text="{Binding Name}" FontSize="16" VerticalAlignment="Center" Margin="3,0"/>
+                                </StackPanel>
+                                <TextBlock 
+                                    x:Name="Grip"
+                                    Text="{StaticResource oi-menu}" 
                                     FontFamily="{StaticResource OpenIconic}"
-                                    IsChecked="{Binding Enabled}"/>
-                                <TextBlock x:Name="Name" Text="{Binding Name}" FontSize="16" VerticalAlignment="Center" Margin="5,0,0,0"/>
-                            </StackPanel>
-                            <TextBlock 
-                                x:Name="Grip"
-                                Text="{StaticResource oi-menu}" 
-                                FontFamily="{StaticResource OpenIconic}"
-                                FontSize="16" 
-                                VerticalAlignment="Center"
-                                HorizontalAlignment="Right"/>
+                                    FontSize="16" 
+                                    VerticalAlignment="Center"
+                                    HorizontalAlignment="Right"/>
+                            </Grid>
                         </Grid>
                     </Border>
                     <ControlTemplate.Triggers>
@@ -73,28 +85,27 @@
             BorderBrush="{DynamicResource window-theme-primary}"
             BorderThickness="3"
             Background="{DynamicResource window-background}"
-            TextElement.Foreground="{DynamicResource window-foreground}">
+            TextElement.Foreground="{DynamicResource window-foreground}"
+            ToolTip="{Binding Text, ElementName=Name}"
+            Padding="1">
             <Grid
                 x:Name="Content"
                 SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
                 TextBlock.TextAlignment="Left">
                 <StackPanel Orientation="Horizontal">
-                    <Controls:MetroToggleButton 
-                        x:Name="EnabledButton"
+                    <Image
+                        x:Name="IconImage"
+                        MinHeight="32"
+                        MinWidth="32"
                         Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"
-                        Content="{DynamicResource oi-x}"
-                        FontFamily="{DynamicResource OpenIconic}"
-                        IsChecked="{Binding Enabled, Mode=OneWay}"
-                        IsEnabled="False"/>
-                    <TextBlock x:Name="Name" Text="{Binding Name}" FontSize="16" VerticalAlignment="Center" Margin="5,0,0,0"/>
+                        Stretch="Uniform"
+                        Margin="2,0"
+                        Source="{Binding Icon}"/>
+                    <TextBlock x:Name="Name" Text="{Binding Name}" FontSize="16" VerticalAlignment="Center" Margin="3,0"/>
                 </StackPanel>
             </Grid>
         </Border>
         <DataTemplate.Triggers>
-            <DataTrigger Binding="{Binding Enabled}" Value="True">
-                <Setter TargetName="Name" Property="TextBlock.FontWeight" Value="Bold"/>
-                <Setter TargetName="EnabledButton" Property="Content" Value="{DynamicResource oi-check}"/>
-            </DataTrigger>
             <DataTrigger Binding="{Binding Enabled}" Value="False">
                 <Setter TargetName="Content" Property="TextBlock.Foreground" Value="{DynamicResource text-muted}"/>
             </DataTrigger>

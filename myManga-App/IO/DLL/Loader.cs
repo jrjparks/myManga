@@ -47,9 +47,8 @@ namespace myManga_App.IO.DLL
             List<ItemType> Classes = new List<ItemType>();
             try
             {
-                Assembly Class = Assembly.LoadFile(DLLPath);
-
-                foreach (Type ClassType in Class.GetTypes())
+                Assembly LoadedAssembly = Assembly.LoadFile(DLLPath);
+                foreach (Type ClassType in LoadedAssembly.GetTypes())
                 {
                     if (ClassType.IsAbstract) continue;
                     if (typeof(ItemType).IsAssignableFrom(ClassType))

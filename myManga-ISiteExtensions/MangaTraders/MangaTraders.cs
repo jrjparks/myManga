@@ -6,6 +6,7 @@ using myMangaSiteExtension.Objects;
 using myMangaSiteExtension.Utilities;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -32,6 +33,16 @@ namespace MangaTraders
         { get { return siteExtensionDescriptionAttribute ?? (siteExtensionDescriptionAttribute = GetType().GetCustomAttribute<ISiteExtensionDescriptionAttribute>(false)); } }
 
         #region Extension
+        private Icon extensionIcon;
+        public Icon ExtensionIcon
+        {
+            get
+            {
+                if (Equals(extensionIcon, null)) extensionIcon = Icon.ExtractAssociatedIcon(Assembly.GetExecutingAssembly().Location);
+                return extensionIcon;
+            }
+        }
+
         public CookieCollection Cookies
         { get; private set; }
 

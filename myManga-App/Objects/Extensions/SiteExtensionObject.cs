@@ -1,6 +1,8 @@
 ﻿using myMangaSiteExtension.Interfaces;
 using System;
 using System.Windows;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
 
 namespace myManga_App.Objects.Extensions
 {
@@ -22,6 +24,7 @@ namespace myManga_App.Objects.Extensions
             Name = SiteExtension.SiteExtensionDescriptionAttribute.Name;
             this.Enabled = Enabled;
             IsAuthenticated = SiteExtension.IsAuthenticated;
+            Icon = System.Windows.Interop.Imaging.CreateBitmapSourceFromHIcon(SiteExtension.ExtensionIcon.Handle, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
         }
 
         public override string ToString()
@@ -45,6 +48,20 @@ namespace myManga_App.Objects.Extensions
         {
             get { return (String)GetValue(NameProperty); }
             private set { SetValue(NamePropertyKey, value); }
+        }
+        #endregion
+
+        #region Icon
+        private static readonly DependencyProperty IconProperty = DependencyProperty.RegisterAttached(
+            "Icon",
+            typeof(ImageSource),
+            typeof(SiteExtensionObject),
+            null);
+
+        public ImageSource Icon
+        {
+            get { return (ImageSource)GetValue(IconProperty); }
+            set { SetValue(IconProperty, value); }
         }
         #endregion
 

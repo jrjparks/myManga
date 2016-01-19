@@ -287,7 +287,7 @@ namespace myManga_App.ViewModels.Pages
             "PageImage",
             typeof(BitmapImage),
             typeof(ChapterReaderViewModel),
-            new PropertyMetadata(null));
+            null);
 
         public BitmapImage PageImage
         {

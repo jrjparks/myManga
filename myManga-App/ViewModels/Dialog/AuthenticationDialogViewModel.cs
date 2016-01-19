@@ -98,7 +98,7 @@ namespace myManga_App.ViewModels.Dialog
             "Name",
             typeof(String),
             typeof(AuthenticationDialogViewModel),
-            new PropertyMetadata(null));
+            null);
 
         public String Name
         {
@@ -148,7 +148,7 @@ namespace myManga_App.ViewModels.Dialog
             "AuthenticationError",
             typeof(String),
             typeof(AuthenticationDialogViewModel),
-            new PropertyMetadata(null));
+            null);
         private static readonly DependencyProperty AuthenticationErrorProperty = AuthenticationErrorPropertyKey.DependencyProperty;
 
         public String AuthenticationError

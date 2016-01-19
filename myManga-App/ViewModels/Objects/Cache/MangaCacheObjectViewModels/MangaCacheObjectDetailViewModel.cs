@@ -25,7 +25,7 @@ namespace myManga_App.ViewModels.Objects.Cache.MangaCacheObjectViewModels
             "MangaCacheObject",
             typeof(MangaCacheObject),
             typeof(MangaCacheObjectDetailViewModel),
-            new PropertyMetadata(null));
+            null);
 
         public MangaCacheObject MangaCacheObject
         {

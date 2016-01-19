@@ -1,6 +1,7 @@
 ﻿using myMangaSiteExtension.Objects;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Net;
 using System.Threading;
 
@@ -8,6 +9,11 @@ namespace myMangaSiteExtension.Interfaces
 {
     public interface IExtension
     {
+        /// <summary>
+        /// Icon used for display.
+        /// </summary>
+        Icon ExtensionIcon { get; }
+
         /// <summary>
         /// CookieCollection used to store cookies after authentication.
         /// </summary>

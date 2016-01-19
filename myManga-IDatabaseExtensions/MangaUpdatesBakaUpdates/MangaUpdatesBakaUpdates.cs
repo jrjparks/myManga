@@ -5,6 +5,7 @@ using myMangaSiteExtension.Interfaces;
 using myMangaSiteExtension.Objects;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Net;
 using System.Reflection;
@@ -22,14 +23,24 @@ namespace MangaUpdatesBakaUpdates
         Version = "0.0.1",
         SupportedObjects = SupportedObjects.All,
         Language = "English")]
-    public class MangaUpdatesBakaUpdates : IDatabaseExtension
+    public sealed class MangaUpdatesBakaUpdates : IDatabaseExtension
     {
-        protected Int32 PageCount = 30;
-        protected IDatabaseExtensionDescriptionAttribute databaseExtensionDescriptionAttribute;
+        private Int32 PageCount = 30;
+        private IDatabaseExtensionDescriptionAttribute databaseExtensionDescriptionAttribute;
         public IDatabaseExtensionDescriptionAttribute DatabaseExtensionDescriptionAttribute
         { get { return databaseExtensionDescriptionAttribute ?? (databaseExtensionDescriptionAttribute = GetType().GetCustomAttribute<IDatabaseExtensionDescriptionAttribute>(false)); } }
 
         #region IExtesion
+        private Icon extensionIcon;
+        public Icon ExtensionIcon
+        {
+            get
+            {
+                if (Equals(extensionIcon, null)) extensionIcon = Icon.ExtractAssociatedIcon(Assembly.GetExecutingAssembly().Location);
+                return extensionIcon;
+            }
+        }
+
         public CookieCollection Cookies
         { get; private set; }
 

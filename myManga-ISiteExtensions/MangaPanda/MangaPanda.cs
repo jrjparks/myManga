@@ -6,6 +6,7 @@ using myMangaSiteExtension.Objects;
 using myMangaSiteExtension.Utilities;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Net;
 using System.Reflection;
@@ -13,24 +14,34 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows;
 
-namespace AFTV_Network
+namespace MangaPanda
 {
     [ISiteExtensionDescription(
-        "MangaReader",
-        "mangareader.net",
-        "http://www.mangareader.net/",
-        RootUrl = "http://www.mangareader.net",
+        "MangaPanda",
+        "mangapanda.com",
+        "http://www.mangapanda.com/",
+        RootUrl = "http://www.mangapanda.com",
         Author = "James Parks",
         Version = "0.0.1",
         SupportedObjects = SupportedObjects.All,
         Language = "English")]
-    public class MangaReader : ISiteExtension
+    public class MangaPanda : ISiteExtension
     {
-        protected ISiteExtensionDescriptionAttribute siteExtensionDescriptionAttribute;
+        private ISiteExtensionDescriptionAttribute siteExtensionDescriptionAttribute;
         public ISiteExtensionDescriptionAttribute SiteExtensionDescriptionAttribute
         { get { return siteExtensionDescriptionAttribute ?? (siteExtensionDescriptionAttribute = GetType().GetCustomAttribute<ISiteExtensionDescriptionAttribute>(false)); } }
 
         #region IExtesion
+        private Icon extensionIcon;
+        public Icon ExtensionIcon
+        {
+            get
+            {
+                if (Equals(extensionIcon, null)) extensionIcon = Icon.ExtractAssociatedIcon(Assembly.GetExecutingAssembly().Location);
+                return extensionIcon;
+            }
+        }
+
         public CookieCollection Cookies
         { get; private set; }
 
@@ -79,6 +90,7 @@ namespace AFTV_Network
             String MangaCoverPrime = MangaObjectDocument.GetElementbyId("mangaimg").SelectSingleNode(".//img").Attributes["src"].Value;
             Regex MangaCoverRegex = new Regex(@"(\d+)\.jpg");
             Int32 MangaCoverInt = Int32.Parse(MangaCoverRegex.Match(MangaCoverPrime).Groups[1].Value);
+            List<String> MangaCovers = new List<String>(MangaCoverInt + 1);
             List<LocationObject> Covers = new List<LocationObject>();
             for (Int32 mcI = 0; mcI <= MangaCoverInt; ++mcI)
                 Covers.Add(new LocationObject()
@@ -207,9 +219,9 @@ namespace AFTV_Network
                     SearchResults.Add(new SearchResultObject()
                     {
                         Cover = new LocationObject() { Url = new Regex(@"r(\d+)\.jpg").Replace(CoverUrl, "l$1.jpg"), ExtensionName = SiteExtensionDescriptionAttribute.Name },
-                        ExtensionName = SiteExtensionDescriptionAttribute.Name,
                         Name = Name,
                         Url = String.Format("{0}{1}", SiteExtensionDescriptionAttribute.RootUrl, Link),
+                        ExtensionName = SiteExtensionDescriptionAttribute.Name,
                         Id = Id,
                         Rating = -1,
                         Artists = null,

@@ -32,9 +32,17 @@ namespace myManga_App.IO.Network
         /// <param name="cookies">Cookies</param>
         public WebDownloader(CookieContainer cookieContainer, CookieCollection cookies) : base()
         {
-            this.CookieContainer = cookieContainer;
+            CookieContainer = cookieContainer;
             if (!Equals(cookies, null))
-            { this.CookieContainer.Add(cookies); }
+            { CookieContainer.Add(cookies); }
+            Proxy = SystemWebProxy();
+        }
+
+        private IWebProxy SystemWebProxy()
+        {
+            IWebProxy proxy = WebRequest.DefaultWebProxy;
+            proxy.Credentials = CredentialCache.DefaultCredentials;
+            return proxy;
         }
 
         /// <summary>
@@ -46,7 +54,7 @@ namespace myManga_App.IO.Network
         {
             HttpWebRequest request = base.GetWebRequest(address) as HttpWebRequest;
             request.AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip;
-            request.CookieContainer = this.CookieContainer;
+            request.CookieContainer = CookieContainer;
             request.Headers.Add("X-Requested-With", "XMLHttpRequest");
             request.Referer = Referer ?? request.Host;
             return request;
@@ -60,7 +68,7 @@ namespace myManga_App.IO.Network
         protected override WebResponse GetWebResponse(WebRequest request)
         {
             HttpWebResponse response = base.GetWebResponse(request) as HttpWebResponse;
-            this.CookieContainer.Add(response.Cookies);
+            CookieContainer.Add(response.Cookies);
             return response;
         }
 
@@ -117,7 +125,7 @@ namespace myManga_App.IO.Network
             request.Referer = referer ?? request.Host;
             request.Method = "GET";
             request.AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip;
-            return this.GetWebResponseStream(request);
+            return GetWebResponseStream(request);
         }
 
         /// <summary>
@@ -132,7 +140,7 @@ namespace myManga_App.IO.Network
             request.Referer = referer ?? request.Host;
             request.Method = "GET";
             request.AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip;
-            return this.GetWebResponseString(request);
+            return GetWebResponseString(request);
         }
     }
 }

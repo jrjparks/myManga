@@ -23,16 +23,24 @@ namespace myManga_App.IO.DLL
 
         public CollectionType DLLCollection
         { get; set; }
+
+        private Action<ICollection<ItemType>, ItemType> AddToCollectionAction
+        { get; set; }
         #endregion
 
         #region Constructor
-        public Manager() : this(null) { }
+        public Manager() : this(null, null) { }
 
-        public Manager(String AppDomainName)
+        public Manager(String AppDomainName, Action<ICollection<ItemType>, ItemType> AddToCollectionAction)
         {
             if (Equals(AppDomainName, null))
                 AppDomainName = String.Format("{0}-AppDomain", typeof(ItemType).Name);
-            this.ManagerAppDomainName = AppDomainName;
+
+            if (Equals(AddToCollectionAction, null))
+                AddToCollectionAction = DefaultAddToCollectionAction;
+            this.AddToCollectionAction = AddToCollectionAction;
+
+            ManagerAppDomainName = AppDomainName;
             ManagerAppDomain = AppDomain.CreateDomain(AppDomainName);
             DLLCollection = new CollectionType();
         }
@@ -43,11 +51,11 @@ namespace myManga_App.IO.DLL
         {
             FileAttributes Attributes = File.GetAttributes(Path);
             if (Attributes.HasFlag(FileAttributes.Directory))
-                foreach (ItemType Class in Loader<ItemType>.LoadDirectory(Path, Filter, DirectorySearchOption))
-                    DLLCollection.Add(Class);
+                foreach (ItemType Item in Loader<ItemType>.LoadDirectory(Path, Filter, DirectorySearchOption))
+                    AddToCollectionAction(DLLCollection, Item);
             else
-                foreach (ItemType Class in Loader<ItemType>.Load(Path))
-                    DLLCollection.Add(Class);
+                foreach (ItemType Item in Loader<ItemType>.Load(Path))
+                    AddToCollectionAction(DLLCollection, Item);
         }
 
         public void Unload()
@@ -59,6 +67,9 @@ namespace myManga_App.IO.DLL
                 ManagerAppDomain = null;
             }
         }
+
+        private void DefaultAddToCollectionAction(ICollection<ItemType> Collection, ItemType Item)
+        { Collection.Add(Item); }
         #endregion
     }
 }

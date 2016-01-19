@@ -5,6 +5,7 @@ using myMangaSiteExtension.Interfaces;
 using myMangaSiteExtension.Objects;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -30,6 +31,16 @@ namespace MangaHere
         { get { return siteExtensionDescriptionAttribute ?? (siteExtensionDescriptionAttribute = GetType().GetCustomAttribute<ISiteExtensionDescriptionAttribute>(false)); } }
 
         #region IExtension
+        private Icon extensionIcon;
+        public Icon ExtensionIcon
+        {
+            get
+            {
+                if (Equals(extensionIcon, null)) extensionIcon = Icon.ExtractAssociatedIcon(Assembly.GetExecutingAssembly().Location);
+                return extensionIcon;
+            }
+        }
+
         public CookieCollection Cookies
         { get; private set; }
 

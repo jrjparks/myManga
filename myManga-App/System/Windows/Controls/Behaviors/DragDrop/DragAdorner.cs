@@ -36,8 +36,10 @@ namespace System.Windows.Controls.Behaviors.DragDrop
 
         public void SetPosition(Double Left, Double Top)
         {
-            this.Left = Left - 1;
-            this.Top = Top + 13;
+            //this.Left = Left - 1;
+            //this.Top = Top + 13;
+            this.Left = Left - DesiredSize.Width;
+            this.Top = Top;
             if (!Equals(AdornerLayer, null))
             { try { AdornerLayer.Update(AdornedElement); } catch { } }
         }

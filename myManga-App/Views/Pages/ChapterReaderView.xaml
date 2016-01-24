@@ -179,7 +179,7 @@
             <ScrollViewer.ContextMenu>
                 <ContextMenu>
                     <MenuItem 
-                        Command="{Binding ReloadPageImageCommand}" 
+                        Command="{Binding ReloadPageAsyncCommand}" 
                         CommandParameter="{Binding PageObject}"
                         Header="(F5) Reload Page Image">
                         <MenuItem.Icon>

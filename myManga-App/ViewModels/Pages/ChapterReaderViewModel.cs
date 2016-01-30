@@ -202,6 +202,7 @@ namespace myManga_App.ViewModels.Pages
             ChapterReaderViewModel control = d as ChapterReaderViewModel;
             control.PageImage = await control.LoadPageImageAsync();
             control.PreloadChapterObjects();
+            control.SaveBookmarkObject();
         }
         #endregion
 
@@ -557,11 +558,7 @@ namespace myManga_App.ViewModels.Pages
         private async void PageNext()
         {
             if (PageObject.PageNumber < ChapterObject.Pages.Last().PageNumber)
-            {
-                BookmarkObject.Page = (PageObject = ChapterObject.NextPageObject(PageObject)).PageNumber;
-                SaveBookmarkObject();
-
-            }
+            { BookmarkObject.Page = (PageObject = ChapterObject.NextPageObject(PageObject)).PageNumber; }
             else
             { await OpenForReading(MangaObject, MangaObject.NextChapterObject(ChapterObject), false); }
         }
@@ -586,10 +583,7 @@ namespace myManga_App.ViewModels.Pages
         private async void PagePrev()
         {
             if (PageObject.PageNumber > ChapterObject.Pages.First().PageNumber)
-            {
-                BookmarkObject.Page = (PageObject = ChapterObject.PrevPageObject(PageObject)).PageNumber;
-                SaveBookmarkObject();
-            }
+            { BookmarkObject.Page = (PageObject = ChapterObject.PrevPageObject(PageObject)).PageNumber; }
             else
             { await OpenForReading(MangaObject, MangaObject.PrevChapterObject(ChapterObject), true); }
         }

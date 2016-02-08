@@ -88,11 +88,14 @@
                         </TextBlock.Text>
                     </TextBlock>
                     <TextBlock Text=" "/>
-                    <TextBlock 
-                        Text="{Binding PageObject.PageNumber, FallbackValue={}Page: 0, StringFormat={}Page: {0}}"/>
-                    <TextBlock Text=" of "/>
-                    <TextBlock 
-                        Text="{Binding ChapterObject.Pages.Count, FallbackValue={}0, StringFormat={}{0}}"/>
+                    <TextBlock>
+                        <TextBlock.Text>
+                            <MultiBinding StringFormat="{}Page: {0} of {1}">
+                                <Binding Path="PageObject.PageNumber" FallbackValue="0"/>
+                                <Binding Path="ChapterObject.Pages.Count" FallbackValue="0"/>
+                            </MultiBinding>
+                        </TextBlock.Text>
+                    </TextBlock>
                 </StackPanel>
             </Controls:MetroToggleButton.Content>
         </Controls:MetroToggleButton>

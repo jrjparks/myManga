@@ -50,3 +50,23 @@ Consolidates information from multiple sites.
  * [MangaHelpers](http://www.mangahelpers.com/manga/)
  * [Anime News Network](http://www.animenewsnetwork.com/)
  * [Baka-Updates](http://www.mangaupdates.com/)
+
+## Screenshots
+___Home - Grid___
+![Home View - Grid](https://i.imgur.com/445TSSF.jpg "Home View - Grid")
+___Home - Grid - Information Dialog___
+![Home View - Grid - Information Dialog](https://i.imgur.com/u5CbrpV.jpg "Home View - Grid - Information Dialog")
+![Home View - Grid - Information Dialog](https://i.imgur.com/1bPzjEp.jpg "Home View - Grid - Information Dialog")
+___Home - List___
+![Home View - List](https://i.imgur.com/kBmCA8P.png "Home View - List")
+___Search___
+![Search View](https://i.imgur.com/lqIekwc.png "Search View")
+___Chapter Reader___
+![Chapter Reader View](https://i.imgur.com/wLt8DI3.jpg "Chapter Reader View")
+![Chapter Reader View - Overview](https://i.imgur.com/Jj8HRUF.jpg "Chapter Reader View - Overview")
+___Settings___
+![Settings View - General](https://i.imgur.com/7uHcusM.png "Settings View - General")
+___Home View - Grid___
+![Settings View - Extensions](https://i.imgur.com/vCOP0YE.png "Settings View - Extensions")
+___Home View - Grid___
+![Settings View - Advanced](https://i.imgur.com/FCId2Yw.png "Settings View - Advanced")

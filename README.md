@@ -66,7 +66,5 @@ ___Chapter Reader___
 ![Chapter Reader View - Overview](https://i.imgur.com/Jj8HRUF.jpg "Chapter Reader View - Overview")
 ___Settings___
 ![Settings View - General](https://i.imgur.com/7uHcusM.png "Settings View - General")
-___Home View - Grid___
 ![Settings View - Extensions](https://i.imgur.com/vCOP0YE.png "Settings View - Extensions")
-___Home View - Grid___
 ![Settings View - Advanced](https://i.imgur.com/FCId2Yw.png "Settings View - Advanced")

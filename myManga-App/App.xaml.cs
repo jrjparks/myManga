@@ -288,9 +288,9 @@ namespace myManga_App
             MANGA_ARCHIVE_DIRECTORY = Path.Combine(Environment.CurrentDirectory, "Manga Archives").SafeFolder(),
             CHAPTER_ARCHIVE_DIRECTORY = Path.Combine(Environment.CurrentDirectory, "Chapter Archives").SafeFolder(),
             MANGA_ARCHIVE_EXTENSION = "ma.zip",
-            CHAPTER_ARCHIVE_EXTENSION = "ca.zip",
+            CHAPTER_ARCHIVE_EXTENSION = "ca.cbz",
             MANGA_ARCHIVE_FILTER = "*.ma.zip",
-            CHAPTER_ARCHIVE_FILTER = "*.ca.zip",
+            CHAPTER_ARCHIVE_FILTER = "*.ca.cbz",
             USER_CONFIG_FILENAME = "mymanga.conf",
             USER_AUTH_FILENAME = "mymanga.auth.conf",
             USER_CONFIG_PATH = Path.Combine(Environment.CurrentDirectory, "mymanga.conf".SafeFileName()),
@@ -393,6 +393,11 @@ namespace myManga_App
 
             // Run initial load of cache
             //Task.Factory.StartNew(FullMangaCacheObject);
+            foreach(String filepath in Directory.EnumerateFiles(CHAPTER_ARCHIVE_DIRECTORY, "*.ca.zip", SearchOption.AllDirectories))
+            {
+                String cbzfilepath = filepath.Replace("ca.zip", "ca.cbz");
+                File.Move(filepath, cbzfilepath);
+            }
             await FullMangaCacheObject().ConfigureAwait(false);
 
             MangaObjectArchiveWatcher.EnableRaisingEvents = true;

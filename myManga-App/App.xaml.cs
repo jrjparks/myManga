@@ -90,7 +90,7 @@ namespace myManga_App
         public RegionedMemoryCache AppMemoryCache
         { get; private set; }
         #endregion
-        
+
         #region MangaObject Cache
         public ObservableCollection<MangaCacheObject> MangaCacheObjects
         { get; private set; }
@@ -285,6 +285,7 @@ namespace myManga_App
         #region Configuration
         public readonly String
             PLUGIN_DIRECTORY = Path.Combine(Environment.CurrentDirectory, "Plugins").SafeFolder(),
+            PLUGIN_FILTER = "*.mymanga.dll",
             MANGA_ARCHIVE_DIRECTORY = Path.Combine(Environment.CurrentDirectory, "Manga Archives").SafeFolder(),
             CHAPTER_ARCHIVE_DIRECTORY = Path.Combine(Environment.CurrentDirectory, "Chapter Archives").SafeFolder(),
             MANGA_ARCHIVE_EXTENSION = "ma.zip",
@@ -379,10 +380,10 @@ namespace myManga_App
         }
 
         #region Application Events
-        private async void App_Startup(object sender, StartupEventArgs e)
+        private void App_Startup(object sender, StartupEventArgs e)
         {
-            SiteExtensions.Load(PLUGIN_DIRECTORY, Filter: "*.mymanga.dll");
-            DatabaseExtensions.Load(PLUGIN_DIRECTORY, Filter: "*.mymanga.dll");
+            SiteExtensions.Load(PLUGIN_DIRECTORY, Filter: PLUGIN_FILTER);
+            DatabaseExtensions.Load(PLUGIN_DIRECTORY, Filter: PLUGIN_FILTER);
 
             LoadUserConfig();
             LoadUserAuthenticate();
@@ -391,14 +392,16 @@ namespace myManga_App
             // Enable FileSystemWatchers
             ConfigureFileWatchers();
 
-            // Run initial load of cache
-            //Task.Factory.StartNew(FullMangaCacheObject);
-            foreach(String filepath in Directory.EnumerateFiles(CHAPTER_ARCHIVE_DIRECTORY, "*.ca.zip", SearchOption.AllDirectories))
+            // Rename old chapter schema to new cbz format
+            IEnumerable<String> chapterFileZipPaths = Directory.EnumerateFiles(CHAPTER_ARCHIVE_DIRECTORY, "*.ca.zip", SearchOption.AllDirectories);
+            Task.Factory.StartNew(() => Parallel.ForEach(chapterFileZipPaths, chapterFileZipPath =>
             {
-                String cbzfilepath = filepath.Replace("ca.zip", "ca.cbz");
-                File.Move(filepath, cbzfilepath);
-            }
-            await FullMangaCacheObject().ConfigureAwait(false);
+                File.Move(chapterFileZipPath, chapterFileZipPath.Replace("ca.zip", CHAPTER_ARCHIVE_EXTENSION));
+            }));
+
+            // Run initial load of cache
+            Task.Factory.StartNew(FullMangaCacheObject);
+            // await FullMangaCacheObject().ConfigureAwait(false);
 
             MangaObjectArchiveWatcher.EnableRaisingEvents = true;
             ChapterObjectArchiveWatcher.EnableRaisingEvents = true;

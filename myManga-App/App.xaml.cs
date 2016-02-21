@@ -250,12 +250,48 @@ namespace myManga_App
             return MangaObject;
         }
 
+        private async Task RenameSchema()
+        {
+            // Rename old schemas to new schema format
+            IEnumerable<String> chapterFileZipPaths = Directory.EnumerateFiles(CHAPTER_ARCHIVE_DIRECTORY, "*.ca.*", SearchOption.AllDirectories),
+                mangaFileZipPaths = Directory.EnumerateFiles(MANGA_ARCHIVE_DIRECTORY, "*.ma.*", SearchOption.AllDirectories);
+            await Task.Factory.StartNew(() => Parallel.ForEach(mangaFileZipPaths, mangaFileZipPath =>
+            {
+                // Manga Archives
+                Int32 indexOfCA = mangaFileZipPath.LastIndexOf(".ma.");
+                String fileName = mangaFileZipPath.Substring(0, indexOfCA),
+                    fileExtension = mangaFileZipPath.Substring(indexOfCA + 1);
+                if (!Equals(fileExtension, MANGA_ARCHIVE_EXTENSION))
+                {
+                    File.Move(
+                        mangaFileZipPath,
+                        String.Format("{0}.{1}", fileName, MANGA_ARCHIVE_EXTENSION));
+                }
+            }));
+            await Task.Factory.StartNew(() => Parallel.ForEach(chapterFileZipPaths, chapterFileZipPath =>
+            {
+                // Chapter Archives
+                Int32 indexOfCA = chapterFileZipPath.LastIndexOf(".ca.");
+                String fileName = chapterFileZipPath.Substring(0, indexOfCA),
+                    fileExtension = chapterFileZipPath.Substring(indexOfCA + 1);
+                if (!Equals(fileExtension, CHAPTER_ARCHIVE_EXTENSION))
+                {
+                    File.Move(
+                        chapterFileZipPath,
+                        String.Format("{0}.{1}", fileName, CHAPTER_ARCHIVE_EXTENSION));
+                }
+            }));
+        }
+
         /// <summary>
         /// Warning, this will completely reload the cache.
         /// </summary>
+        /// <returns>Time taken to load cache.</returns>
         private async Task<TimeSpan> FullMangaCacheObject()
         {
             Stopwatch loadWatch = Stopwatch.StartNew();
+            await RenameSchema();
+
             String[] MangaArchivePaths = Directory.GetFiles(MANGA_ARCHIVE_DIRECTORY, MANGA_ARCHIVE_FILTER, SearchOption.TopDirectoryOnly);
 
             IEnumerable<Task<MangaCacheObject>> MangaCacheObjectTasksQuery =
@@ -389,19 +425,11 @@ namespace myManga_App
             LoadUserAuthenticate();
             UserConfiguration.UserConfigurationUpdated += (_s, _e) => SaveUserConfiguration();
 
-            // Enable FileSystemWatchers
-            ConfigureFileWatchers();
-
-            // Rename old chapter schema to new cbz format
-            IEnumerable<String> chapterFileZipPaths = Directory.EnumerateFiles(CHAPTER_ARCHIVE_DIRECTORY, "*.ca.zip", SearchOption.AllDirectories);
-            Task.Factory.StartNew(() => Parallel.ForEach(chapterFileZipPaths, chapterFileZipPath =>
-            {
-                File.Move(chapterFileZipPath, chapterFileZipPath.Replace("ca.zip", CHAPTER_ARCHIVE_EXTENSION));
-            }));
-
             // Run initial load of cache
             Task.Factory.StartNew(FullMangaCacheObject);
-            // await FullMangaCacheObject().ConfigureAwait(false);
+
+            // Enable FileSystemWatchers
+            ConfigureFileWatchers();            
 
             MangaObjectArchiveWatcher.EnableRaisingEvents = true;
             ChapterObjectArchiveWatcher.EnableRaisingEvents = true;

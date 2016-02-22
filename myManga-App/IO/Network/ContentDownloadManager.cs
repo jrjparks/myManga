@@ -32,6 +32,7 @@ namespace myManga_App.IO.Network
         private readonly CancellationTokenSource cts;
 
         private readonly MemoryCache ActiveDownloadsCache;
+        // private readonly Dictionary<String, IProgress<Int32>> DownloadProgressDictionary;
         #endregion
 
         #region Properties
@@ -69,7 +70,7 @@ namespace myManga_App.IO.Network
             TaskConcurrencySemaphore = new SemaphoreSlim(DownloadConcurrency, DownloadConcurrency);
             ImageTaskConcurrencySemaphore = new SemaphoreSlim(ImageDownloadConcurrency, ImageDownloadConcurrency);
             ServicePointManager.DefaultConnectionLimit = DownloadConcurrency;
-            
+
             cts = new CancellationTokenSource();
             ContentTaskFactory = Task.Factory;
         }
@@ -127,8 +128,11 @@ namespace myManga_App.IO.Network
 
         public async Task DownloadAsync(MangaObject MangaObject, Boolean Refresh = true, IProgress<Int32> ProgressReporter = null)
         {
-            if (ActiveDownloadsCache.Contains(CacheKey(MangaObject))) return;
-            ActiveDownloadsCache.Set(CacheKey(MangaObject), true, DateTimeOffset.MaxValue);
+            String CK = CacheKey(MangaObject);
+            if (ActiveDownloadsCache.Contains(CK)) return;
+            ActiveDownloadsCache.Set(CK, true, DateTimeOffset.MaxValue);
+            // DownloadProgressDictionary.Add(CK, ProgressReporter);
+
             try
             {
                 await Task.Delay(TimeSpan.FromSeconds(1));
@@ -142,14 +146,15 @@ namespace myManga_App.IO.Network
                     foreach (LocationObject CoverImageLocation in MangaObject.CoverLocations)
                     { DownloadCover(MangaObject, CoverImageLocation); }
                 }
-                // Write Async Verify
+                // TODO: Write Async Verify
             }
             catch (Exception ex)
             { throw ex; }
             finally
             {
-                ActiveDownloadsCache.Remove(CacheKey(MangaObject));
                 if (!Equals(ProgressReporter, null)) ProgressReporter.Report(100);
+                ActiveDownloadsCache.Remove(CK);
+                // DownloadProgressDictionary.Remove(CK);
             }
         }
 
@@ -169,8 +174,10 @@ namespace myManga_App.IO.Network
 
         public async Task DownloadAsync(MangaObject MangaObject, ChapterObject ChapterObject, IProgress<Int32> ProgressReporter = null)
         {
-            if (ActiveDownloadsCache.Contains(CacheKey(MangaObject, ChapterObject))) return;
-            ActiveDownloadsCache.Set(CacheKey(MangaObject, ChapterObject), true, DateTimeOffset.MaxValue);
+            String CK = CacheKey(MangaObject, ChapterObject);
+            if (ActiveDownloadsCache.Contains(CK)) return;
+            ActiveDownloadsCache.Set(CK, true, DateTimeOffset.MaxValue);
+            // DownloadProgressDictionary.Add(CK, ProgressReporter);
 
             try
             {
@@ -238,8 +245,9 @@ namespace myManga_App.IO.Network
             { throw ex; }
             finally
             {
-                ActiveDownloadsCache.Remove(CacheKey(MangaObject, ChapterObject));
                 if (!Equals(ProgressReporter, null)) ProgressReporter.Report(100);
+                ActiveDownloadsCache.Remove(CK);
+                // DownloadProgressDictionary.Remove(CK);
             }
         }
 
@@ -259,8 +267,10 @@ namespace myManga_App.IO.Network
 
         public async Task DownloadAsync(MangaObject MangaObject, ChapterObject ChapterObject, PageObject PageObject, IProgress<Int32> ProgressReporter = null)
         {
-            if (ActiveDownloadsCache.Contains(CacheKey(MangaObject, ChapterObject, PageObject))) return;
-            ActiveDownloadsCache.Set(CacheKey(MangaObject, ChapterObject, PageObject), true, DateTimeOffset.MaxValue);
+            String CK = CacheKey(MangaObject, ChapterObject, PageObject);
+            if (ActiveDownloadsCache.Contains(CK)) return;
+            ActiveDownloadsCache.Set(CK, true, DateTimeOffset.MaxValue);
+            // DownloadProgressDictionary.Add(CK, ProgressReporter);
 
             try
             {
@@ -284,8 +294,9 @@ namespace myManga_App.IO.Network
             { throw ex; }
             finally
             {
-                ActiveDownloadsCache.Remove(CacheKey(MangaObject, ChapterObject, PageObject));
                 if (!Equals(ProgressReporter, null)) ProgressReporter.Report(100);
+                ActiveDownloadsCache.Remove(CK);
+                // DownloadProgressDictionary.Remove(CK);
             }
         }
 
@@ -337,6 +348,7 @@ namespace myManga_App.IO.Network
         {
             if (ActiveDownloadsCache.Contains(Url)) return;
             ActiveDownloadsCache.Set(Url, true, DateTimeOffset.MaxValue);
+            // DownloadProgressDictionary.Add(Url, ProgressReporter);
             try
             {
                 using (Stream ImageStream = await ContentTaskFactory.StartNew(() => LoadImageAsync(Url, Referer, Cookies, cts.Token, ProgressReporter)).Unwrap())
@@ -349,8 +361,9 @@ namespace myManga_App.IO.Network
             { throw ex; }
             finally
             {
-                ActiveDownloadsCache.Remove(Url);
                 if (!Equals(ProgressReporter, null)) ProgressReporter.Report(100);
+                ActiveDownloadsCache.Remove(Url);
+                // DownloadProgressDictionary.Remove(Url);
             }
         }
 
@@ -564,7 +577,7 @@ namespace myManga_App.IO.Network
                 });
 
                 IEnumerable<LocationObject> OrderedChapterObjectLocations = ChapterObject.Locations.OrderBy(_ => App.UserConfiguration.EnabledSiteExtensions.IndexOf(_.ExtensionName));
-                foreach(LocationObject LocationObject in OrderedChapterObjectLocations)
+                foreach (LocationObject LocationObject in OrderedChapterObjectLocations)
                 {
                     ct.ThrowIfCancellationRequested();
                     ISiteExtension SiteExtension = ValidSiteExtensions.FirstOrDefault(_ => Equals(_.SiteExtensionDescriptionAttribute.Name, LocationObject.ExtensionName));

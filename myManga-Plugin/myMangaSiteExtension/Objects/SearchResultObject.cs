@@ -3,163 +3,21 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Runtime.CompilerServices;
-using System.Runtime.Serialization;
-using System.Xml.Serialization;
+using System.Linq;
 
 namespace myMangaSiteExtension.Objects
 {
-    [Serializable, XmlRoot, DebuggerStepThrough]
-    public class SearchResultObject : SerializableObject, INotifyPropertyChanging, INotifyPropertyChanged
+    [DebuggerStepThrough]
+    public class SearchResultObject
     {
-        #region NotifyPropertyChange
-        public event PropertyChangingEventHandler PropertyChanging;
-        protected void OnPropertyChanging([CallerMemberName] String caller = "")
-        {
-            if (PropertyChanging != null)
-                PropertyChanging(this, new PropertyChangingEventArgs(caller));
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-        protected void OnPropertyChanged([CallerMemberName] String caller = "")
-        {
-            if (PropertyChanged != null)
-                PropertyChanged(this, new PropertyChangedEventArgs(caller));
-        }
-        #endregion
-
-        #region Protected
-        [NonSerialized, XmlIgnore, EditorBrowsable(EditorBrowsableState.Never)]
-        protected String name;
-
-        [NonSerialized, XmlIgnore, EditorBrowsable(EditorBrowsableState.Never)]
-        protected String description;
-
-        [NonSerialized, XmlIgnore, EditorBrowsable(EditorBrowsableState.Never)]
-        protected Int32 id;
-        [NonSerialized, XmlIgnore, EditorBrowsable(EditorBrowsableState.Never)]
-        protected String extensionname;
-        [NonSerialized, XmlIgnore, EditorBrowsable(EditorBrowsableState.Never)]
-        protected String url;
-        [NonSerialized, XmlIgnore, EditorBrowsable(EditorBrowsableState.Never)]
-        protected LocationObject cover;
-        
-        [NonSerialized, XmlIgnore, EditorBrowsable(EditorBrowsableState.Never)]
-        protected List<String> authors;
-        [NonSerialized, XmlIgnore, EditorBrowsable(EditorBrowsableState.Never)]
-        protected List<String> artists;
-
-        [NonSerialized, XmlIgnore, EditorBrowsable(EditorBrowsableState.Never)]
-        protected Double rating;
-        #endregion
-
-        #region Public
-        [XmlAttribute]
-        public String Name
-        {
-            get { return name; }
-            set
-            {
-                OnPropertyChanging();
-                name = value;
-                OnPropertyChanged();
-            }
-        }
-
-        [XmlAttribute]
-        public String Description
-        {
-            get { return description; }
-            set
-            {
-                OnPropertyChanging();
-                description = value;
-                OnPropertyChanged();
-            }
-        }
-
-        [XmlAttribute]
-        public Int32 Id
-        {
-            get { return id; }
-            set
-            {
-                OnPropertyChanging();
-                id = value;
-                OnPropertyChanged();
-            }
-        }
-
-        [XmlAttribute]
-        public String ExtensionName
-        {
-            get { return extensionname; }
-            set
-            {
-                OnPropertyChanging();
-                extensionname = value;
-                OnPropertyChanged();
-            }
-        }
-
-        [XmlAttribute]
-        public String Url
-        {
-            get { return url; }
-            set
-            {
-                OnPropertyChanging();
-                url = value;
-                OnPropertyChanged();
-            }
-        }
-
-        [XmlAttribute]
-        public LocationObject Cover
-        {
-            get { return cover; }
-            set
-            {
-                OnPropertyChanging();
-                cover = value;
-                OnPropertyChanged();
-            }
-        }
-
-        [XmlArray, XmlArrayItem("Name")]
-        public List<String> Authors
-        {
-            get { return authors ?? (authors = new List<String>()); }
-            set
-            {
-                OnPropertyChanging();
-                authors = value;
-                OnPropertyChanged();
-            }
-        }
-
-        [XmlArray, XmlArrayItem("Name")]
-        public List<String> Artists
-        {
-            get { return artists ?? (artists = new List<String>()); }
-            set
-            {
-                OnPropertyChanging();
-                artists = value;
-                OnPropertyChanged();
-            }
-        }
-
-        public Double Rating
-        {
-            get { return rating; }
-            set
-            {
-                OnPropertyChanging();
-                rating = value;
-                OnPropertyChanged();
-            }
-        }
-        #endregion
+        public Int32 Id { get; set; }
+        public Double Rating { get; set; }
+        public String Name { get; set; }
+        public String Description { get; set; }
+        public String ExtensionName { get; set; }
+        public String Url { get; set; }
+        public LocationObject Cover { get; set; }
+        public List<String> Authors { get; set; }
+        public List<String> Artists { get; set; }
     }
 }

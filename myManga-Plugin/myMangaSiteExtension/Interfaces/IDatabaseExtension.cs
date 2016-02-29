@@ -7,11 +7,13 @@ namespace myMangaSiteExtension.Interfaces
 {
     public interface IDatabaseExtension : IExtension
     {
-        IDatabaseExtensionDescriptionAttribute DatabaseExtensionDescriptionAttribute { get; }
-
-        SearchRequestObject GetSearchRequestObject(String searchTerm);
-
         DatabaseObject ParseDatabaseObject(String content);
-        List<DatabaseObject> ParseSearch(String content);
+
+        /// <summary>
+        /// Use extension to parse search page.
+        /// </summary>
+        /// <param name="SearchTerm">Search term to send.</param>
+        /// <returns>List of SearchResultObjects</returns>
+        new List<DatabaseObject> ParseSearch(String Content);
     }
 }

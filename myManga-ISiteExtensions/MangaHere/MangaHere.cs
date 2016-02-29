@@ -15,10 +15,10 @@ using System.Threading;
 
 namespace MangaHere
 {
-    [ISiteExtensionDescription(
-        "MangaHere",
-        "mangahere.co",
-        "http://www.mangahere.co/",
+    [IExtensionDescription(
+        Name = "MangaHere",
+        URLFormat = "mangahere.co",
+        RefererHeader = "http://www.mangahere.co/",
         RootUrl = "http://www.mangahere.co",
         Author = "James Parks",
         Version = "0.0.1",
@@ -26,11 +26,11 @@ namespace MangaHere
         Language = "English")]
     public sealed class MangaHere : ISiteExtension
     {
-        private ISiteExtensionDescriptionAttribute siteExtensionDescriptionAttribute;
-        public ISiteExtensionDescriptionAttribute SiteExtensionDescriptionAttribute
-        { get { return siteExtensionDescriptionAttribute ?? (siteExtensionDescriptionAttribute = GetType().GetCustomAttribute<ISiteExtensionDescriptionAttribute>(false)); } }
+        #region IExtesion
+        private IExtensionDescriptionAttribute EDA;
+        public IExtensionDescriptionAttribute ExtensionDescriptionAttribute
+        { get { return EDA ?? (EDA = GetType().GetCustomAttribute<IExtensionDescriptionAttribute>(false)); } }
 
-        #region IExtension
         private Icon extensionIcon;
         public Icon ExtensionIcon
         {
@@ -80,9 +80,9 @@ namespace MangaHere
         {
             return new SearchRequestObject()
             {
-                Url = String.Format("{0}/search.php?name={1}", SiteExtensionDescriptionAttribute.RootUrl, Uri.EscapeUriString(searchTerm)),
+                Url = String.Format("{0}/search.php?name={1}", ExtensionDescriptionAttribute.RootUrl, Uri.EscapeUriString(searchTerm)),
                 Method = SearchMethod.GET,
-                Referer = SiteExtensionDescriptionAttribute.RefererHeader
+                Referer = ExtensionDescriptionAttribute.RefererHeader
             };
         }
 
@@ -130,7 +130,7 @@ namespace MangaHere
                     Chapter = UInt32.Parse(volChapSub[1]),
                     Locations = {
                         new LocationObject() {
-                                ExtensionName = SiteExtensionDescriptionAttribute.Name,
+                                ExtensionName = ExtensionDescriptionAttribute.Name,
                                 Url = ChapterNode.SelectSingleNode(".//span[1]/a").Attributes["href"].Value }
                         },
                     Released = ChapterNode.SelectSingleNode(".//span[2]").InnerText.ToLower().Equals("today") ? DateTime.Today : (ChapterNode.SelectSingleNode(".//span[2]").InnerText.ToLower().Equals("yesterday") ? DateTime.Today.AddDays(-1) : DateTime.Parse(ChapterNode.SelectSingleNode(".//span[2]").InnerText))
@@ -148,7 +148,7 @@ namespace MangaHere
                 Name = MangaName,
                 Description = HtmlEntity.DeEntitize(Desciption),
                 AlternateNames = AlternateNames.ToList(),
-                CoverLocations = { new LocationObject() { Url = Cover, ExtensionName = SiteExtensionDescriptionAttribute.Name } },
+                CoverLocations = { new LocationObject() { Url = Cover, ExtensionName = ExtensionDescriptionAttribute.Name } },
                 Authors = Authors.ToList(),
                 Artists = Artists.ToList(),
                 Genres = Genres.ToList(),
@@ -228,9 +228,9 @@ namespace MangaHere
                             return true;
                         });
                         String[] Details = HtmlWeb.Load(
-                            String.Format("{0}/ajax/series.php", SiteExtensionDescriptionAttribute.RootUrl)
+                            String.Format("{0}/ajax/series.php", ExtensionDescriptionAttribute.RootUrl)
                             ).DocumentNode.InnerText.Replace("\\/", "/").Split(new String[] { "\",\"" }, StringSplitOptions.None);
-                        LocationObject Cover = new LocationObject() { Url = Details[1].Substring(0, Details[1].LastIndexOf('?')), ExtensionName = SiteExtensionDescriptionAttribute.Name };
+                        LocationObject Cover = new LocationObject() { Url = Details[1].Substring(0, Details[1].LastIndexOf('?')), ExtensionName = ExtensionDescriptionAttribute.Name };
                         Double Rating = -1;
                         Double.TryParse(Details[3], out Rating);
 
@@ -243,7 +243,7 @@ namespace MangaHere
                             Authors = (from String Staff in Details[5].Split(new String[] { ", " }, StringSplitOptions.RemoveEmptyEntries) select Staff.Trim()).ToList(),
                             Cover = Cover,
                             Url = Url,
-                            ExtensionName = SiteExtensionDescriptionAttribute.Name
+                            ExtensionName = ExtensionDescriptionAttribute.Name
                         });
                     }
                     catch { }

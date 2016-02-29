@@ -70,6 +70,9 @@
   <PropertyGroup>
     <PostBuildEvent>echo F|xcopy /F /R /Y /I "$(TargetPath)" "$(ProjectDir)..\$(ConfigurationName)\$(TargetName).mymanga$(TargetExt)"</PostBuildEvent>
   </PropertyGroup>
+  <PropertyGroup>
+    <PreBuildEvent>del "$(ProjectDir)..\$(ConfigurationName)\$(TargetName).mymanga$(TargetExt)"</PreBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

@@ -3,10 +3,10 @@ using myMangaSiteExtension.Enums;
 
 namespace Batoto
 {
-    [ISiteExtensionDescription(
-        "Batoto-Spanish",
-        "batoto.net",
-        "http://www.batoto.net/",
+    [IExtensionDescription(
+        Name = "Batoto",
+        URLFormat = "bato.to",
+        RefererHeader = "https://bato.to/reader",
         RootUrl = "http://www.batoto.net",
         Author = "James Parks",
         Version = "0.0.1",

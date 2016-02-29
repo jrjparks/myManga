@@ -47,12 +47,12 @@ namespace TestApp
             DatabaseExtensions.Add("MangaUpdatesBakaUpdates", new MangaUpdatesBakaUpdates.MangaUpdatesBakaUpdates());
             foreach (ISiteExtension ise in SiteExtensions.Values)
             {
-                ISiteExtensionDescriptionAttribute isea = ise.GetType().GetCustomAttribute<ISiteExtensionDescriptionAttribute>(false);
+                IExtensionDescriptionAttribute isea = ise.GetType().GetCustomAttribute<IExtensionDescriptionAttribute>(false);
                 Console.WriteLine("Loaded Site Extention {0}", isea.Name);
             }
             foreach (IDatabaseExtension ise in DatabaseExtensions.Values)
             {
-                IDatabaseExtensionDescriptionAttribute isea = ise.GetType().GetCustomAttribute<IDatabaseExtensionDescriptionAttribute>(false);
+                IExtensionDescriptionAttribute isea = ise.GetType().GetCustomAttribute<IExtensionDescriptionAttribute>(false);
                 Console.WriteLine("Loaded Database Extention {0}", isea.Name);
             }
             //Authenticate();
@@ -121,8 +121,8 @@ namespace TestApp
                     Dictionary<String, List<SearchResultObject>> RawSearchResults = new Dictionary<String, List<SearchResultObject>>();
                     foreach (ISiteExtension ise in SiteExtensions.Values)
                     {
-                        ISiteExtensionDescriptionAttribute isea = ise.GetType().GetCustomAttribute<ISiteExtensionDescriptionAttribute>(false);
-                        SearchRequestObject sro = ise.GetSearchRequestObject(searchTerm: SearchTerm);
+                        IExtensionDescriptionAttribute isea = ise.GetType().GetCustomAttribute<IExtensionDescriptionAttribute>(false);
+                        SearchRequestObject sro = ise.GetSearchRequestObject(SearchTerm: SearchTerm);
                         Console.Write("Searching {0}...", isea.Name);
 
                         HttpWebRequest request = WebRequest.Create(sro.Url) as HttpWebRequest;
@@ -188,8 +188,8 @@ namespace TestApp
                     Dictionary<String, List<DatabaseObject>> RawDatabaseSearchResults = new Dictionary<String, List<DatabaseObject>>();
                     foreach (IDatabaseExtension ide in DatabaseExtensions.Values)
                     {
-                        IDatabaseExtensionDescriptionAttribute idea = ide.GetType().GetCustomAttribute<IDatabaseExtensionDescriptionAttribute>(false);
-                        SearchRequestObject SearchRequestObject = ide.GetSearchRequestObject(searchTerm: SearchTerm);
+                        IExtensionDescriptionAttribute idea = ide.GetType().GetCustomAttribute<IExtensionDescriptionAttribute>(false);
+                        SearchRequestObject SearchRequestObject = ide.GetSearchRequestObject(SearchTerm: SearchTerm);
                         Console.Write("Searching {0}...", idea.Name);
 
                         HttpWebRequest request = WebRequest.Create(SearchRequestObject.Url) as HttpWebRequest;
@@ -414,7 +414,7 @@ namespace TestApp
         static MangaObject LoadMangaObject(String Link, ISiteExtension ise)
         {
             MangaObject MangaObj = null;
-            ISiteExtensionDescriptionAttribute isea = ise.GetType().GetCustomAttribute<ISiteExtensionDescriptionAttribute>(false);
+            IExtensionDescriptionAttribute isea = ise.GetType().GetCustomAttribute<IExtensionDescriptionAttribute>(false);
 
             HttpWebRequest request = WebRequest.Create(Link) as HttpWebRequest;
             request.CookieContainer = new CookieContainer();
@@ -437,7 +437,7 @@ namespace TestApp
             foreach (LocationObject LocationObj in MangaObj.Locations.FindAll(l => l.Enabled))
             {
                 ISiteExtension ise = SiteExtensions[LocationObj.ExtensionName];
-                ISiteExtensionDescriptionAttribute isea = ise.GetType().GetCustomAttribute<ISiteExtensionDescriptionAttribute>(false);
+                IExtensionDescriptionAttribute isea = ise.GetType().GetCustomAttribute<IExtensionDescriptionAttribute>(false);
 
                 HttpWebRequest request = WebRequest.Create(LocationObj.Url) as HttpWebRequest;
                 request.Referer = isea.RefererHeader ?? request.Host;
@@ -463,7 +463,7 @@ namespace TestApp
         {
             ChapterObject ChapterObj = null;
             ISiteExtension ise = SiteExtensions["MangaReader"];
-            ISiteExtensionDescriptionAttribute isea = ise.GetType().GetCustomAttribute<ISiteExtensionDescriptionAttribute>(false);
+            IExtensionDescriptionAttribute isea = ise.GetType().GetCustomAttribute<IExtensionDescriptionAttribute>(false);
 
             HttpWebRequest request = WebRequest.Create(Link) as HttpWebRequest;
             request.Referer = isea.RefererHeader ?? request.Host;
@@ -482,7 +482,7 @@ namespace TestApp
         {
             ChapterObject ChapterObj = null;
             ISiteExtension ise = SiteExtensions[chapterObject.Locations[LocationId].ExtensionName];
-            ISiteExtensionDescriptionAttribute isea = ise.GetType().GetCustomAttribute<ISiteExtensionDescriptionAttribute>(false);
+            IExtensionDescriptionAttribute isea = ise.GetType().GetCustomAttribute<IExtensionDescriptionAttribute>(false);
 
             HttpWebRequest request = WebRequest.Create(chapterObject.Locations[LocationId].Url) as HttpWebRequest;
             request.Referer = isea.RefererHeader ?? request.Host;
@@ -500,7 +500,7 @@ namespace TestApp
         public static void LoadPageObjects(this ChapterObject chapterObject, Int32 LocationId = 0)
         {
             ISiteExtension ise = SiteExtensions[chapterObject.Locations[LocationId].ExtensionName];
-            ISiteExtensionDescriptionAttribute isea = ise.GetType().GetCustomAttribute<ISiteExtensionDescriptionAttribute>(false);
+            IExtensionDescriptionAttribute isea = ise.GetType().GetCustomAttribute<IExtensionDescriptionAttribute>(false);
 
             List<PageObject> ParsedPages = new List<PageObject>();
             DrawProgressBar(String.Format("Parsing: {0}", chapterObject.Name), 0, chapterObject.Pages.Count, 60);
@@ -525,7 +525,7 @@ namespace TestApp
         public static void DownloadPageObjects(this ChapterObject chapterObject, Int32 LocationId = 0)
         {
             ISiteExtension ise = SiteExtensions[chapterObject.Locations[LocationId].ExtensionName];
-            ISiteExtensionDescriptionAttribute isea = ise.GetType().GetCustomAttribute<ISiteExtensionDescriptionAttribute>(false);
+            IExtensionDescriptionAttribute isea = ise.GetType().GetCustomAttribute<IExtensionDescriptionAttribute>(false);
 
             List<PageObject> ParsedPages = new List<PageObject>();
             List<Task> pageTasks = new List<Task>();
@@ -649,7 +649,7 @@ namespace TestApp
         {
             using (WebDownloader wD = new WebDownloader(ise.Cookies))
             {
-                wD.Referer = ise.SiteExtensionDescriptionAttribute.RefererHeader;
+                wD.Referer = ise.ExtensionDescriptionAttribute.RefererHeader;
                 ct.ThrowIfCancellationRequested();
                 if (progress != null) progress.Report(10);
                 String content = await wD.DownloadStringTaskAsync(Link);
@@ -663,7 +663,7 @@ namespace TestApp
                     if (progress != null) progress.Report(90);
                     MangaObject.Locations.Add(new LocationObject()
                     {
-                        ExtensionName = ise.SiteExtensionDescriptionAttribute.Name,
+                        ExtensionName = ise.ExtensionDescriptionAttribute.Name,
                         Url = Link
                     });
                     ct.ThrowIfCancellationRequested();
@@ -684,7 +684,7 @@ namespace TestApp
             ISiteExtension ise = SiteExtensions[ChapterObject.Locations[LocationId].ExtensionName];
             using (WebDownloader wD = new WebDownloader(ise.Cookies))
             {
-                wD.Referer = ise.SiteExtensionDescriptionAttribute.RefererHeader;
+                wD.Referer = ise.ExtensionDescriptionAttribute.RefererHeader;
                 ct.ThrowIfCancellationRequested();
                 if (progress != null) progress.Report(10);
                 String content = await wD.DownloadStringTaskAsync(ChapterObject.Locations[LocationId].Url);
@@ -712,7 +712,7 @@ namespace TestApp
             ISiteExtension ise = SiteExtensions[ChapterObject.Locations[LocationId].ExtensionName];
             using (WebDownloader wD = new WebDownloader(ise.Cookies))
             {
-                wD.Referer = ise.SiteExtensionDescriptionAttribute.RefererHeader;
+                wD.Referer = ise.ExtensionDescriptionAttribute.RefererHeader;
                 ct.ThrowIfCancellationRequested();
                 if (progress != null) progress.Report(10);
                 String content = await wD.DownloadStringTaskAsync(PageObject.Url);
@@ -732,7 +732,7 @@ namespace TestApp
             ISiteExtension ise = SiteExtensions[ChapterObject.Locations[LocationId].ExtensionName];
             using (WebDownloader wD = new WebDownloader(ise.Cookies))
             {
-                wD.Referer = ise.SiteExtensionDescriptionAttribute.RefererHeader;
+                wD.Referer = ise.ExtensionDescriptionAttribute.RefererHeader;
                 ct.ThrowIfCancellationRequested();
                 if (progress != null) progress.Report(10);
                 Stream content = new MemoryStream();

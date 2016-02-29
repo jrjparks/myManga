@@ -2,6 +2,7 @@
 using myManga_App.Objects.Extensions;
 using myManga_App.Objects.UserConfig;
 using myManga_App.ViewModels.Dialog;
+using myMangaSiteExtension.Enums;
 using myMangaSiteExtension.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -20,13 +21,31 @@ namespace myManga_App.ViewModels.Pages
         public SettingsViewModel()
             : base(false)
         {
-            SiteExtensionObjects = new ObservableCollection<SiteExtensionObject>();
-            DatabaseExtensionObjects = new ObservableCollection<DatabaseExtensionObject>();
+            SiteExtensionObjects = new ObservableCollection<ExtensionObject>();
+            DatabaseExtensionObjects = new ObservableCollection<ExtensionObject>();
             AuthenticationDialog = new AuthenticationDialogViewModel();
             if (!IsInDesignMode)
-            {
-                ResetData();
-            }
+            { ResetData(); }
+        }
+
+        protected override void SubPullFocus()
+        {
+            base.SubPullFocus();
+            ResetData();
+        }
+
+        protected override void SubLostFocus()
+        {
+            base.SubLostFocus();
+            ResetData();
+            App.ApplyTheme(App.UserConfiguration.Theme);
+        }
+
+        protected override void SubReturnFocus()
+        {
+            base.SubReturnFocus();
+            ResetData();
+            App.ApplyTheme(App.UserConfiguration.Theme);
         }
 
         private void UserConfiguration_PropertyChanged(Object sender, PropertyChangedEventArgs e)
@@ -53,42 +72,99 @@ namespace myManga_App.ViewModels.Pages
 
             SiteExtensionObjects.Clear();
             DatabaseExtensionObjects.Clear();
-
+1
             // Load SiteExtensions
             foreach (String EnabledSiteExtension in UserConfiguration.EnabledSiteExtensions)
             {
-                ISiteExtension SiteExtension = App.SiteExtensions.DLLCollection[EnabledSiteExtension];
-                SiteExtensionObjects.Add(new SiteExtensionObject(SiteExtension, true));
+                ISiteExtension SiteExtension = App.SiteExtensions[EnabledSiteExtension];
+                SiteExtensionObjects.Add(new ExtensionObject(SiteExtension, true));
             }
-            foreach (ISiteExtension SiteExtension in App.SiteExtensions.DLLCollection)
+            foreach (ISiteExtension SiteExtension in App.SiteExtensions)
             {
-                if (!UserConfiguration.EnabledSiteExtensions.Contains(SiteExtension.SiteExtensionDescriptionAttribute.Name))
-                    SiteExtensionObjects.Add(new SiteExtensionObject(SiteExtension, false));
+                if (!UserConfiguration.EnabledSiteExtensions.Contains(SiteExtension.ExtensionDescriptionAttribute.Name))
+                    SiteExtensionObjects.Add(new ExtensionObject(SiteExtension, false));
             }
 
             // Load DatabaseExtensions
             foreach (String EnabledDatabaseExtension in UserConfiguration.EnabledDatabaseExtensions)
             {
-                IDatabaseExtension DatabaseExtension = App.DatabaseExtensions.DLLCollection[EnabledDatabaseExtension];
-                DatabaseExtensionObjects.Add(new DatabaseExtensionObject(DatabaseExtension, true));
+                IDatabaseExtension DatabaseExtension = App.DatabaseExtensions[EnabledDatabaseExtension];
+                DatabaseExtensionObjects.Add(new ExtensionObject(DatabaseExtension, true));
             }
-            foreach (IDatabaseExtension DatabaseExtension in App.DatabaseExtensions.DLLCollection)
+            foreach (IDatabaseExtension DatabaseExtension in App.DatabaseExtensions)
             {
-                if (!UserConfiguration.EnabledDatabaseExtensions.Contains(DatabaseExtension.DatabaseExtensionDescriptionAttribute.Name))
-                    DatabaseExtensionObjects.Add(new DatabaseExtensionObject(DatabaseExtension, false));
+                if (!UserConfiguration.EnabledDatabaseExtensions.Contains(DatabaseExtension.ExtensionDescriptionAttribute.Name))
+                    DatabaseExtensionObjects.Add(new ExtensionObject(DatabaseExtension, false));
             }
+            MangaCount = App.MangaCacheObjects.Count(mco =>
+                Equals(mco.MangaObject.MangaType, MangaObjectType.Manga));
+            ManhwaCount = App.MangaCacheObjects.Count(mco =>
+                Equals(mco.MangaObject.MangaType, MangaObjectType.Manhua));
+            ManhwaCount += App.MangaCacheObjects.Count(mco =>
+                Equals(mco.MangaObject.MangaType, MangaObjectType.Manhwa));
+            UnknownCount = App.MangaCacheObjects.Count(mco =>
+                Equals(mco.MangaObject.MangaType, MangaObjectType.Unknown));
         }
 
         #region Extension Collections
 
         #region SiteExtension Collections
-        public ObservableCollection<SiteExtensionObject> SiteExtensionObjects
+        public ObservableCollection<ExtensionObject> SiteExtensionObjects
         { get; private set; }
         #endregion
 
         #region DatabaseExtension Collections
-        public ObservableCollection<DatabaseExtensionObject> DatabaseExtensionObjects
+        public ObservableCollection<ExtensionObject> DatabaseExtensionObjects
         { get; private set; }
+        #endregion
+
+        #endregion
+
+        #region Status Page
+
+        #region MangaCount
+        private static readonly DependencyPropertyKey MangaCountPropertyKey = DependencyProperty.RegisterAttachedReadOnly(
+            "MangaCount",
+            typeof(Int32),
+            typeof(SettingsViewModel),
+            null);
+        private static readonly DependencyProperty MangaCountProperty = MangaCountPropertyKey.DependencyProperty;
+
+        public Int32 MangaCount
+        {
+            get { return (Int32)GetValue(MangaCountProperty); }
+            private set { SetValue(MangaCountPropertyKey, value); }
+        }
+        #endregion
+
+        #region ManhwaCount
+        private static readonly DependencyPropertyKey ManhwaCountPropertyKey = DependencyProperty.RegisterAttachedReadOnly(
+            "ManhwaCount",
+            typeof(Int32),
+            typeof(SettingsViewModel),
+            null);
+        private static readonly DependencyProperty ManhwaCountProperty = ManhwaCountPropertyKey.DependencyProperty;
+
+        public Int32 ManhwaCount
+        {
+            get { return (Int32)GetValue(ManhwaCountProperty); }
+            private set { SetValue(ManhwaCountPropertyKey, value); }
+        }
+        #endregion
+
+        #region UnknownCount
+        private static readonly DependencyPropertyKey UnknownCountPropertyKey = DependencyProperty.RegisterAttachedReadOnly(
+            "UnknownCount",
+            typeof(Int32),
+            typeof(SettingsViewModel),
+            null);
+        private static readonly DependencyProperty UnknownCountProperty = UnknownCountPropertyKey.DependencyProperty;
+
+        public Int32 UnknownCount
+        {
+            get { return (Int32)GetValue(UnknownCountProperty); }
+            private set { SetValue(UnknownCountPropertyKey, value); }
+        }
         #endregion
 
         #endregion
@@ -126,12 +202,12 @@ namespace myManga_App.ViewModels.Pages
             };
 
             UserConfiguration.EnabledSiteExtensions.Clear();
-            foreach (SiteExtensionObject SiteExtensionObject in SiteExtensionObjects)
-            { if (SiteExtensionObject.Enabled) UserConfiguration.EnabledSiteExtensions.Add(SiteExtensionObject.Name); }
+            foreach (ExtensionObject ExtensionObject in SiteExtensionObjects)
+            { if (ExtensionObject.Enabled) UserConfiguration.EnabledSiteExtensions.Add(ExtensionObject.Name); }
 
             UserConfiguration.EnabledDatabaseExtensions.Clear();
-            foreach (DatabaseExtensionObject DatabaseExtensionObject in DatabaseExtensionObjects)
-            { if (DatabaseExtensionObject.Enabled) UserConfiguration.EnabledDatabaseExtensions.Add(DatabaseExtensionObject.Name); }
+            foreach (ExtensionObject ExtensionObject in DatabaseExtensionObjects)
+            { if (ExtensionObject.Enabled) UserConfiguration.EnabledDatabaseExtensions.Add(ExtensionObject.Name); }
 
             PropertyInfo[] UserConfigurationProperties = typeof(UserConfigurationObject).GetProperties();
             foreach (PropertyInfo Property in UserConfigurationProperties)
@@ -148,19 +224,17 @@ namespace myManga_App.ViewModels.Pages
 
         private void CancelConfiguration()
         {
-            ResetData();
-            App.ApplyTheme(App.UserConfiguration.Theme);
-            Messenger.Instance.Send(true, "PreviousFocusRequest");
+            ReturnFocus();
         }
         #endregion
 
         #region Authentication Dialog
-        private static readonly DependencyPropertyKey AuthenticationDialogPropertyKey = DependencyProperty.RegisterAttachedReadOnly(
+        public static readonly DependencyPropertyKey AuthenticationDialogPropertyKey = DependencyProperty.RegisterAttachedReadOnly(
             "AuthenticationDialog",
             typeof(AuthenticationDialogViewModel),
             typeof(SettingsViewModel),
             null);
-        private static readonly DependencyProperty AuthenticationDialogProperty = AuthenticationDialogPropertyKey.DependencyProperty;
+        public static readonly DependencyProperty AuthenticationDialogProperty = AuthenticationDialogPropertyKey.DependencyProperty;
 
         public AuthenticationDialogViewModel AuthenticationDialog
         {
@@ -180,9 +254,15 @@ namespace myManga_App.ViewModels.Pages
             return true;
         }
 
-        private void AuthenticateExtension(IExtension Extension)
+        private async void AuthenticateExtension(IExtension Extension)
         {
-            Messenger.Instance.Send(Extension, "ShowExtensionAuthenticationDialog");
+            try
+            {
+                Boolean Authenticated = await AuthenticationDialog.ShowDialogAsync(Extension);
+                if (Authenticated) { }
+            }
+            catch { }
+            finally { }
         }
         #endregion
     }

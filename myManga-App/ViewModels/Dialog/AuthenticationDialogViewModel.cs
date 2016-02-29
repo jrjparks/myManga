@@ -25,12 +25,13 @@ namespace myManga_App.ViewModels.Dialog
             });
             if (!IsInDesignMode)
             {
-                Messenger.Instance.RegisterRecipient<IExtension>(this, _ =>
-                {
-                    Extension = _;
-                    ShowDialog();
-                }, "ShowExtensionAuthenticationDialog");
             }
+        }
+
+        public override Task<bool> ShowDialogAsync(object state)
+        {
+            Extension = state as IExtension;
+            return base.ShowDialogAsync(state);
         }
 
         #region Progress
@@ -87,11 +88,8 @@ namespace myManga_App.ViewModels.Dialog
             { try { control.AuthenticationPassword.Clear(); } catch { } }
             control.AuthenticationRememberMe = false;
 
-            if (Extension is ISiteExtension)
-            { control.Name = (Extension as ISiteExtension).SiteExtensionDescriptionAttribute.Name; }
-            else if (Extension is IDatabaseExtension)
-            { control.Name = (Extension as IDatabaseExtension).DatabaseExtensionDescriptionAttribute.Name; }
-            else { control.Name = null; }
+            if (!Equals(Extension, null))
+            { control.Name = String.Format("{0} ({1})", Extension.ExtensionDescriptionAttribute.Name, Extension.ExtensionDescriptionAttribute.Language); }
         }
 
         private static readonly DependencyProperty NameProperty = DependencyProperty.RegisterAttached(
@@ -136,7 +134,7 @@ namespace myManga_App.ViewModels.Dialog
             "AuthenticationRememberMe",
             typeof(Boolean),
             typeof(AuthenticationDialogViewModel),
-            new PropertyMetadata(false));
+            new PropertyMetadata(true));
 
         public Boolean AuthenticationRememberMe
         {
@@ -196,6 +194,7 @@ namespace myManga_App.ViewModels.Dialog
             Boolean RememberMe = AuthenticationRememberMe;
 
             Boolean authenticationSuccess = await Task.Run(() => Authenticate(new NetworkCredential(Username, Password), AuthenticationCTS.Token, AuthenticationProgressReporter));
+            String Name = Extension.ExtensionDescriptionAttribute.Name;
             if (authenticationSuccess)
             {
                 if (!Equals(Name, null))

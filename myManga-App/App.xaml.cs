@@ -67,21 +67,22 @@ namespace myManga_App
         private readonly Embedded embedded = new Embedded();
 
         #region Storage
-        public Manager<ISiteExtension, ISiteExtensionCollection> SiteExtensions
+        public Manager<IExtension, IExtensionCollection<IExtension>> Extensions
         { get; private set; }
 
-        public Manager<IDatabaseExtension, IDatabaseExtensionCollection> DatabaseExtensions
-        { get; private set; }
+        public IExtensionCollection<ISiteExtension> SiteExtensions
+        { get { return new IExtensionCollection<ISiteExtension>(Extensions.DLLCollection.OfType<ISiteExtension>()); } }
+
+        public IExtensionCollection<IDatabaseExtension> DatabaseExtensions
+        { get { return new IExtensionCollection<IDatabaseExtension>(Extensions.DLLCollection.OfType<IDatabaseExtension>()); } }
         #endregion
 
         private void InitializeEmbedded()
         {
-            SiteExtensions = new Manager<ISiteExtension, ISiteExtensionCollection>();
-            DatabaseExtensions = new Manager<IDatabaseExtension, IDatabaseExtensionCollection>();
+            Extensions = new Manager<IExtension, IExtensionCollection<IExtension>>();
 
             AppDomain.CurrentDomain.AssemblyResolve += embedded.ResolveAssembly;
-            SiteExtensions.ManagerAppDomain.AssemblyResolve += embedded.ResolveAssembly;
-            DatabaseExtensions.ManagerAppDomain.AssemblyResolve += embedded.ResolveAssembly;
+            Extensions.ManagerAppDomain.AssemblyResolve += embedded.ResolveAssembly;
         }
 
         #endregion
@@ -232,17 +233,17 @@ namespace myManga_App
             {
                 foreach (String Cover in MangaObject.Covers)
                 {
-                    ISiteExtension SiteExtension = SiteExtensions.DLLCollection.FirstOrDefault(_SiteExtension =>
-                    { return Cover.Contains(_SiteExtension.SiteExtensionDescriptionAttribute.URLFormat); });
-                    IDatabaseExtension DatabaseExtension = DatabaseExtensions.DLLCollection.FirstOrDefault(_DatabaseExtension =>
-                    { return Cover.Contains(_DatabaseExtension.DatabaseExtensionDescriptionAttribute.URLFormat); });
-                    if (Cover.Contains("mhcdn.net")) SiteExtension = SiteExtensions.DLLCollection["MangaHere"];
+                    ISiteExtension SiteExtension = SiteExtensions.FirstOrDefault(_SiteExtension =>
+                    { return Cover.Contains(_SiteExtension.ExtensionDescriptionAttribute.URLFormat); });
+                    IDatabaseExtension DatabaseExtension = DatabaseExtensions.FirstOrDefault(_DatabaseExtension =>
+                    { return Cover.Contains(_DatabaseExtension.ExtensionDescriptionAttribute.URLFormat); });
+                    if (Cover.Contains("mhcdn.net")) SiteExtension = SiteExtensions["MangaHere", "English"];
                     if (!Equals(SiteExtension, null))
                         MangaObject.CoverLocations.Add(new LocationObject()
-                        { Url = Cover, ExtensionName = SiteExtension.SiteExtensionDescriptionAttribute.Name });
+                        { Url = Cover, ExtensionName = SiteExtension.ExtensionDescriptionAttribute.Name });
                     else if (!Equals(DatabaseExtension, null))
                         MangaObject.CoverLocations.Add(new LocationObject()
-                        { Url = Cover, ExtensionName = DatabaseExtension.DatabaseExtensionDescriptionAttribute.Name });
+                        { Url = Cover, ExtensionName = DatabaseExtension.ExtensionDescriptionAttribute.Name });
                 }
 
                 await ZipManager.Retry(() => ZipManager.WriteAsync(ArchivePath, typeof(MangaObject).Name, MangaObject.Serialize(UserConfiguration.SerializeType)), TimeSpan.FromMinutes(1));
@@ -418,8 +419,8 @@ namespace myManga_App
         #region Application Events
         private void App_Startup(object sender, StartupEventArgs e)
         {
-            SiteExtensions.Load(PLUGIN_DIRECTORY, Filter: PLUGIN_FILTER);
-            DatabaseExtensions.Load(PLUGIN_DIRECTORY, Filter: PLUGIN_FILTER);
+            // Load all of the extensions
+            Extensions.Load(PLUGIN_DIRECTORY, PLUGIN_FILTER);
 
             LoadUserConfig();
             LoadUserAuthenticate();
@@ -429,7 +430,7 @@ namespace myManga_App
             Task.Factory.StartNew(FullMangaCacheObject);
 
             // Enable FileSystemWatchers
-            ConfigureFileWatchers();            
+            ConfigureFileWatchers();
 
             MangaObjectArchiveWatcher.EnableRaisingEvents = true;
             ChapterObjectArchiveWatcher.EnableRaisingEvents = true;
@@ -444,8 +445,7 @@ namespace myManga_App
             ContentDownloadManager.Dispose();
             ZipManager.Dispose();
 
-            SiteExtensions.Unload();
-            DatabaseExtensions.Unload();
+            Extensions.Unload();
         }
         #endregion
 
@@ -553,7 +553,7 @@ namespace myManga_App
             {
                 try
                 {
-                    ISiteExtension siteExtension = SiteExtensions.DLLCollection[upa.PluginName];
+                    ISiteExtension siteExtension = SiteExtensions[upa.PluginName, upa.PluginLanguage];
                     siteExtension.Authenticate(new System.Net.NetworkCredential(upa.Username, upa.Password), cts.Token, null);
                 }
                 catch
@@ -577,12 +577,12 @@ namespace myManga_App
                 UserConfiguration = new UserConfigurationObject();
 
                 // Enable all available Database Extensions
-                foreach (IDatabaseExtension DatabaseExtension in DatabaseExtensions.DLLCollection)
-                    UserConfiguration.EnabledDatabaseExtensions.Add(DatabaseExtension.DatabaseExtensionDescriptionAttribute.Name);
+                foreach (IDatabaseExtension DatabaseExtension in DatabaseExtensions)
+                    UserConfiguration.EnabledExtensions.Add(new EnabledExtensionObject(DatabaseExtension) { Enabled = true });
 
-                // Enable the first Site Extention if available
-                if (SiteExtensions.DLLCollection.Count > 0)
-                    UserConfiguration.EnabledSiteExtensions.Add(SiteExtensions.DLLCollection[0].SiteExtensionDescriptionAttribute.Name);
+                // Enable the first site
+                foreach (var o in SiteExtensions.Select((sExt, idx) => new { Index = idx, Value = sExt }))
+                { UserConfiguration.EnabledExtensions.Add(new EnabledExtensionObject(o.Value) { Enabled = Equals(o.Index, 0) }); }
                 SaveUserConfiguration();
             }
             ApplyTheme(UserConfiguration.Theme);

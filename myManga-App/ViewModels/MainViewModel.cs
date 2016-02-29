@@ -151,7 +151,10 @@ namespace myManga_App.ViewModels
                 Messenger.Instance.RegisterRecipient<BaseViewModel>(this, v =>
                 {
                     if (ContentViewModel != v)
+                    {
+                        if (!Equals(ContentViewModel, null)) { ContentViewModel.LostFocus(); }
                         ContentViewModel = v;
+                    }
                 }, "FocusRequest");
 
                 Messenger.Instance.RegisterRecipient<Boolean>(this, b =>
@@ -159,7 +162,7 @@ namespace myManga_App.ViewModels
                     if (!Equals(PreviousContentViewModel, null) && b)
                         PreviousContentViewModel.PullFocus();
                 }, "PreviousFocusRequest");
-                
+
                 ServicePointManager.DefaultConnectionLimit = App.ContentDownloadManager.DownloadConcurrency;
 
                 ActiveDownloadsTime = new Timer(state =>

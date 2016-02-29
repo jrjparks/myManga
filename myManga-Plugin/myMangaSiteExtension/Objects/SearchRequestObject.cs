@@ -9,84 +9,12 @@ using System.Xml.Serialization;
 
 namespace myMangaSiteExtension.Objects
 {
-    [Serializable, XmlRoot, DebuggerStepThrough]
-    public class SearchRequestObject : SerializableObject, INotifyPropertyChanging, INotifyPropertyChanged
+    [DebuggerStepThrough]
+    public class SearchRequestObject
     {
-        #region NotifyPropertyChange
-        public event PropertyChangingEventHandler PropertyChanging;
-        protected void OnPropertyChanging([CallerMemberName] String caller = "")
-        {
-            if (PropertyChanging != null)
-                PropertyChanging(this, new PropertyChangingEventArgs(caller));
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-        protected void OnPropertyChanged([CallerMemberName] String caller = "")
-        {
-            if (PropertyChanged != null)
-                PropertyChanged(this, new PropertyChangedEventArgs(caller));
-        }
-        #endregion
-
-        #region Protected
-        [NonSerialized, XmlIgnore, EditorBrowsable(EditorBrowsableState.Never)]
-        protected String url;
-        [NonSerialized, XmlIgnore, EditorBrowsable(EditorBrowsableState.Never)]
-        protected String referer;
-        [NonSerialized, XmlIgnore, EditorBrowsable(EditorBrowsableState.Never)]
-        protected String request_content;
-        [NonSerialized, XmlIgnore, EditorBrowsable(EditorBrowsableState.Never)]
-        protected SearchMethod method;
-        #endregion
-
-        #region Public
-        [XmlAttribute]
-        public String Url
-        {
-            get { return url; }
-            set
-            {
-                OnPropertyChanging();
-                url = value;
-                OnPropertyChanged();
-            }
-        }
-
-        [XmlAttribute]
-        public String Referer
-        {
-            get { return referer; }
-            set
-            {
-                OnPropertyChanging();
-                referer = value;
-                OnPropertyChanged();
-            }
-        }
-
-        [XmlAttribute]
-        public String RequestContent
-        {
-            get { return request_content; }
-            set
-            {
-                OnPropertyChanging();
-                request_content = value;
-                OnPropertyChanged();
-            }
-        }
-
-        [XmlAttribute]
-        public SearchMethod Method
-        {
-            get { return method; }
-            set
-            {
-                OnPropertyChanging();
-                method = value;
-                OnPropertyChanged();
-            }
-        }
-        #endregion
+        public String Url { get; set; }
+        public String Referer { get; set; }
+        public String RequestContent { get; set; }
+        public SearchMethod Method { get; set; }
     }
 }

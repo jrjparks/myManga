@@ -13,22 +13,22 @@ using System.Threading;
 
 namespace AnimeNewsNetwork
 {
-    [IDatabaseExtensionDescription(
-        "AnimeNewsNetwork",
-        "animenewsnetwork.com",
-        "http://cdn.animenewsnetwork.com/",
+    [IExtensionDescription(
+        Name = "AnimeNewsNetwork",
+        URLFormat = "animenewsnetwork.com",
+        RefererHeader = "http://cdn.animenewsnetwork.com/",
         RootUrl = "http://cdn.animenewsnetwork.com",
+        SupportedObjects = SupportedObjects.All,
         Author = "James Parks",
         Version = "0.0.1",
-        SupportedObjects = SupportedObjects.All,
         Language = "English")]
     public sealed class AnimeNewsNetwork : IDatabaseExtension
     {
-        private IDatabaseExtensionDescriptionAttribute databaseExtensionDescriptionAttribute;
-        public IDatabaseExtensionDescriptionAttribute DatabaseExtensionDescriptionAttribute
-        { get { return databaseExtensionDescriptionAttribute ?? (databaseExtensionDescriptionAttribute = GetType().GetCustomAttribute<IDatabaseExtensionDescriptionAttribute>(false)); } }
-
         #region IExtesion
+        private IExtensionDescriptionAttribute EDA;
+        public IExtensionDescriptionAttribute ExtensionDescriptionAttribute
+        { get { return EDA ?? (EDA = GetType().GetCustomAttribute<IExtensionDescriptionAttribute>(false)); } }
+
         private Icon extensionIcon;
         public Icon ExtensionIcon
         {
@@ -78,9 +78,9 @@ namespace AnimeNewsNetwork
         {
             return new SearchRequestObject()
             {
-                Url = String.Format("{0}/encyclopedia/api.xml?manga=~{1}", DatabaseExtensionDescriptionAttribute.RootUrl, Uri.EscapeUriString(searchTerm)),
+                Url = String.Format("{0}/encyclopedia/api.xml?manga=~{1}", ExtensionDescriptionAttribute.RootUrl, Uri.EscapeUriString(searchTerm)),
                 Method = SearchMethod.GET,
-                Referer = DatabaseExtensionDescriptionAttribute.RefererHeader,
+                Referer = ExtensionDescriptionAttribute.RefererHeader,
             };
         }
 
@@ -98,7 +98,7 @@ namespace AnimeNewsNetwork
                 StaffNodes = DatabaseObjectDocument.DocumentNode.SelectNodes("//staff/person");
             List<LocationObject> Covers = new List<LocationObject>();
             if (CoverNode != null)
-                Covers.Add(new LocationObject() { Url = CoverNode.Attributes["src"].Value, ExtensionName = DatabaseExtensionDescriptionAttribute.Name });
+                Covers.Add(new LocationObject() { Url = CoverNode.Attributes["src"].Value, ExtensionName = ExtensionDescriptionAttribute.Name });
 
             return new DatabaseObject()
             {
@@ -107,8 +107,8 @@ namespace AnimeNewsNetwork
                 AlternateNames = (AlternateNameNodes != null) ? (from HtmlNode InfoNode in AlternateNameNodes select HtmlEntity.DeEntitize(InfoNode.InnerText.Trim())).ToList() : new List<String>(),
                 Genres = (GenreNodes != null) ? (from HtmlNode InfoNode in GenreNodes select HtmlEntity.DeEntitize(InfoNode.InnerText.Trim())).ToList() : new List<String>(),
                 Locations = { new LocationObject() {
-                    ExtensionName = DatabaseExtensionDescriptionAttribute.Name,
-                    Url = String.Format("{0}/encyclopedia/api.xml?manga={1}", DatabaseExtensionDescriptionAttribute.RootUrl, DatabaseObjectDocument.DocumentNode.SelectSingleNode("//manga[@id]").Attributes["id"].Value) } },
+                    ExtensionName = ExtensionDescriptionAttribute.Name,
+                    Url = String.Format("{0}/encyclopedia/api.xml?manga={1}", ExtensionDescriptionAttribute.RootUrl, DatabaseObjectDocument.DocumentNode.SelectSingleNode("//manga[@id]").Attributes["id"].Value) } },
                 Staff = (StaffNodes != null) ? (from HtmlNode InfoNode in StaffNodes select HtmlEntity.DeEntitize(InfoNode.InnerText.Trim())).ToList() : new List<String>(),
                 Description = (DescriptionNode != null) ? HtmlEntity.DeEntitize(DescriptionNode.InnerText.Trim()) : String.Empty,
                 ReleaseYear = Int32.Parse(ReleaseNode.FirstChild.InnerText.Substring(0, 4))
@@ -121,9 +121,14 @@ namespace AnimeNewsNetwork
             if (content.StartsWith("<ann>") && !content.Contains("warning"))
             {
                 DatabaseObjectDocument.LoadHtml(content);
-                return (from HtmlNode MangaNode in DatabaseObjectDocument.DocumentNode.SelectNodes("//manga") select ParseDatabaseObject(MangaNode.OuterHtml)).ToList();
+                return (from HtmlNode MangaNode 
+                        in DatabaseObjectDocument.DocumentNode.SelectNodes("//manga")
+                        select ParseDatabaseObject(MangaNode.OuterHtml)).ToList();
             }
             return new List<DatabaseObject>();
         }
+
+        List<SearchResultObject> IExtension.ParseSearch(string Content)
+        { throw new NotImplementedException("Database extensions return DatabaseObjects"); }
     }
 }

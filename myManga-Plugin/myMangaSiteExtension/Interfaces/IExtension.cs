@@ -1,4 +1,5 @@
-﻿using myMangaSiteExtension.Objects;
+﻿using myMangaSiteExtension.Attributes;
+using myMangaSiteExtension.Objects;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -9,10 +10,21 @@ namespace myMangaSiteExtension.Interfaces
 {
     public interface IExtension
     {
+        #region Description
+
+        /// <summary>
+        /// Extension descriptor
+        /// </summary>
+        IExtensionDescriptionAttribute ExtensionDescriptionAttribute { get; }
+
         /// <summary>
         /// Icon used for display.
         /// </summary>
         Icon ExtensionIcon { get; }
+
+        #endregion
+
+        #region Authentication
 
         /// <summary>
         /// CookieCollection used to store cookies after authentication.
@@ -30,7 +42,7 @@ namespace myMangaSiteExtension.Interfaces
         /// </summary>
         /// <param name="Credentials">User credentials</param>
         /// <returns>Authentication Success</returns>
-        Boolean Authenticate(NetworkCredential Credentials, CancellationToken ct, IProgress<Int32> ProgressReporter);
+        Boolean Authenticate(NetworkCredential Credentials, CancellationToken CT, IProgress<Int32> ProgressReporter);
 
         /// <summary>
         /// Used to deauthenticate a user on a manga site.
@@ -38,6 +50,10 @@ namespace myMangaSiteExtension.Interfaces
         /// </summary>
         /// <returns>Authentication Success</returns>
         void Deauthenticate();
+
+        #endregion
+
+        #region Remote library
 
         /// <summary>
         /// Get user favorites from the site.
@@ -58,5 +74,25 @@ namespace myMangaSiteExtension.Interfaces
         /// <param name="MangaObject">MangaObject to remove.</param>
         /// <returns>Remove Success</returns>
         Boolean RemoveUserFavorites(MangaObject MangaObject);
+
+        #endregion
+
+        #region Search
+
+        /// <summary>
+        /// Generate search request.
+        /// </summary>
+        /// <param name="SearchTerm">Search term.</param>
+        /// <returns>SearchRequestObject</returns>
+        SearchRequestObject GetSearchRequestObject(String SearchTerm);
+
+        /// <summary>
+        /// Use extension to parse search page.
+        /// </summary>
+        /// <param name="SearchTerm">Search term to send.</param>
+        /// <returns>List of SearchResultObjects</returns>
+        List<SearchResultObject> ParseSearch(String Content);
+
+        #endregion
     }
 }

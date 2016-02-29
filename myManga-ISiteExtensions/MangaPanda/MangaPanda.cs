@@ -16,10 +16,10 @@ using System.Windows;
 
 namespace MangaPanda
 {
-    [ISiteExtensionDescription(
-        "MangaPanda",
-        "mangapanda.com",
-        "http://www.mangapanda.com/",
+    [IExtensionDescription(
+        Name = "MangaPanda",
+        URLFormat = "mangapanda.com",
+        RefererHeader = "http://www.mangapanda.com/",
         RootUrl = "http://www.mangapanda.com",
         Author = "James Parks",
         Version = "0.0.1",
@@ -27,11 +27,11 @@ namespace MangaPanda
         Language = "English")]
     public class MangaPanda : ISiteExtension
     {
-        private ISiteExtensionDescriptionAttribute siteExtensionDescriptionAttribute;
-        public ISiteExtensionDescriptionAttribute SiteExtensionDescriptionAttribute
-        { get { return siteExtensionDescriptionAttribute ?? (siteExtensionDescriptionAttribute = GetType().GetCustomAttribute<ISiteExtensionDescriptionAttribute>(false)); } }
-
         #region IExtesion
+        private IExtensionDescriptionAttribute EDA;
+        public IExtensionDescriptionAttribute ExtensionDescriptionAttribute
+        { get { return EDA ?? (EDA = GetType().GetCustomAttribute<IExtensionDescriptionAttribute>(false)); } }
+
         private Icon extensionIcon;
         public Icon ExtensionIcon
         {
@@ -79,7 +79,7 @@ namespace MangaPanda
 
         public SearchRequestObject GetSearchRequestObject(String searchTerm)
         {
-            return new SearchRequestObject() { Url = String.Format("{0}/search/?w={1}", SiteExtensionDescriptionAttribute.RootUrl, Uri.EscapeUriString(searchTerm)), Method = SearchMethod.GET, Referer = SiteExtensionDescriptionAttribute.RefererHeader };
+            return new SearchRequestObject() { Url = String.Format("{0}/search/?w={1}", ExtensionDescriptionAttribute.RootUrl, Uri.EscapeUriString(searchTerm)), Method = SearchMethod.GET, Referer = ExtensionDescriptionAttribute.RefererHeader };
         }
 
         public MangaObject ParseMangaObject(String content)
@@ -96,7 +96,7 @@ namespace MangaPanda
                 Covers.Add(new LocationObject()
                 {
                     Url = MangaCoverRegex.Replace(MangaCoverPrime, String.Format("{0}.jpg", mcI)),
-                    ExtensionName = SiteExtensionDescriptionAttribute.Name
+                    ExtensionName = ExtensionDescriptionAttribute.Name
                 });
             Covers.TrimExcess();
 
@@ -141,8 +141,8 @@ namespace MangaPanda
                                             Chapter = UInt32.Parse(ChapterNode.SelectSingleNode(".//td[1]/a").InnerText.Substring(ChapterNode.SelectSingleNode(".//td[1]/a").InnerText.LastIndexOf(' ') + 1)),
                                             Locations = {
                                                     new LocationObject() {
-                                                        ExtensionName = SiteExtensionDescriptionAttribute.Name,
-                                                        Url = String.Format("{0}{1}", SiteExtensionDescriptionAttribute.RootUrl, ChapterNode.SelectSingleNode(".//td[1]/a").Attributes["href"].Value) }
+                                                        ExtensionName = ExtensionDescriptionAttribute.Name,
+                                                        Url = String.Format("{0}{1}", ExtensionDescriptionAttribute.RootUrl, ChapterNode.SelectSingleNode(".//td[1]/a").Attributes["href"].Value) }
                                                 },
                                             Released = DateTime.Parse(ChapterNode.SelectSingleNode(".//td[2]").InnerText)
                                         }).ToArray();
@@ -172,7 +172,7 @@ namespace MangaPanda
                 Pages = (from HtmlNode PageNode in ChapterObjectDocument.GetElementbyId("pageMenu").SelectNodes(".//option")
                          select new PageObject()
                          {
-                             Url = String.Format("{0}{1}", SiteExtensionDescriptionAttribute.RootUrl, PageNode.Attributes["value"].Value),
+                             Url = String.Format("{0}{1}", ExtensionDescriptionAttribute.RootUrl, PageNode.Attributes["value"].Value),
                              PageNumber = UInt32.Parse(PageNode.NextSibling.InnerText)
                          }).ToList()
             };
@@ -194,9 +194,9 @@ namespace MangaPanda
             {
                 Name = Name,
                 PageNumber = UInt32.Parse(PageNode.NextSibling.InnerText),
-                Url = String.Format("{0}{1}", SiteExtensionDescriptionAttribute.RootUrl, PageNode.Attributes["value"].Value),
-                NextUrl = (NextNode != null) ? String.Format("{0}{1}", SiteExtensionDescriptionAttribute.RootUrl, NextNode.Attributes["value"].Value) : null,
-                PrevUrl = (PrevNode != null) ? String.Format("{0}{1}", SiteExtensionDescriptionAttribute.RootUrl, PrevNode.Attributes["value"].Value) : null,
+                Url = String.Format("{0}{1}", ExtensionDescriptionAttribute.RootUrl, PageNode.Attributes["value"].Value),
+                NextUrl = (NextNode != null) ? String.Format("{0}{1}", ExtensionDescriptionAttribute.RootUrl, NextNode.Attributes["value"].Value) : null,
+                PrevUrl = (PrevNode != null) ? String.Format("{0}{1}", ExtensionDescriptionAttribute.RootUrl, PrevNode.Attributes["value"].Value) : null,
                 ImgUrl = ImageLink.ToString()
             };
         }
@@ -218,10 +218,10 @@ namespace MangaPanda
                     Int32 Id; if (!Int32.TryParse(Link.Slice(1, Link.IndexOf('/', 1)), out Id)) Id = -1;
                     SearchResults.Add(new SearchResultObject()
                     {
-                        Cover = new LocationObject() { Url = new Regex(@"r(\d+)\.jpg").Replace(CoverUrl, "l$1.jpg"), ExtensionName = SiteExtensionDescriptionAttribute.Name },
+                        Cover = new LocationObject() { Url = new Regex(@"r(\d+)\.jpg").Replace(CoverUrl, "l$1.jpg"), ExtensionName = ExtensionDescriptionAttribute.Name },
                         Name = Name,
-                        Url = String.Format("{0}{1}", SiteExtensionDescriptionAttribute.RootUrl, Link),
-                        ExtensionName = SiteExtensionDescriptionAttribute.Name,
+                        Url = String.Format("{0}{1}", ExtensionDescriptionAttribute.RootUrl, Link),
+                        ExtensionName = ExtensionDescriptionAttribute.Name,
                         Id = Id,
                         Rating = -1,
                         Artists = null,

@@ -44,6 +44,9 @@ namespace myManga_App
             appender.AppendToFile = true;
             appender.ImmediateFlush = true;
             appender.Threshold = LogLevel;
+            appender.MaxSizeRollBackups = 10;
+            appender.MaximumFileSize = "128KB";
+            appender.RollingStyle = log4net.Appender.RollingFileAppender.RollingMode.Once;
             appender.ActivateOptions();
             log4net.Config.BasicConfigurator.Configure(appender);
         }

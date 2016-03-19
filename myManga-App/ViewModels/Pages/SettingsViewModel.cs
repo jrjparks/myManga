@@ -72,29 +72,34 @@ namespace myManga_App.ViewModels.Pages
 
             SiteExtensionObjects.Clear();
             DatabaseExtensionObjects.Clear();
-1
+
             // Load SiteExtensions
-            foreach (String EnabledSiteExtension in UserConfiguration.EnabledSiteExtensions)
+
+            IEnumerable<EnabledExtensionObject> EnabledSiteExtensionObjects = UserConfiguration.EnabledExtensions.Where(ext => Equals(ext.ExtensionType, typeof(ISiteExtension).Name));
+            IEnumerable<EnabledExtensionObject> EnabledDatabaseExtensionObjects = UserConfiguration.EnabledExtensions.Where(ext => Equals(ext.ExtensionType, typeof(IDatabaseExtension).Name));
+
+            foreach (EnabledExtensionObject EnabledSiteExtensionObject in EnabledSiteExtensionObjects)
             {
-                ISiteExtension SiteExtension = App.SiteExtensions[EnabledSiteExtension];
-                SiteExtensionObjects.Add(new ExtensionObject(SiteExtension, true));
+                ISiteExtension SiteExtension = App.SiteExtensions[EnabledSiteExtensionObject.Name, EnabledSiteExtensionObject.Language];
+                SiteExtensionObjects.Add(new ExtensionObject(SiteExtension, EnabledSiteExtensionObject.Enabled));
             }
             foreach (ISiteExtension SiteExtension in App.SiteExtensions)
             {
-                if (!UserConfiguration.EnabledSiteExtensions.Contains(SiteExtension.ExtensionDescriptionAttribute.Name))
-                    SiteExtensionObjects.Add(new ExtensionObject(SiteExtension, false));
+                String Name = String.Format("{0} ({1})", SiteExtension.ExtensionDescriptionAttribute.Name, SiteExtension.ExtensionDescriptionAttribute.Language);
+                ExtensionObject SiteExtensionObject = SiteExtensionObjects.FirstOrDefault(seo => Equals(seo.Name, Name));
+                if (Equals(SiteExtensionObject, null)) SiteExtensionObjects.Add(new ExtensionObject(SiteExtension, false));
             }
 
-            // Load DatabaseExtensions
-            foreach (String EnabledDatabaseExtension in UserConfiguration.EnabledDatabaseExtensions)
+            foreach (EnabledExtensionObject EnabledDatabaseExtensionObject in EnabledDatabaseExtensionObjects)
             {
-                IDatabaseExtension DatabaseExtension = App.DatabaseExtensions[EnabledDatabaseExtension];
-                DatabaseExtensionObjects.Add(new ExtensionObject(DatabaseExtension, true));
+                IDatabaseExtension DatabaseExtension = App.DatabaseExtensions[EnabledDatabaseExtensionObject.Name, EnabledDatabaseExtensionObject.Language];
+                DatabaseExtensionObjects.Add(new ExtensionObject(DatabaseExtension, EnabledDatabaseExtensionObject.Enabled));
             }
             foreach (IDatabaseExtension DatabaseExtension in App.DatabaseExtensions)
             {
-                if (!UserConfiguration.EnabledDatabaseExtensions.Contains(DatabaseExtension.ExtensionDescriptionAttribute.Name))
-                    DatabaseExtensionObjects.Add(new ExtensionObject(DatabaseExtension, false));
+                String Name = String.Format("{0} ({1})", DatabaseExtension.ExtensionDescriptionAttribute.Name, DatabaseExtension.ExtensionDescriptionAttribute.Language);
+                ExtensionObject DatabaseExtensionObject = DatabaseExtensionObjects.FirstOrDefault(seo => Equals(seo.Name, Name));
+                if (Equals(DatabaseExtensionObject, null)) DatabaseExtensionObjects.Add(new ExtensionObject(DatabaseExtension, false));
             }
             MangaCount = App.MangaCacheObjects.Count(mco =>
                 Equals(mco.MangaObject.MangaType, MangaObjectType.Manga));
@@ -104,6 +109,7 @@ namespace myManga_App.ViewModels.Pages
                 Equals(mco.MangaObject.MangaType, MangaObjectType.Manhwa));
             UnknownCount = App.MangaCacheObjects.Count(mco =>
                 Equals(mco.MangaObject.MangaType, MangaObjectType.Unknown));
+            TotalCount = MangaCount + ManhwaCount + UnknownCount;
         }
 
         #region Extension Collections
@@ -167,6 +173,21 @@ namespace myManga_App.ViewModels.Pages
         }
         #endregion
 
+        #region TotalCount
+        private static readonly DependencyPropertyKey TotalCountPropertyKey = DependencyProperty.RegisterAttachedReadOnly(
+            "TotalCount",
+            typeof(Int32),
+            typeof(SettingsViewModel),
+            null);
+        private static readonly DependencyProperty TotalCountProperty = TotalCountPropertyKey.DependencyProperty;
+
+        public Int32 TotalCount
+        {
+            get { return (Int32)GetValue(TotalCountProperty); }
+            private set { SetValue(TotalCountPropertyKey, value); }
+        }
+        #endregion
+
         #endregion
 
         #region User Configuration
@@ -200,7 +221,22 @@ namespace myManga_App.ViewModels.Pages
                 "WindowState",
                 "ViewTypes"
             };
-
+            UserConfiguration.EnabledExtensions.Clear();
+            foreach (ExtensionObject ExtensionObject in SiteExtensionObjects)
+            {
+                UserConfiguration.EnabledExtensions.Add(new EnabledExtensionObject(ExtensionObject.Extension)
+                {
+                    Enabled = ExtensionObject.Enabled
+                });
+            }
+            foreach (ExtensionObject ExtensionObject in DatabaseExtensionObjects)
+            {
+                UserConfiguration.EnabledExtensions.Add(new EnabledExtensionObject(ExtensionObject.Extension)
+                {
+                    Enabled = ExtensionObject.Enabled
+                });
+            }
+            /*
             UserConfiguration.EnabledSiteExtensions.Clear();
             foreach (ExtensionObject ExtensionObject in SiteExtensionObjects)
             { if (ExtensionObject.Enabled) UserConfiguration.EnabledSiteExtensions.Add(ExtensionObject.Name); }
@@ -208,7 +244,7 @@ namespace myManga_App.ViewModels.Pages
             UserConfiguration.EnabledDatabaseExtensions.Clear();
             foreach (ExtensionObject ExtensionObject in DatabaseExtensionObjects)
             { if (ExtensionObject.Enabled) UserConfiguration.EnabledDatabaseExtensions.Add(ExtensionObject.Name); }
-
+            //*/
             PropertyInfo[] UserConfigurationProperties = typeof(UserConfigurationObject).GetProperties();
             foreach (PropertyInfo Property in UserConfigurationProperties)
             { if (!IgnoreProperties.Contains(Property.Name)) Property.SetValue(App.UserConfiguration, Property.GetValue(UserConfiguration)); }
@@ -259,7 +295,6 @@ namespace myManga_App.ViewModels.Pages
             try
             {
                 Boolean Authenticated = await AuthenticationDialog.ShowDialogAsync(Extension);
-                if (Authenticated) { }
             }
             catch { }
             finally { }

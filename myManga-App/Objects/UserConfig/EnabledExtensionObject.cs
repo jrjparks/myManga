@@ -3,13 +3,14 @@ using myMangaSiteExtension.Primitives.Objects;
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using System.Xml.Serialization;
 
 namespace myManga_App.Objects.UserConfig
 {
-    [Serializable, XmlRoot, DebuggerStepThrough]
+    [Serializable, XmlRoot]//, DebuggerStepThrough]
     public sealed class EnabledExtensionObject : SerializableObject, INotifyPropertyChanging, INotifyPropertyChanged
     {
         #region NotifyPropertyChange
@@ -24,7 +25,7 @@ namespace myManga_App.Objects.UserConfig
         private void OnPropertyChanged([CallerMemberName] String caller = "")
         {
             if (PropertyChanged != null)
-                PropertyChanged(this, new PropertyChangedEventArgs(caller));=
+                PropertyChanged(this, new PropertyChangedEventArgs(caller));
         }
         #endregion
 
@@ -36,7 +37,7 @@ namespace myManga_App.Objects.UserConfig
         [XmlIgnore]
         private Boolean enabled = false;
         [XmlIgnore]
-        private String extensiontype = false;
+        private String extensiontype = String.Empty;
         #endregion
 
         #region Public
@@ -91,7 +92,9 @@ namespace myManga_App.Objects.UserConfig
         {
             Name = Extension.ExtensionDescriptionAttribute.Name;
             Language = Extension.ExtensionDescriptionAttribute.Language;
-            ExtensionType = Extension.GetType().Name;
+            Type InterfaceType = Enumerable.FirstOrDefault(Extension.GetType().GetInterfaces());
+            if (!Equals(InterfaceType, null)) ExtensionType = InterfaceType.Name;
+            else ExtensionType = "UnknownExtension";
         }
 
         public override void GetObjectData(SerializationInfo info, StreamingContext context)

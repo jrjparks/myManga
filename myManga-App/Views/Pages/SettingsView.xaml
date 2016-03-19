@@ -305,6 +305,7 @@
                                     <RowDefinition/>
                                     <RowDefinition/>
                                     <RowDefinition/>
+                                    <RowDefinition/>
                                 </Grid.RowDefinitions>
 
                                 <TextBlock 
@@ -342,6 +343,18 @@
                                     VerticalAlignment="Center" 
                                     TextWrapping="Wrap"
                                     Text="{Binding UnknownCount, FallbackValue=0}"/>
+
+                                <TextBlock 
+                                    Grid.Row="3"
+                                    Text="Total"
+                                    VerticalAlignment="Center" 
+                                    TextWrapping="Wrap"/>
+                                <TextBlock
+                                    Grid.Row="3"
+                                    Grid.Column="2"
+                                    VerticalAlignment="Center" 
+                                    TextWrapping="Wrap"
+                                    Text="{Binding TotalCount, FallbackValue=0}"/>
                             </Grid>
                         </HeaderedContentControl>
                     </ScrollViewer>

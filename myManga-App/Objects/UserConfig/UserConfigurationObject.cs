@@ -118,7 +118,8 @@ namespace myManga_App.Objects.UserConfig
             set {
                 OnPropertyChanging();
                 enabledExtensions.Clear();
-                foreach (var _ in value) enabledExtensions.Add(_);
+                foreach (var _ in value)
+                    enabledExtensions.Add(_);
                 OnPropertyChanged();
             }
         }
@@ -207,10 +208,12 @@ namespace myManga_App.Objects.UserConfig
         {
             ViewTypes.CollectionChanged += (s, e) => OnUserConfigurationUpdated("ViewTypes");
             ViewTypes.CollectionChanged += (s, e) => OnPropertyChanged("ViewTypes");
+            /*
             EnabledSiteExtensions.CollectionChanged += (s, e) => OnUserConfigurationUpdated("EnabledSiteExtensions");
             EnabledSiteExtensions.CollectionChanged += (s, e) => OnPropertyChanged("EnabledSiteExtensions");
             EnabledDatabaseExtensions.CollectionChanged += (s, e) => OnUserConfigurationUpdated("EnabledDatabaseExtensions");
             EnabledDatabaseExtensions.CollectionChanged += (s, e) => OnPropertyChanged("EnabledDatabaseExtensions");
+            //*/
         }
     }
 }

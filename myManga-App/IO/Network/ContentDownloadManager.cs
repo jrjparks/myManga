@@ -1,4 +1,5 @@
 ﻿using myManga_App.IO.Local.Object;
+using myManga_App.Objects.UserConfig;
 using myMangaSiteExtension.Enums;
 using myMangaSiteExtension.Interfaces;
 using myMangaSiteExtension.Objects;
@@ -386,6 +387,17 @@ namespace myManga_App.IO.Network
         #endregion
 
         #region Async Methods
+        public IEnumerable<IExtension> ValidExtensions(IEnumerable<IExtension> Extensions, IEnumerable<EnabledExtensionObject> EnabledExtentions) => Extensions.Where(Extension =>
+        {
+            if (!Extension.ExtensionDescriptionAttribute.SupportedObjects.HasFlag(SupportedObjects.Manga)) return false;
+            if (Extension.ExtensionDescriptionAttribute.RequiresAuthentication) if (!Extension.IsAuthenticated) return false;
+
+            String Name = String.Format("{0} ({1})", Extension.ExtensionDescriptionAttribute.Name, Extension.ExtensionDescriptionAttribute.Language);
+            Int32 Count = EnabledExtentions.Count(ee => Equals(ee.Name, Extension.ExtensionDescriptionAttribute.Name) && Equals(ee.Language, Extension.ExtensionDescriptionAttribute.Language));
+            if (Equals(Count, 0)) return false;
+            return true;
+        });
+
         #region Async Method Classes
         private sealed class ExtensionContentResult
         {
@@ -436,32 +448,11 @@ namespace myManga_App.IO.Network
                 await TaskConcurrencySemaphore.WaitAsync(ct);
                 ct.ThrowIfCancellationRequested();
 
-                // Store valid ISiteExtension
-                IEnumerable<ISiteExtension> ValidSiteExtensions = App.SiteExtensions.Where(SiteExtension =>
-                {
-                    if (!SiteExtension.ExtensionDescriptionAttribute.SupportedObjects.HasFlag(SupportedObjects.Manga)) return false;
-                    if (SiteExtension.ExtensionDescriptionAttribute.RequiresAuthentication)
-                        if (!SiteExtension.IsAuthenticated) return false;
-                    if (!App.UserConfiguration.EnabledSiteExtensions.Contains(SiteExtension.ExtensionDescriptionAttribute.Name)) return false;
-                    return true;
-                });
-                // Store valid IDatabaseExtension
-                IEnumerable<IDatabaseExtension> ValidDatabaseExtension = App.DatabaseExtensions.Where(DatabaseExtension =>
-                {
-                    if (!DatabaseExtension.ExtensionDescriptionAttribute.SupportedObjects.HasFlag(SupportedObjects.Manga)) return false;
-                    if (DatabaseExtension.ExtensionDescriptionAttribute.RequiresAuthentication)
-                        if (!DatabaseExtension.IsAuthenticated) return false;
-                    if (!App.UserConfiguration.EnabledDatabaseExtensions.Contains(DatabaseExtension.ExtensionDescriptionAttribute.Name)) return false;
-                    return true;
-                });
-                List<IExtension> ValidExtensions = new List<IExtension>();
-                ValidExtensions.AddRange(ValidSiteExtensions);
-                ValidExtensions.AddRange(ValidDatabaseExtension);
-
                 if (!Equals(progress, null)) progress.Report(5);
 
                 IEnumerable<Task<ExtensionContentResult>> ExtensionContentTasksQuery =
-                    from Extension in ValidExtensions select LoadExtensionMangaContent(Extension, MangaObject);
+                    from Extension in ValidExtensions(App.Extensions.DLLCollection, App.UserConfiguration.EnabledExtensions)
+                    select LoadExtensionMangaContent(Extension, MangaObject);
                 List<Task<ExtensionContentResult>> ExtensionContentTasks = ExtensionContentTasksQuery.ToList();
                 Int32 OriginalExtensionContentTasksCount = ExtensionContentTasks.Count;
 
@@ -569,16 +560,9 @@ namespace myManga_App.IO.Network
                 ct.ThrowIfCancellationRequested();
 
                 // Store valid ISiteExtension
-                IEnumerable<ISiteExtension> ValidSiteExtensions = App.SiteExtensions.Where(_ =>
-                {
-                    if (!_.ExtensionDescriptionAttribute.SupportedObjects.HasFlag(SupportedObjects.Manga)) return false;
-                    if (_.ExtensionDescriptionAttribute.RequiresAuthentication)
-                        if (!_.IsAuthenticated) return false;
-                    if (!App.UserConfiguration.EnabledSiteExtensions.Contains(_.ExtensionDescriptionAttribute.Name)) return false;
-                    return true;
-                });
-
-                IEnumerable<LocationObject> OrderedChapterObjectLocations = ChapterObject.Locations.OrderBy(_ => App.UserConfiguration.EnabledSiteExtensions.IndexOf(_.ExtensionName));
+                IEnumerable<ISiteExtension> ValidSiteExtensions = ValidExtensions(App.SiteExtensions, App.UserConfiguration.EnabledExtensions).Cast<ISiteExtension>();
+                
+                IEnumerable<LocationObject> OrderedChapterObjectLocations = ChapterObject.Locations.OrderBy(_ => App.UserConfiguration.EnabledExtensions.ToList().FindIndex(ee => Equals(ee.Name, _.ExtensionName) && Equals(ee.Language, _.ExtensionLanguage))).Reverse();
                 foreach (LocationObject LocationObject in OrderedChapterObjectLocations)
                 {
                     ct.ThrowIfCancellationRequested();
@@ -689,32 +673,11 @@ namespace myManga_App.IO.Network
         {
             List<MangaObject> SearchResults = new List<MangaObject>();
 
-            // Store valid ISiteExtension
-            IEnumerable<ISiteExtension> ValidSiteExtensions = App.SiteExtensions.Where(SiteExtension =>
-            {
-                if (!SiteExtension.ExtensionDescriptionAttribute.SupportedObjects.HasFlag(SupportedObjects.Manga)) return false;
-                if (SiteExtension.ExtensionDescriptionAttribute.RequiresAuthentication)
-                    if (!SiteExtension.IsAuthenticated) return false;
-                if (!App.UserConfiguration.EnabledSiteExtensions.Contains(SiteExtension.ExtensionDescriptionAttribute.Name)) return false;
-                return true;
-            });
-            // Store valid IDatabaseExtension
-            IEnumerable<IDatabaseExtension> ValidDatabaseExtension = App.DatabaseExtensions.Where(DatabaseExtension =>
-            {
-                if (!DatabaseExtension.ExtensionDescriptionAttribute.SupportedObjects.HasFlag(SupportedObjects.Manga)) return false;
-                if (DatabaseExtension.ExtensionDescriptionAttribute.RequiresAuthentication)
-                    if (!DatabaseExtension.IsAuthenticated) return false;
-                if (!App.UserConfiguration.EnabledDatabaseExtensions.Contains(DatabaseExtension.ExtensionDescriptionAttribute.Name)) return false;
-                return true;
-            });
-            List<IExtension> ValidExtensions = new List<IExtension>();
-            ValidExtensions.AddRange(ValidSiteExtensions);
-            ValidExtensions.AddRange(ValidDatabaseExtension);
-
             if (!Equals(progress, null)) progress.Report(5);
 
             IEnumerable<Task<ExtensionContentResult>> ExtensionContentTasksQuery =
-                from Extension in ValidExtensions select LoadExtensionSearchContent(Extension, SearchTerm);
+                from Extension in ValidExtensions(App.Extensions.DLLCollection, App.UserConfiguration.EnabledExtensions)
+                select LoadExtensionSearchContent(Extension, SearchTerm);
             List<Task<ExtensionContentResult>> ExtensionContentTasks = ExtensionContentTasksQuery.ToList();
             Int32 OriginalExtensionContentTasksCount = ExtensionContentTasks.Count;
 

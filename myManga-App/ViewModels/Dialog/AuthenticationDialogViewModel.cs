@@ -86,7 +86,7 @@ namespace myManga_App.ViewModels.Dialog
             control.AuthenticationUsername = String.Empty;
             if (!Equals(control.AuthenticationPassword, null))
             { try { control.AuthenticationPassword.Clear(); } catch { } }
-            control.AuthenticationRememberMe = false;
+            control.ResetAuthenticationRememberMe();
 
             if (!Equals(Extension, null))
             { control.Name = String.Format("{0} ({1})", Extension.ExtensionDescriptionAttribute.Name, Extension.ExtensionDescriptionAttribute.Language); }
@@ -140,6 +140,10 @@ namespace myManga_App.ViewModels.Dialog
         {
             get { return (Boolean)GetValue(AuthenticationRememberMeProperty); }
             set { SetValue(AuthenticationRememberMeProperty, value); }
+        }
+        public void ResetAuthenticationRememberMe()
+        {
+            ClearValue(AuthenticationRememberMeProperty);
         }
 
         private static readonly DependencyPropertyKey AuthenticationErrorPropertyKey = DependencyProperty.RegisterAttachedReadOnly(
@@ -219,7 +223,7 @@ namespace myManga_App.ViewModels.Dialog
                 AuthenticationUsername = String.Empty;
                 if (!Equals(AuthenticationPassword, null))
                 { try { AuthenticationPassword.Clear(); } catch { } }
-                AuthenticationRememberMe = false;
+                ResetAuthenticationRememberMe();
             }
         }
         #endregion

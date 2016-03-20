@@ -6,6 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
     xmlns:local="clr-namespace:myManga_App.Views.Dialog"
     xmlns:Controls="clr-namespace:System.Windows.Controls"
+    xmlns:AppControls="clr-namespace:myManga_App.Controls"
     xmlns:Converters="clr-namespace:myManga_App.Converters"
     mc:Ignorable="d" 
     d:DesignHeight="450" d:DesignWidth="600"
@@ -13,7 +14,8 @@
     Background="{DynamicResource window-background}"
     Foreground="{DynamicResource text-dark}"
     TextBlock.Foreground="{DynamicResource text-dark}"
-    TextElement.Foreground="{DynamicResource text-dark}">
+    TextElement.Foreground="{DynamicResource text-dark}"
+    AppControls:InputBindingsBehavior.HasInputBindingPrecedence="True">
     <Controls:DialogUserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -27,6 +29,9 @@
             <Converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" TrueValue="Visible" FalseValue="Collapsed"/>
         </ResourceDictionary>
     </Controls:DialogUserControl.Resources>
+    <Controls:DialogUserControl.InputBindings>
+        <KeyBinding Command="{Binding OKCommand}" Key="Return"/>
+    </Controls:DialogUserControl.InputBindings>
 
     <Border
         Grid.Column="1"
@@ -141,7 +146,7 @@
                 <Controls:MetroToggleButton
                     Grid.Column="1"
                     HorizontalAlignment="Right"
-                    IsChecked="{Binding AuthenticationRememberMe}"
+                    IsChecked="{Binding AuthenticationRememberMe, FallbackValue=True}"
                     Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"
                     FontFamily="{DynamicResource OpenIconic}"
                     Content="{DynamicResource oi-check}"/>

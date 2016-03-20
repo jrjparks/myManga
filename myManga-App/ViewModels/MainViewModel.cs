@@ -120,7 +120,7 @@ namespace myManga_App.ViewModels
         #endregion
 
         #region Download Active
-        private Timer ActiveDownloadsTime
+        private Timer ActiveDownloadsTimer
         { get; set; }
 
         private static readonly DependencyProperty DownloadsActiveProperty = DependencyProperty.RegisterAttached(
@@ -165,14 +165,14 @@ namespace myManga_App.ViewModels
 
                 ServicePointManager.DefaultConnectionLimit = App.ContentDownloadManager.DownloadConcurrency;
 
-                ActiveDownloadsTime = new Timer(state =>
+                ActiveDownloadsTimer = new Timer(state =>
                 {   // Monitor the ContentDownloadManager IsActive property
                     App.RunOnUiThread(new Action(() =>
                     {
                         if (!Equals(App.ContentDownloadManager.IsActive, DownloadsActive))
                             DownloadsActive = App.ContentDownloadManager.IsActive;
                     }));
-                }, null, TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(1));
+                }, null, TimeSpan.FromSeconds(3), TimeSpan.FromSeconds(1));
 
                 PagesHomeViewModel.PullFocus();
             }

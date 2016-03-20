@@ -301,72 +301,85 @@
 
                 <TabItem Header="Status" Height="40" Width="100">
                     <ScrollViewer HorizontalScrollBarVisibility="Disabled">
-                        <HeaderedContentControl
-                            Header="Library Size"
-                            Margin="2,6"
-                            VerticalAlignment="Top">
-                            <Grid Margin="15,0,0,0">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto"/>
-                                    <ColumnDefinition Width="15"/>
-                                    <ColumnDefinition/>
-                                </Grid.ColumnDefinitions>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition/>
-                                    <RowDefinition/>
-                                    <RowDefinition/>
-                                    <RowDefinition/>
-                                </Grid.RowDefinitions>
+                        <StackPanel Orientation="Vertical">
+                            <HeaderedContentControl
+                                Header="Library Size"
+                                Margin="2,6"
+                                VerticalAlignment="Top">
+                                <Grid Margin="15,0,0,0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="15"/>
+                                        <ColumnDefinition/>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition/>
+                                        <RowDefinition/>
+                                        <RowDefinition/>
+                                        <RowDefinition/>
+                                    </Grid.RowDefinitions>
 
-                                <TextBlock 
-                                    Grid.Row="0"
-                                    Text="Manga" 
-                                    VerticalAlignment="Center" 
-                                    TextWrapping="Wrap"/>
-                                <TextBlock
-                                    Grid.Row="0"
-                                    Grid.Column="2"
-                                    VerticalAlignment="Center" 
-                                    TextWrapping="Wrap"
-                                    Text="{Binding MangaCount, FallbackValue=0}"/>
+                                    <TextBlock 
+                                        Grid.Row="0"
+                                        Text="Manga" 
+                                        VerticalAlignment="Center" 
+                                        TextWrapping="Wrap"/>
+                                    <TextBlock
+                                        Grid.Row="0"
+                                        Grid.Column="2"
+                                        VerticalAlignment="Center" 
+                                        TextWrapping="Wrap"
+                                        Text="{Binding MangaCount, FallbackValue=0}"/>
 
-                                <TextBlock 
-                                    Grid.Row="1"
-                                    Text="Manhwa/Manhua"
-                                    VerticalAlignment="Center" 
-                                    TextWrapping="Wrap"/>
-                                <TextBlock
-                                    Grid.Row="1"
-                                    Grid.Column="2"
-                                    VerticalAlignment="Center" 
-                                    TextWrapping="Wrap"
-                                    Text="{Binding ManhwaCount, FallbackValue=0}"/>
+                                    <TextBlock 
+                                        Grid.Row="1"
+                                        Text="Manhwa/Manhua"
+                                        VerticalAlignment="Center" 
+                                        TextWrapping="Wrap"/>
+                                    <TextBlock
+                                        Grid.Row="1"
+                                        Grid.Column="2"
+                                        VerticalAlignment="Center" 
+                                        TextWrapping="Wrap"
+                                        Text="{Binding ManhwaCount, FallbackValue=0}"/>
 
-                                <TextBlock 
-                                    Grid.Row="2"
-                                    Text="Unknown"
-                                    VerticalAlignment="Center" 
-                                    TextWrapping="Wrap"/>
-                                <TextBlock
-                                    Grid.Row="2"
-                                    Grid.Column="2"
-                                    VerticalAlignment="Center" 
-                                    TextWrapping="Wrap"
-                                    Text="{Binding UnknownCount, FallbackValue=0}"/>
+                                    <TextBlock 
+                                        Grid.Row="2"
+                                        Text="Unknown"
+                                        VerticalAlignment="Center" 
+                                        TextWrapping="Wrap"/>
+                                    <TextBlock
+                                        Grid.Row="2"
+                                        Grid.Column="2"
+                                        VerticalAlignment="Center" 
+                                        TextWrapping="Wrap"
+                                        Text="{Binding UnknownCount, FallbackValue=0}"/>
 
-                                <TextBlock 
-                                    Grid.Row="3"
-                                    Text="Total"
-                                    VerticalAlignment="Center" 
-                                    TextWrapping="Wrap"/>
-                                <TextBlock
-                                    Grid.Row="3"
-                                    Grid.Column="2"
-                                    VerticalAlignment="Center" 
-                                    TextWrapping="Wrap"
-                                    Text="{Binding TotalCount, FallbackValue=0}"/>
-                            </Grid>
-                        </HeaderedContentControl>
+                                    <TextBlock 
+                                        Grid.Row="3"
+                                        Text="Total"
+                                        VerticalAlignment="Center" 
+                                        TextWrapping="Wrap"/>
+                                    <TextBlock
+                                        Grid.Row="3"
+                                        Grid.Column="2"
+                                        VerticalAlignment="Center" 
+                                        TextWrapping="Wrap"
+                                        Text="{Binding TotalCount, FallbackValue=0}"/>
+                                </Grid>
+                            </HeaderedContentControl>
+                            <HeaderedContentControl
+                                Header="Active Download Keys"
+                                Margin="2,6"
+                                VerticalAlignment="Top">
+                                <ItemsControl
+                                    x:Name="ActiveDownloadKeys"
+                                    ItemsSource="{Binding ActiveDownloadKeys}"
+                                    VirtualizingPanel.ScrollUnit="Pixel"
+                                    VirtualizingPanel.VirtualizationMode="Recycling"
+                                    HorizontalContentAlignment="Stretch"/>
+                            </HeaderedContentControl>
+                        </StackPanel>
                     </ScrollViewer>
                 </TabItem>
 

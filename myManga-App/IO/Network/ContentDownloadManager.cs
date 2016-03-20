@@ -53,6 +53,9 @@ namespace myManga_App.IO.Network
 
         public Boolean IsActive
         { get { return TotalDownloadCount > 0; } }
+
+        public IEnumerable<String> ActiveKeys
+        { get { return ActiveDownloadsCache.Select(x => x.Key); } }
         #endregion
 
         #region Constructors

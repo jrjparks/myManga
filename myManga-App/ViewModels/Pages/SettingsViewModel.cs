@@ -11,6 +11,7 @@ using System.Communication;
 using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
 using System.Windows;
 using System.Windows.Input;
 
@@ -18,6 +19,9 @@ namespace myManga_App.ViewModels.Pages
 {
     public sealed class SettingsViewModel : BaseViewModel
     {
+        private Timer ActiveDownloadsTimer
+        { get; set; }
+
         public SettingsViewModel()
             : base(false)
         {
@@ -25,7 +29,13 @@ namespace myManga_App.ViewModels.Pages
             DatabaseExtensionObjects = new ObservableCollection<ExtensionObject>();
             AuthenticationDialog = new AuthenticationDialogViewModel();
             if (!IsInDesignMode)
-            { ResetData(); }
+            {
+                ResetData();
+                ActiveDownloadsTimer = new Timer(state =>
+                {   // Monitor the ContentDownloadManager ActiveDownloadKeys property
+                    App.RunOnUiThread(new Action(() => { ActiveDownloadKeys = App.ContentDownloadManager.ActiveKeys; }));
+                }, null, TimeSpan.FromSeconds(5), TimeSpan.FromSeconds(3));
+            }
         }
 
         protected override void SubPullFocus()
@@ -185,6 +195,21 @@ namespace myManga_App.ViewModels.Pages
         {
             get { return (Int32)GetValue(TotalCountProperty); }
             private set { SetValue(TotalCountPropertyKey, value); }
+        }
+        #endregion
+
+        #region ActiveDownloadKeys
+        private static readonly DependencyPropertyKey ActiveDownloadKeysPropertyKey = DependencyProperty.RegisterAttachedReadOnly(
+            "ActiveDownloadKeys",
+            typeof(IEnumerable<String>),
+            typeof(SettingsViewModel),
+            null);
+        private static readonly DependencyProperty ActiveDownloadKeysProperty = ActiveDownloadKeysPropertyKey.DependencyProperty;
+
+        public IEnumerable<String> ActiveDownloadKeys
+        {
+            get { return (IEnumerable<String>)GetValue(ActiveDownloadKeysProperty); }
+            private set { SetValue(ActiveDownloadKeysPropertyKey, value); }
         }
         #endregion
 

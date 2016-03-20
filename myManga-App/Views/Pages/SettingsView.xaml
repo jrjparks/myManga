@@ -264,7 +264,7 @@
                                     Grid.Row="0"
                                     Content="Authenticate Selected Database"
                                     Command="{Binding AuthenticateExtensionCommand}"
-                                    CommandParameter="{Binding ElementName=DatabaseExtensionObjects, Path=SelectedItem.Extension}"/>
+                                    CommandParameter="{Binding ElementName=DatabaseExtensionObjects, Path=SelectedItem}"/>
 
                                 <ListBox
                                     Grid.Row="1"

@@ -374,6 +374,8 @@
                                 VerticalAlignment="Top">
                                 <ItemsControl
                                     x:Name="ActiveDownloadKeys"
+                                    Margin="15,0,0,0"
+                                    FontSize="10pt"
                                     ItemsSource="{Binding ActiveDownloadKeys}"
                                     VirtualizingPanel.ScrollUnit="Pixel"
                                     VirtualizingPanel.VirtualizationMode="Recycling"

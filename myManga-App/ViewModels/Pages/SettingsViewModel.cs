@@ -280,21 +280,23 @@ namespace myManga_App.ViewModels.Pages
         #endregion
 
         #region AuthenticateExtensionCommand
-        private DelegateCommand<IExtension> authenticateExtensionCommand;
+        private DelegateCommand<ExtensionObject> authenticateExtensionCommand;
         public ICommand AuthenticateExtensionCommand
-        { get { return authenticateExtensionCommand ?? (authenticateExtensionCommand = new DelegateCommand<IExtension>(AuthenticateExtension, CanAuthenticateExtension)); } }
+        { get { return authenticateExtensionCommand ?? (authenticateExtensionCommand = new DelegateCommand<ExtensionObject>(AuthenticateExtension, CanAuthenticateExtension)); } }
 
-        private Boolean CanAuthenticateExtension(IExtension Extension)
+        private Boolean CanAuthenticateExtension(ExtensionObject Extension)
         {
             if (Equals(Extension, null)) return false;
+            if (Equals(Extension.Extension, null)) return false;
             return true;
         }
 
-        private async void AuthenticateExtension(IExtension Extension)
+        private async void AuthenticateExtension(ExtensionObject Extension)
         {
             try
             {
-                Boolean Authenticated = await AuthenticationDialog.ShowDialogAsync(Extension);
+                Boolean Authenticated = await AuthenticationDialog.ShowDialogAsync(Extension.Extension);
+                Extension.Update(Extension.Extension, LoadIcon: false);
             }
             catch { }
             finally { }

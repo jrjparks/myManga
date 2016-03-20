@@ -1,4 +1,5 @@
 ﻿using myMangaSiteExtension.Interfaces;
+using myMangaSiteExtension.Objects;
 using myMangaSiteExtension.Primitives.Objects;
 using System;
 using System.ComponentModel;
@@ -97,7 +98,64 @@ namespace myManga_App.Objects.UserConfig
             else ExtensionType = "UnknownExtension";
         }
 
+        public override string ToString()
+        {
+            return String.Format("[{2}]{0} ({1})", Name, Language, ExtensionType);
+        }
+
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         { base.GetObjectData(info, context); }
+
+        public override Boolean Equals(Object obj)
+        {
+            EnabledExtensionObject ExtObj = (obj as EnabledExtensionObject);
+            if (Equals(ExtObj, null)) return false;
+            if (!Equals(Name, ExtObj.Name)) return false;
+            if (!Equals(Language, ExtObj.Language)) return false;
+            if (!Equals(ExtensionType, ExtObj.ExtensionType)) return false;
+            return true;
+        }
+
+        public override int GetHashCode()
+        {
+            return base.GetHashCode()
+                & Name.GetHashCode()
+                & Language.GetHashCode()
+                & ExtensionType.GetHashCode();
+        }
+
+        public Boolean EqualsIExtension(IExtension Extension)
+        {
+            if (Equals(Extension, null)) return false;
+            String ExtType = "UnknownExtension";
+            Type InterfaceType = Enumerable.FirstOrDefault(Extension.GetType().GetInterfaces());
+            if (!Equals(InterfaceType, null)) ExtType = InterfaceType.Name;
+
+            if (!Equals(Name, Extension.ExtensionDescriptionAttribute.Name)) return false;
+            if (!Equals(Language, Extension.ExtensionDescriptionAttribute.Language)) return false;
+            if (!Equals(ExtensionType, ExtType)) return false;
+            return true;
+        }
+
+        public Boolean EqualsLocationObject(LocationObject Location)
+        {
+            if (Equals(Location, null)) return false;
+            if (!Equals(Name, Location.ExtensionName)) return false;
+            if (!Equals(Language, Location.ExtensionLanguage)) return false;
+            return true;
+        }
+
+        public static Boolean operator ==(EnabledExtensionObject A, EnabledExtensionObject B)
+        {
+            if (ReferenceEquals(A, B)) return true;
+            if (Equals(A, null)) return false;
+            if (Equals(B, null)) return false;
+            return A.Equals(B);
+        }
+
+        public static Boolean operator !=(EnabledExtensionObject A, EnabledExtensionObject B)
+        {
+            return !(A == B);
+        }
     }
 }

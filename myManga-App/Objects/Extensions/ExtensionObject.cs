@@ -29,15 +29,20 @@ namespace myManga_App.Objects.Extensions
         public IExtension Extension
         { get; private set; }
 
-        public ExtensionObject(IExtension Extension, Boolean Enabled) : base()
+        public ExtensionObject(IExtension Extension, Boolean Enabled, Boolean LoadIcon = true) : base()
         {
-            Update(Extension, Enabled);
+            Update(Extension, Enabled, LoadIcon);
         }
 
-        public void Update(IExtension Extension, Boolean Enabled)
+        public void Update(IExtension Extension, Boolean Enabled, Boolean LoadIcon = true)
+        {
+            this.Enabled = Enabled;
+            Update(Extension);
+        }
+
+        public void Update(IExtension Extension, Boolean LoadIcon=true)
         {
             this.Extension = Extension;
-            this.Enabled = Enabled;
 
             Name = String.Format("{0} ({1})", Extension.ExtensionDescriptionAttribute.Name, Extension.ExtensionDescriptionAttribute.Language);
 

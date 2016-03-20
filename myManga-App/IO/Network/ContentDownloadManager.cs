@@ -387,13 +387,18 @@ namespace myManga_App.IO.Network
         #endregion
 
         #region Async Methods
+        /// <summary>
+        /// Filter Extentions
+        /// </summary>
+        /// <param name="Extensions">IEnumerable<IExtension> to filter</param>
+        /// <param name="EnabledExtentions">IEnumerable<EnabledExtensionObject> to use for filter</param>
+        /// <returns></returns>
         public IEnumerable<IExtension> ValidExtensions(IEnumerable<IExtension> Extensions, IEnumerable<EnabledExtensionObject> EnabledExtentions) => Extensions.Where(Extension =>
         {
             if (!Extension.ExtensionDescriptionAttribute.SupportedObjects.HasFlag(SupportedObjects.Manga)) return false;
             if (Extension.ExtensionDescriptionAttribute.RequiresAuthentication) if (!Extension.IsAuthenticated) return false;
 
-            String Name = String.Format("{0} ({1})", Extension.ExtensionDescriptionAttribute.Name, Extension.ExtensionDescriptionAttribute.Language);
-            Int32 Count = EnabledExtentions.Count(ee => Equals(ee.Name, Extension.ExtensionDescriptionAttribute.Name) && Equals(ee.Language, Extension.ExtensionDescriptionAttribute.Language));
+            Int32 Count = EnabledExtentions.Where(EnExt => EnExt.Enabled).Count(EnExt => EnExt.EqualsIExtension(Extension));
             if (Equals(Count, 0)) return false;
             return true;
         });
@@ -407,10 +412,34 @@ namespace myManga_App.IO.Network
         #endregion
 
         #region Retry
+        /// <summary>
+        /// Async Task Retry
+        /// </summary>
+        /// <typeparam name="TResult"></typeparam>
+        /// <param name="method">Task to Retry</param>
+        /// <param name="timeout">Allowed TimeSpan timeout</param>
+        /// <returns>Result from method</returns>
         public async Task<TResult> Retry<TResult>(Func<Task<TResult>> method, TimeSpan timeout)
         { return await Retry(method: method, timeout: timeout, delay: TimeSpan.FromSeconds(1), delayIncrement: TimeSpan.Zero); }
+        /// <summary>
+        /// Async Task Retry
+        /// </summary>
+        /// <typeparam name="TResult"></typeparam>
+        /// <param name="method">Task to Retry</param>
+        /// <param name="timeout">Allowed TimeSpan timeout</param>
+        /// <param name="delay"></param>
+        /// <returns>Result from method</returns>
         public async Task<TResult> Retry<TResult>(Func<Task<TResult>> method, TimeSpan timeout, TimeSpan delay)
         { return await Retry(method: method, timeout: timeout, delay: delay, delayIncrement: TimeSpan.Zero); }
+        /// <summary>
+        /// Async Task Retry
+        /// </summary>
+        /// <typeparam name="TResult"></typeparam>
+        /// <param name="method">Task to Retry</param>
+        /// <param name="timeout">Allowed TimeSpan timeout</param>
+        /// <param name="delay"></param>
+        /// <param name="delayIncrement"></param>
+        /// <returns>Result from method</returns>
         public async Task<TResult> Retry<TResult>(Func<Task<TResult>> method, TimeSpan timeout, TimeSpan delay, TimeSpan delayIncrement)
         {
             Stopwatch watch = Stopwatch.StartNew();
@@ -451,7 +480,7 @@ namespace myManga_App.IO.Network
                 if (!Equals(progress, null)) progress.Report(5);
 
                 IEnumerable<Task<ExtensionContentResult>> ExtensionContentTasksQuery =
-                    from Extension in ValidExtensions(App.Extensions.DLLCollection, App.UserConfiguration.EnabledExtensions)
+                    from Extension in ValidExtensions(App.Extensions, App.UserConfiguration.EnabledExtensions)
                     select LoadExtensionMangaContent(Extension, MangaObject);
                 List<Task<ExtensionContentResult>> ExtensionContentTasks = ExtensionContentTasksQuery.ToList();
                 Int32 OriginalExtensionContentTasksCount = ExtensionContentTasks.Count;
@@ -561,8 +590,9 @@ namespace myManga_App.IO.Network
 
                 // Store valid ISiteExtension
                 IEnumerable<ISiteExtension> ValidSiteExtensions = ValidExtensions(App.SiteExtensions, App.UserConfiguration.EnabledExtensions).Cast<ISiteExtension>();
-                
-                IEnumerable<LocationObject> OrderedChapterObjectLocations = ChapterObject.Locations.OrderBy(_ => App.UserConfiguration.EnabledExtensions.ToList().FindIndex(ee => Equals(ee.Name, _.ExtensionName) && Equals(ee.Language, _.ExtensionLanguage))).Reverse();
+
+                List<EnabledExtensionObject> EnabledExtensionList = App.UserConfiguration.EnabledExtensions.ToList();
+                IEnumerable<LocationObject> OrderedChapterObjectLocations = ChapterObject.Locations.OrderBy(Location => EnabledExtensionList.FindIndex(EnExt => EnExt.EqualsLocationObject(Location))).Reverse();
                 foreach (LocationObject LocationObject in OrderedChapterObjectLocations)
                 {
                     ct.ThrowIfCancellationRequested();
@@ -676,7 +706,7 @@ namespace myManga_App.IO.Network
             if (!Equals(progress, null)) progress.Report(5);
 
             IEnumerable<Task<ExtensionContentResult>> ExtensionContentTasksQuery =
-                from Extension in ValidExtensions(App.Extensions.DLLCollection, App.UserConfiguration.EnabledExtensions)
+                from Extension in ValidExtensions(App.Extensions, App.UserConfiguration.EnabledExtensions)
                 select LoadExtensionSearchContent(Extension, SearchTerm);
             List<Task<ExtensionContentResult>> ExtensionContentTasks = ExtensionContentTasksQuery.ToList();
             Int32 OriginalExtensionContentTasksCount = ExtensionContentTasks.Count;

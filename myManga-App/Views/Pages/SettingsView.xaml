@@ -139,6 +139,11 @@
                                         <RadioButton.Resources>
                                             <ResourceDictionary Source="/myManga;component/Themes/LightTheme.xaml"/>
                                         </RadioButton.Resources>
+                                        <RadioButton.Template>
+                                            <ControlTemplate TargetType="RadioButton">
+                                                <ContentPresenter/>
+                                            </ControlTemplate>
+                                        </RadioButton.Template>
                                         <Border
                                             Height="100"
                                             Width="100"
@@ -171,6 +176,11 @@
                                         <RadioButton.Resources>
                                             <ResourceDictionary Source="/myManga;component/Themes/DarkTheme.xaml"/>
                                         </RadioButton.Resources>
+                                        <RadioButton.Template>
+                                            <ControlTemplate TargetType="RadioButton">
+                                                <ContentPresenter/>
+                                            </ControlTemplate>
+                                        </RadioButton.Template>
                                         <Border
                                             Height="100"
                                             Width="100"
@@ -224,7 +234,7 @@
                                     Grid.Row="0"
                                     Content="Authenticate Selected Site"
                                     Command="{Binding AuthenticateExtensionCommand}"
-                                    CommandParameter="{Binding ElementName=SiteExtensionObjects, Path=SelectedItem.Extension}"/>
+                                    CommandParameter="{Binding ElementName=SiteExtensionObjects, Path=SelectedItem}"/>
 
                                 <ListBox
                                     Grid.Row="1"

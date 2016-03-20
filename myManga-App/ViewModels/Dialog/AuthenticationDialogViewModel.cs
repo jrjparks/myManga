@@ -194,7 +194,8 @@ namespace myManga_App.ViewModels.Dialog
             Boolean RememberMe = AuthenticationRememberMe;
 
             Boolean authenticationSuccess = await Task.Run(() => Authenticate(new NetworkCredential(Username, Password), AuthenticationCTS.Token, AuthenticationProgressReporter));
-            String Name = Extension.ExtensionDescriptionAttribute.Name;
+            String Name = Extension.ExtensionDescriptionAttribute.Name,
+                Language = Extension.ExtensionDescriptionAttribute.Language;
             if (authenticationSuccess)
             {
                 if (!Equals(Name, null))
@@ -203,6 +204,7 @@ namespace myManga_App.ViewModels.Dialog
                     App.UserAuthentication.UserPluginAuthentications.Remove(UserPluginAuthentication);
                     UserPluginAuthentication = UserPluginAuthentication ?? new UserPluginAuthenticationObject();
                     UserPluginAuthentication.PluginName = Name;
+                    UserPluginAuthentication.PluginLanguage = Language;
                     UserPluginAuthentication.Username = Username;
                     UserPluginAuthentication.Password = Password;
                     App.UserAuthentication.UserPluginAuthentications.Add(UserPluginAuthentication);

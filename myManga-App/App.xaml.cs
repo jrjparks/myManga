@@ -70,22 +70,23 @@ namespace myManga_App
         private readonly Embedded embedded = new Embedded();
 
         #region Storage
-        public Manager<IExtension, IExtensionCollection<IExtension>> Extensions
+        public Manager<IExtension, IExtensionCollection<IExtension>> ExtensionsManager
         { get; private set; }
 
-        public IExtensionCollection<ISiteExtension> SiteExtensions
-        { get { return new IExtensionCollection<ISiteExtension>(Extensions.DLLCollection.OfType<ISiteExtension>()); } }
-
-        public IExtensionCollection<IDatabaseExtension> DatabaseExtensions
-        { get { return new IExtensionCollection<IDatabaseExtension>(Extensions.DLLCollection.OfType<IDatabaseExtension>()); } }
+        public IExtensionCollection<IExtension> Extensions =>
+            new IExtensionCollection<IExtension>(ExtensionsManager.DLLCollection.OfType<IExtension>());
+        public IExtensionCollection<ISiteExtension> SiteExtensions =>
+            new IExtensionCollection<ISiteExtension>(ExtensionsManager.DLLCollection.OfType<ISiteExtension>());
+        public IExtensionCollection<IDatabaseExtension> DatabaseExtensions =>
+            new IExtensionCollection<IDatabaseExtension>(ExtensionsManager.DLLCollection.OfType<IDatabaseExtension>());
         #endregion
 
         private void InitializeEmbedded()
         {
-            Extensions = new Manager<IExtension, IExtensionCollection<IExtension>>();
+            ExtensionsManager = new Manager<IExtension, IExtensionCollection<IExtension>>();
 
             AppDomain.CurrentDomain.AssemblyResolve += embedded.ResolveAssembly;
-            Extensions.ManagerAppDomain.AssemblyResolve += embedded.ResolveAssembly;
+            ExtensionsManager.ManagerAppDomain.AssemblyResolve += embedded.ResolveAssembly;
         }
 
         #endregion
@@ -423,7 +424,7 @@ namespace myManga_App
         private void App_Startup(object sender, StartupEventArgs e)
         {
             // Load all of the extensions
-            Extensions.Load(PLUGIN_DIRECTORY, PLUGIN_FILTER);
+            ExtensionsManager.Load(PLUGIN_DIRECTORY, PLUGIN_FILTER);
 
             LoadUserConfig();
             LoadUserAuthenticate();
@@ -448,7 +449,7 @@ namespace myManga_App
             ContentDownloadManager.Dispose();
             ZipManager.Dispose();
 
-            Extensions.Unload();
+            ExtensionsManager.Unload();
         }
         #endregion
 
@@ -556,12 +557,12 @@ namespace myManga_App
             {
                 try
                 {
-                    ISiteExtension siteExtension = SiteExtensions[upa.PluginName, upa.PluginLanguage];
-                    siteExtension.Authenticate(new System.Net.NetworkCredential(upa.Username, upa.Password), cts.Token, null);
+                    IExtension extension = Extensions[upa.PluginName, upa.PluginLanguage];
+                    extension.Authenticate(new System.Net.NetworkCredential(upa.Username, upa.Password), cts.Token, null);
                 }
                 catch
                 {
-                    MessageBox.Show(String.Format("There was an error decoding {0}. Please reauthenticate.", upa.PluginName));
+                    MessageBox.Show(String.Format("There was an error decoding {0} ({1}). Please reauthenticate.", upa.PluginName, upa.PluginLanguage));
                 }
             }
             SaveUserAuthentication();

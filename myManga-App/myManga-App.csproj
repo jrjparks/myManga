@@ -424,7 +424,8 @@
 xcopy "$(SolutionDir)myManga-IDatabaseExtensions\$(ConfigurationName)\*.mymanga.dll" "$(TargetDir)Plugins\" /F /R /Y /I</PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
-    <PreBuildEvent>del "$(TargetDir)Plugins\*.mymanga.dll"</PreBuildEvent>
+    <PreBuildEvent>if not exist "$(TargetDir)Plugins" mkdir "$(TargetDir)Plugins"
+del "$(TargetDir)Plugins\*.mymanga.dll"</PreBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

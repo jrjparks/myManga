@@ -18,10 +18,10 @@ using System.Windows;
 
 namespace Batoto
 {
-    [ISiteExtensionDescription(
-        "Batoto",
-        "bato.to",
-        "https://bato.to/reader",
+    [IExtensionDescription(
+        Name = "Batoto",
+        URLFormat = "bato.to",
+        RefererHeader ="https://bato.to/reader",
         RootUrl = "https://bato.to",
         Author = "James Parks",
         Version = "0.0.1",
@@ -33,11 +33,11 @@ namespace Batoto
         protected const String AUTH_KEY = "880ea6a14ea49e853634fbdc5015a024",
             SECURE_KEY = "ff65abdb3406e0c4459ab7f1c873b621";
 
-        protected ISiteExtensionDescriptionAttribute siteExtensionDescriptionAttribute;
-        public ISiteExtensionDescriptionAttribute SiteExtensionDescriptionAttribute
-        { get { return siteExtensionDescriptionAttribute ?? (siteExtensionDescriptionAttribute = GetType().GetCustomAttribute<ISiteExtensionDescriptionAttribute>(false)); } }
+        #region IExtesion
+        private IExtensionDescriptionAttribute EDA;
+        public IExtensionDescriptionAttribute ExtensionDescriptionAttribute
+        { get { return EDA ?? (EDA = GetType().GetCustomAttribute<IExtensionDescriptionAttribute>(false)); } }
 
-        #region IExtension
         protected Icon extensionIcon;
         public Icon ExtensionIcon
         {
@@ -78,7 +78,7 @@ namespace Batoto
             loginData.AppendUrlEncoded("auth_key", AUTH_KEY, true);
             loginData.AppendUrlEncoded("anonymous", "1");
             loginData.AppendUrlEncoded("rememberMe", "1");
-            loginData.AppendUrlEncoded("referer", this.SiteExtensionDescriptionAttribute.RefererHeader);
+            loginData.AppendUrlEncoded("referer", this.ExtensionDescriptionAttribute.RefererHeader);
             loginData.AppendUrlEncoded("ips_username", Credentials.UserName);
             loginData.AppendUrlEncoded("ips_password", Credentials.Password);
 
@@ -158,9 +158,9 @@ namespace Batoto
         {
             return new SearchRequestObject()
             {
-                Url = String.Format("{0}/search?name={1}", SiteExtensionDescriptionAttribute.RootUrl, Uri.EscapeUriString(searchTerm)),
+                Url = String.Format("{0}/search?name={1}", ExtensionDescriptionAttribute.RootUrl, Uri.EscapeUriString(searchTerm)),
                 Method = SearchMethod.GET,
-                Referer = SiteExtensionDescriptionAttribute.RefererHeader
+                Referer = ExtensionDescriptionAttribute.RefererHeader
             };
         }
 
@@ -215,7 +215,7 @@ namespace Batoto
                 Genres = (from HtmlNode GenreNode in GenreNodes select HtmlEntity.DeEntitize(GenreNode.InnerText.Trim())).ToArray();
 
             List<ChapterObject> Chapters = new List<ChapterObject>();
-            HtmlNodeCollection ChapterNodes = ChapterListing.SelectNodes(String.Format(".//tr[contains(@class,'lang_{0} chapter_row')]", SiteExtensionDescriptionAttribute.Language));
+            HtmlNodeCollection ChapterNodes = ChapterListing.SelectNodes(String.Format(".//tr[contains(@class,'lang_{0} chapter_row')]", ExtensionDescriptionAttribute.Language));
             if (ChapterNodes != null && ChapterNodes.Count > 0)
             {
                 foreach (HtmlNode ChapterNode in ChapterNodes)
@@ -249,7 +249,7 @@ namespace Batoto
                         Released = Released,
                         Locations = {
                             new LocationObject() {
-                                ExtensionName = SiteExtensionDescriptionAttribute.Name,
+                                ExtensionName = ExtensionDescriptionAttribute.Name,
                                 Url = ChapterUrl
                             }
                         }
@@ -278,7 +278,7 @@ namespace Batoto
                 PageFlowDirection = PageFlowDirection,
                 Description = HtmlEntity.DeEntitize(Desciption),
                 AlternateNames = AlternateNames.ToList(),
-                CoverLocations = { new LocationObject() { Url = Cover, ExtensionName = SiteExtensionDescriptionAttribute.Name } },
+                CoverLocations = { new LocationObject() { Url = Cover, ExtensionName = ExtensionDescriptionAttribute.Name } },
                 Authors = Authors.ToList(),
                 Artists = Artists.ToList(),
                 Genres = Genres.ToList(),
@@ -409,10 +409,10 @@ namespace Batoto
                         LocationObject Cover = null;
                         if (Int32.TryParse(IdMatch.Match(Link).Value.Substring(1), out Id))
                         {
-                            HtmlDocument PopDocument = HtmlWeb.Load(String.Format("{0}/comic_pop?id={1}", SiteExtensionDescriptionAttribute.RootUrl, Id));
+                            HtmlDocument PopDocument = HtmlWeb.Load(String.Format("{0}/comic_pop?id={1}", ExtensionDescriptionAttribute.RootUrl, Id));
                             HtmlNode CoverNode = PopDocument.DocumentNode.SelectSingleNode("//img"),
                                 DescriptionNode = PopDocument.DocumentNode.SelectSingleNode("//table/tbody/tr[6]/td[2]");
-                            if (!HtmlNode.Equals(CoverNode, null)) Cover = new LocationObject() { Url = CoverNode.Attributes["src"].Value, ExtensionName = SiteExtensionDescriptionAttribute.Name };
+                            if (!HtmlNode.Equals(CoverNode, null)) Cover = new LocationObject() { Url = CoverNode.Attributes["src"].Value, ExtensionName = ExtensionDescriptionAttribute.Name };
                             if (!HtmlNode.Equals(DescriptionNode, null)) Description = DescriptionNode.InnerText.Trim();
                         }
                         String[] Author_Artists = { SearchResultNode.SelectSingleNode(".//td[2]").InnerText.Trim() };
@@ -420,7 +420,7 @@ namespace Batoto
                         {
                             Cover = Cover,
                             Description = Description,
-                            ExtensionName = SiteExtensionDescriptionAttribute.Name,
+                            ExtensionName = ExtensionDescriptionAttribute.Name,
                             Name = Name,
                             Url = Link,
                             Id = Id,

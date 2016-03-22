@@ -6,7 +6,7 @@ using System.Runtime.Serialization;
 namespace myMangaSiteExtension.Primitives.Objects
 {
     [Serializable, DebuggerStepThrough]
-    public abstract class SerializableObject : ISerializable
+    public abstract class SerializableObject : Object, ISerializable
     {
         public SerializableObject() { }
 

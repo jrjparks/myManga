@@ -49,6 +49,15 @@ namespace myManga_App.Objects.UserConfig
         }
 
         [XmlIgnore]
+        public String pluginLanguage;
+        [XmlElement]
+        public String PluginLanguage
+        {
+            get { return pluginLanguage; }
+            set { OnPropertyChanging(); pluginLanguage = value; OnPropertyChanged(); }
+        }
+
+        [XmlIgnore]
         public String username;
         [XmlElement]
         public String Username

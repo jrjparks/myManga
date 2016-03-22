@@ -1,4 +1,5 @@
 ﻿using myManga_App.IO.Local.Object;
+using myManga_App.Objects.UserConfig;
 using myMangaSiteExtension.Enums;
 using myMangaSiteExtension.Interfaces;
 using myMangaSiteExtension.Objects;
@@ -32,6 +33,7 @@ namespace myManga_App.IO.Network
         private readonly CancellationTokenSource cts;
 
         private readonly MemoryCache ActiveDownloadsCache;
+        // private readonly Dictionary<String, IProgress<Int32>> DownloadProgressDictionary;
         #endregion
 
         #region Properties
@@ -51,6 +53,9 @@ namespace myManga_App.IO.Network
 
         public Boolean IsActive
         { get { return TotalDownloadCount > 0; } }
+
+        public IEnumerable<String> ActiveKeys
+        { get { return ActiveDownloadsCache.Select(x => x.Key); } }
         #endregion
 
         #region Constructors
@@ -69,7 +74,7 @@ namespace myManga_App.IO.Network
             TaskConcurrencySemaphore = new SemaphoreSlim(DownloadConcurrency, DownloadConcurrency);
             ImageTaskConcurrencySemaphore = new SemaphoreSlim(ImageDownloadConcurrency, ImageDownloadConcurrency);
             ServicePointManager.DefaultConnectionLimit = DownloadConcurrency;
-            
+
             cts = new CancellationTokenSource();
             ContentTaskFactory = Task.Factory;
         }
@@ -127,8 +132,11 @@ namespace myManga_App.IO.Network
 
         public async Task DownloadAsync(MangaObject MangaObject, Boolean Refresh = true, IProgress<Int32> ProgressReporter = null)
         {
-            if (ActiveDownloadsCache.Contains(CacheKey(MangaObject))) return;
-            ActiveDownloadsCache.Set(CacheKey(MangaObject), true, DateTimeOffset.MaxValue);
+            String CK = CacheKey(MangaObject);
+            if (ActiveDownloadsCache.Contains(CK)) return;
+            ActiveDownloadsCache.Set(CK, true, DateTimeOffset.MaxValue);
+            // DownloadProgressDictionary.Add(CK, ProgressReporter);
+
             try
             {
                 await Task.Delay(TimeSpan.FromSeconds(1));
@@ -142,14 +150,15 @@ namespace myManga_App.IO.Network
                     foreach (LocationObject CoverImageLocation in MangaObject.CoverLocations)
                     { DownloadCover(MangaObject, CoverImageLocation); }
                 }
-                // Write Async Verify
+                // TODO: Write Async Verify
             }
             catch (Exception ex)
             { throw ex; }
             finally
             {
-                ActiveDownloadsCache.Remove(CacheKey(MangaObject));
                 if (!Equals(ProgressReporter, null)) ProgressReporter.Report(100);
+                ActiveDownloadsCache.Remove(CK);
+                // DownloadProgressDictionary.Remove(CK);
             }
         }
 
@@ -169,8 +178,10 @@ namespace myManga_App.IO.Network
 
         public async Task DownloadAsync(MangaObject MangaObject, ChapterObject ChapterObject, IProgress<Int32> ProgressReporter = null)
         {
-            if (ActiveDownloadsCache.Contains(CacheKey(MangaObject, ChapterObject))) return;
-            ActiveDownloadsCache.Set(CacheKey(MangaObject, ChapterObject), true, DateTimeOffset.MaxValue);
+            String CK = CacheKey(MangaObject, ChapterObject);
+            if (ActiveDownloadsCache.Contains(CK)) return;
+            ActiveDownloadsCache.Set(CK, true, DateTimeOffset.MaxValue);
+            // DownloadProgressDictionary.Add(CK, ProgressReporter);
 
             try
             {
@@ -218,7 +229,7 @@ namespace myManga_App.IO.Network
                     select DownloadImageAsync(
                         PageObject.ImgUrl,
                         PageObject.Url,
-                        App.SiteExtensions.DLLCollection.First(_SiteExtension => PageObject.Url.Contains(_SiteExtension.SiteExtensionDescriptionAttribute.URLFormat)).Cookies,
+                        App.SiteExtensions.First(_SiteExtension => PageObject.Url.Contains(_SiteExtension.ExtensionDescriptionAttribute.URLFormat)).Cookies,
                         SavePath(MangaObject, ChapterObject),
                         Path.GetFileName(new Uri(PageObject.ImgUrl).LocalPath));
                     List<Task> DownloadImageTasks = DownloadImageTasksQuery.ToList();
@@ -238,8 +249,9 @@ namespace myManga_App.IO.Network
             { throw ex; }
             finally
             {
-                ActiveDownloadsCache.Remove(CacheKey(MangaObject, ChapterObject));
                 if (!Equals(ProgressReporter, null)) ProgressReporter.Report(100);
+                ActiveDownloadsCache.Remove(CK);
+                // DownloadProgressDictionary.Remove(CK);
             }
         }
 
@@ -259,8 +271,10 @@ namespace myManga_App.IO.Network
 
         public async Task DownloadAsync(MangaObject MangaObject, ChapterObject ChapterObject, PageObject PageObject, IProgress<Int32> ProgressReporter = null)
         {
-            if (ActiveDownloadsCache.Contains(CacheKey(MangaObject, ChapterObject, PageObject))) return;
-            ActiveDownloadsCache.Set(CacheKey(MangaObject, ChapterObject, PageObject), true, DateTimeOffset.MaxValue);
+            String CK = CacheKey(MangaObject, ChapterObject, PageObject);
+            if (ActiveDownloadsCache.Contains(CK)) return;
+            ActiveDownloadsCache.Set(CK, true, DateTimeOffset.MaxValue);
+            // DownloadProgressDictionary.Add(CK, ProgressReporter);
 
             try
             {
@@ -275,8 +289,8 @@ namespace myManga_App.IO.Network
 
                 ChapterObject = await StorePageObject(MangaObject, ChapterObject, PageObject);
 
-                ISiteExtension SiteExtension = App.SiteExtensions.DLLCollection.First(_SiteExtension =>
-                { return PageObject.Url.Contains(_SiteExtension.SiteExtensionDescriptionAttribute.URLFormat); });
+                ISiteExtension SiteExtension = App.SiteExtensions.First(_SiteExtension =>
+                { return PageObject.Url.Contains(_SiteExtension.ExtensionDescriptionAttribute.URLFormat); });
                 // Start the DownloadImage task, don't wait.
                 DownloadImage(PageObject.ImgUrl, PageObject.Url, SiteExtension.Cookies, SavePath(MangaObject, ChapterObject), Path.GetFileName(new Uri(PageObject.ImgUrl).LocalPath));
             }
@@ -284,8 +298,9 @@ namespace myManga_App.IO.Network
             { throw ex; }
             finally
             {
-                ActiveDownloadsCache.Remove(CacheKey(MangaObject, ChapterObject, PageObject));
                 if (!Equals(ProgressReporter, null)) ProgressReporter.Report(100);
+                ActiveDownloadsCache.Remove(CK);
+                // DownloadProgressDictionary.Remove(CK);
             }
         }
 
@@ -311,14 +326,14 @@ namespace myManga_App.IO.Network
             // Load the Cover Image via Async and LimitedTaskFactory
             CookieCollection Cookies = null;
             String Referer = String.Format("{0}://{1}", CoverImageUri.Scheme, CoverImageUri.Host);
-            if (App.SiteExtensions.DLLCollection.Contains(LocationObject.ExtensionName))
+            if (App.SiteExtensions.Contains(LocationObject.ExtensionName))
             {
-                Cookies = App.SiteExtensions.DLLCollection[LocationObject.ExtensionName].Cookies;
-                Referer = App.SiteExtensions.DLLCollection[LocationObject.ExtensionName].SiteExtensionDescriptionAttribute.RefererHeader;
+                Cookies = App.SiteExtensions[LocationObject.ExtensionName, LocationObject.ExtensionLanguage].Cookies;
+                Referer = App.SiteExtensions[LocationObject.ExtensionName, LocationObject.ExtensionLanguage].ExtensionDescriptionAttribute.RefererHeader;
             }
-            else if (App.DatabaseExtensions.DLLCollection.Contains(LocationObject.ExtensionName))
+            else if (App.DatabaseExtensions.Contains(LocationObject.ExtensionName))
             {
-                Referer = App.DatabaseExtensions.DLLCollection[LocationObject.ExtensionName].DatabaseExtensionDescriptionAttribute.RefererHeader;
+                Referer = App.DatabaseExtensions[LocationObject.ExtensionName, LocationObject.ExtensionLanguage].ExtensionDescriptionAttribute.RefererHeader;
             }
             DownloadImage(
                 LocationObject.Url,
@@ -337,6 +352,7 @@ namespace myManga_App.IO.Network
         {
             if (ActiveDownloadsCache.Contains(Url)) return;
             ActiveDownloadsCache.Set(Url, true, DateTimeOffset.MaxValue);
+            // DownloadProgressDictionary.Add(Url, ProgressReporter);
             try
             {
                 using (Stream ImageStream = await ContentTaskFactory.StartNew(() => LoadImageAsync(Url, Referer, Cookies, cts.Token, ProgressReporter)).Unwrap())
@@ -349,8 +365,9 @@ namespace myManga_App.IO.Network
             { throw ex; }
             finally
             {
-                ActiveDownloadsCache.Remove(Url);
                 if (!Equals(ProgressReporter, null)) ProgressReporter.Report(100);
+                ActiveDownloadsCache.Remove(Url);
+                // DownloadProgressDictionary.Remove(Url);
             }
         }
 
@@ -373,6 +390,22 @@ namespace myManga_App.IO.Network
         #endregion
 
         #region Async Methods
+        /// <summary>
+        /// Filter Extentions
+        /// </summary>
+        /// <param name="Extensions">IEnumerable<IExtension> to filter</param>
+        /// <param name="EnabledExtentions">IEnumerable<EnabledExtensionObject> to use for filter</param>
+        /// <returns></returns>
+        public IEnumerable<IExtension> ValidExtensions(IEnumerable<IExtension> Extensions, IEnumerable<EnabledExtensionObject> EnabledExtentions) => Extensions.Where(Extension =>
+        {
+            if (!Extension.ExtensionDescriptionAttribute.SupportedObjects.HasFlag(SupportedObjects.Manga)) return false;
+            if (Extension.ExtensionDescriptionAttribute.RequiresAuthentication) if (!Extension.IsAuthenticated) return false;
+
+            Int32 Count = EnabledExtentions.Where(EnExt => EnExt.Enabled).Count(EnExt => EnExt.EqualsIExtension(Extension));
+            if (Equals(Count, 0)) return false;
+            return true;
+        });
+
         #region Async Method Classes
         private sealed class ExtensionContentResult
         {
@@ -382,10 +415,34 @@ namespace myManga_App.IO.Network
         #endregion
 
         #region Retry
+        /// <summary>
+        /// Async Task Retry
+        /// </summary>
+        /// <typeparam name="TResult"></typeparam>
+        /// <param name="method">Task to Retry</param>
+        /// <param name="timeout">Allowed TimeSpan timeout</param>
+        /// <returns>Result from method</returns>
         public async Task<TResult> Retry<TResult>(Func<Task<TResult>> method, TimeSpan timeout)
         { return await Retry(method: method, timeout: timeout, delay: TimeSpan.FromSeconds(1), delayIncrement: TimeSpan.Zero); }
+        /// <summary>
+        /// Async Task Retry
+        /// </summary>
+        /// <typeparam name="TResult"></typeparam>
+        /// <param name="method">Task to Retry</param>
+        /// <param name="timeout">Allowed TimeSpan timeout</param>
+        /// <param name="delay"></param>
+        /// <returns>Result from method</returns>
         public async Task<TResult> Retry<TResult>(Func<Task<TResult>> method, TimeSpan timeout, TimeSpan delay)
         { return await Retry(method: method, timeout: timeout, delay: delay, delayIncrement: TimeSpan.Zero); }
+        /// <summary>
+        /// Async Task Retry
+        /// </summary>
+        /// <typeparam name="TResult"></typeparam>
+        /// <param name="method">Task to Retry</param>
+        /// <param name="timeout">Allowed TimeSpan timeout</param>
+        /// <param name="delay"></param>
+        /// <param name="delayIncrement"></param>
+        /// <returns>Result from method</returns>
         public async Task<TResult> Retry<TResult>(Func<Task<TResult>> method, TimeSpan timeout, TimeSpan delay, TimeSpan delayIncrement)
         {
             Stopwatch watch = Stopwatch.StartNew();
@@ -423,32 +480,11 @@ namespace myManga_App.IO.Network
                 await TaskConcurrencySemaphore.WaitAsync(ct);
                 ct.ThrowIfCancellationRequested();
 
-                // Store valid ISiteExtension
-                IEnumerable<ISiteExtension> ValidSiteExtensions = App.SiteExtensions.DLLCollection.Where(SiteExtension =>
-                {
-                    if (!SiteExtension.SiteExtensionDescriptionAttribute.SupportedObjects.HasFlag(SupportedObjects.Manga)) return false;
-                    if (SiteExtension.SiteExtensionDescriptionAttribute.RequiresAuthentication)
-                        if (!SiteExtension.IsAuthenticated) return false;
-                    if (!App.UserConfiguration.EnabledSiteExtensions.Contains(SiteExtension.SiteExtensionDescriptionAttribute.Name)) return false;
-                    return true;
-                });
-                // Store valid IDatabaseExtension
-                IEnumerable<IDatabaseExtension> ValidDatabaseExtension = App.DatabaseExtensions.DLLCollection.Where(DatabaseExtension =>
-                {
-                    if (!DatabaseExtension.DatabaseExtensionDescriptionAttribute.SupportedObjects.HasFlag(SupportedObjects.Manga)) return false;
-                    if (DatabaseExtension.DatabaseExtensionDescriptionAttribute.RequiresAuthentication)
-                        if (!DatabaseExtension.IsAuthenticated) return false;
-                    if (!App.UserConfiguration.EnabledDatabaseExtensions.Contains(DatabaseExtension.DatabaseExtensionDescriptionAttribute.Name)) return false;
-                    return true;
-                });
-                List<IExtension> ValidExtensions = new List<IExtension>();
-                ValidExtensions.AddRange(ValidSiteExtensions);
-                ValidExtensions.AddRange(ValidDatabaseExtension);
-
                 if (!Equals(progress, null)) progress.Report(5);
 
                 IEnumerable<Task<ExtensionContentResult>> ExtensionContentTasksQuery =
-                    from Extension in ValidExtensions select LoadExtensionMangaContent(Extension, MangaObject);
+                    from Extension in ValidExtensions(App.Extensions, App.UserConfiguration.EnabledExtensions)
+                    select LoadExtensionMangaContent(Extension, MangaObject);
                 List<Task<ExtensionContentResult>> ExtensionContentTasks = ExtensionContentTasksQuery.ToList();
                 Int32 OriginalExtensionContentTasksCount = ExtensionContentTasks.Count;
 
@@ -474,7 +510,7 @@ namespace myManga_App.IO.Network
                             }
                             catch (Exception)
                             {
-                                Int32 idx = MangaObject.Locations.FindIndex(_LocationObject => Equals(_LocationObject.ExtensionName, SiteExtension.SiteExtensionDescriptionAttribute.Name));
+                                Int32 idx = MangaObject.Locations.FindIndex(_LocationObject => Equals(_LocationObject.ExtensionName, SiteExtension.ExtensionDescriptionAttribute.Name));
                                 MangaObject.Locations[idx].Enabled = false;
                             }
                         }
@@ -488,7 +524,7 @@ namespace myManga_App.IO.Network
                             }
                             catch (Exception)
                             {
-                                Int32 idx = MangaObject.DatabaseLocations.FindIndex(_LocationObject => Equals(_LocationObject.ExtensionName, DatabaseExtension.DatabaseExtensionDescriptionAttribute.Name));
+                                Int32 idx = MangaObject.DatabaseLocations.FindIndex(_LocationObject => Equals(_LocationObject.ExtensionName, DatabaseExtension.ExtensionDescriptionAttribute.Name));
                                 MangaObject.DatabaseLocations[idx].Enabled = false;
                             }
                         }
@@ -519,25 +555,27 @@ namespace myManga_App.IO.Network
             MangaInfoLocationObjects.AddRange(MangaObject.DatabaseLocations);
             LocationObject LocationObject = MangaInfoLocationObjects.FirstOrDefault(_LocationObject =>
             {
-                if (Extension is ISiteExtension)
-                { if (!Equals(_LocationObject.ExtensionName, (Extension as ISiteExtension).SiteExtensionDescriptionAttribute.Name)) return false; }
-                else if (Extension is IDatabaseExtension)
-                { if (!Equals(_LocationObject.ExtensionName, (Extension as IDatabaseExtension).DatabaseExtensionDescriptionAttribute.Name)) return false; }
-                if (Equals(_LocationObject.Enabled, false)) return false;
+                if (!Equals(_LocationObject.ExtensionName, Extension.ExtensionDescriptionAttribute.Name))
+                { return false; }
+                if (Equals(_LocationObject.Enabled, false))
+                { return false; }
                 return true;
             });
             if (Equals(LocationObject, null)) // If there is not a match return null
             { return null; }
             using (WebDownloader WebDownloader = new WebDownloader(Extension.Cookies))
             {
-                if (Extension is ISiteExtension)
-                { WebDownloader.Referer = (Extension as ISiteExtension).SiteExtensionDescriptionAttribute.RefererHeader; }
-                else if (Extension is IDatabaseExtension)
-                { WebDownloader.Referer = (Extension as IDatabaseExtension).DatabaseExtensionDescriptionAttribute.RefererHeader; }
+                WebDownloader.Referer = Extension.ExtensionDescriptionAttribute.RefererHeader;
                 try
                 {
-                    String Content = await Retry(() => WebDownloader.DownloadStringTaskAsync(LocationObject.Url), DOWNLOAD_TIMEOUT);
-                    return new ExtensionContentResult() { Extension = Extension, Content = Content };
+                    String Content = await Retry(() =>
+                        WebDownloader.DownloadStringTaskAsync(LocationObject.Url),
+                        DOWNLOAD_TIMEOUT);
+                    return new ExtensionContentResult()
+                    {
+                        Extension = Extension,
+                        Content = Content
+                    };
                 }
                 catch
                 { return null; }
@@ -554,26 +592,20 @@ namespace myManga_App.IO.Network
                 ct.ThrowIfCancellationRequested();
 
                 // Store valid ISiteExtension
-                IEnumerable<ISiteExtension> ValidSiteExtensions = App.SiteExtensions.DLLCollection.Where(_ =>
-                {
-                    if (!_.SiteExtensionDescriptionAttribute.SupportedObjects.HasFlag(SupportedObjects.Manga)) return false;
-                    if (_.SiteExtensionDescriptionAttribute.RequiresAuthentication)
-                        if (!_.IsAuthenticated) return false;
-                    if (!App.UserConfiguration.EnabledSiteExtensions.Contains(_.SiteExtensionDescriptionAttribute.Name)) return false;
-                    return true;
-                });
+                IEnumerable<ISiteExtension> ValidSiteExtensions = ValidExtensions(App.SiteExtensions, App.UserConfiguration.EnabledExtensions).Cast<ISiteExtension>();
 
-                IEnumerable<LocationObject> OrderedChapterObjectLocations = ChapterObject.Locations.OrderBy(_ => App.UserConfiguration.EnabledSiteExtensions.IndexOf(_.ExtensionName));
-                foreach(LocationObject LocationObject in OrderedChapterObjectLocations)
+                List<EnabledExtensionObject> EnabledExtensionList = App.UserConfiguration.EnabledExtensions.ToList();
+                IEnumerable<LocationObject> OrderedChapterObjectLocations = ChapterObject.Locations.OrderBy(Location => EnabledExtensionList.FindIndex(EnExt => EnExt.EqualsLocationObject(Location))).Reverse();
+                foreach (LocationObject LocationObject in OrderedChapterObjectLocations)
                 {
                     ct.ThrowIfCancellationRequested();
-                    ISiteExtension SiteExtension = ValidSiteExtensions.FirstOrDefault(_ => Equals(_.SiteExtensionDescriptionAttribute.Name, LocationObject.ExtensionName));
+                    ISiteExtension SiteExtension = ValidSiteExtensions.FirstOrDefault(_ => Equals(_.ExtensionDescriptionAttribute.Name, LocationObject.ExtensionName));
                     if (Equals(SiteExtension, null)) continue;  // Continue with the foreach loop
 
                     ct.ThrowIfCancellationRequested();
                     using (WebDownloader WebDownloader = new WebDownloader(SiteExtension.Cookies))
                     {
-                        WebDownloader.Referer = SiteExtension.SiteExtensionDescriptionAttribute.RefererHeader;
+                        WebDownloader.Referer = SiteExtension.ExtensionDescriptionAttribute.RefererHeader;
                         DownloadProgressChangedEventHandler ProgressEventHandler = (s, e) =>
                         {
                             if (!Equals(progress, null))
@@ -610,10 +642,10 @@ namespace myManga_App.IO.Network
                 await TaskConcurrencySemaphore.WaitAsync(ct);
                 ct.ThrowIfCancellationRequested();
 
-                ISiteExtension SiteExtension = App.SiteExtensions.DLLCollection.First(_SiteExtension => PageObject.Url.Contains(_SiteExtension.SiteExtensionDescriptionAttribute.URLFormat));
+                ISiteExtension SiteExtension = App.SiteExtensions.First(_SiteExtension => PageObject.Url.Contains(_SiteExtension.ExtensionDescriptionAttribute.URLFormat));
                 using (WebDownloader WebDownloader = new WebDownloader(SiteExtension.Cookies))
                 {
-                    WebDownloader.Referer = SiteExtension.SiteExtensionDescriptionAttribute.RefererHeader;
+                    WebDownloader.Referer = SiteExtension.ExtensionDescriptionAttribute.RefererHeader;
                     DownloadProgressChangedEventHandler ProgressEventHandler = (s, e) =>
                     {
                         if (!Equals(progress, null))
@@ -674,32 +706,11 @@ namespace myManga_App.IO.Network
         {
             List<MangaObject> SearchResults = new List<MangaObject>();
 
-            // Store valid ISiteExtension
-            IEnumerable<ISiteExtension> ValidSiteExtensions = App.SiteExtensions.DLLCollection.Where(SiteExtension =>
-            {
-                if (!SiteExtension.SiteExtensionDescriptionAttribute.SupportedObjects.HasFlag(SupportedObjects.Manga)) return false;
-                if (SiteExtension.SiteExtensionDescriptionAttribute.RequiresAuthentication)
-                    if (!SiteExtension.IsAuthenticated) return false;
-                if (!App.UserConfiguration.EnabledSiteExtensions.Contains(SiteExtension.SiteExtensionDescriptionAttribute.Name)) return false;
-                return true;
-            });
-            // Store valid IDatabaseExtension
-            IEnumerable<IDatabaseExtension> ValidDatabaseExtension = App.DatabaseExtensions.DLLCollection.Where(DatabaseExtension =>
-            {
-                if (!DatabaseExtension.DatabaseExtensionDescriptionAttribute.SupportedObjects.HasFlag(SupportedObjects.Manga)) return false;
-                if (DatabaseExtension.DatabaseExtensionDescriptionAttribute.RequiresAuthentication)
-                    if (!DatabaseExtension.IsAuthenticated) return false;
-                if (!App.UserConfiguration.EnabledDatabaseExtensions.Contains(DatabaseExtension.DatabaseExtensionDescriptionAttribute.Name)) return false;
-                return true;
-            });
-            List<IExtension> ValidExtensions = new List<IExtension>();
-            ValidExtensions.AddRange(ValidSiteExtensions);
-            ValidExtensions.AddRange(ValidDatabaseExtension);
-
             if (!Equals(progress, null)) progress.Report(5);
 
             IEnumerable<Task<ExtensionContentResult>> ExtensionContentTasksQuery =
-                from Extension in ValidExtensions select LoadExtensionSearchContent(Extension, SearchTerm);
+                from Extension in ValidExtensions(App.Extensions, App.UserConfiguration.EnabledExtensions)
+                select LoadExtensionSearchContent(Extension, SearchTerm);
             List<Task<ExtensionContentResult>> ExtensionContentTasks = ExtensionContentTasksQuery.ToList();
             Int32 OriginalExtensionContentTasksCount = ExtensionContentTasks.Count;
 
@@ -763,7 +774,7 @@ namespace myManga_App.IO.Network
                             {
                                 if (Equals(ExistingMangaObject.DatabaseLocations.FindIndex(_DatabaseLocation => Equals(
                                     _DatabaseLocation.ExtensionName,
-                                    DatabaseExtension.DatabaseExtensionDescriptionAttribute.Name)), -1))
+                                    DatabaseExtension.ExtensionDescriptionAttribute.Name)), -1))
                                 {
                                     ExistingMangaObject.AttachDatabase(DatabaseObject, preferDatabaseDescription: true);
                                 }
@@ -825,9 +836,9 @@ namespace myManga_App.IO.Network
             using (WebDownloader WebDownloader = new WebDownloader(Extension.Cookies))
             {
                 if (Extension is ISiteExtension)
-                { WebDownloader.Referer = (Extension as ISiteExtension).SiteExtensionDescriptionAttribute.RefererHeader; }
+                { WebDownloader.Referer = (Extension as ISiteExtension).ExtensionDescriptionAttribute.RefererHeader; }
                 else if (Extension is IDatabaseExtension)
-                { WebDownloader.Referer = (Extension as IDatabaseExtension).DatabaseExtensionDescriptionAttribute.RefererHeader; }
+                { WebDownloader.Referer = (Extension as IDatabaseExtension).ExtensionDescriptionAttribute.RefererHeader; }
                 try
                 {
                     String Content = null;

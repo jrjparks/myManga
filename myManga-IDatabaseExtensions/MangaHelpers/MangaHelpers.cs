@@ -13,10 +13,10 @@ using System.Threading;
 
 namespace MangaHelpers
 {
-    [IDatabaseExtensionDescription(
-        "MangaHelpers",
-        "mangahelpers.com",
-        "http://mangahelpers.com/",
+    [IExtensionDescription(
+        Name = "MangaHelpers",
+        URLFormat = "mangahelpers.com",
+        RefererHeader = "http://mangahelpers.com/",
         RootUrl = "http://mangahelpers.com",
         Author = "James Parks",
         Version = "0.0.1",
@@ -24,11 +24,11 @@ namespace MangaHelpers
         Language = "English")]
     public sealed class MangaHelpers : IDatabaseExtension
     {
-        private IDatabaseExtensionDescriptionAttribute databaseExtensionDescriptionAttribute;
-        public IDatabaseExtensionDescriptionAttribute DatabaseExtensionDescriptionAttribute
-        { get { return databaseExtensionDescriptionAttribute ?? (databaseExtensionDescriptionAttribute = GetType().GetCustomAttribute<IDatabaseExtensionDescriptionAttribute>(false)); } }
-
         #region IExtesion
+        private IExtensionDescriptionAttribute EDA;
+        public IExtensionDescriptionAttribute ExtensionDescriptionAttribute
+        { get { return EDA ?? (EDA = GetType().GetCustomAttribute<IExtensionDescriptionAttribute>(false)); } }
+
         private Icon extensionIcon;
         public Icon ExtensionIcon
         {
@@ -78,9 +78,9 @@ namespace MangaHelpers
         {
             return new SearchRequestObject()
             {
-                Url = String.Format("{0}/manga/browse/?q={1}", DatabaseExtensionDescriptionAttribute.RootUrl, Uri.EscapeUriString(searchTerm)),
+                Url = String.Format("{0}/manga/browse/?q={1}", ExtensionDescriptionAttribute.RootUrl, Uri.EscapeUriString(searchTerm)),
                 Method = SearchMethod.GET,
-                Referer = DatabaseExtensionDescriptionAttribute.RefererHeader,
+                Referer = ExtensionDescriptionAttribute.RefererHeader,
             };
         }
 
@@ -105,8 +105,8 @@ namespace MangaHelpers
 
             LocationObject Location = new LocationObject()
             {
-                ExtensionName = DatabaseExtensionDescriptionAttribute.Name,
-                Url = String.Format("{0}{1}", DatabaseExtensionDescriptionAttribute.RootUrl, LocationNode.Attributes["href"].Value),
+                ExtensionName = ExtensionDescriptionAttribute.Name,
+                Url = String.Format("{0}{1}", ExtensionDescriptionAttribute.RootUrl, LocationNode.Attributes["href"].Value),
             };
 
             foreach (HtmlNode DetailNode in DetailsNode.SelectNodes(".//tr"))
@@ -138,7 +138,7 @@ namespace MangaHelpers
             }
 
             List<LocationObject> Covers = new List<LocationObject>();
-            if (CoverNode != null) Covers.Add(new LocationObject() { Url = String.Format("{0}{1}", DatabaseExtensionDescriptionAttribute.RootUrl, CoverNode.Attributes["src"].Value), ExtensionName = DatabaseExtensionDescriptionAttribute.Name });
+            if (CoverNode != null) Covers.Add(new LocationObject() { Url = String.Format("{0}{1}", ExtensionDescriptionAttribute.RootUrl, CoverNode.Attributes["src"].Value), ExtensionName = ExtensionDescriptionAttribute.Name });
 
             return new DatabaseObject()
             {
@@ -160,10 +160,16 @@ namespace MangaHelpers
             HtmlWeb HtmlWeb = new HtmlWeb();
             HtmlNode TableResultsNode = DatabaseObjectDocument.GetElementbyId("results");
             if (TableResultsNode.InnerText.Contains("No results")) return new List<DatabaseObject>();
-            return (from HtmlNode MangaNode in TableResultsNode.SelectNodes(".//tr")
+            return (from HtmlNode MangaNode 
+                    in TableResultsNode.SelectNodes(".//tr")
                     where MangaNode.SelectSingleNode(".//td[1]/a") != null
-                    select ParseDatabaseObject(HtmlWeb.Load(String.Format("{0}{1}", DatabaseExtensionDescriptionAttribute.RootUrl, MangaNode.SelectSingleNode(".//td[1]/a").Attributes["href"].Value)).DocumentNode.OuterHtml)
+                    select ParseDatabaseObject(HtmlWeb.Load(String.Format("{0}{1}",
+                        ExtensionDescriptionAttribute.RootUrl,
+                        MangaNode.SelectSingleNode(".//td[1]/a").Attributes["href"].Value)).DocumentNode.OuterHtml)
                     ).ToList();
         }
+
+        List<SearchResultObject> IExtension.ParseSearch(string Content)
+        { throw new NotImplementedException("Database extensions return DatabaseObjects"); }
     }
 }

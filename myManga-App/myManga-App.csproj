@@ -92,8 +92,8 @@
     </ApplicationDefinition>
     <Compile Include="Controls\Extensions\ItemsControlExtensions.cs" />
     <Compile Include="Controls\ListBoxExtentions.cs" />
-    <Compile Include="Objects\Extensions\DatabaseExtensionObject.cs" />
-    <Compile Include="Objects\Extensions\SiteExtensionObject.cs" />
+    <Compile Include="Objects\Extensions\ExtensionObject.cs" />
+    <Compile Include="Objects\UserConfig\EnabledExtensionObject.cs" />
     <Compile Include="System\Windows\Controls\Behaviors\DragDrop\DragAdorner.cs" />
     <Compile Include="System\Windows\Controls\Behaviors\DragDrop\Helper.cs" />
     <Compile Include="System\Windows\Controls\Behaviors\DragDrop\InsertAdorner.cs" />
@@ -137,11 +137,9 @@
     <Compile Include="Objects\UserConfig\ThemeType.cs" />
     <Compile Include="Objects\UserConfig\UserAuthenticationObject.cs" />
     <Compile Include="Objects\UserConfig\UserPluginAuthenticationObject.cs" />
-    <Compile Include="Objects\UserInterface\DatabaseExtensionInformationObject.cs" />
     <Compile Include="Objects\MVVM\ViewModelViewType.cs" />
     <Compile Include="Objects\UserInterface\MangaArchiveInformationObject.cs" />
     <Compile Include="Objects\UserInterface\ReadChapterRequestObject.cs" />
-    <Compile Include="Objects\UserInterface\SiteExtentionInformationObject.cs" />
     <Compile Include="Objects\UserConfig\UserConfigurationObject.cs" />
     <Compile Include="System\Runtime\Caching\RegionedMemoryCache.cs" />
     <Compile Include="System\Threading\Tasks\Schedulers\LimitedConcurrencyTaskScheduler.cs" />
@@ -426,7 +424,8 @@
 xcopy "$(SolutionDir)myManga-IDatabaseExtensions\$(ConfigurationName)\*.mymanga.dll" "$(TargetDir)Plugins\" /F /R /Y /I</PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
-    <PreBuildEvent>del "$(TargetDir)Plugins\*.mymanga.dll"</PreBuildEvent>
+    <PreBuildEvent>if not exist "$(TargetDir)Plugins" mkdir "$(TargetDir)Plugins"
+del "$(TargetDir)Plugins\*.mymanga.dll"</PreBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

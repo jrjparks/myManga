@@ -1,5 +1,8 @@
-﻿namespace myMangaSiteExtension.Enums
+﻿using System;
+
+namespace myMangaSiteExtension.Enums
 {
+    [Flags]
     public enum MangaObjectType
     {
         Unknown = 0x00,

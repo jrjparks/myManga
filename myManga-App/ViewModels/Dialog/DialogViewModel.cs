@@ -2,6 +2,7 @@
 using System.Communication;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 
@@ -70,6 +71,34 @@ namespace myManga_App.ViewModels.Dialog
         }
         #endregion
 
+        #region Async Dialog
+        private TaskCompletionSource<Boolean> dialogTaskCompletionSource;
+        public virtual Task<Boolean> ShowDialogAsync(Object state)
+        {
+            ShowDialog();
+            dialogTaskCompletionSource = new TaskCompletionSource<Boolean>();
+            return dialogTaskCompletionSource.Task;
+        }
+
+        protected void ReturnAsync(Boolean value)
+        {
+            if (!Equals(dialogTaskCompletionSource, null))
+            { dialogTaskCompletionSource.TrySetResult(value); }
+        }
+
+        protected void CancelAsync()
+        {
+            if (!Equals(dialogTaskCompletionSource, null))
+            { dialogTaskCompletionSource.TrySetCanceled(); }
+        }
+
+        protected void ExceptionAsync(Exception exception)
+        {
+            if (!Equals(dialogTaskCompletionSource, null))
+            { dialogTaskCompletionSource.TrySetException(exception); }
+        }
+        #endregion
+
         #region Show Dialog Command
         protected DelegateCommand showDialogCommand;
         public ICommand ShowDialogCommand
@@ -88,7 +117,7 @@ namespace myManga_App.ViewModels.Dialog
         { IsShown = HideMode; }
         #endregion
 
-        #region OK Authenticate
+        #region OK Button
         protected DelegateCommand okCommand;
         public ICommand OKCommand
         { get { return okCommand ?? (okCommand = new DelegateCommand(OK, CanOK)); } }
@@ -97,10 +126,28 @@ namespace myManga_App.ViewModels.Dialog
         { return true; }
 
         protected virtual void OK()
-        { HideDialog(); }
+        {
+            HideDialog();
+            ReturnAsync(true);
+        }
         #endregion
 
-        #region Cancel Authenticate
+        #region No Button
+        protected DelegateCommand noCommand;
+        public ICommand NoCommand
+        { get { return noCommand ?? (noCommand = new DelegateCommand(No, CanNo)); } }
+
+        protected virtual Boolean CanNo()
+        { return true; }
+
+        protected virtual void No()
+        {
+            HideDialog();
+            ReturnAsync(false);
+        }
+        #endregion
+
+        #region Cancel Button
         protected DelegateCommand cancelCommand;
         public ICommand CancelCommand
         { get { return cancelCommand ?? (cancelCommand = new DelegateCommand(Cancel, CanCancel)); } }
@@ -109,7 +156,10 @@ namespace myManga_App.ViewModels.Dialog
         { return true; }
 
         protected virtual void Cancel()
-        { HideDialog(); }
+        {
+            HideDialog();
+            CancelAsync();
+        }
         #endregion
 
         public DialogViewModel()

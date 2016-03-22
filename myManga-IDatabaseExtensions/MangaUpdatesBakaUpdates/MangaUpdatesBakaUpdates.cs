@@ -14,10 +14,10 @@ using System.Threading;
 
 namespace MangaUpdatesBakaUpdates
 {
-    [IDatabaseExtensionDescription(
-        "MangaUpdatesBakaUpdates",
-        "mangaupdates.com",
-        "http://www.mangaupdates.com/",
+    [IExtensionDescription(
+        Name = "MangaUpdatesBakaUpdates",
+        URLFormat = "mangaupdates.com",
+        RefererHeader = "http://www.mangaupdates.com/",
         RootUrl = "http://www.mangaupdates.com",
         Author = "James Parks",
         Version = "0.0.1",
@@ -26,11 +26,12 @@ namespace MangaUpdatesBakaUpdates
     public sealed class MangaUpdatesBakaUpdates : IDatabaseExtension
     {
         private Int32 PageCount = 30;
-        private IDatabaseExtensionDescriptionAttribute databaseExtensionDescriptionAttribute;
-        public IDatabaseExtensionDescriptionAttribute DatabaseExtensionDescriptionAttribute
-        { get { return databaseExtensionDescriptionAttribute ?? (databaseExtensionDescriptionAttribute = GetType().GetCustomAttribute<IDatabaseExtensionDescriptionAttribute>(false)); } }
 
         #region IExtesion
+        private IExtensionDescriptionAttribute EDA;
+        public IExtensionDescriptionAttribute ExtensionDescriptionAttribute
+        { get { return EDA ?? (EDA = GetType().GetCustomAttribute<IExtensionDescriptionAttribute>(false)); } }
+
         private Icon extensionIcon;
         public Icon ExtensionIcon
         {
@@ -80,9 +81,9 @@ namespace MangaUpdatesBakaUpdates
         {
             return new SearchRequestObject()
             {
-                Url = String.Format("{0}/series.html?stype=title&search={1}&perpage={2}", DatabaseExtensionDescriptionAttribute.RootUrl, Uri.EscapeUriString(searchTerm), PageCount),
+                Url = String.Format("{0}/series.html?stype=title&search={1}&perpage={2}", ExtensionDescriptionAttribute.RootUrl, Uri.EscapeUriString(searchTerm), PageCount),
                 Method = SearchMethod.GET,
-                Referer = DatabaseExtensionDescriptionAttribute.RefererHeader,
+                Referer = ExtensionDescriptionAttribute.RefererHeader,
             };
         }
 
@@ -105,7 +106,7 @@ namespace MangaUpdatesBakaUpdates
             
             List<LocationObject> Covers = new List<LocationObject>();
             if (CoverNode != null && CoverNode.SelectSingleNode(".//img") != null)
-                Covers.Add(new LocationObject() { Url = CoverNode.SelectSingleNode(".//img").Attributes["src"].Value, ExtensionName = DatabaseExtensionDescriptionAttribute.Name });
+                Covers.Add(new LocationObject() { Url = CoverNode.SelectSingleNode(".//img").Attributes["src"].Value, ExtensionName = ExtensionDescriptionAttribute.Name });
 
             Match DatabaseObjectIdMatch = Regex.Match(content, @"id=(?<DatabaseObjectId>\d+)&");
             Int32 DatabaseObjectId = Int32.Parse(DatabaseObjectIdMatch.Groups["DatabaseObjectId"].Value),
@@ -118,8 +119,8 @@ namespace MangaUpdatesBakaUpdates
                 AlternateNames = AssociatedNames,
                 Description = HtmlEntity.DeEntitize(ContentNodes.FirstOrDefault(item => item.Key.Equals("Description")).Value.InnerText.Trim()),
                 Locations = { new LocationObject() { 
-                    ExtensionName = DatabaseExtensionDescriptionAttribute.Name,
-                    Url = String.Format("{0}/series.html?id={1}", DatabaseExtensionDescriptionAttribute.RootUrl, DatabaseObjectId) } },
+                    ExtensionName = ExtensionDescriptionAttribute.Name,
+                    Url = String.Format("{0}/series.html?id={1}", ExtensionDescriptionAttribute.RootUrl, DatabaseObjectId) } },
                 ReleaseYear = ReleaseYear
             };
         }
@@ -132,9 +133,15 @@ namespace MangaUpdatesBakaUpdates
                 DatabaseObjectDocument.LoadHtml(content);
                 HtmlWeb HtmlWeb = new HtmlWeb();
                 HtmlNode TableSeriesNode = DatabaseObjectDocument.DocumentNode.SelectSingleNode("//table[contains(@class,'series_rows_table')]");
-                return (from HtmlNode MangaNode in TableSeriesNode.SelectNodes(".//tr[not(@valign='top')]").Skip(2).Take(PageCount) where MangaNode.SelectSingleNode(".//td[1]/a") != null select ParseDatabaseObject(HtmlWeb.Load(MangaNode.SelectSingleNode(".//td[1]/a").Attributes["href"].Value).DocumentNode.OuterHtml)).ToList();
+                return (from HtmlNode MangaNode 
+                        in TableSeriesNode.SelectNodes(".//tr[not(@valign='top')]").Skip(2).Take(PageCount)
+                        where MangaNode.SelectSingleNode(".//td[1]/a") != null
+                        select ParseDatabaseObject(HtmlWeb.Load(MangaNode.SelectSingleNode(".//td[1]/a").Attributes["href"].Value).DocumentNode.OuterHtml)).ToList();
             }
             return new List<DatabaseObject>();
         }
+
+        List<SearchResultObject> IExtension.ParseSearch(string Content)
+        { throw new NotImplementedException("Database extensions return DatabaseObjects"); }
     }
 }

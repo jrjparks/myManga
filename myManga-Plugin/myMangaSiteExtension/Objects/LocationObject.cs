@@ -31,6 +31,8 @@ namespace myMangaSiteExtension.Objects
         [NonSerialized, XmlIgnore, EditorBrowsable(EditorBrowsableState.Never)]
         protected String extensionname;
         [NonSerialized, XmlIgnore, EditorBrowsable(EditorBrowsableState.Never)]
+        protected String extensionlanguage;
+        [NonSerialized, XmlIgnore, EditorBrowsable(EditorBrowsableState.Never)]
         protected String url;
         [NonSerialized, XmlIgnore, EditorBrowsable(EditorBrowsableState.Never)]
         protected Boolean enabled = true;
@@ -45,6 +47,18 @@ namespace myMangaSiteExtension.Objects
             {
                 OnPropertyChanging();
                 extensionname = value;
+                OnPropertyChanged();
+            }
+        }
+
+        [XmlAttribute]
+        public String ExtensionLanguage
+        {
+            get { return extensionlanguage; }
+            set
+            {
+                OnPropertyChanging();
+                extensionlanguage = value;
                 OnPropertyChanged();
             }
         }

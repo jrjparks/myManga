@@ -17,10 +17,10 @@ using System.Threading;
 
 namespace MangaTraders
 {
-    [ISiteExtensionDescription(
-        "MangaTraders",
-        "mangatraders.org",
-        "http://mangatraders.org/",
+    [IExtensionDescription(
+        Name = "MangaTraders",
+        URLFormat = "mangatraders.org",
+        RefererHeader = "http://mangatraders.org/",
         RootUrl = "http://mangatraders.org",
         Author = "James Parks",
         Version = "0.0.1",
@@ -28,11 +28,11 @@ namespace MangaTraders
         Language = "English")]
     public sealed class MangaTraders : ISiteExtension
     {
-        private ISiteExtensionDescriptionAttribute siteExtensionDescriptionAttribute;
-        public ISiteExtensionDescriptionAttribute SiteExtensionDescriptionAttribute
-        { get { return siteExtensionDescriptionAttribute ?? (siteExtensionDescriptionAttribute = GetType().GetCustomAttribute<ISiteExtensionDescriptionAttribute>(false)); } }
+        #region IExtesion
+        private IExtensionDescriptionAttribute EDA;
+        public IExtensionDescriptionAttribute ExtensionDescriptionAttribute
+        { get { return EDA ?? (EDA = GetType().GetCustomAttribute<IExtensionDescriptionAttribute>(false)); } }
 
-        #region Extension
         private Icon extensionIcon;
         public Icon ExtensionIcon
         {
@@ -131,9 +131,9 @@ namespace MangaTraders
         {
             return new SearchRequestObject()
             {
-                Url = String.Format("{0}/advanced-search/result.php?seriesName={1}", SiteExtensionDescriptionAttribute.RootUrl, Uri.EscapeUriString(searchTerm)),
+                Url = String.Format("{0}/advanced-search/result.php?seriesName={1}", ExtensionDescriptionAttribute.RootUrl, Uri.EscapeUriString(searchTerm)),
                 Method = SearchMethod.GET,
-                Referer = SiteExtensionDescriptionAttribute.RefererHeader
+                Referer = ExtensionDescriptionAttribute.RefererHeader
             };
         }
 
@@ -197,7 +197,7 @@ namespace MangaTraders
             }
 
 
-            String Cover = SiteExtensionDescriptionAttribute.RootUrl + MangaObjectNode.SelectSingleNode(".//div[1]/img/@src").Attributes["src"].Value;
+            String Cover = ExtensionDescriptionAttribute.RootUrl + MangaObjectNode.SelectSingleNode(".//div[1]/img/@src").Attributes["src"].Value;
 
             List<ChapterObject> Chapters = new List<ChapterObject>();
             MangaObjectDocument.LoadHtml(MangaChaptersContent);
@@ -232,8 +232,8 @@ namespace MangaTraders
                     Locations =
                     {
                         new LocationObject(){
-                            ExtensionName = SiteExtensionDescriptionAttribute.Name,
-                            Url = SiteExtensionDescriptionAttribute.RootUrl + ChapterNumberNode.Attributes["href"].Value
+                            ExtensionName = ExtensionDescriptionAttribute.Name,
+                            Url = ExtensionDescriptionAttribute.RootUrl + ChapterNumberNode.Attributes["href"].Value
                         },
                     },
                     Released = Released
@@ -248,7 +248,7 @@ namespace MangaTraders
                 Name = MangaName,
                 Description = Description,
                 AlternateNames = AlternateNames.ToList(),
-                CoverLocations = { new LocationObject() { Url = Cover, ExtensionName = SiteExtensionDescriptionAttribute.Name } },
+                CoverLocations = { new LocationObject() { Url = Cover, ExtensionName = ExtensionDescriptionAttribute.Name } },
                 Authors = AuthorsArtists.ToList(),
                 Artists = AuthorsArtists.ToList(),
                 Genres = Genres.ToList(),
@@ -285,7 +285,7 @@ namespace MangaTraders
 
             String ChapterUrl = PageObjectDocument.DocumentNode.SelectSingleNode("//meta[@property='og:url']").Attributes["content"].Value;
             ChapterUrl = ChapterUrl.Substring(0, ChapterUrl.LastIndexOf('/') + 1);
-            String[] ChapterUrlSections = ChapterUrl.Substring(SiteExtensionDescriptionAttribute.RootUrl.Length).Split(new char[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
+            String[] ChapterUrlSections = ChapterUrl.Substring(ExtensionDescriptionAttribute.RootUrl.Length).Split(new char[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
 
             HtmlNode PageNode = PageObjectDocument.GetElementbyId("changePageSelect").SelectSingleNode(".//option[@selected]"),
                 PrevNode = PageNode.SelectSingleNode(".//preceding-sibling::option"),
@@ -320,10 +320,10 @@ namespace MangaTraders
             {
                 foreach (HtmlNode SearchResultNode in SearchResultNodes)
                 {
-                    String ImgUrl = SiteExtensionDescriptionAttribute.RootUrl + SearchResultNode.SelectSingleNode(".//img").Attributes["src"].Value.Substring(2),
+                    String ImgUrl = ExtensionDescriptionAttribute.RootUrl + SearchResultNode.SelectSingleNode(".//img").Attributes["src"].Value.Substring(2),
                         Name = String.Empty,
                         Link = String.Empty;
-                    LocationObject Cover = new LocationObject() { Url = ImgUrl, ExtensionName = SiteExtensionDescriptionAttribute.Name };
+                    LocationObject Cover = new LocationObject() { Url = ImgUrl, ExtensionName = ExtensionDescriptionAttribute.Name };
                     List<String> AlternateNames = new List<String>(),
                         AuthorsArtists = new List<String>(),
                         Genres = new List<String>();
@@ -378,8 +378,8 @@ namespace MangaTraders
                     {
                         Cover = Cover,
                         Name = Name,
-                        Url = String.Format("{0}/read-online/{1}", SiteExtensionDescriptionAttribute.RootUrl, Link),
-                        ExtensionName = SiteExtensionDescriptionAttribute.Name,
+                        Url = String.Format("{0}/read-online/{1}", ExtensionDescriptionAttribute.RootUrl, Link),
+                        ExtensionName = ExtensionDescriptionAttribute.Name,
                         Rating = -1,
                         Artists = AuthorsArtists,
                         Authors = AuthorsArtists

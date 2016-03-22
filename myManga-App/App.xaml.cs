@@ -44,6 +44,9 @@ namespace myManga_App
             appender.AppendToFile = true;
             appender.ImmediateFlush = true;
             appender.Threshold = LogLevel;
+            appender.MaxSizeRollBackups = 3;
+            appender.MaximumFileSize = "128KB";
+            appender.RollingStyle = log4net.Appender.RollingFileAppender.RollingMode.Once;
             appender.ActivateOptions();
             log4net.Config.BasicConfigurator.Configure(appender);
         }
@@ -67,21 +70,23 @@ namespace myManga_App
         private readonly Embedded embedded = new Embedded();
 
         #region Storage
-        public Manager<ISiteExtension, ISiteExtensionCollection> SiteExtensions
+        public Manager<IExtension, IExtensionCollection<IExtension>> ExtensionsManager
         { get; private set; }
 
-        public Manager<IDatabaseExtension, IDatabaseExtensionCollection> DatabaseExtensions
-        { get; private set; }
+        public IExtensionCollection<IExtension> Extensions =>
+            new IExtensionCollection<IExtension>(ExtensionsManager.DLLCollection.OfType<IExtension>());
+        public IExtensionCollection<ISiteExtension> SiteExtensions =>
+            new IExtensionCollection<ISiteExtension>(ExtensionsManager.DLLCollection.OfType<ISiteExtension>());
+        public IExtensionCollection<IDatabaseExtension> DatabaseExtensions =>
+            new IExtensionCollection<IDatabaseExtension>(ExtensionsManager.DLLCollection.OfType<IDatabaseExtension>());
         #endregion
 
         private void InitializeEmbedded()
         {
-            SiteExtensions = new Manager<ISiteExtension, ISiteExtensionCollection>();
-            DatabaseExtensions = new Manager<IDatabaseExtension, IDatabaseExtensionCollection>();
+            ExtensionsManager = new Manager<IExtension, IExtensionCollection<IExtension>>();
 
             AppDomain.CurrentDomain.AssemblyResolve += embedded.ResolveAssembly;
-            SiteExtensions.ManagerAppDomain.AssemblyResolve += embedded.ResolveAssembly;
-            DatabaseExtensions.ManagerAppDomain.AssemblyResolve += embedded.ResolveAssembly;
+            ExtensionsManager.ManagerAppDomain.AssemblyResolve += embedded.ResolveAssembly;
         }
 
         #endregion
@@ -90,7 +95,7 @@ namespace myManga_App
         public RegionedMemoryCache AppMemoryCache
         { get; private set; }
         #endregion
-        
+
         #region MangaObject Cache
         public ObservableCollection<MangaCacheObject> MangaCacheObjects
         { get; private set; }
@@ -232,17 +237,17 @@ namespace myManga_App
             {
                 foreach (String Cover in MangaObject.Covers)
                 {
-                    ISiteExtension SiteExtension = SiteExtensions.DLLCollection.FirstOrDefault(_SiteExtension =>
-                    { return Cover.Contains(_SiteExtension.SiteExtensionDescriptionAttribute.URLFormat); });
-                    IDatabaseExtension DatabaseExtension = DatabaseExtensions.DLLCollection.FirstOrDefault(_DatabaseExtension =>
-                    { return Cover.Contains(_DatabaseExtension.DatabaseExtensionDescriptionAttribute.URLFormat); });
-                    if (Cover.Contains("mhcdn.net")) SiteExtension = SiteExtensions.DLLCollection["MangaHere"];
+                    ISiteExtension SiteExtension = SiteExtensions.FirstOrDefault(_SiteExtension =>
+                    { return Cover.Contains(_SiteExtension.ExtensionDescriptionAttribute.URLFormat); });
+                    IDatabaseExtension DatabaseExtension = DatabaseExtensions.FirstOrDefault(_DatabaseExtension =>
+                    { return Cover.Contains(_DatabaseExtension.ExtensionDescriptionAttribute.URLFormat); });
+                    if (Cover.Contains("mhcdn.net")) SiteExtension = SiteExtensions["MangaHere", "English"];
                     if (!Equals(SiteExtension, null))
                         MangaObject.CoverLocations.Add(new LocationObject()
-                        { Url = Cover, ExtensionName = SiteExtension.SiteExtensionDescriptionAttribute.Name });
+                        { Url = Cover, ExtensionName = SiteExtension.ExtensionDescriptionAttribute.Name });
                     else if (!Equals(DatabaseExtension, null))
                         MangaObject.CoverLocations.Add(new LocationObject()
-                        { Url = Cover, ExtensionName = DatabaseExtension.DatabaseExtensionDescriptionAttribute.Name });
+                        { Url = Cover, ExtensionName = DatabaseExtension.ExtensionDescriptionAttribute.Name });
                 }
 
                 await ZipManager.Retry(() => ZipManager.WriteAsync(ArchivePath, typeof(MangaObject).Name, MangaObject.Serialize(UserConfiguration.SerializeType)), TimeSpan.FromMinutes(1));
@@ -250,12 +255,48 @@ namespace myManga_App
             return MangaObject;
         }
 
+        private async Task RenameSchema()
+        {
+            // Rename old schemas to new schema format
+            IEnumerable<String> chapterFileZipPaths = Directory.EnumerateFiles(CHAPTER_ARCHIVE_DIRECTORY, "*.ca.*", SearchOption.AllDirectories),
+                mangaFileZipPaths = Directory.EnumerateFiles(MANGA_ARCHIVE_DIRECTORY, "*.ma.*", SearchOption.AllDirectories);
+            await Task.Factory.StartNew(() => Parallel.ForEach(mangaFileZipPaths, mangaFileZipPath =>
+            {
+                // Manga Archives
+                Int32 indexOfCA = mangaFileZipPath.LastIndexOf(".ma.");
+                String fileName = mangaFileZipPath.Substring(0, indexOfCA),
+                    fileExtension = mangaFileZipPath.Substring(indexOfCA + 1);
+                if (!Equals(fileExtension, MANGA_ARCHIVE_EXTENSION))
+                {
+                    File.Move(
+                        mangaFileZipPath,
+                        String.Format("{0}.{1}", fileName, MANGA_ARCHIVE_EXTENSION));
+                }
+            }));
+            await Task.Factory.StartNew(() => Parallel.ForEach(chapterFileZipPaths, chapterFileZipPath =>
+            {
+                // Chapter Archives
+                Int32 indexOfCA = chapterFileZipPath.LastIndexOf(".ca.");
+                String fileName = chapterFileZipPath.Substring(0, indexOfCA),
+                    fileExtension = chapterFileZipPath.Substring(indexOfCA + 1);
+                if (!Equals(fileExtension, CHAPTER_ARCHIVE_EXTENSION))
+                {
+                    File.Move(
+                        chapterFileZipPath,
+                        String.Format("{0}.{1}", fileName, CHAPTER_ARCHIVE_EXTENSION));
+                }
+            }));
+        }
+
         /// <summary>
         /// Warning, this will completely reload the cache.
         /// </summary>
+        /// <returns>Time taken to load cache.</returns>
         private async Task<TimeSpan> FullMangaCacheObject()
         {
             Stopwatch loadWatch = Stopwatch.StartNew();
+            await RenameSchema();
+
             String[] MangaArchivePaths = Directory.GetFiles(MANGA_ARCHIVE_DIRECTORY, MANGA_ARCHIVE_FILTER, SearchOption.TopDirectoryOnly);
 
             IEnumerable<Task<MangaCacheObject>> MangaCacheObjectTasksQuery =
@@ -285,12 +326,13 @@ namespace myManga_App
         #region Configuration
         public readonly String
             PLUGIN_DIRECTORY = Path.Combine(Environment.CurrentDirectory, "Plugins").SafeFolder(),
+            PLUGIN_FILTER = "*.mymanga.dll",
             MANGA_ARCHIVE_DIRECTORY = Path.Combine(Environment.CurrentDirectory, "Manga Archives").SafeFolder(),
             CHAPTER_ARCHIVE_DIRECTORY = Path.Combine(Environment.CurrentDirectory, "Chapter Archives").SafeFolder(),
             MANGA_ARCHIVE_EXTENSION = "ma.zip",
-            CHAPTER_ARCHIVE_EXTENSION = "ca.zip",
+            CHAPTER_ARCHIVE_EXTENSION = "ca.cbz",
             MANGA_ARCHIVE_FILTER = "*.ma.zip",
-            CHAPTER_ARCHIVE_FILTER = "*.ca.zip",
+            CHAPTER_ARCHIVE_FILTER = "*.ca.cbz",
             USER_CONFIG_FILENAME = "mymanga.conf",
             USER_AUTH_FILENAME = "mymanga.auth.conf",
             USER_CONFIG_PATH = Path.Combine(Environment.CurrentDirectory, "mymanga.conf".SafeFileName()),
@@ -379,21 +421,20 @@ namespace myManga_App
         }
 
         #region Application Events
-        private async void App_Startup(object sender, StartupEventArgs e)
+        private void App_Startup(object sender, StartupEventArgs e)
         {
-            SiteExtensions.Load(PLUGIN_DIRECTORY, Filter: "*.mymanga.dll");
-            DatabaseExtensions.Load(PLUGIN_DIRECTORY, Filter: "*.mymanga.dll");
+            // Load all of the extensions
+            ExtensionsManager.Load(PLUGIN_DIRECTORY, PLUGIN_FILTER);
 
             LoadUserConfig();
             LoadUserAuthenticate();
             UserConfiguration.UserConfigurationUpdated += (_s, _e) => SaveUserConfiguration();
 
+            // Run initial load of cache
+            Task.Factory.StartNew(FullMangaCacheObject);
+
             // Enable FileSystemWatchers
             ConfigureFileWatchers();
-
-            // Run initial load of cache
-            //Task.Factory.StartNew(FullMangaCacheObject);
-            await FullMangaCacheObject().ConfigureAwait(false);
 
             MangaObjectArchiveWatcher.EnableRaisingEvents = true;
             ChapterObjectArchiveWatcher.EnableRaisingEvents = true;
@@ -408,8 +449,7 @@ namespace myManga_App
             ContentDownloadManager.Dispose();
             ZipManager.Dispose();
 
-            SiteExtensions.Unload();
-            DatabaseExtensions.Unload();
+            ExtensionsManager.Unload();
         }
         #endregion
 
@@ -517,12 +557,12 @@ namespace myManga_App
             {
                 try
                 {
-                    ISiteExtension siteExtension = SiteExtensions.DLLCollection[upa.PluginName];
-                    siteExtension.Authenticate(new System.Net.NetworkCredential(upa.Username, upa.Password), cts.Token, null);
+                    IExtension extension = Extensions[upa.PluginName, upa.PluginLanguage];
+                    extension.Authenticate(new System.Net.NetworkCredential(upa.Username, upa.Password), cts.Token, null);
                 }
                 catch
                 {
-                    MessageBox.Show(String.Format("There was an error decoding {0}. Please reauthenticate.", upa.PluginName));
+                    MessageBox.Show(String.Format("There was an error decoding {0} ({1}). Please reauthenticate.", upa.PluginName, upa.PluginLanguage));
                 }
             }
             SaveUserAuthentication();
@@ -541,12 +581,12 @@ namespace myManga_App
                 UserConfiguration = new UserConfigurationObject();
 
                 // Enable all available Database Extensions
-                foreach (IDatabaseExtension DatabaseExtension in DatabaseExtensions.DLLCollection)
-                    UserConfiguration.EnabledDatabaseExtensions.Add(DatabaseExtension.DatabaseExtensionDescriptionAttribute.Name);
+                foreach (IDatabaseExtension DatabaseExtension in DatabaseExtensions)
+                    UserConfiguration.EnabledExtensions.Add(new EnabledExtensionObject(DatabaseExtension) { Enabled = true });
 
-                // Enable the first Site Extention if available
-                if (SiteExtensions.DLLCollection.Count > 0)
-                    UserConfiguration.EnabledSiteExtensions.Add(SiteExtensions.DLLCollection[0].SiteExtensionDescriptionAttribute.Name);
+                // Enable the first site
+                foreach (var o in SiteExtensions.Select((sExt, idx) => new { Index = idx, Value = sExt }))
+                { UserConfiguration.EnabledExtensions.Add(new EnabledExtensionObject(o.Value) { Enabled = Equals(o.Index, 0) }); }
                 SaveUserConfiguration();
             }
             ApplyTheme(UserConfiguration.Theme);

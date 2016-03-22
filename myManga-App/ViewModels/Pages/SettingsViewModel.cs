@@ -2,6 +2,7 @@
 using myManga_App.Objects.Extensions;
 using myManga_App.Objects.UserConfig;
 using myManga_App.ViewModels.Dialog;
+using myMangaSiteExtension.Enums;
 using myMangaSiteExtension.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -10,6 +11,7 @@ using System.Communication;
 using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
 using System.Windows;
 using System.Windows.Input;
 
@@ -17,16 +19,43 @@ namespace myManga_App.ViewModels.Pages
 {
     public sealed class SettingsViewModel : BaseViewModel
     {
+        private Timer ActiveDownloadsTimer
+        { get; set; }
+
         public SettingsViewModel()
             : base(false)
         {
-            SiteExtensionObjects = new ObservableCollection<SiteExtensionObject>();
-            DatabaseExtensionObjects = new ObservableCollection<DatabaseExtensionObject>();
+            SiteExtensionObjects = new ObservableCollection<ExtensionObject>();
+            DatabaseExtensionObjects = new ObservableCollection<ExtensionObject>();
             AuthenticationDialog = new AuthenticationDialogViewModel();
             if (!IsInDesignMode)
             {
                 ResetData();
+                ActiveDownloadsTimer = new Timer(state =>
+                {   // Monitor the ContentDownloadManager ActiveDownloadKeys property
+                    App.RunOnUiThread(new Action(() => { ActiveDownloadKeys = App.ContentDownloadManager.ActiveKeys; }));
+                }, null, TimeSpan.FromSeconds(5), TimeSpan.FromSeconds(3));
             }
+        }
+
+        protected override void SubPullFocus()
+        {
+            base.SubPullFocus();
+            ResetData();
+        }
+
+        protected override void SubLostFocus()
+        {
+            base.SubLostFocus();
+            ResetData();
+            App.ApplyTheme(App.UserConfiguration.Theme);
+        }
+
+        protected override void SubReturnFocus()
+        {
+            base.SubReturnFocus();
+            ResetData();
+            App.ApplyTheme(App.UserConfiguration.Theme);
         }
 
         private void UserConfiguration_PropertyChanged(Object sender, PropertyChangedEventArgs e)
@@ -55,40 +84,133 @@ namespace myManga_App.ViewModels.Pages
             DatabaseExtensionObjects.Clear();
 
             // Load SiteExtensions
-            foreach (String EnabledSiteExtension in UserConfiguration.EnabledSiteExtensions)
+
+            IEnumerable<EnabledExtensionObject> EnabledSiteExtensionObjects = UserConfiguration.EnabledExtensions.Where(ext => Equals(ext.ExtensionType, typeof(ISiteExtension).Name));
+            IEnumerable<EnabledExtensionObject> EnabledDatabaseExtensionObjects = UserConfiguration.EnabledExtensions.Where(ext => Equals(ext.ExtensionType, typeof(IDatabaseExtension).Name));
+
+            foreach (EnabledExtensionObject EnabledSiteExtensionObject in EnabledSiteExtensionObjects)
             {
-                ISiteExtension SiteExtension = App.SiteExtensions.DLLCollection[EnabledSiteExtension];
-                SiteExtensionObjects.Add(new SiteExtensionObject(SiteExtension, true));
+                ISiteExtension SiteExtension = App.SiteExtensions[EnabledSiteExtensionObject.Name, EnabledSiteExtensionObject.Language];
+                SiteExtensionObjects.Add(new ExtensionObject(SiteExtension, EnabledSiteExtensionObject.Enabled));
             }
-            foreach (ISiteExtension SiteExtension in App.SiteExtensions.DLLCollection)
+            foreach (ISiteExtension SiteExtension in App.SiteExtensions)
             {
-                if (!UserConfiguration.EnabledSiteExtensions.Contains(SiteExtension.SiteExtensionDescriptionAttribute.Name))
-                    SiteExtensionObjects.Add(new SiteExtensionObject(SiteExtension, false));
+                String Name = String.Format("{0} ({1})", SiteExtension.ExtensionDescriptionAttribute.Name, SiteExtension.ExtensionDescriptionAttribute.Language);
+                ExtensionObject SiteExtensionObject = SiteExtensionObjects.FirstOrDefault(seo => Equals(seo.Name, Name));
+                if (Equals(SiteExtensionObject, null)) SiteExtensionObjects.Add(new ExtensionObject(SiteExtension, false));
             }
 
-            // Load DatabaseExtensions
-            foreach (String EnabledDatabaseExtension in UserConfiguration.EnabledDatabaseExtensions)
+            foreach (EnabledExtensionObject EnabledDatabaseExtensionObject in EnabledDatabaseExtensionObjects)
             {
-                IDatabaseExtension DatabaseExtension = App.DatabaseExtensions.DLLCollection[EnabledDatabaseExtension];
-                DatabaseExtensionObjects.Add(new DatabaseExtensionObject(DatabaseExtension, true));
+                IDatabaseExtension DatabaseExtension = App.DatabaseExtensions[EnabledDatabaseExtensionObject.Name, EnabledDatabaseExtensionObject.Language];
+                DatabaseExtensionObjects.Add(new ExtensionObject(DatabaseExtension, EnabledDatabaseExtensionObject.Enabled));
             }
-            foreach (IDatabaseExtension DatabaseExtension in App.DatabaseExtensions.DLLCollection)
+            foreach (IDatabaseExtension DatabaseExtension in App.DatabaseExtensions)
             {
-                if (!UserConfiguration.EnabledDatabaseExtensions.Contains(DatabaseExtension.DatabaseExtensionDescriptionAttribute.Name))
-                    DatabaseExtensionObjects.Add(new DatabaseExtensionObject(DatabaseExtension, false));
+                String Name = String.Format("{0} ({1})", DatabaseExtension.ExtensionDescriptionAttribute.Name, DatabaseExtension.ExtensionDescriptionAttribute.Language);
+                ExtensionObject DatabaseExtensionObject = DatabaseExtensionObjects.FirstOrDefault(seo => Equals(seo.Name, Name));
+                if (Equals(DatabaseExtensionObject, null)) DatabaseExtensionObjects.Add(new ExtensionObject(DatabaseExtension, false));
             }
+            MangaCount = App.MangaCacheObjects.Count(mco =>
+                Equals(mco.MangaObject.MangaType, MangaObjectType.Manga));
+            ManhwaCount = App.MangaCacheObjects.Count(mco =>
+                Equals(mco.MangaObject.MangaType, MangaObjectType.Manhua));
+            ManhwaCount += App.MangaCacheObjects.Count(mco =>
+                Equals(mco.MangaObject.MangaType, MangaObjectType.Manhwa));
+            UnknownCount = App.MangaCacheObjects.Count(mco =>
+                Equals(mco.MangaObject.MangaType, MangaObjectType.Unknown));
+            TotalCount = MangaCount + ManhwaCount + UnknownCount;
         }
 
         #region Extension Collections
 
         #region SiteExtension Collections
-        public ObservableCollection<SiteExtensionObject> SiteExtensionObjects
+        public ObservableCollection<ExtensionObject> SiteExtensionObjects
         { get; private set; }
         #endregion
 
         #region DatabaseExtension Collections
-        public ObservableCollection<DatabaseExtensionObject> DatabaseExtensionObjects
+        public ObservableCollection<ExtensionObject> DatabaseExtensionObjects
         { get; private set; }
+        #endregion
+
+        #endregion
+
+        #region Status Page
+
+        #region MangaCount
+        private static readonly DependencyPropertyKey MangaCountPropertyKey = DependencyProperty.RegisterAttachedReadOnly(
+            "MangaCount",
+            typeof(Int32),
+            typeof(SettingsViewModel),
+            null);
+        private static readonly DependencyProperty MangaCountProperty = MangaCountPropertyKey.DependencyProperty;
+
+        public Int32 MangaCount
+        {
+            get { return (Int32)GetValue(MangaCountProperty); }
+            private set { SetValue(MangaCountPropertyKey, value); }
+        }
+        #endregion
+
+        #region ManhwaCount
+        private static readonly DependencyPropertyKey ManhwaCountPropertyKey = DependencyProperty.RegisterAttachedReadOnly(
+            "ManhwaCount",
+            typeof(Int32),
+            typeof(SettingsViewModel),
+            null);
+        private static readonly DependencyProperty ManhwaCountProperty = ManhwaCountPropertyKey.DependencyProperty;
+
+        public Int32 ManhwaCount
+        {
+            get { return (Int32)GetValue(ManhwaCountProperty); }
+            private set { SetValue(ManhwaCountPropertyKey, value); }
+        }
+        #endregion
+
+        #region UnknownCount
+        private static readonly DependencyPropertyKey UnknownCountPropertyKey = DependencyProperty.RegisterAttachedReadOnly(
+            "UnknownCount",
+            typeof(Int32),
+            typeof(SettingsViewModel),
+            null);
+        private static readonly DependencyProperty UnknownCountProperty = UnknownCountPropertyKey.DependencyProperty;
+
+        public Int32 UnknownCount
+        {
+            get { return (Int32)GetValue(UnknownCountProperty); }
+            private set { SetValue(UnknownCountPropertyKey, value); }
+        }
+        #endregion
+
+        #region TotalCount
+        private static readonly DependencyPropertyKey TotalCountPropertyKey = DependencyProperty.RegisterAttachedReadOnly(
+            "TotalCount",
+            typeof(Int32),
+            typeof(SettingsViewModel),
+            null);
+        private static readonly DependencyProperty TotalCountProperty = TotalCountPropertyKey.DependencyProperty;
+
+        public Int32 TotalCount
+        {
+            get { return (Int32)GetValue(TotalCountProperty); }
+            private set { SetValue(TotalCountPropertyKey, value); }
+        }
+        #endregion
+
+        #region ActiveDownloadKeys
+        private static readonly DependencyPropertyKey ActiveDownloadKeysPropertyKey = DependencyProperty.RegisterAttachedReadOnly(
+            "ActiveDownloadKeys",
+            typeof(IEnumerable<String>),
+            typeof(SettingsViewModel),
+            null);
+        private static readonly DependencyProperty ActiveDownloadKeysProperty = ActiveDownloadKeysPropertyKey.DependencyProperty;
+
+        public IEnumerable<String> ActiveDownloadKeys
+        {
+            get { return (IEnumerable<String>)GetValue(ActiveDownloadKeysProperty); }
+            private set { SetValue(ActiveDownloadKeysPropertyKey, value); }
+        }
         #endregion
 
         #endregion
@@ -124,15 +246,30 @@ namespace myManga_App.ViewModels.Pages
                 "WindowState",
                 "ViewTypes"
             };
-
+            UserConfiguration.EnabledExtensions.Clear();
+            foreach (ExtensionObject ExtensionObject in SiteExtensionObjects)
+            {
+                UserConfiguration.EnabledExtensions.Add(new EnabledExtensionObject(ExtensionObject.Extension)
+                {
+                    Enabled = ExtensionObject.Enabled
+                });
+            }
+            foreach (ExtensionObject ExtensionObject in DatabaseExtensionObjects)
+            {
+                UserConfiguration.EnabledExtensions.Add(new EnabledExtensionObject(ExtensionObject.Extension)
+                {
+                    Enabled = ExtensionObject.Enabled
+                });
+            }
+            /*
             UserConfiguration.EnabledSiteExtensions.Clear();
-            foreach (SiteExtensionObject SiteExtensionObject in SiteExtensionObjects)
-            { if (SiteExtensionObject.Enabled) UserConfiguration.EnabledSiteExtensions.Add(SiteExtensionObject.Name); }
+            foreach (ExtensionObject ExtensionObject in SiteExtensionObjects)
+            { if (ExtensionObject.Enabled) UserConfiguration.EnabledSiteExtensions.Add(ExtensionObject.Name); }
 
             UserConfiguration.EnabledDatabaseExtensions.Clear();
-            foreach (DatabaseExtensionObject DatabaseExtensionObject in DatabaseExtensionObjects)
-            { if (DatabaseExtensionObject.Enabled) UserConfiguration.EnabledDatabaseExtensions.Add(DatabaseExtensionObject.Name); }
-
+            foreach (ExtensionObject ExtensionObject in DatabaseExtensionObjects)
+            { if (ExtensionObject.Enabled) UserConfiguration.EnabledDatabaseExtensions.Add(ExtensionObject.Name); }
+            //*/
             PropertyInfo[] UserConfigurationProperties = typeof(UserConfigurationObject).GetProperties();
             foreach (PropertyInfo Property in UserConfigurationProperties)
             { if (!IgnoreProperties.Contains(Property.Name)) Property.SetValue(App.UserConfiguration, Property.GetValue(UserConfiguration)); }
@@ -148,19 +285,17 @@ namespace myManga_App.ViewModels.Pages
 
         private void CancelConfiguration()
         {
-            ResetData();
-            App.ApplyTheme(App.UserConfiguration.Theme);
-            Messenger.Instance.Send(true, "PreviousFocusRequest");
+            ReturnFocus();
         }
         #endregion
 
         #region Authentication Dialog
-        private static readonly DependencyPropertyKey AuthenticationDialogPropertyKey = DependencyProperty.RegisterAttachedReadOnly(
+        public static readonly DependencyPropertyKey AuthenticationDialogPropertyKey = DependencyProperty.RegisterAttachedReadOnly(
             "AuthenticationDialog",
             typeof(AuthenticationDialogViewModel),
             typeof(SettingsViewModel),
             null);
-        private static readonly DependencyProperty AuthenticationDialogProperty = AuthenticationDialogPropertyKey.DependencyProperty;
+        public static readonly DependencyProperty AuthenticationDialogProperty = AuthenticationDialogPropertyKey.DependencyProperty;
 
         public AuthenticationDialogViewModel AuthenticationDialog
         {
@@ -170,19 +305,26 @@ namespace myManga_App.ViewModels.Pages
         #endregion
 
         #region AuthenticateExtensionCommand
-        private DelegateCommand<IExtension> authenticateExtensionCommand;
+        private DelegateCommand<ExtensionObject> authenticateExtensionCommand;
         public ICommand AuthenticateExtensionCommand
-        { get { return authenticateExtensionCommand ?? (authenticateExtensionCommand = new DelegateCommand<IExtension>(AuthenticateExtension, CanAuthenticateExtension)); } }
+        { get { return authenticateExtensionCommand ?? (authenticateExtensionCommand = new DelegateCommand<ExtensionObject>(AuthenticateExtension, CanAuthenticateExtension)); } }
 
-        private Boolean CanAuthenticateExtension(IExtension Extension)
+        private Boolean CanAuthenticateExtension(ExtensionObject Extension)
         {
             if (Equals(Extension, null)) return false;
+            if (Equals(Extension.Extension, null)) return false;
             return true;
         }
 
-        private void AuthenticateExtension(IExtension Extension)
+        private async void AuthenticateExtension(ExtensionObject Extension)
         {
-            Messenger.Instance.Send(Extension, "ShowExtensionAuthenticationDialog");
+            try
+            {
+                Boolean Authenticated = await AuthenticationDialog.ShowDialogAsync(Extension.Extension);
+                Extension.Update(Extension.Extension, LoadIcon: false);
+            }
+            catch { }
+            finally { }
         }
         #endregion
     }

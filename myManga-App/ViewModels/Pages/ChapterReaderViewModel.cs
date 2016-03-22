@@ -169,11 +169,11 @@ namespace myManga_App.ViewModels.Pages
         private static void OnBookmarkObjectChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             ChapterReaderViewModel control = d as ChapterReaderViewModel;
-            BookmarkObject BookmarkObject = e.NewValue as BookmarkObject;
-            control.SaveBookmarkObject();
+            BookmarkObject newBookmarkObject = e.NewValue as BookmarkObject;
+            control.SaveBookmarkObject(newBookmarkObject);
         }
 
-        private async void SaveBookmarkObject()
+        private async void SaveBookmarkObject(BookmarkObject BookmarkObject)
         {
             await App.ZipManager.Retry(
                 () => App.ZipManager.WriteAsync(
@@ -200,9 +200,11 @@ namespace myManga_App.ViewModels.Pages
         private async static void OnPageObjectChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             ChapterReaderViewModel control = d as ChapterReaderViewModel;
+            PageObject newPageObject = e.NewValue as PageObject;
+            control.BookmarkObject.Page = newPageObject.PageNumber;
             control.PageImage = await control.LoadPageImageAsync();
             control.PreloadChapterObjects();
-            control.SaveBookmarkObject();
+            control.SaveBookmarkObject(control.BookmarkObject);
         }
         #endregion
 
@@ -532,7 +534,21 @@ namespace myManga_App.ViewModels.Pages
         private void PreloadChapterObject(MangaObject MangaObject, ChapterObject ChapterObject)
         {
             if (!App.ContentDownloadManager.IsCacheKeyActive(App.ContentDownloadManager.CacheKey(MangaObject, ChapterObject)))
-            { App.ContentDownloadManager.Download(MangaObject, ChapterObject); }
+            {
+                // Lookup MangaCacheObject and ChapterCacheObject
+                MangaCacheObject MangaCacheObject = App.MangaCacheObjects.FirstOrDefault(mco => Equals(
+                    mco.MangaObject.Name,
+                    MangaObject.Name));
+                ChapterCacheObject ChapterCacheObject = Equals(MangaCacheObject, null) ? null : MangaCacheObject.ChapterCacheObjects.FirstOrDefault(cco => Equals(
+                    cco.ArchiveFileName,
+                    ChapterObject.ChapterArchiveName(App.CHAPTER_ARCHIVE_EXTENSION)));
+
+                // Start Download
+                App.ContentDownloadManager.Download(
+                    MangaObject,
+                    ChapterObject,
+                    Equals(ChapterCacheObject, null) ? null : ChapterCacheObject.DownloadProgressReporter);
+            }
         }
 
         #endregion
@@ -558,7 +574,7 @@ namespace myManga_App.ViewModels.Pages
         private async void PageNext()
         {
             if (PageObject.PageNumber < ChapterObject.Pages.Last().PageNumber)
-            { BookmarkObject.Page = (PageObject = ChapterObject.NextPageObject(PageObject)).PageNumber; }
+            { PageObject = ChapterObject.NextPageObject(PageObject); }
             else
             { await OpenForReading(MangaObject, MangaObject.NextChapterObject(ChapterObject), false); }
         }
@@ -583,7 +599,7 @@ namespace myManga_App.ViewModels.Pages
         private async void PagePrev()
         {
             if (PageObject.PageNumber > ChapterObject.Pages.First().PageNumber)
-            { BookmarkObject.Page = (PageObject = ChapterObject.PrevPageObject(PageObject)).PageNumber; }
+            { PageObject = ChapterObject.PrevPageObject(PageObject); }
             else
             { await OpenForReading(MangaObject, MangaObject.PrevChapterObject(ChapterObject), true); }
         }

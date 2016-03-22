@@ -25,12 +25,13 @@ namespace myManga_App.ViewModels.Dialog
             });
             if (!IsInDesignMode)
             {
-                Messenger.Instance.RegisterRecipient<IExtension>(this, _ =>
-                {
-                    Extension = _;
-                    ShowDialog();
-                }, "ShowExtensionAuthenticationDialog");
             }
+        }
+
+        public override Task<bool> ShowDialogAsync(object state)
+        {
+            Extension = state as IExtension;
+            return base.ShowDialogAsync(state);
         }
 
         #region Progress
@@ -85,13 +86,10 @@ namespace myManga_App.ViewModels.Dialog
             control.AuthenticationUsername = String.Empty;
             if (!Equals(control.AuthenticationPassword, null))
             { try { control.AuthenticationPassword.Clear(); } catch { } }
-            control.AuthenticationRememberMe = false;
+            control.ResetAuthenticationRememberMe();
 
-            if (Extension is ISiteExtension)
-            { control.Name = (Extension as ISiteExtension).SiteExtensionDescriptionAttribute.Name; }
-            else if (Extension is IDatabaseExtension)
-            { control.Name = (Extension as IDatabaseExtension).DatabaseExtensionDescriptionAttribute.Name; }
-            else { control.Name = null; }
+            if (!Equals(Extension, null))
+            { control.Name = String.Format("{0} ({1})", Extension.ExtensionDescriptionAttribute.Name, Extension.ExtensionDescriptionAttribute.Language); }
         }
 
         private static readonly DependencyProperty NameProperty = DependencyProperty.RegisterAttached(
@@ -136,12 +134,16 @@ namespace myManga_App.ViewModels.Dialog
             "AuthenticationRememberMe",
             typeof(Boolean),
             typeof(AuthenticationDialogViewModel),
-            new PropertyMetadata(false));
+            new PropertyMetadata(true));
 
         public Boolean AuthenticationRememberMe
         {
             get { return (Boolean)GetValue(AuthenticationRememberMeProperty); }
             set { SetValue(AuthenticationRememberMeProperty, value); }
+        }
+        public void ResetAuthenticationRememberMe()
+        {
+            ClearValue(AuthenticationRememberMeProperty);
         }
 
         private static readonly DependencyPropertyKey AuthenticationErrorPropertyKey = DependencyProperty.RegisterAttachedReadOnly(
@@ -196,6 +198,8 @@ namespace myManga_App.ViewModels.Dialog
             Boolean RememberMe = AuthenticationRememberMe;
 
             Boolean authenticationSuccess = await Task.Run(() => Authenticate(new NetworkCredential(Username, Password), AuthenticationCTS.Token, AuthenticationProgressReporter));
+            String Name = Extension.ExtensionDescriptionAttribute.Name,
+                Language = Extension.ExtensionDescriptionAttribute.Language;
             if (authenticationSuccess)
             {
                 if (!Equals(Name, null))
@@ -204,6 +208,7 @@ namespace myManga_App.ViewModels.Dialog
                     App.UserAuthentication.UserPluginAuthentications.Remove(UserPluginAuthentication);
                     UserPluginAuthentication = UserPluginAuthentication ?? new UserPluginAuthenticationObject();
                     UserPluginAuthentication.PluginName = Name;
+                    UserPluginAuthentication.PluginLanguage = Language;
                     UserPluginAuthentication.Username = Username;
                     UserPluginAuthentication.Password = Password;
                     App.UserAuthentication.UserPluginAuthentications.Add(UserPluginAuthentication);
@@ -218,7 +223,7 @@ namespace myManga_App.ViewModels.Dialog
                 AuthenticationUsername = String.Empty;
                 if (!Equals(AuthenticationPassword, null))
                 { try { AuthenticationPassword.Clear(); } catch { } }
-                AuthenticationRememberMe = false;
+                ResetAuthenticationRememberMe();
             }
         }
         #endregion

@@ -33,6 +33,8 @@ namespace myManga_App.ViewModels
         }
         #endregion
 
+        #region View Management
+
         #region ViewType
         private static readonly DependencyProperty ViewTypeProperty = DependencyProperty.RegisterAttached(
             "ViewType",
@@ -64,20 +66,6 @@ namespace myManga_App.ViewModels
         }
         #endregion
 
-        private Boolean? _IsInDesignMode = null;
-        public Boolean IsInDesignMode { get { return (Boolean)(_IsInDesignMode ?? (_IsInDesignMode = DesignerProperties.GetIsInDesignMode(this))); } }
-
-        protected virtual void SubPullFocus() { }
-        public void PullFocus() { Messenger.Instance.Send(this, "FocusRequest"); SubPullFocus(); }
-
-        protected BaseViewModel(Boolean SupportsViewTypeChange = false)
-        {
-            if (!IsInDesignMode)
-                if (this.SupportsViewTypeChange = SupportsViewTypeChange)
-                    try { ViewType = App.UserConfiguration.ViewTypes.FirstOrDefault(vt => vt.ViewModelName.Equals(GetType().Name)).ViewType; }
-                    catch { App.UserConfiguration.ViewTypes.Add(new SerializableViewModelViewType() { ViewModelName = GetType().Name, ViewType = ViewType = ViewModelViewType.Normal }); }
-        }
-
         private void SaveViewType()
         {
             if (!IsInDesignMode && SupportsViewTypeChange)
@@ -86,6 +74,38 @@ namespace myManga_App.ViewModels
                 if (CurrentSerializableViewModelViewType != null) CurrentSerializableViewModelViewType.ViewType = ViewType;
                 App.SaveUserConfiguration();
             }
+        }
+
+        #endregion
+
+        #region Focus Management
+
+        #region Pull
+        public void PullFocus() { Messenger.Instance.Send(this, "FocusRequest"); SubPullFocus(); }
+        protected virtual void SubPullFocus() { }
+        #endregion
+
+        #region Lost
+        public void LostFocus() { Messenger.Instance.Send(this, "LostFocusRequest"); SubLostFocus(); }
+        protected virtual void SubLostFocus() { }
+        #endregion
+
+        #region Return
+        public void ReturnFocus() { Messenger.Instance.Send(true, "PreviousFocusRequest"); SubReturnFocus(); }
+        protected virtual void SubReturnFocus() { }
+        #endregion
+
+        #endregion
+
+        private Boolean? _IsInDesignMode = null;
+        public Boolean IsInDesignMode { get { return (Boolean)(_IsInDesignMode ?? (_IsInDesignMode = DesignerProperties.GetIsInDesignMode(this))); } }
+
+        protected BaseViewModel(Boolean SupportsViewTypeChange = false)
+        {
+            if (!IsInDesignMode)
+                if (this.SupportsViewTypeChange = SupportsViewTypeChange)
+                    try { ViewType = App.UserConfiguration.ViewTypes.FirstOrDefault(vt => vt.ViewModelName.Equals(GetType().Name)).ViewType; }
+                    catch { App.UserConfiguration.ViewTypes.Add(new SerializableViewModelViewType() { ViewModelName = GetType().Name, ViewType = ViewType = ViewModelViewType.Normal }); }
         }
 
         #region IDisposable Support

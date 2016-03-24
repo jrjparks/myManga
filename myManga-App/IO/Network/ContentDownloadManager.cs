@@ -330,13 +330,13 @@ namespace myManga_App.IO.Network
             String Referer = String.Format("{0}://{1}", CoverImageUri.Scheme, CoverImageUri.Host);
             if (App.Extensions.Contains(LocationObject.ExtensionName, LocationObject.ExtensionLanguage))
             {
-                IExtension Extension = App.SiteExtensions[LocationObject.ExtensionName, LocationObject.ExtensionLanguage];
+                IExtension Extension = App.Extensions[LocationObject.ExtensionName, LocationObject.ExtensionLanguage];
                 Cookies = Extension.Cookies;
                 Referer = Extension.ExtensionDescriptionAttribute.RefererHeader;
             }
             else if (App.Extensions.Contains(LocationObject.ExtensionName))
             {
-                IExtension Extension = App.SiteExtensions[LocationObject.ExtensionName];
+                IExtension Extension = App.Extensions[LocationObject.ExtensionName];
                 Cookies = Extension.Cookies;
                 Referer = Extension.ExtensionDescriptionAttribute.RefererHeader;
             }
@@ -714,6 +714,7 @@ namespace myManga_App.IO.Network
 
             if (!Equals(progress, null)) progress.Report(5);
 
+            Boolean firstResponse = true;
             IEnumerable<Task<ExtensionContentResult>> ExtensionContentTasksQuery =
                 from Extension in ValidExtensions(App.Extensions, App.UserConfiguration.EnabledExtensions)
                 select LoadExtensionSearchContent(Extension, SearchTerm);
@@ -764,7 +765,7 @@ namespace myManga_App.IO.Network
                             MangaObject ExistingMangaObject = SearchResults.FirstOrDefault(_MangaObject =>
                             {   // Locate an Existing MangaObject
                                 List<String> ExistingMangaObjectNames = new List<String>(_MangaObject.AlternateNames),
-                                DatabaseObjectNames = new List<String>(DatabaseObject.AlternateNames);
+                                        DatabaseObjectNames = new List<String>(DatabaseObject.AlternateNames);
 
                                 ExistingMangaObjectNames.Insert(0, _MangaObject.Name);
                                 DatabaseObjectNames.Insert(0, DatabaseObject.Name);
@@ -776,19 +777,23 @@ namespace myManga_App.IO.Network
                                 ExistingHalfCount = (Int32)Math.Ceiling((Double)ExistingMangaObjectNames.Count / 2);
                                 return IntersectCount >= ExistingHalfCount;
                             });
-                            if (!Equals(ExistingMangaObject, null))
+                            if (Equals(ExistingMangaObject, null))
+                            {
+                                MangaObject databaseMangaObject = new MangaObject();
+                                databaseMangaObject.AttachDatabase(DatabaseObject, true, true);
+                                SearchResults.Add(databaseMangaObject);
+                            }
+                            else
                             {
                                 if (Equals(ExistingMangaObject.DatabaseLocations.FindIndex(_DatabaseLocation => Equals(
                                     _DatabaseLocation.ExtensionName,
                                     DatabaseExtension.ExtensionDescriptionAttribute.Name)), -1))
-                                {
-                                    ExistingMangaObject.AttachDatabase(DatabaseObject, preferDatabaseDescription: true);
-                                }
+                                { ExistingMangaObject.AttachDatabase(DatabaseObject, preferDatabaseDescription: true); }
                             }
                         }
                     }
                 }
-
+                firstResponse = Equals(SearchResults.Count, 0);
                 Int32 ExtensionContentTasksProgress = (Int32)Math.Round(((Double)(OriginalExtensionContentTasksCount - ExtensionContentTasks.Count) / (Double)OriginalExtensionContentTasksCount) * 70);
                 if (!Equals(progress, null)) progress.Report(10 + ExtensionContentTasksProgress);
             }

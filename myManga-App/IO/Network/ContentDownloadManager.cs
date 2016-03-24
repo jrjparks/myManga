@@ -798,9 +798,14 @@ namespace myManga_App.IO.Network
                 if (!Equals(progress, null)) progress.Report(10 + ExtensionContentTasksProgress);
             }
 
-            if (!Equals(progress, null)) progress.Report(850);
+            if (!Equals(progress, null)) progress.Report(85);
             ct.ThrowIfCancellationRequested();
+
+            // Remove Database only results
+            Int32 RemoveCount = SearchResults.RemoveAll(_ => Equals(_.Locations.Count, 0));
+
             // Merge same items
+            /* This should be handled above.
             for (Int32 index = 0; index < SearchResults.Count; ++index)
             {
                 ct.ThrowIfCancellationRequested();
@@ -830,6 +835,7 @@ namespace myManga_App.IO.Network
                     if (!Equals(progress, null)) progress.Report(90 + MergeProgress);
                 }
             }
+            //*/
 
             if (!Equals(progress, null)) progress.Report(100);
             ct.ThrowIfCancellationRequested();

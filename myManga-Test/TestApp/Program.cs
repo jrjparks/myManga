@@ -426,7 +426,10 @@ namespace TestApp
                 using (StreamReader streamReader = new StreamReader(response.GetResponseStream()))
                 {
                     MangaObj = ise.ParseMangaObject(streamReader.ReadToEnd());
-                    MangaObj.Locations.Add(new LocationObject() { ExtensionName = isea.Name, Url = Link });
+                    MangaObj.Locations.Add(new LocationObject() {
+                        ExtensionName = isea.Name,
+                        ExtensionLanguage = isea.Language,
+                        Url = Link });
                 }
             }
             return MangaObj;
@@ -664,6 +667,7 @@ namespace TestApp
                     MangaObject.Locations.Add(new LocationObject()
                     {
                         ExtensionName = ise.ExtensionDescriptionAttribute.Name,
+                        ExtensionLanguage = ise.ExtensionDescriptionAttribute.Language,
                         Url = Link
                     });
                     ct.ThrowIfCancellationRequested();

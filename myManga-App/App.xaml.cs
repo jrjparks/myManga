@@ -32,7 +32,7 @@ namespace myManga_App
     public partial class App : Application
     {
         #region Logging
-        private readonly log4net.ILog logger = log4net.LogManager.GetLogger(typeof(App));
+        public readonly log4net.ILog logger = log4net.LogManager.GetLogger(typeof(App));
 
         private void ConfigureLog4Net(log4net.Core.Level LogLevel = null)
         {
@@ -244,10 +244,18 @@ namespace myManga_App
                     if (Cover.Contains("mhcdn.net")) SiteExtension = SiteExtensions["MangaHere", "English"];
                     if (!Equals(SiteExtension, null))
                         MangaObject.CoverLocations.Add(new LocationObject()
-                        { Url = Cover, ExtensionName = SiteExtension.ExtensionDescriptionAttribute.Name });
+                        {
+                            Url = Cover,
+                            ExtensionName = SiteExtension.ExtensionDescriptionAttribute.Name,
+                            ExtensionLanguage = SiteExtension.ExtensionDescriptionAttribute.Language
+                        });
                     else if (!Equals(DatabaseExtension, null))
                         MangaObject.CoverLocations.Add(new LocationObject()
-                        { Url = Cover, ExtensionName = DatabaseExtension.ExtensionDescriptionAttribute.Name });
+                        {
+                            Url = Cover,
+                            ExtensionName = DatabaseExtension.ExtensionDescriptionAttribute.Name,
+                            ExtensionLanguage = DatabaseExtension.ExtensionDescriptionAttribute.Language
+                        });
                 }
 
                 await ZipManager.Retry(() => ZipManager.WriteAsync(ArchivePath, typeof(MangaObject).Name, MangaObject.Serialize(UserConfiguration.SerializeType)), TimeSpan.FromMinutes(1));

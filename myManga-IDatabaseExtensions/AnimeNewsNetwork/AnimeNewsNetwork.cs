@@ -98,7 +98,11 @@ namespace AnimeNewsNetwork
                 StaffNodes = DatabaseObjectDocument.DocumentNode.SelectNodes("//staff/person");
             List<LocationObject> Covers = new List<LocationObject>();
             if (CoverNode != null)
-                Covers.Add(new LocationObject() { Url = CoverNode.Attributes["src"].Value, ExtensionName = ExtensionDescriptionAttribute.Name });
+                Covers.Add(new LocationObject() {
+                    Url = CoverNode.Attributes["src"].Value,
+                    ExtensionName = ExtensionDescriptionAttribute.Name,
+                    ExtensionLanguage = ExtensionDescriptionAttribute.Language
+                });
 
             return new DatabaseObject()
             {
@@ -108,6 +112,7 @@ namespace AnimeNewsNetwork
                 Genres = (GenreNodes != null) ? (from HtmlNode InfoNode in GenreNodes select HtmlEntity.DeEntitize(InfoNode.InnerText.Trim())).ToList() : new List<String>(),
                 Locations = { new LocationObject() {
                     ExtensionName = ExtensionDescriptionAttribute.Name,
+                    ExtensionLanguage = ExtensionDescriptionAttribute.Language,
                     Url = String.Format("{0}/encyclopedia/api.xml?manga={1}", ExtensionDescriptionAttribute.RootUrl, DatabaseObjectDocument.DocumentNode.SelectSingleNode("//manga[@id]").Attributes["id"].Value) } },
                 Staff = (StaffNodes != null) ? (from HtmlNode InfoNode in StaffNodes select HtmlEntity.DeEntitize(InfoNode.InnerText.Trim())).ToList() : new List<String>(),
                 Description = (DescriptionNode != null) ? HtmlEntity.DeEntitize(DescriptionNode.InnerText.Trim()) : String.Empty,

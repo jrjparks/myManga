@@ -10,6 +10,12 @@ namespace myMangaSiteExtension.Collections
     public class IExtensionCollection<ExtensionType> : GenericCollection<ExtensionType>
         where ExtensionType : IExtension
     {
+        public virtual ExtensionType this[String Name]
+        {
+            get { return innerList[IndexOf(Name)]; }
+            set { innerList[IndexOf(Name)] = value; }
+        }
+
         public virtual ExtensionType this[String Name, String Language]
         {
             get { return innerList[IndexOf(Name, Language)]; }
@@ -35,6 +41,9 @@ namespace myMangaSiteExtension.Collections
 
         public virtual Boolean Contains(String Name)
         { return IndexOf(Name) >= 0; }
+
+        public virtual Boolean Contains(String Name, String Language)
+        { return IndexOf(Name, Language) >= 0; }
 
         public IExtensionCollection() : base() { }
         public IExtensionCollection(int capacity) : base(capacity: capacity) { }

@@ -21,7 +21,7 @@ namespace Batoto
     [IExtensionDescription(
         Name = "Batoto",
         URLFormat = "bato.to",
-        RefererHeader ="https://bato.to/reader",
+        RefererHeader = "https://bato.to/reader",
         RootUrl = "https://bato.to",
         Author = "James Parks",
         Version = "0.0.1",
@@ -250,6 +250,7 @@ namespace Batoto
                         Locations = {
                             new LocationObject() {
                                 ExtensionName = ExtensionDescriptionAttribute.Name,
+                                ExtensionLanguage = ExtensionDescriptionAttribute.Language,
                                 Url = ChapterUrl
                             }
                         }
@@ -278,7 +279,10 @@ namespace Batoto
                 PageFlowDirection = PageFlowDirection,
                 Description = HtmlEntity.DeEntitize(Desciption),
                 AlternateNames = AlternateNames.ToList(),
-                CoverLocations = { new LocationObject() { Url = Cover, ExtensionName = ExtensionDescriptionAttribute.Name } },
+                CoverLocations = { new LocationObject() {
+                    Url = Cover,
+                    ExtensionName = ExtensionDescriptionAttribute.Name,
+                    ExtensionLanguage = ExtensionDescriptionAttribute.Language } },
                 Authors = Authors.ToList(),
                 Artists = Artists.ToList(),
                 Genres = Genres.ToList(),
@@ -412,7 +416,12 @@ namespace Batoto
                             HtmlDocument PopDocument = HtmlWeb.Load(String.Format("{0}/comic_pop?id={1}", ExtensionDescriptionAttribute.RootUrl, Id));
                             HtmlNode CoverNode = PopDocument.DocumentNode.SelectSingleNode("//img"),
                                 DescriptionNode = PopDocument.DocumentNode.SelectSingleNode("//table/tbody/tr[6]/td[2]");
-                            if (!HtmlNode.Equals(CoverNode, null)) Cover = new LocationObject() { Url = CoverNode.Attributes["src"].Value, ExtensionName = ExtensionDescriptionAttribute.Name };
+                            if (!HtmlNode.Equals(CoverNode, null)) Cover = new LocationObject()
+                            {
+                                Url = CoverNode.Attributes["src"].Value,
+                                ExtensionName = ExtensionDescriptionAttribute.Name,
+                                ExtensionLanguage = ExtensionDescriptionAttribute.Language
+                            };
                             if (!HtmlNode.Equals(DescriptionNode, null)) Description = DescriptionNode.InnerText.Trim();
                         }
                         String[] Author_Artists = { SearchResultNode.SelectSingleNode(".//td[2]").InnerText.Trim() };
@@ -421,6 +430,7 @@ namespace Batoto
                             Cover = Cover,
                             Description = Description,
                             ExtensionName = ExtensionDescriptionAttribute.Name,
+                            ExtensionLanguage = ExtensionDescriptionAttribute.Language,
                             Name = Name,
                             Url = Link,
                             Id = Id,

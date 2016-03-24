@@ -106,6 +106,7 @@ namespace MangaHelpers
             LocationObject Location = new LocationObject()
             {
                 ExtensionName = ExtensionDescriptionAttribute.Name,
+                ExtensionLanguage = ExtensionDescriptionAttribute.Language,
                 Url = String.Format("{0}{1}", ExtensionDescriptionAttribute.RootUrl, LocationNode.Attributes["href"].Value),
             };
 
@@ -138,7 +139,11 @@ namespace MangaHelpers
             }
 
             List<LocationObject> Covers = new List<LocationObject>();
-            if (CoverNode != null) Covers.Add(new LocationObject() { Url = String.Format("{0}{1}", ExtensionDescriptionAttribute.RootUrl, CoverNode.Attributes["src"].Value), ExtensionName = ExtensionDescriptionAttribute.Name });
+            if (CoverNode != null) Covers.Add(new LocationObject() {
+                Url = String.Format("{0}{1}", ExtensionDescriptionAttribute.RootUrl, CoverNode.Attributes["src"].Value),
+                ExtensionName = ExtensionDescriptionAttribute.Name,
+                ExtensionLanguage = ExtensionDescriptionAttribute.Language
+            });
 
             return new DatabaseObject()
             {

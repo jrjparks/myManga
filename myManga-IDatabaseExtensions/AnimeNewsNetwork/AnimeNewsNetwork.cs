@@ -116,7 +116,7 @@ namespace AnimeNewsNetwork
                     Url = String.Format("{0}/encyclopedia/api.xml?manga={1}", ExtensionDescriptionAttribute.RootUrl, DatabaseObjectDocument.DocumentNode.SelectSingleNode("//manga[@id]").Attributes["id"].Value) } },
                 Staff = (StaffNodes != null) ? (from HtmlNode InfoNode in StaffNodes select HtmlEntity.DeEntitize(InfoNode.InnerText.Trim())).ToList() : new List<String>(),
                 Description = (DescriptionNode != null) ? HtmlEntity.DeEntitize(DescriptionNode.InnerText.Trim()) : String.Empty,
-                ReleaseYear = Int32.Parse(ReleaseNode.FirstChild.InnerText.Substring(0, 4))
+                ReleaseYear = (ReleaseNode != null) ? Int32.Parse(ReleaseNode.FirstChild.InnerText.Substring(0, 4)) : 0
             };
         }
 

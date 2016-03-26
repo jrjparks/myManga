@@ -570,6 +570,7 @@ namespace myManga_App.IO.Network
             { return null; }
             using (WebDownloader WebDownloader = new WebDownloader(Extension.Cookies))
             {
+                WebDownloader.Encoding = System.Text.Encoding.UTF8;
                 WebDownloader.Referer = Extension.ExtensionDescriptionAttribute.RefererHeader;
                 try
                 {
@@ -610,6 +611,7 @@ namespace myManga_App.IO.Network
                     ct.ThrowIfCancellationRequested();
                     using (WebDownloader WebDownloader = new WebDownloader(SiteExtension.Cookies))
                     {
+                        WebDownloader.Encoding = System.Text.Encoding.UTF8;
                         WebDownloader.Referer = SiteExtension.ExtensionDescriptionAttribute.RefererHeader;
                         DownloadProgressChangedEventHandler ProgressEventHandler = (s, e) =>
                         {
@@ -851,10 +853,8 @@ namespace myManga_App.IO.Network
         {
             using (WebDownloader WebDownloader = new WebDownloader(Extension.Cookies))
             {
-                if (Extension is ISiteExtension)
-                { WebDownloader.Referer = (Extension as ISiteExtension).ExtensionDescriptionAttribute.RefererHeader; }
-                else if (Extension is IDatabaseExtension)
-                { WebDownloader.Referer = (Extension as IDatabaseExtension).ExtensionDescriptionAttribute.RefererHeader; }
+                WebDownloader.Encoding = System.Text.Encoding.UTF8;
+                WebDownloader.Referer = Extension.ExtensionDescriptionAttribute.RefererHeader;
                 try
                 {
                     String Content = null;
@@ -872,6 +872,7 @@ namespace myManga_App.IO.Network
         {
             using (WebDownloader WebDownloader = new WebDownloader())
             {
+                WebDownloader.Encoding = System.Text.Encoding.UTF8;
                 WebDownloader.Referer = RequestObject.Referer;
                 switch (RequestObject.Method)
                 {

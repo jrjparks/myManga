@@ -8,8 +8,8 @@
     xmlns:Converters="clr-namespace:myManga_App.Converters"
     xmlns:Controls="clr-namespace:System.Windows.Controls"
     mc:Ignorable="d" 
-    d:DesignHeight="768"
-    d:DesignWidth="1024">
+    d:DesignWidth="720"
+    d:DesignHeight="720">
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>

@@ -42,8 +42,8 @@
                             Grid.Row="1"
                             Grid.Column="1"
                             ClipToBounds="False"
-                            Height="{TemplateBinding DialogHeight}"
                             Width="{TemplateBinding DialogWidth}"
+                            Height="{TemplateBinding DialogHeight}"
                             Background="{TemplateBinding Background}"
                             TextBlock.Foreground="{TemplateBinding Foreground}"
                             TextElement.Foreground="{TemplateBinding Foreground}">

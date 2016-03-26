@@ -42,41 +42,6 @@
                 <ColumnDefinition Width="3*"/>
             </Grid.ColumnDefinitions>
 
-            <Border
-			    HorizontalAlignment="Center" 
-			    VerticalAlignment="Top"
-                BorderBrush="{DynamicResource window-theme-primary}"
-                BorderThickness="1,1,1,0"
-                Margin="0,-33,0,0"
-                Grid.ColumnSpan="3">
-                <StackPanel 
-                    Orientation="Horizontal"
-			        Grid.Column="2">
-                    <Controls:MetroButton
-			            FontFamily="{DynamicResource OpenIconic}"
-			            Content="{DynamicResource oi-reload}"
-			            Command="{Binding MangaCacheObjectDialog.RefreshCommand}"
-                        CommandParameter="{Binding MangaCacheObjectDialog.MangaCacheObjectDetail.MangaCacheObject}"
-			            Height="32"
-			            Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"/>
-                    <Controls:MetroButton
-			            FontFamily="{DynamicResource OpenIconic}"
-			            Content="{DynamicResource oi-trash}"
-			            Command="{Binding MangaCacheObjectDialog.DeleteCommand}"
-                        CommandParameter="{Binding MangaCacheObjectDialog.MangaCacheObjectDetail.MangaCacheObject}"
-			            Height="32"
-			            Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"/>
-                    <Controls:MetroButton
-			            FontFamily="{DynamicResource OpenIconic}"
-			            Content="{DynamicResource oi-pencil}"
-			            Command="{Binding MangaCacheObjectDialog.EditCommand}"
-                        CommandParameter="{Binding MangaCacheObjectDialog.MangaCacheObjectDetail.MangaCacheObject}"
-			            Height="32"
-			            Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"
-                        IsEnabled="False"/>
-                </StackPanel>
-            </Border>
-
             <ListBox
                 x:Name="MangaCacheObjects"
                 Grid.ColumnSpan="2"
@@ -166,6 +131,41 @@
                     Background="{DynamicResource window-background}" 
                     BorderThickness="0"/>
             </Grid>
+
+            <Border
+			    HorizontalAlignment="Right" 
+			    VerticalAlignment="Top"
+                BorderBrush="{DynamicResource window-theme-primary}"
+                BorderThickness="1,1,1,0"
+                Margin="0,-33,200,0"
+                Grid.ColumnSpan="3">
+                <StackPanel 
+                    Orientation="Horizontal"
+			        Grid.Column="2">
+                    <Controls:MetroButton
+			            FontFamily="{DynamicResource OpenIconic}"
+			            Content="{DynamicResource oi-reload}"
+			            Command="{Binding MangaCacheObjectDialog.RefreshCommand}"
+                        CommandParameter="{Binding MangaCacheObjectDialog.MangaCacheObjectDetail.MangaCacheObject}"
+			            Height="32"
+			            Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"/>
+                    <Controls:MetroButton
+			            FontFamily="{DynamicResource OpenIconic}"
+			            Content="{DynamicResource oi-trash}"
+			            Command="{Binding MangaCacheObjectDialog.DeleteCommand}"
+                        CommandParameter="{Binding MangaCacheObjectDialog.MangaCacheObjectDetail.MangaCacheObject}"
+			            Height="32"
+			            Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"/>
+                    <Controls:MetroButton
+			            FontFamily="{DynamicResource OpenIconic}"
+			            Content="{DynamicResource oi-pencil}"
+			            Command="{Binding MangaCacheObjectDialog.EditCommand}"
+                        CommandParameter="{Binding MangaCacheObjectDialog.MangaCacheObjectDetail.MangaCacheObject}"
+			            Height="32"
+			            Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"
+                        IsEnabled="False"/>
+                </StackPanel>
+            </Border>
 
         </Grid>
     </Border>

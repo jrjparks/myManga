@@ -48,12 +48,12 @@ namespace TestApp
             foreach (ISiteExtension ise in SiteExtensions.Values)
             {
                 IExtensionDescriptionAttribute isea = ise.GetType().GetCustomAttribute<IExtensionDescriptionAttribute>(false);
-                Console.WriteLine("Loaded Site Extention {0}", isea.Name);
+                Console.WriteLine("Loaded Site Extension {0}", isea.Name);
             }
             foreach (IDatabaseExtension ise in DatabaseExtensions.Values)
             {
                 IExtensionDescriptionAttribute isea = ise.GetType().GetCustomAttribute<IExtensionDescriptionAttribute>(false);
-                Console.WriteLine("Loaded Database Extention {0}", isea.Name);
+                Console.WriteLine("Loaded Database Extension {0}", isea.Name);
             }
             //Authenticate();
             //LoadManga();

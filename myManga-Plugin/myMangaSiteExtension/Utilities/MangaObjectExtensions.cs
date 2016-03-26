@@ -200,11 +200,11 @@ namespace myMangaSiteExtension.Utilities
         { return (value != null && value.Name != null) ? new String(value.Name.Where(Char.IsLetterOrDigit).ToArray()) : String.Empty; }
 
         //Yes the archive is a zip file, read the docs
-        public static String MangaArchiveName(this MangaObject value, String Extention = "zip")
-        { return (value != null && value.Name != null) ? String.Format("{0}.{1}", value.MangaFileName(), Extention) : String.Empty; }
+        public static String MangaArchiveName(this MangaObject value, String Extension = "zip")
+        { return (value != null && value.Name != null) ? String.Format("{0}.{1}", value.MangaFileName(), Extension) : String.Empty; }
 
-        public static Boolean IsLocal(this MangaObject value, String Folder, String Extention = "zip")
-        { return (value != null) ? System.IO.File.Exists(System.IO.Path.Combine(Folder, value.MangaArchiveName(Extention))) : false; }
+        public static Boolean IsLocal(this MangaObject value, String Folder, String Extension = "zip")
+        { return (value != null) ? System.IO.File.Exists(System.IO.Path.Combine(Folder, value.MangaArchiveName(Extension))) : false; }
 
         public static Boolean IsNameMatch(this MangaObject value, String name)
         {

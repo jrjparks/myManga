@@ -69,9 +69,9 @@ namespace myManga_App.Objects.Extensions
             }
 
             AuthenticationState = Extension.IsAuthenticated ?
-                    AuthenticationState.Valid :         // Extention is Authenticated? Awesome.
+                    AuthenticationState.Valid :         // Extension is Authenticated? Awesome.
                     (Extension.ExtensionDescriptionAttribute.RequiresAuthentication ?
-                        AuthenticationState.Required :   // Extention is not Authenticated and needs to be? Boo!
+                        AuthenticationState.Required :   // Extension is not Authenticated and needs to be? Boo!
                         AuthenticationState.Ignored     // What ever...
                     );
         }

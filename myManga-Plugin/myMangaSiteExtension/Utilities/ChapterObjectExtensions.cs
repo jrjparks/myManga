@@ -57,11 +57,11 @@ namespace myMangaSiteExtension.Utilities
         }
 
         //Yes the archive is a zip file, read the docs
-        public static String ChapterArchiveName(this ChapterObject value, String Extention = "zip")
-        { return String.Format("{0}.{1}.{2}.{3}", value.Volume, value.Chapter, value.SubChapter, Extention); }
+        public static String ChapterArchiveName(this ChapterObject value, String Extension = "zip")
+        { return String.Format("{0}.{1}.{2}.{3}", value.Volume, value.Chapter, value.SubChapter, Extension); }
 
-        public static Boolean IsLocal(this ChapterObject value, String Folder, String Extention = "zip")
-        { return (value != null) ? System.IO.File.Exists(System.IO.Path.Combine(Folder, value.ChapterArchiveName(Extention))) : false; }
+        public static Boolean IsLocal(this ChapterObject value, String Folder, String Extension = "zip")
+        { return (value != null) ? System.IO.File.Exists(System.IO.Path.Combine(Folder, value.ChapterArchiveName(Extension))) : false; }
 
         public static PageObject PageObjectOfBookmarkObject(this ChapterObject value, BookmarkObject bookmark_object)
         { return value.Pages.Find(p => p.PageNumber == bookmark_object.Page); }

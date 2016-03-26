@@ -125,7 +125,8 @@ namespace myManga_App
 
                 // MangaObject update check
                 Boolean VersionUpdated = false;
-                UpdateMangaObjectVersion(MangaCacheObject.MangaObject, ref VersionUpdated);
+                if (!Equals(MangaCacheObject.MangaObject, null))
+                    UpdateMangaObjectVersion(MangaCacheObject.MangaObject, ref VersionUpdated);
                 if (VersionUpdated)
                 {
                     logger.Info(String.Format("MangaObject version was updated for '{0}'.", MangaCacheObject.MangaObject.Name));
@@ -199,7 +200,8 @@ namespace myManga_App
 
                 // MangaObject update check
                 Boolean VersionUpdated = false;
-                UpdateMangaObjectVersion(MangaCacheObject.MangaObject, ref VersionUpdated);
+                if (!Equals(MangaCacheObject.MangaObject, null))
+                    UpdateMangaObjectVersion(MangaCacheObject.MangaObject, ref VersionUpdated);
                 if (VersionUpdated)
                 {
                     logger.Info(String.Format("MangaObject version was updated for '{0}'.", MangaCacheObject.MangaObject.Name));
@@ -273,7 +275,7 @@ namespace myManga_App
                     String[] NameLanguage = NameLanguageSplitRegex.Split(LocObj.ExtensionName);
                     if (NameLanguage.Length > 1) Language = NameLanguage[1];
                     LocObj.ExtensionLanguage = Language;
-                    logger.Info(String.Format("Setting language of '{0}' to '{1}'", LocObj.ExtensionName, Language));
+                    logger.Info(String.Format("[{0}] Setting language of '{1}' to '{2}'", MangaObject.Name, LocObj.ExtensionName, Language));
                 }
             }
             foreach (LocationObject LocObj in MangaObject.DatabaseLocations)
@@ -285,7 +287,7 @@ namespace myManga_App
                     String[] NameLanguage = NameLanguageSplitRegex.Split(LocObj.ExtensionName);
                     if (NameLanguage.Length > 1) Language = NameLanguage[1];
                     LocObj.ExtensionLanguage = Language;
-                    logger.Info(String.Format("Setting language of '{0}' to '{1}'", LocObj.ExtensionName, Language));
+                    logger.Info(String.Format("[{0}] Setting language of '{1}' to '{2}'", MangaObject.Name, LocObj.ExtensionName, Language));
                 }
             }
             #endregion
@@ -305,7 +307,7 @@ namespace myManga_App
                         ExtensionName = Extension.ExtensionDescriptionAttribute.Name,
                         ExtensionLanguage = Extension.ExtensionDescriptionAttribute.Language,
                     });
-                logger.Info(String.Format("Migrating cover to location: {0}", Cover));
+                logger.Info(String.Format("[{0}] Migrating cover to location: {1}", MangaObject.Name, Cover));
             }
 
             // Remove duplicates

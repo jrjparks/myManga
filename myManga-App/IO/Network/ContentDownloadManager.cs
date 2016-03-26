@@ -397,17 +397,17 @@ namespace myManga_App.IO.Network
 
         #region Async Methods
         /// <summary>
-        /// Filter Extentions
+        /// Filter Extensions
         /// </summary>
         /// <param name="Extensions">IEnumerable<IExtension> to filter</param>
-        /// <param name="EnabledExtentions">IEnumerable<EnabledExtensionObject> to use for filter</param>
+        /// <param name="EnabledExtensions">IEnumerable<EnabledExtensionObject> to use for filter</param>
         /// <returns></returns>
-        public IEnumerable<IExtension> ValidExtensions(IEnumerable<IExtension> Extensions, IEnumerable<EnabledExtensionObject> EnabledExtentions) => Extensions.Where(Extension =>
+        public IEnumerable<IExtension> ValidExtensions(IEnumerable<IExtension> Extensions, IEnumerable<EnabledExtensionObject> EnabledExtensions) => Extensions.Where(Extension =>
         {
             if (!Extension.ExtensionDescriptionAttribute.SupportedObjects.HasFlag(SupportedObjects.Manga)) return false;
             if (Extension.ExtensionDescriptionAttribute.RequiresAuthentication) if (!Extension.IsAuthenticated) return false;
 
-            Int32 Count = EnabledExtentions.Where(EnExt => EnExt.Enabled).Count(EnExt => EnExt.EqualsIExtension(Extension));
+            Int32 Count = EnabledExtensions.Where(EnExt => EnExt.Enabled).Count(EnExt => EnExt.EqualsIExtension(Extension));
             if (Equals(Count, 0)) return false;
             return true;
         });
@@ -733,7 +733,7 @@ namespace myManga_App.IO.Network
                 {
                     String Content = LoadedExtensionContentResult.Content;
                     if (LoadedExtensionContentResult.Extension is ISiteExtension)
-                    {   // Extention was a ISiteExtension
+                    {   // Extension was a ISiteExtension
                         ISiteExtension SiteExtension = LoadedExtensionContentResult.Extension as ISiteExtension;
                         List<SearchResultObject> SearchResultObjects = SiteExtension.ParseSearch(Content);
                         foreach (SearchResultObject SearchResultObject in SearchResultObjects)
@@ -756,7 +756,7 @@ namespace myManga_App.IO.Network
                         }
                     }
                     else if (LoadedExtensionContentResult.Extension is IDatabaseExtension)
-                    {   // Extention was a IDatabaseExtension
+                    {   // Extension was a IDatabaseExtension
                         IDatabaseExtension DatabaseExtension = LoadedExtensionContentResult.Extension as IDatabaseExtension;
                         List<DatabaseObject> DatabaseObjects = DatabaseExtension.ParseSearch(Content);
                         foreach (DatabaseObject DatabaseObject in DatabaseObjects)

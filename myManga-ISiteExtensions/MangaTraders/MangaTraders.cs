@@ -233,6 +233,7 @@ namespace MangaTraders
                     {
                         new LocationObject(){
                             ExtensionName = ExtensionDescriptionAttribute.Name,
+                            ExtensionLanguage = ExtensionDescriptionAttribute.Language,
                             Url = ExtensionDescriptionAttribute.RootUrl + ChapterNumberNode.Attributes["href"].Value
                         },
                     },
@@ -248,7 +249,10 @@ namespace MangaTraders
                 Name = MangaName,
                 Description = Description,
                 AlternateNames = AlternateNames.ToList(),
-                CoverLocations = { new LocationObject() { Url = Cover, ExtensionName = ExtensionDescriptionAttribute.Name } },
+                CoverLocations = { new LocationObject() {
+                    Url = Cover,
+                    ExtensionName = ExtensionDescriptionAttribute.Name,
+                    ExtensionLanguage = ExtensionDescriptionAttribute.Language } },
                 Authors = AuthorsArtists.ToList(),
                 Artists = AuthorsArtists.ToList(),
                 Genres = Genres.ToList(),
@@ -323,7 +327,11 @@ namespace MangaTraders
                     String ImgUrl = ExtensionDescriptionAttribute.RootUrl + SearchResultNode.SelectSingleNode(".//img").Attributes["src"].Value.Substring(2),
                         Name = String.Empty,
                         Link = String.Empty;
-                    LocationObject Cover = new LocationObject() { Url = ImgUrl, ExtensionName = ExtensionDescriptionAttribute.Name };
+                    LocationObject Cover = new LocationObject() {
+                        Url = ImgUrl,
+                        ExtensionName = ExtensionDescriptionAttribute.Name,
+                        ExtensionLanguage = ExtensionDescriptionAttribute.Language
+                    };
                     List<String> AlternateNames = new List<String>(),
                         AuthorsArtists = new List<String>(),
                         Genres = new List<String>();
@@ -380,6 +388,7 @@ namespace MangaTraders
                         Name = Name,
                         Url = String.Format("{0}/read-online/{1}", ExtensionDescriptionAttribute.RootUrl, Link),
                         ExtensionName = ExtensionDescriptionAttribute.Name,
+                        ExtensionLanguage = ExtensionDescriptionAttribute.Language,
                         Rating = -1,
                         Artists = AuthorsArtists,
                         Authors = AuthorsArtists

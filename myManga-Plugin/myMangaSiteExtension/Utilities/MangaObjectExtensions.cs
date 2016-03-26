@@ -134,7 +134,6 @@ namespace myMangaSiteExtension.Utilities
 
         public static void AttachDatabase(this MangaObject value, DatabaseObject databaseObject, Boolean databaseAsMaster = false, Boolean preferDatabaseDescription = false)
         {
-            value.DatabaseLocations = databaseObject.Locations;
             if (databaseAsMaster)
             {
                 if (!String.IsNullOrWhiteSpace(value.Name) &&
@@ -167,6 +166,7 @@ namespace myMangaSiteExtension.Utilities
                     value.Genres.Add(Genre);
 
             // DatabaseLocations
+            // value.DatabaseLocations = databaseObject.Locations;
             foreach (LocationObject DatabaseLocation in databaseObject.Locations)
                 if (!value.DatabaseLocations.Any(o => o.ExtensionName == DatabaseLocation.ExtensionName))
                     value.DatabaseLocations.Add(DatabaseLocation);

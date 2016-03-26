@@ -106,7 +106,11 @@ namespace MangaUpdatesBakaUpdates
             
             List<LocationObject> Covers = new List<LocationObject>();
             if (CoverNode != null && CoverNode.SelectSingleNode(".//img") != null)
-                Covers.Add(new LocationObject() { Url = CoverNode.SelectSingleNode(".//img").Attributes["src"].Value, ExtensionName = ExtensionDescriptionAttribute.Name });
+                Covers.Add(new LocationObject() {
+                    Url = CoverNode.SelectSingleNode(".//img").Attributes["src"].Value,
+                    ExtensionName = ExtensionDescriptionAttribute.Name,
+                    ExtensionLanguage = ExtensionDescriptionAttribute.Language
+                });
 
             Match DatabaseObjectIdMatch = Regex.Match(content, @"id=(?<DatabaseObjectId>\d+)&");
             Int32 DatabaseObjectId = Int32.Parse(DatabaseObjectIdMatch.Groups["DatabaseObjectId"].Value),
@@ -120,6 +124,7 @@ namespace MangaUpdatesBakaUpdates
                 Description = HtmlEntity.DeEntitize(ContentNodes.FirstOrDefault(item => item.Key.Equals("Description")).Value.InnerText.Trim()),
                 Locations = { new LocationObject() { 
                     ExtensionName = ExtensionDescriptionAttribute.Name,
+                    ExtensionLanguage = ExtensionDescriptionAttribute.Language,
                     Url = String.Format("{0}/series.html?id={1}", ExtensionDescriptionAttribute.RootUrl, DatabaseObjectId) } },
                 ReleaseYear = ReleaseYear
             };

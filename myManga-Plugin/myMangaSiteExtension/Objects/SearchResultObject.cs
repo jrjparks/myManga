@@ -15,6 +15,7 @@ namespace myMangaSiteExtension.Objects
         public String Name { get; set; }
         public String Description { get; set; }
         public String ExtensionName { get; set; }
+        public String ExtensionLanguage { get; set; }        
         public String Url { get; set; }
         public LocationObject Cover { get; set; }
         public List<String> Authors { get; set; }

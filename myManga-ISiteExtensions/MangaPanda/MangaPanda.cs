@@ -96,7 +96,8 @@ namespace MangaPanda
                 Covers.Add(new LocationObject()
                 {
                     Url = MangaCoverRegex.Replace(MangaCoverPrime, String.Format("{0}.jpg", mcI)),
-                    ExtensionName = ExtensionDescriptionAttribute.Name
+                    ExtensionName = ExtensionDescriptionAttribute.Name,
+                    ExtensionLanguage = ExtensionDescriptionAttribute.Language
                 });
             Covers.TrimExcess();
 
@@ -142,6 +143,7 @@ namespace MangaPanda
                                             Locations = {
                                                     new LocationObject() {
                                                         ExtensionName = ExtensionDescriptionAttribute.Name,
+                                                        ExtensionLanguage = ExtensionDescriptionAttribute.Language,
                                                         Url = String.Format("{0}{1}", ExtensionDescriptionAttribute.RootUrl, ChapterNode.SelectSingleNode(".//td[1]/a").Attributes["href"].Value) }
                                                 },
                                             Released = DateTime.Parse(ChapterNode.SelectSingleNode(".//td[2]").InnerText)
@@ -218,10 +220,16 @@ namespace MangaPanda
                     Int32 Id; if (!Int32.TryParse(Link.Slice(1, Link.IndexOf('/', 1)), out Id)) Id = -1;
                     SearchResults.Add(new SearchResultObject()
                     {
-                        Cover = new LocationObject() { Url = new Regex(@"r(\d+)\.jpg").Replace(CoverUrl, "l$1.jpg"), ExtensionName = ExtensionDescriptionAttribute.Name },
+                        Cover = new LocationObject()
+                        {
+                            Url = new Regex(@"r(\d+)\.jpg").Replace(CoverUrl, "l$1.jpg"),
+                            ExtensionName = ExtensionDescriptionAttribute.Name,
+                            ExtensionLanguage = ExtensionDescriptionAttribute.Language
+                        },
                         Name = Name,
                         Url = String.Format("{0}{1}", ExtensionDescriptionAttribute.RootUrl, Link),
                         ExtensionName = ExtensionDescriptionAttribute.Name,
+                        ExtensionLanguage = ExtensionDescriptionAttribute.Language,
                         Id = Id,
                         Rating = -1,
                         Artists = null,

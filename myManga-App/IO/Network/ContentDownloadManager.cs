@@ -33,7 +33,6 @@ namespace myManga_App.IO.Network
         private readonly CancellationTokenSource cts;
 
         private readonly MemoryCache ActiveDownloadsCache;
-        // private readonly Dictionary<String, IProgress<Int32>> DownloadProgressDictionary;
         #endregion
 
         #region Properties
@@ -116,11 +115,11 @@ namespace myManga_App.IO.Network
 
         #region CacheKey
         public String CacheKey(MangaObject MangaObject)
-        { return String.Format("{0}", MangaObject.MangaArchiveName("CACHE")); }
+        { return String.Format("{0}", MangaObject.MangaArchiveName(App.MANGA_ARCHIVE_EXTENSION)); }
         public String CacheKey(MangaObject MangaObject, ChapterObject ChapterObject)
-        { return String.Format("{0}/{1}", MangaObject.MangaArchiveName("CACHE"), ChapterObject.ChapterArchiveName("CACHE")); }
+        { return String.Format("{0}/{1}", MangaObject.MangaArchiveName(App.MANGA_ARCHIVE_EXTENSION), ChapterObject.ChapterArchiveName(App.CHAPTER_ARCHIVE_EXTENSION)); }
         public String CacheKey(MangaObject MangaObject, ChapterObject ChapterObject, PageObject PageObject)
-        { return String.Format("{0}/{1}/{2}", MangaObject.MangaArchiveName("CACHE"), ChapterObject.ChapterArchiveName("CACHE"), PageObject.PageNumber); }
+        { return String.Format("{0}/{1}/{2}", MangaObject.MangaArchiveName(App.MANGA_ARCHIVE_EXTENSION), ChapterObject.ChapterArchiveName(App.CHAPTER_ARCHIVE_EXTENSION), PageObject.PageNumber); }
 
         public Boolean IsCacheKeyActive(String CacheKey)
         { return ActiveDownloadsCache.Contains(CacheKey); }
@@ -135,7 +134,6 @@ namespace myManga_App.IO.Network
             String CK = CacheKey(MangaObject);
             if (ActiveDownloadsCache.Contains(CK)) return;
             ActiveDownloadsCache.Set(CK, true, DateTimeOffset.MaxValue);
-            // DownloadProgressDictionary.Add(CK, ProgressReporter);
 
             try
             {
@@ -153,12 +151,14 @@ namespace myManga_App.IO.Network
                 // TODO: Write Async Verify
             }
             catch (Exception ex)
-            { throw ex; }
+            {
+                App.logger.Warn(String.Format("[ContentDownloadManager] An exception was thrown while processing {0}.", MangaObject.Name), ex);
+                throw ex;
+            }
             finally
             {
                 if (!Equals(ProgressReporter, null)) ProgressReporter.Report(100);
                 ActiveDownloadsCache.Remove(CK);
-                // DownloadProgressDictionary.Remove(CK);
             }
         }
 
@@ -181,7 +181,6 @@ namespace myManga_App.IO.Network
             String CK = CacheKey(MangaObject, ChapterObject);
             if (ActiveDownloadsCache.Contains(CK)) return;
             ActiveDownloadsCache.Set(CK, true, DateTimeOffset.MaxValue);
-            // DownloadProgressDictionary.Add(CK, ProgressReporter);
 
             try
             {
@@ -246,12 +245,14 @@ namespace myManga_App.IO.Network
                 }
             }
             catch (Exception ex)
-            { throw ex; }
+            {
+                App.logger.Warn(String.Format("[ContentDownloadManager] An exception was thrown while processing {0}.", MangaObject.Name), ex);
+                throw ex;
+            }
             finally
             {
                 if (!Equals(ProgressReporter, null)) ProgressReporter.Report(100);
                 ActiveDownloadsCache.Remove(CK);
-                // DownloadProgressDictionary.Remove(CK);
             }
         }
 
@@ -274,7 +275,6 @@ namespace myManga_App.IO.Network
             String CK = CacheKey(MangaObject, ChapterObject, PageObject);
             if (ActiveDownloadsCache.Contains(CK)) return;
             ActiveDownloadsCache.Set(CK, true, DateTimeOffset.MaxValue);
-            // DownloadProgressDictionary.Add(CK, ProgressReporter);
 
             try
             {
@@ -295,12 +295,14 @@ namespace myManga_App.IO.Network
                 DownloadImage(PageObject.ImgUrl, PageObject.Url, SiteExtension.Cookies, SavePath(MangaObject, ChapterObject), Path.GetFileName(new Uri(PageObject.ImgUrl).LocalPath));
             }
             catch (Exception ex)
-            { throw ex; }
+            {
+                App.logger.Warn(String.Format("[ContentDownloadManager] An exception was thrown while processing {0}.", MangaObject.Name), ex);
+                throw ex;
+            }
             finally
             {
                 if (!Equals(ProgressReporter, null)) ProgressReporter.Report(100);
                 ActiveDownloadsCache.Remove(CK);
-                // DownloadProgressDictionary.Remove(CK);
             }
         }
 
@@ -326,14 +328,17 @@ namespace myManga_App.IO.Network
             // Load the Cover Image via Async and LimitedTaskFactory
             CookieCollection Cookies = null;
             String Referer = String.Format("{0}://{1}", CoverImageUri.Scheme, CoverImageUri.Host);
-            if (App.SiteExtensions.Contains(LocationObject.ExtensionName))
+            if (App.Extensions.Contains(LocationObject.ExtensionName, LocationObject.ExtensionLanguage))
             {
-                Cookies = App.SiteExtensions[LocationObject.ExtensionName, LocationObject.ExtensionLanguage].Cookies;
-                Referer = App.SiteExtensions[LocationObject.ExtensionName, LocationObject.ExtensionLanguage].ExtensionDescriptionAttribute.RefererHeader;
+                IExtension Extension = App.Extensions[LocationObject.ExtensionName, LocationObject.ExtensionLanguage];
+                Cookies = Extension.Cookies;
+                Referer = Extension.ExtensionDescriptionAttribute.RefererHeader;
             }
-            else if (App.DatabaseExtensions.Contains(LocationObject.ExtensionName))
+            else if (App.Extensions.Contains(LocationObject.ExtensionName))
             {
-                Referer = App.DatabaseExtensions[LocationObject.ExtensionName, LocationObject.ExtensionLanguage].ExtensionDescriptionAttribute.RefererHeader;
+                IExtension Extension = App.Extensions[LocationObject.ExtensionName];
+                Cookies = Extension.Cookies;
+                Referer = Extension.ExtensionDescriptionAttribute.RefererHeader;
             }
             DownloadImage(
                 LocationObject.Url,
@@ -352,7 +357,6 @@ namespace myManga_App.IO.Network
         {
             if (ActiveDownloadsCache.Contains(Url)) return;
             ActiveDownloadsCache.Set(Url, true, DateTimeOffset.MaxValue);
-            // DownloadProgressDictionary.Add(Url, ProgressReporter);
             try
             {
                 using (Stream ImageStream = await ContentTaskFactory.StartNew(() => LoadImageAsync(Url, Referer, Cookies, cts.Token, ProgressReporter)).Unwrap())
@@ -362,12 +366,14 @@ namespace myManga_App.IO.Network
                 }
             }
             catch (Exception ex)
-            { throw ex; }
+            {
+                App.logger.Warn(String.Format("[ContentDownloadManager] An exception was thrown while processing {0}.", Url), ex);
+                throw ex;
+            }
             finally
             {
                 if (!Equals(ProgressReporter, null)) ProgressReporter.Report(100);
                 ActiveDownloadsCache.Remove(Url);
-                // DownloadProgressDictionary.Remove(Url);
             }
         }
 
@@ -553,13 +559,12 @@ namespace myManga_App.IO.Network
             List<LocationObject> MangaInfoLocationObjects = new List<LocationObject>();
             MangaInfoLocationObjects.AddRange(MangaObject.Locations);
             MangaInfoLocationObjects.AddRange(MangaObject.DatabaseLocations);
-            LocationObject LocationObject = MangaInfoLocationObjects.FirstOrDefault(_LocationObject =>
+            LocationObject LocationObject = MangaInfoLocationObjects.FirstOrDefault(_ =>
             {
-                if (!Equals(_LocationObject.ExtensionName, Extension.ExtensionDescriptionAttribute.Name))
-                { return false; }
-                if (Equals(_LocationObject.Enabled, false))
-                { return false; }
-                return true;
+                if (!Equals(Extension.ExtensionDescriptionAttribute.Name, _.ExtensionName)) return false;
+                if (!Equals(_.ExtensionLanguage, null)) // Only check language if location has one.
+                    if (!Equals(Extension.ExtensionDescriptionAttribute.Language, _.ExtensionLanguage)) return false;
+                return _.Enabled;
             });
             if (Equals(LocationObject, null)) // If there is not a match return null
             { return null; }
@@ -708,6 +713,7 @@ namespace myManga_App.IO.Network
 
             if (!Equals(progress, null)) progress.Report(5);
 
+            Boolean firstResponse = true;
             IEnumerable<Task<ExtensionContentResult>> ExtensionContentTasksQuery =
                 from Extension in ValidExtensions(App.Extensions, App.UserConfiguration.EnabledExtensions)
                 select LoadExtensionSearchContent(Extension, SearchTerm);
@@ -758,7 +764,7 @@ namespace myManga_App.IO.Network
                             MangaObject ExistingMangaObject = SearchResults.FirstOrDefault(_MangaObject =>
                             {   // Locate an Existing MangaObject
                                 List<String> ExistingMangaObjectNames = new List<String>(_MangaObject.AlternateNames),
-                                DatabaseObjectNames = new List<String>(DatabaseObject.AlternateNames);
+                                        DatabaseObjectNames = new List<String>(DatabaseObject.AlternateNames);
 
                                 ExistingMangaObjectNames.Insert(0, _MangaObject.Name);
                                 DatabaseObjectNames.Insert(0, DatabaseObject.Name);
@@ -770,26 +776,35 @@ namespace myManga_App.IO.Network
                                 ExistingHalfCount = (Int32)Math.Ceiling((Double)ExistingMangaObjectNames.Count / 2);
                                 return IntersectCount >= ExistingHalfCount;
                             });
-                            if (!Equals(ExistingMangaObject, null))
+                            if (Equals(ExistingMangaObject, null))
+                            {
+                                MangaObject databaseMangaObject = new MangaObject();
+                                databaseMangaObject.AttachDatabase(DatabaseObject, true, true);
+                                SearchResults.Add(databaseMangaObject);
+                            }
+                            else
                             {
                                 if (Equals(ExistingMangaObject.DatabaseLocations.FindIndex(_DatabaseLocation => Equals(
                                     _DatabaseLocation.ExtensionName,
                                     DatabaseExtension.ExtensionDescriptionAttribute.Name)), -1))
-                                {
-                                    ExistingMangaObject.AttachDatabase(DatabaseObject, preferDatabaseDescription: true);
-                                }
+                                { ExistingMangaObject.AttachDatabase(DatabaseObject, preferDatabaseDescription: true); }
                             }
                         }
                     }
                 }
-
+                firstResponse = Equals(SearchResults.Count, 0);
                 Int32 ExtensionContentTasksProgress = (Int32)Math.Round(((Double)(OriginalExtensionContentTasksCount - ExtensionContentTasks.Count) / (Double)OriginalExtensionContentTasksCount) * 70);
                 if (!Equals(progress, null)) progress.Report(10 + ExtensionContentTasksProgress);
             }
 
-            if (!Equals(progress, null)) progress.Report(850);
+            if (!Equals(progress, null)) progress.Report(85);
             ct.ThrowIfCancellationRequested();
+
+            // Remove Database only results
+            Int32 RemoveCount = SearchResults.RemoveAll(_ => Equals(_.Locations.Count, 0));
+
             // Merge same items
+            /* This should be handled above.
             for (Int32 index = 0; index < SearchResults.Count; ++index)
             {
                 ct.ThrowIfCancellationRequested();
@@ -819,6 +834,7 @@ namespace myManga_App.IO.Network
                     if (!Equals(progress, null)) progress.Report(90 + MergeProgress);
                 }
             }
+            //*/
 
             if (!Equals(progress, null)) progress.Report(100);
             ct.ThrowIfCancellationRequested();

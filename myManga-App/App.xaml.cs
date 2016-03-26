@@ -18,6 +18,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.Caching;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -32,7 +33,7 @@ namespace myManga_App
     public partial class App : Application
     {
         #region Logging
-        private readonly log4net.ILog logger = log4net.LogManager.GetLogger(typeof(App));
+        public readonly log4net.ILog logger = log4net.LogManager.GetLogger(typeof(App));
 
         private void ConfigureLog4Net(log4net.Core.Level LogLevel = null)
         {
@@ -121,8 +122,18 @@ namespace myManga_App
                 Stream MangaObjectStream = ZipManager.UnsafeRead(ArchivePath, typeof(MangaObject).Name);
                 if (!Equals(MangaObjectStream, null))
                 { using (MangaObjectStream) { MangaCacheObject.MangaObject = MangaObjectStream.Deserialize<MangaObject>(UserConfiguration.SerializeType); } }
-                if (!Equals(MangaCacheObject.MangaObject, null))
-                    MangaCacheObject.MangaObject = await MigrateCovers(ArchivePath, MangaCacheObject.MangaObject);
+
+                // MangaObject update check
+                Boolean VersionUpdated = false;
+                UpdateMangaObjectVersion(MangaCacheObject.MangaObject, ref VersionUpdated);
+                if (VersionUpdated)
+                {
+                    logger.Info(String.Format("MangaObject version was updated for '{0}'.", MangaCacheObject.MangaObject.Name));
+                    await ZipManager.Retry(() => ZipManager.WriteAsync(
+                        ArchivePath, typeof(MangaObject).Name,
+                        MangaCacheObject.MangaObject.Serialize(UserConfiguration.SerializeType)),
+                        TimeSpan.FromMinutes(1));
+                }
 
                 // Load Cover Image
                 String CoverImageFileName = Path.GetFileName(MangaCacheObject.MangaObject.SelectedCover().Url);
@@ -185,8 +196,18 @@ namespace myManga_App
                 Stream MangaObjectStream = await ZipManager.Retry(() => ZipManager.ReadAsync(ArchivePath, typeof(MangaObject).Name), TimeSpan.FromMinutes(1));
                 if (!Equals(MangaObjectStream, null))
                 { using (MangaObjectStream) { MangaCacheObject.MangaObject = MangaObjectStream.Deserialize<MangaObject>(UserConfiguration.SerializeType); } }
-                if (!Equals(MangaCacheObject.MangaObject, null))
-                    MangaCacheObject.MangaObject = await MigrateCovers(ArchivePath, MangaCacheObject.MangaObject);
+
+                // MangaObject update check
+                Boolean VersionUpdated = false;
+                UpdateMangaObjectVersion(MangaCacheObject.MangaObject, ref VersionUpdated);
+                if (VersionUpdated)
+                {
+                    logger.Info(String.Format("MangaObject version was updated for '{0}'.", MangaCacheObject.MangaObject.Name));
+                    await ZipManager.Retry(() => ZipManager.WriteAsync(
+                        ArchivePath, typeof(MangaObject).Name,
+                        MangaCacheObject.MangaObject.Serialize(UserConfiguration.SerializeType)),
+                        TimeSpan.FromMinutes(1));
+                }
 
                 if (ReloadCoverImage)
                 {
@@ -231,27 +252,71 @@ namespace myManga_App
             }
         }
 
-        private async Task<MangaObject> MigrateCovers(String ArchivePath, MangaObject MangaObject)
+        /// <summary>
+        /// Update MangaObject to current version
+        /// </summary>
+        /// <param name="MangaObject">MangaObject to update</param>
+        /// <param name="Updated">Was the MangaObject updated</param>
+        /// <returns>Updated MangaObject</returns>
+        private MangaObject UpdateMangaObjectVersion(MangaObject MangaObject, ref Boolean Updated)
         {
-            if (Equals(MangaObject.CoverLocations.Count, 0))
-            {
-                foreach (String Cover in MangaObject.Covers)
-                {
-                    ISiteExtension SiteExtension = SiteExtensions.FirstOrDefault(_SiteExtension =>
-                    { return Cover.Contains(_SiteExtension.ExtensionDescriptionAttribute.URLFormat); });
-                    IDatabaseExtension DatabaseExtension = DatabaseExtensions.FirstOrDefault(_DatabaseExtension =>
-                    { return Cover.Contains(_DatabaseExtension.ExtensionDescriptionAttribute.URLFormat); });
-                    if (Cover.Contains("mhcdn.net")) SiteExtension = SiteExtensions["MangaHere", "English"];
-                    if (!Equals(SiteExtension, null))
-                        MangaObject.CoverLocations.Add(new LocationObject()
-                        { Url = Cover, ExtensionName = SiteExtension.ExtensionDescriptionAttribute.Name });
-                    else if (!Equals(DatabaseExtension, null))
-                        MangaObject.CoverLocations.Add(new LocationObject()
-                        { Url = Cover, ExtensionName = DatabaseExtension.ExtensionDescriptionAttribute.Name });
-                }
+            Updated = false;
 
-                await ZipManager.Retry(() => ZipManager.WriteAsync(ArchivePath, typeof(MangaObject).Name, MangaObject.Serialize(UserConfiguration.SerializeType)), TimeSpan.FromMinutes(1));
+            #region Check for old location object types.
+            Regex NameLanguageSplitRegex = new Regex(@"[^\w]");
+            foreach (LocationObject LocObj in MangaObject.Locations)
+            {
+                if (Equals(LocObj.ExtensionLanguage, null))
+                {
+                    Updated = true;
+                    String Language = "English";
+                    String[] NameLanguage = NameLanguageSplitRegex.Split(LocObj.ExtensionName);
+                    if (NameLanguage.Length > 1) Language = NameLanguage[1];
+                    LocObj.ExtensionLanguage = Language;
+                    logger.Info(String.Format("Setting language of '{0}' to '{1}'", LocObj.ExtensionName, Language));
+                }
             }
+            foreach (LocationObject LocObj in MangaObject.DatabaseLocations)
+            {
+                if (Equals(LocObj.ExtensionLanguage, null))
+                {
+                    Updated = true;
+                    String Language = "English";
+                    String[] NameLanguage = NameLanguageSplitRegex.Split(LocObj.ExtensionName);
+                    if (NameLanguage.Length > 1) Language = NameLanguage[1];
+                    LocObj.ExtensionLanguage = Language;
+                    logger.Info(String.Format("Setting language of '{0}' to '{1}'", LocObj.ExtensionName, Language));
+                }
+            }
+            #endregion
+
+            #region Migrate covers to new format.
+            foreach (String Cover in MangaObject.Covers)
+            {
+                Updated = true;
+                IExtension Extension = null;
+                if (Cover.Contains("mhcdn.net")) Extension = Extensions["MangaHere", "English"];
+                else Extension = Extensions.FirstOrDefault(_ => Cover.Contains(_.ExtensionDescriptionAttribute.URLFormat));
+                if (!Equals(Extension, null))
+                    MangaObject.CoverLocations.Add(new LocationObject()
+                    {
+                        Url = Cover,
+                        Enabled = true,
+                        ExtensionName = Extension.ExtensionDescriptionAttribute.Name,
+                        ExtensionLanguage = Extension.ExtensionDescriptionAttribute.Language,
+                    });
+                logger.Info(String.Format("Migrating cover to location: {0}", Cover));
+            }
+
+            // Remove duplicates
+            MangaObject.CoverLocations = (from CoverLocation in MangaObject.CoverLocations
+                                         group CoverLocation by CoverLocation.Url
+                                         into CoverLocationGroups
+                                         select CoverLocationGroups.FirstOrDefault()).ToList();
+            MangaObject.CoverLocations.RemoveAll(_ => Equals(_, null));
+            MangaObject.Covers.Clear();
+            #endregion
+
             return MangaObject;
         }
 
@@ -482,13 +547,17 @@ namespace myManga_App
                         goto case WatcherChangeTypes.Changed;
                     case WatcherChangeTypes.Changed:
                         // (Re)Cache if creaded or changed
-                        MangaCacheObject ReloadedMangaCacheObject = await DispatcherReloadMangaCacheObjectAsync(e.FullPath, Equals(ExistingMangaCacheObject.CoverImage, null));
-                        if (!Equals(ReloadedMangaCacheObject, null))
+                        if (!Equals(ExistingMangaCacheObject, null))
                         {
-                            if (Equals(ExistingMangaCacheObject, null))
-                            { MangaCacheObjects.Add(ReloadedMangaCacheObject); }
-                            else
-                            { ExistingMangaCacheObject.Update(ReloadedMangaCacheObject); }
+                            // If ExistingMangaCacheObject is null we are probably still loading.
+                            MangaCacheObject ReloadedMangaCacheObject = await DispatcherReloadMangaCacheObjectAsync(e.FullPath, Equals(ExistingMangaCacheObject.CoverImage, null));
+                            if (!Equals(ReloadedMangaCacheObject, null))
+                            {
+                                if (Equals(ExistingMangaCacheObject, null))
+                                { MangaCacheObjects.Add(ReloadedMangaCacheObject); }
+                                else
+                                { ExistingMangaCacheObject.Update(ReloadedMangaCacheObject); }
+                            }
                         }
                         break;
 

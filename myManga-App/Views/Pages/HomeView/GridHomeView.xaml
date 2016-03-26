@@ -51,6 +51,7 @@
                     <ControlTemplate TargetType="{x:Type ListBox}">
                         <ScrollViewer
                             HorizontalScrollBarVisibility="Disabled"
+                            VerticalScrollBarVisibility="Visible"
                             HorizontalContentAlignment="Stretch"
                             VirtualizingPanel.IsVirtualizing="True"
                             VirtualizingPanel.IsVirtualizingWhenGrouping="True"
@@ -62,7 +63,8 @@
                                 VirtualizingPanel.IsVirtualizingWhenGrouping="True"
                                 VirtualizingPanel.VirtualizationMode="Recycling"
                                 ItemWidth="160" ItemHeight="240"
-                                HorizontalAlignment="Stretch" AlignLastItems="True"/>
+                                HorizontalAlignment="Stretch" 
+                                AlignLastItems="True"/>
                         </ScrollViewer>
                     </ControlTemplate>
                 </ListBox.Template>

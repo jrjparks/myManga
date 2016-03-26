@@ -559,13 +559,12 @@ namespace myManga_App.IO.Network
             List<LocationObject> MangaInfoLocationObjects = new List<LocationObject>();
             MangaInfoLocationObjects.AddRange(MangaObject.Locations);
             MangaInfoLocationObjects.AddRange(MangaObject.DatabaseLocations);
-            LocationObject LocationObject = MangaInfoLocationObjects.FirstOrDefault(_LocationObject =>
+            LocationObject LocationObject = MangaInfoLocationObjects.FirstOrDefault(_ =>
             {
-                if (!Equals(_LocationObject.ExtensionName, Extension.ExtensionDescriptionAttribute.Name))
-                { return false; }
-                if (Equals(_LocationObject.Enabled, false))
-                { return false; }
-                return true;
+                if (!Equals(Extension.ExtensionDescriptionAttribute.Name, _.ExtensionName)) return false;
+                if (!Equals(_.ExtensionLanguage, null)) // Only check language if location has one.
+                    if (!Equals(Extension.ExtensionDescriptionAttribute.Language, _.ExtensionLanguage)) return false;
+                return _.Enabled;
             });
             if (Equals(LocationObject, null)) // If there is not a match return null
             { return null; }

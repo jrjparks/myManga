@@ -8,8 +8,10 @@
     </ResourceDictionary.MergedDictionaries>
 
     <Style TargetType="{x:Type Controls:DialogUserControl}" x:Key="DialogUserControlStyle">
-        <Setter Property="DialogWidth" Value="400"/>
-        <Setter Property="DialogHeight" Value="250"/>
+        <Setter Property="DialogMinWidth" Value="400"/>
+        <Setter Property="DialogMaxWidth" Value="600"/>
+        <Setter Property="DialogMinHeight" Value="250"/>
+        <Setter Property="DialogMaxHeight" Value="450"/>
         <Setter Property="Background" Value="{DynamicResource window-background}"/>
         <Setter Property="Foreground" Value="{DynamicResource window-foreground}"/>
         <Setter Property="Template">
@@ -42,12 +44,16 @@
                             Grid.Row="1"
                             Grid.Column="1"
                             ClipToBounds="False"
-                            Width="{TemplateBinding DialogWidth}"
-                            Height="{TemplateBinding DialogHeight}"
-                            Background="{TemplateBinding Background}"
-                            TextBlock.Foreground="{TemplateBinding Foreground}"
-                            TextElement.Foreground="{TemplateBinding Foreground}">
-                            <ContentPresenter ContentSource="Content"/>
+                            Width="{TemplateBinding DialogActualWidth}"
+                            Height="{TemplateBinding DialogActualHeight}">
+                            <Border
+                                ClipToBounds="False"
+                                Margin="{TemplateBinding DialogMargin}"
+                                Background="{TemplateBinding Background}"
+                                TextBlock.Foreground="{TemplateBinding Foreground}"
+                                TextElement.Foreground="{TemplateBinding Foreground}">
+                                <ContentPresenter ContentSource="Content" ClipToBounds="False"/>
+                            </Border>
                         </Grid>
                     </Grid>
                 </ControlTemplate>

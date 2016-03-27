@@ -412,6 +412,17 @@ namespace myManga_App.IO.Network
             return true;
         });
 
+        private Boolean LocationObjectExtension(IExtension Extension, LocationObject Location)
+        {
+            if (Equals(Extension, null)) return false;
+            if (Equals(Location, null)) return false;
+
+            if (!Equals(Extension.ExtensionDescriptionAttribute.Name, Location.ExtensionName)) return false;
+            if (!Equals(Location.ExtensionLanguage, null)) // Only check language if location has one.
+                if (!Equals(Extension.ExtensionDescriptionAttribute.Language, Location.ExtensionLanguage)) return false;
+            return true;
+        }
+
         #region Async Method Classes
         private sealed class ExtensionContentResult
         {
@@ -600,12 +611,15 @@ namespace myManga_App.IO.Network
                 // Store valid ISiteExtension
                 IEnumerable<ISiteExtension> ValidSiteExtensions = ValidExtensions(App.SiteExtensions, App.UserConfiguration.EnabledExtensions).Cast<ISiteExtension>();
 
-                List<EnabledExtensionObject> EnabledExtensionList = App.UserConfiguration.EnabledExtensions.ToList();
-                IEnumerable<LocationObject> OrderedChapterObjectLocations = ChapterObject.Locations.OrderBy(Location => EnabledExtensionList.FindIndex(EnExt => EnExt.EqualsLocationObject(Location))).Reverse();
+                // Re-Order the Chapter's LocationObjects to the EnabledExtensions order.
+                IEnumerable<LocationObject> OrderedChapterObjectLocations = from EnExt in App.UserConfiguration.EnabledExtensions
+                                                                            where ChapterObject.Locations.Exists(LocObj => EnExt.EqualsLocationObject(LocObj))
+                                                                            select ChapterObject.Locations.FirstOrDefault(LocObj => EnExt.EqualsLocationObject(LocObj));
+
                 foreach (LocationObject LocationObject in OrderedChapterObjectLocations)
                 {
                     ct.ThrowIfCancellationRequested();
-                    ISiteExtension SiteExtension = ValidSiteExtensions.FirstOrDefault(_ => Equals(_.ExtensionDescriptionAttribute.Name, LocationObject.ExtensionName));
+                    ISiteExtension SiteExtension = ValidSiteExtensions.FirstOrDefault(_ => LocationObjectExtension(_, LocationObject));
                     if (Equals(SiteExtension, null)) continue;  // Continue with the foreach loop
 
                     ct.ThrowIfCancellationRequested();

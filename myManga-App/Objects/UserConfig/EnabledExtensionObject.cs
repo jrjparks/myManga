@@ -141,7 +141,8 @@ namespace myManga_App.Objects.UserConfig
         {
             if (Equals(Location, null)) return false;
             if (!Equals(Name, Location.ExtensionName)) return false;
-            if (!Equals(Language, Location.ExtensionLanguage)) return false;
+            if (!Equals(Location.ExtensionLanguage, null)) // Only check language if location has one.
+                if (!Equals(Language, Location.ExtensionLanguage)) return false;
             return true;
         }
 

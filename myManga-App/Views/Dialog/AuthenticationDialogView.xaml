@@ -9,7 +9,11 @@
     xmlns:AppControls="clr-namespace:myManga_App.Controls"
     xmlns:Converters="clr-namespace:myManga_App.Converters"
     mc:Ignorable="d" 
+    
     d:DesignHeight="450" d:DesignWidth="600"
+    DialogActualHeight="250" DialogActualWidth="400"
+    DialogHeight="250" DialogWidth="400"
+    
     Style="{DynamicResource DialogUserControlStyle}"
     Background="{DynamicResource window-background}"
     Foreground="{DynamicResource text-dark}"

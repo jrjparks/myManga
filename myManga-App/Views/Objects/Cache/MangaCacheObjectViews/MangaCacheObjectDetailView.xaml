@@ -33,346 +33,346 @@
     </UserControl.Resources>
     <Grid
         Background="{DynamicResource window-background}">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition/>
-            <ColumnDefinition Width="230"/>
-        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="300"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
 
-        <Grid
-            Grid.Column="1">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="300"/>
+                <ColumnDefinition MaxWidth="600"/>
+                <ColumnDefinition Width="5"/>
+            </Grid.ColumnDefinitions>
 
-            <ListBox
-                x:Name="ChapterObjects"
-                Grid.Column="1"
-                Padding="0,38,0,38"
-                ItemsSource="{Binding MangaCacheObject.ChapterCacheObjects}"
-                ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                ScrollViewer.VerticalScrollBarVisibility="Visible"
-                VirtualizingPanel.ScrollUnit="Pixel"
-                VirtualizingPanel.VirtualizationMode="Recycling"
-                HorizontalContentAlignment="Stretch"
-                SelectionMode="Extended" 
-                ItemContainerStyle="{DynamicResource ChapterCacheObjectListBoxItem}"/>
+            <Image
+                x:Name="CoverImage"
+                Stretch="Uniform"
+                Margin="5"
+                Source="{Binding MangaCacheObject.CoverImage, FallbackValue=/myManga;component/Resources/Images/FallbackMangaIcon.png}"
+                ClipToBounds="True"/>
 
-            <Grid
-                x:Name="DownloadButtonsGrid"
-                Grid.Column="1"
-                VerticalAlignment="Top"
-                TextElement.FontWeight="Bold"
-                TextBlock.FontWeight="Bold" 
-                TextElement.FontSize="16"
-                TextElement.FontFamily="{DynamicResource OpenIconic}">
-
-                <Grid.Margin>
-                    <Thickness Right="{x:Static SystemParameters.VerticalScrollBarWidth}"/>
-                </Grid.Margin>
-
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition/>
-                    <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
-
-                <Controls:MetroButton
-                    x:Name="DownloadToLatestButton"
-                    HorizontalContentAlignment="Left"
-                    Content="{DynamicResource oi-cloud-download}"
-                    ContentStringFormat="{}{0} Download To Latest"
-                    Padding="4,8"
-                    Command="{Binding DownloadToLatestChapterAsyncCommand}"/>
-
-                <Controls:MetroToggleButton
-                    x:Name="DownloadDropdown"
-                    Grid.Column="1"
-                    Content="{DynamicResource oi-chevron-bottom}"
-                    Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"
-                    IsHitTestVisible="{Binding IsOpen, Converter={StaticResource BooleanInverter}, ElementName=DownloadPopup, Mode=OneWay}"
-                    Margin="0,0,1,0"/>
-
-                <PrimitiveControls:DockingPopup
-                    x:Name="DownloadPopup"
-                    PlacementTarget="{Binding ElementName=DownloadButtonsGrid, Mode=OneWay}"
-                    Width="{Binding ActualWidth, ElementName=DownloadButtonsGrid, Mode=OneWay}"
-                    PlacementRectangle="{Binding ElementName=DownloadButtonsGrid, Mode=OneWay}"
-			        IsOpen="{Binding IsChecked, ElementName=DownloadDropdown}"
-                    PopupAnimation="Fade"
-                    StaysOpen="False">
-                    <Border
-                        BorderThickness="1,0,1,1"
-                        Background="{DynamicResource window-background}"
-                        BorderBrush="{DynamicResource window-theme-primary}">
-                        <StackPanel Orientation="Vertical">
-
-                            <Controls:MetroButton
-                                x:Name="DownloadSelectedChapters"
-                                HorizontalContentAlignment="Left"
-                                Content="{DynamicResource oi-cloud-download}"
-                                ContentStringFormat="{}{0} Download Selected"
-                                Padding="4,8"
-                                Command="{Binding DownloadSelectedChaptersAsyncCommand}"
-                                CommandParameter="{Binding SelectedItems, ElementName=ChapterObjects}"/>
-
-                            <Controls:MetroButton
-                                x:Name="DownloadAllChapters"
-                                HorizontalContentAlignment="Left"
-                                Content="{DynamicResource oi-cloud-download}"
-                                ContentStringFormat="{}{0} Download All"
-                                Padding="4,8"
-                                Command="{Binding DownloadAllChaptersAsyncCommand}"/>
-
-                        </StackPanel>
-                    </Border>
-                </PrimitiveControls:DockingPopup>
-
-            </Grid>
-
-            <Grid
-                x:Name="ReadButtonsGrid"
-                Grid.Column="1"
+            <StackPanel
                 VerticalAlignment="Bottom"
-                TextElement.FontWeight="Bold"
-                TextBlock.FontWeight="Bold" 
-                TextElement.FontSize="16"
-                TextElement.FontFamily="{DynamicResource OpenIconic}">
-
-                <Grid.Margin>
-                    <Thickness Right="{x:Static SystemParameters.VerticalScrollBarWidth}"/>
-                </Grid.Margin>
-
+                Opacity="0.75">
                 <Controls:MetroButton
-                    x:Name="ReadChapterButton"
-                    HorizontalContentAlignment="Left"
-                    Padding="4,8"
-                    Content="{DynamicResource oi-book}"
-                    ContentStringFormat="{}{0} Read Selected Chapter"
-                    Command="{Binding ReadSelectedChapterAsyncCommand}"
-                    CommandParameter="{Binding SelectedItems, ElementName=ChapterObjects}"
-                    Margin="0,0,1,0"/>
+                    FontFamily="{DynamicResource OpenIconic}"
+                    Content="{DynamicResource oi-bookmark}"
+                    ContentStringFormat="{}{0} Resume Reading"
+                    FontSize="18"
+                    Padding="5"
+                    Command="{Binding ResumeReadingAsyncCommand}"
+                    CommandParameter="{Binding MangaCacheObject.ResumeChapterCacheObject}"/>
+                <ProgressBar
+                    Height="5"
+                    Minimum="0"
+                    Maximum="100"
+                    Value="{Binding MangaCacheObject.ChapterProgress, Mode=OneWay, FallbackValue=0}"
+                    BorderThickness="0"/>
+            </StackPanel>
+
+            <Grid
+                Grid.Column="1"
+                TextBlock.FontWeight="Bold"
+                TextBlock.Foreground="{DynamicResource text-muted}">
+
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="10"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="5"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="10"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="10"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <Grid
+                    Grid.Row="1">
+
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock
+                        TextTrimming="CharacterEllipsis" FontWeight="Bold" FontSize="24"
+                        Text="{Binding MangaCacheObject.MangaObject.Name, FallbackValue=No-Name}"
+                        ToolTip="{Binding Text, RelativeSource={RelativeSource Self}}"
+                        Foreground="{DynamicResource text-dark}"/>
+
+                    <TextBlock 
+                        Grid.Column="1"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Bottom"
+                        Text="{Binding MangaCacheObject.MangaObject.Released, StringFormat=yyyy, FallbackValue=????}" 
+                        ToolTip="{Binding Text, RelativeSource={RelativeSource Self}}"
+                        TextTrimming="CharacterEllipsis"/>
+
+                </Grid>
+
+                <TextBlock 
+                    Grid.Row="2"
+                    Text="{Binding MangaCacheObject.MangaObject.AlternateNames, Converter={StaticResource StringListToCSV}, FallbackValue=Alternate\ Names}" 
+                    ToolTip="{Binding Text, RelativeSource={RelativeSource Self}}"
+                    TextTrimming="CharacterEllipsis"/>
+
+                <TextBlock 
+                    Grid.Row="4"
+                    Text="{Binding MangaCacheObject.MangaObject.Genres, Converter={StaticResource StringListToCSV}, FallbackValue=Genres}" 
+                    ToolTip="{Binding Text, RelativeSource={RelativeSource Self}}"
+                    TextTrimming="CharacterEllipsis"/>
+
+                <Grid
+                    Grid.Row="6">
+
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Text="Authors:" TextTrimming="CharacterEllipsis"/>
+                    <TextBlock Text="Artists:" TextTrimming="CharacterEllipsis" Grid.Column="1"/>
+
+                </Grid>
+
+                <Grid
+                    Grid.Row="7">
+
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+
+                    <ItemsControl
+                        x:Name="Authors"
+                        ItemsSource="{Binding MangaCacheObject.MangaObject.Authors}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Orientation="Vertical" IsItemsHost="True"/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock 
+                                    Text="{Binding}" 
+                                    TextTrimming="CharacterEllipsis"
+                                    ToolTip="{Binding Text, RelativeSource={RelativeSource Self}}"/>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
+                    <ItemsControl
+                        x:Name="Artists"
+                        Grid.Column="1"
+                        ItemsSource="{Binding MangaCacheObject.MangaObject.Artists}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Orientation="Vertical" IsItemsHost="True"/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock 
+                                    Text="{Binding}" 
+                                    TextTrimming="CharacterEllipsis"
+                                    ToolTip="{Binding Text, RelativeSource={RelativeSource Self}}"/>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
+                </Grid>
+
+                <Grid
+                    Grid.Row="9">
+
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Text="Sites:" TextTrimming="CharacterEllipsis"/>
+                    <TextBlock Text="Databases:" TextTrimming="CharacterEllipsis" Grid.Column="1"/>
+
+                </Grid>
+
+                <Grid
+                    Grid.Row="10">
+
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+
+                    <ItemsControl
+                        x:Name="Sites"
+                        ItemsSource="{Binding MangaCacheObject.MangaObject.Locations}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Orientation="Vertical" IsItemsHost="True"/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock 
+                                    Text="{Binding ExtensionName}" 
+                                    TextTrimming="CharacterEllipsis"
+                                    ToolTip="{Binding Text, RelativeSource={RelativeSource Self}}"/>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
+                    <ItemsControl
+                        x:Name="Databases"
+                        Grid.Column="1"
+                        ItemsSource="{Binding MangaCacheObject.MangaObject.DatabaseLocations}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Orientation="Vertical" IsItemsHost="True"/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock 
+                                    Text="{Binding ExtensionName}" 
+                                    TextTrimming="CharacterEllipsis"
+                                    ToolTip="{Binding Text, RelativeSource={RelativeSource Self}}"/>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
+                </Grid>
 
             </Grid>
 
         </Grid>
 
         <Grid
-            Grid.Column="0">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="300"/>
-                <RowDefinition/>
-            </Grid.RowDefinitions>
+            Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition Width="250"/>
+            </Grid.ColumnDefinitions>
 
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="300"/>
-                    <ColumnDefinition MaxWidth="600"/>
-                    <ColumnDefinition Width="5"/>
-                </Grid.ColumnDefinitions>
+            <Grid
+                Grid.Column="1">
 
-                <Image
-                    x:Name="CoverImage"
-                    Stretch="Uniform"
-                    Margin="5"
-                    Source="{Binding MangaCacheObject.CoverImage, FallbackValue=/myManga;component/Resources/Images/FallbackMangaIcon.png}"
-                    ClipToBounds="True"/>
-
-                <StackPanel
-                    VerticalAlignment="Bottom"
-                    Opacity="0.75">
-                    <Controls:MetroButton
-                        FontFamily="{DynamicResource OpenIconic}"
-                        Content="{DynamicResource oi-bookmark}"
-                        ContentStringFormat="{}{0} Resume Reading"
-                        FontSize="18"
-                        Padding="5"
-                        Command="{Binding ResumeReadingAsyncCommand}"
-                        CommandParameter="{Binding MangaCacheObject.ResumeChapterCacheObject}"/>
-                    <ProgressBar
-                        Height="5"
-                        Minimum="0"
-                        Maximum="100"
-                        Value="{Binding MangaCacheObject.ChapterProgress, Mode=OneWay, FallbackValue=0}"
-                        BorderThickness="0"/>
-                </StackPanel>
+                <ListBox
+                    x:Name="ChapterObjects"
+                    Grid.Column="1"
+                    Padding="0,38,0,38"
+                    ItemsSource="{Binding MangaCacheObject.ChapterCacheObjects}"
+                    ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                    ScrollViewer.VerticalScrollBarVisibility="Visible"
+                    VirtualizingPanel.ScrollUnit="Pixel"
+                    VirtualizingPanel.VirtualizationMode="Recycling"
+                    HorizontalContentAlignment="Stretch"
+                    SelectionMode="Extended" 
+                    ItemContainerStyle="{DynamicResource ChapterCacheObjectListBoxItem}"/>
 
                 <Grid
+                    x:Name="DownloadButtonsGrid"
                     Grid.Column="1"
-                    TextBlock.FontWeight="Bold"
-                    TextBlock.Foreground="{DynamicResource text-muted}">
+                    VerticalAlignment="Top"
+                    TextElement.FontWeight="Bold"
+                    TextBlock.FontWeight="Bold" 
+                    TextElement.FontSize="16"
+                    TextElement.FontFamily="{DynamicResource OpenIconic}">
 
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="10"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="5"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="10"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="10"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                    </Grid.RowDefinitions>
+                    <Grid.Margin>
+                        <Thickness Right="{x:Static SystemParameters.VerticalScrollBarWidth}"/>
+                    </Grid.Margin>
 
-                    <Grid
-                        Grid.Row="1">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
 
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition/>
-                            <ColumnDefinition Width="Auto"/>
-                        </Grid.ColumnDefinitions>
+                    <Controls:MetroButton
+                        x:Name="DownloadToLatestButton"
+                        HorizontalContentAlignment="Left"
+                        Content="{DynamicResource oi-cloud-download}"
+                        ContentStringFormat="{}{0} Download To Latest"
+                        Padding="4,8"
+                        Command="{Binding DownloadToLatestChapterAsyncCommand}"/>
 
-                        <TextBlock
-                            TextTrimming="CharacterEllipsis" FontWeight="Bold" FontSize="24"
-                            Text="{Binding MangaCacheObject.MangaObject.Name, FallbackValue=No-Name}"
-                            ToolTip="{Binding Text, RelativeSource={RelativeSource Self}}"
-                            Foreground="{DynamicResource text-dark}"/>
+                    <Controls:MetroToggleButton
+                        x:Name="DownloadDropdown"
+                        Grid.Column="1"
+                        Content="{DynamicResource oi-chevron-bottom}"
+                        Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"
+                        IsHitTestVisible="{Binding IsOpen, Converter={StaticResource BooleanInverter}, ElementName=DownloadPopup, Mode=OneWay}"
+                        Margin="0,0,1,0"/>
 
-                        <TextBlock 
-                            Grid.Column="1"
-                            HorizontalAlignment="Right"
-                            VerticalAlignment="Bottom"
-                            Text="{Binding MangaCacheObject.MangaObject.Released, StringFormat=yyyy, FallbackValue=????}" 
-                            ToolTip="{Binding Text, RelativeSource={RelativeSource Self}}"
-                            TextTrimming="CharacterEllipsis"/>
+                    <PrimitiveControls:DockingPopup
+                        x:Name="DownloadPopup"
+                        PlacementTarget="{Binding ElementName=DownloadButtonsGrid, Mode=OneWay}"
+                        Width="{Binding ActualWidth, ElementName=DownloadButtonsGrid, Mode=OneWay}"
+                        PlacementRectangle="{Binding ElementName=DownloadButtonsGrid, Mode=OneWay}"
+			            IsOpen="{Binding IsChecked, ElementName=DownloadDropdown}"
+                        PopupAnimation="Fade"
+                        StaysOpen="False">
+                        <Border
+                            BorderThickness="1,0,1,1"
+                            Background="{DynamicResource window-background}"
+                            BorderBrush="{DynamicResource window-theme-primary}">
+                            <StackPanel Orientation="Vertical">
 
-                    </Grid>
+                                <Controls:MetroButton
+                                    x:Name="DownloadSelectedChapters"
+                                    HorizontalContentAlignment="Left"
+                                    Content="{DynamicResource oi-cloud-download}"
+                                    ContentStringFormat="{}{0} Download Selected"
+                                    Padding="4,8"
+                                    Command="{Binding DownloadSelectedChaptersAsyncCommand}"
+                                    CommandParameter="{Binding SelectedItems, ElementName=ChapterObjects}"/>
 
-                    <TextBlock 
-                        Grid.Row="2"
-                        Text="{Binding MangaCacheObject.MangaObject.AlternateNames, Converter={StaticResource StringListToCSV}, FallbackValue=Alternate\ Names}" 
-                        ToolTip="{Binding Text, RelativeSource={RelativeSource Self}}"
-                        TextTrimming="CharacterEllipsis"/>
+                                <Controls:MetroButton
+                                    x:Name="DownloadAllChapters"
+                                    HorizontalContentAlignment="Left"
+                                    Content="{DynamicResource oi-cloud-download}"
+                                    ContentStringFormat="{}{0} Download All"
+                                    Padding="4,8"
+                                    Command="{Binding DownloadAllChaptersAsyncCommand}"/>
 
-                    <TextBlock 
-                        Grid.Row="4"
-                        Text="{Binding MangaCacheObject.MangaObject.Genres, Converter={StaticResource StringListToCSV}, FallbackValue=Genres}" 
-                        ToolTip="{Binding Text, RelativeSource={RelativeSource Self}}"
-                        TextTrimming="CharacterEllipsis"/>
+                            </StackPanel>
+                        </Border>
+                    </PrimitiveControls:DockingPopup>
 
-                    <Grid
-                        Grid.Row="6">
+                </Grid>
 
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition/>
-                            <ColumnDefinition/>
-                        </Grid.ColumnDefinitions>
+                <Grid
+                    x:Name="ReadButtonsGrid"
+                    Grid.Column="1"
+                    VerticalAlignment="Bottom"
+                    TextElement.FontWeight="Bold"
+                    TextBlock.FontWeight="Bold" 
+                    TextElement.FontSize="16"
+                    TextElement.FontFamily="{DynamicResource OpenIconic}">
 
-                        <TextBlock Text="Authors:" TextTrimming="CharacterEllipsis"/>
-                        <TextBlock Text="Artists:" TextTrimming="CharacterEllipsis" Grid.Column="1"/>
+                    <Grid.Margin>
+                        <Thickness Right="{x:Static SystemParameters.VerticalScrollBarWidth}"/>
+                    </Grid.Margin>
 
-                    </Grid>
-
-                    <Grid
-                        Grid.Row="7">
-
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition/>
-                            <ColumnDefinition/>
-                        </Grid.ColumnDefinitions>
-
-                        <ItemsControl
-                            x:Name="Authors"
-                            ItemsSource="{Binding MangaCacheObject.MangaObject.Authors}">
-                            <ItemsControl.ItemsPanel>
-                                <ItemsPanelTemplate>
-                                    <StackPanel Orientation="Vertical" IsItemsHost="True"/>
-                                </ItemsPanelTemplate>
-                            </ItemsControl.ItemsPanel>
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate>
-                                    <TextBlock 
-                                        Text="{Binding}" 
-                                        TextTrimming="CharacterEllipsis"
-                                        ToolTip="{Binding Text, RelativeSource={RelativeSource Self}}"/>
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                        </ItemsControl>
-
-                        <ItemsControl
-                            x:Name="Artists"
-                            Grid.Column="1"
-                            ItemsSource="{Binding MangaCacheObject.MangaObject.Artists}">
-                            <ItemsControl.ItemsPanel>
-                                <ItemsPanelTemplate>
-                                    <StackPanel Orientation="Vertical" IsItemsHost="True"/>
-                                </ItemsPanelTemplate>
-                            </ItemsControl.ItemsPanel>
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate>
-                                    <TextBlock 
-                                        Text="{Binding}" 
-                                        TextTrimming="CharacterEllipsis"
-                                        ToolTip="{Binding Text, RelativeSource={RelativeSource Self}}"/>
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                        </ItemsControl>
-
-                    </Grid>
-
-                    <Grid
-                        Grid.Row="9">
-
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition/>
-                            <ColumnDefinition/>
-                        </Grid.ColumnDefinitions>
-
-                        <TextBlock Text="Sites:" TextTrimming="CharacterEllipsis"/>
-                        <TextBlock Text="Databases:" TextTrimming="CharacterEllipsis" Grid.Column="1"/>
-
-                    </Grid>
-
-                    <Grid
-                        Grid.Row="10">
-
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition/>
-                            <ColumnDefinition/>
-                        </Grid.ColumnDefinitions>
-
-                        <ItemsControl
-                            x:Name="Sites"
-                            ItemsSource="{Binding MangaCacheObject.MangaObject.Locations}">
-                            <ItemsControl.ItemsPanel>
-                                <ItemsPanelTemplate>
-                                    <StackPanel Orientation="Vertical" IsItemsHost="True"/>
-                                </ItemsPanelTemplate>
-                            </ItemsControl.ItemsPanel>
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate>
-                                    <TextBlock 
-                                        Text="{Binding ExtensionName}" 
-                                        TextTrimming="CharacterEllipsis"
-                                        ToolTip="{Binding Text, RelativeSource={RelativeSource Self}}"/>
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                        </ItemsControl>
-
-                        <ItemsControl
-                            x:Name="Databases"
-                            Grid.Column="1"
-                            ItemsSource="{Binding MangaCacheObject.MangaObject.DatabaseLocations}">
-                            <ItemsControl.ItemsPanel>
-                                <ItemsPanelTemplate>
-                                    <StackPanel Orientation="Vertical" IsItemsHost="True"/>
-                                </ItemsPanelTemplate>
-                            </ItemsControl.ItemsPanel>
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate>
-                                    <TextBlock 
-                                        Text="{Binding ExtensionName}" 
-                                        TextTrimming="CharacterEllipsis"
-                                        ToolTip="{Binding Text, RelativeSource={RelativeSource Self}}"/>
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                        </ItemsControl>
-
-                    </Grid>
+                    <Controls:MetroButton
+                        x:Name="ReadChapterButton"
+                        HorizontalContentAlignment="Left"
+                        Padding="4,8"
+                        Content="{DynamicResource oi-book}"
+                        ContentStringFormat="{}{0} Read Selected Chapter"
+                        Command="{Binding ReadSelectedChapterAsyncCommand}"
+                        CommandParameter="{Binding SelectedItems, ElementName=ChapterObjects}"
+                        Margin="0,0,1,0"/>
 
                 </Grid>
 
             </Grid>
 
             <ScrollViewer
-                Grid.Row="1"
+                Grid.Column="0"
                 CanContentScroll="True"
                 HorizontalScrollBarVisibility="Disabled"
                 VerticalScrollBarVisibility="Visible"
@@ -387,4 +387,5 @@
         </Grid>
 
     </Grid>
+
 </UserControl>

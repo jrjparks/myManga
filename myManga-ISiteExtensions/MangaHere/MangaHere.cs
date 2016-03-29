@@ -220,8 +220,10 @@ namespace MangaHere
                     {
                         String Name = SearchResultNode.SelectSingleNode(".//dt/a[1]").Attributes["rel"].Value,
                             Url = SearchResultNode.SelectSingleNode(".//dt/a[1]").Attributes["href"].Value;
-                        HtmlWeb.PreRequest = new HtmlAgilityPack.HtmlWeb.PreRequestHandler(req =>
+                        HtmlWeb.PreRequest = new HtmlWeb.PreRequestHandler(req =>
                         {
+                            req.CookieContainer = new CookieContainer();
+                            req.CookieContainer.Add(Cookies);
                             req.Method = "POST";
                             req.ContentType = "application/x-www-form-urlencoded";
                             String PayloadContent = String.Format("name={0}", Uri.EscapeDataString(Name));

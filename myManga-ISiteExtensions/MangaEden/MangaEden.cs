@@ -11,7 +11,9 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Reflection;
+using System.Runtime.Serialization.Json;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 
 namespace MangaEden
@@ -28,6 +30,37 @@ namespace MangaEden
         RequiresAuthentication = false)]
     public class MangaEden : ISiteExtension
     {
+        private String LangChars
+        {
+            get
+            {
+                switch (ExtensionDescriptionAttribute.Language)
+                {
+                    default:
+                    case "English":
+                        return "en";
+
+                    case "Italian":
+                        return "it";
+                }
+            }
+        }
+        private Int32 LangId
+        {
+            get
+            {
+                switch (ExtensionDescriptionAttribute.Language)
+                {
+                    default:
+                    case "English":
+                        return 0;
+
+                    case "Italian":
+                        return 1;
+                }
+            }
+        }
+
         #region IExtesion
         private IExtensionDescriptionAttribute EDA;
         public IExtensionDescriptionAttribute ExtensionDescriptionAttribute
@@ -103,9 +136,41 @@ namespace MangaEden
             };
         }
 
+        private SearchResultObject SearchResponseToSearchResultObject(SearchResponse SearchResponse, ref HtmlWeb HtmlWeb)
+        {
+            String Url = String.Format("{0}/{1}", ExtensionDescriptionAttribute.RootUrl, SearchResponse.URL);
+            HtmlDocument MangaDetailPage = HtmlWeb.Load(Url, WebRequestMethods.Http.Get);
+            Regex MangaIdRegex = new Regex(@"window.manga_id2\s=\s");
+            // String MangaId = MangaIdRegex.Match(MangaDetailPage.DocumentNode.InnerHtml);
+
+            SearchResultObject SearchResultObject = new SearchResultObject()
+            {
+                Name = SearchResponse.Label.Substring(0, SearchResponse.Label.Length - 5),  // Remove end language ID
+                Url = String.Format("{0}/{1}", ExtensionDescriptionAttribute.RootUrl, SearchResponse.URL)
+            };
+            return SearchResultObject;
+        }
+
         public List<SearchResultObject> ParseSearch(String Content)
         {
-            throw new NotImplementedException();
+            DataContractJsonSerializer jsonSerializer = new DataContractJsonSerializer(typeof(SearchResponse[]));
+            SearchResponse[] SearchResponses;
+            using (MemoryStream ms = new MemoryStream(Encoding.UTF8.GetBytes(Content)))
+            { SearchResponses = jsonSerializer.ReadObject(ms) as SearchResponse[]; }
+            HtmlWeb HtmlWeb = new HtmlWeb();
+            HtmlWeb.PreRequest = new HtmlWeb.PreRequestHandler(req =>
+            {
+                req.CookieContainer = new CookieContainer();
+                req.CookieContainer.Add(Cookies);
+                return true;
+            });
+            HtmlDocument ApiMangaList = HtmlWeb.Load(
+                String.Format("{0}/api/list/{1}/", ExtensionDescriptionAttribute.RootUrl, LangId),
+                WebRequestMethods.Http.Get);
+
+            return (from SearchResponse in SearchResponses
+                    where SearchResponse.URL.StartsWith(String.Format("/{0}", LangChars))
+                    select SearchResponseToSearchResultObject(SearchResponse, ref HtmlWeb)).ToList();
         }
     }
 }

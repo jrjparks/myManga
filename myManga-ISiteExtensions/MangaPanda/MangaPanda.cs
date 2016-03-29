@@ -151,7 +151,7 @@ namespace MangaPanda
 
             return new MangaObject()
             {
-                Name = MangaName,
+                Name = HtmlEntity.DeEntitize(MangaName),
                 MangaType = MangaType,
                 PageFlowDirection = PageFlowDirection,
                 Description = HtmlEntity.DeEntitize(Desciption),
@@ -230,7 +230,7 @@ namespace MangaPanda
                         Url = String.Format("{0}{1}", ExtensionDescriptionAttribute.RootUrl, Link),
                         ExtensionName = ExtensionDescriptionAttribute.Name,
                         ExtensionLanguage = ExtensionDescriptionAttribute.Language,
-                        Id = Id,
+                        Id = Id.ToString(),
                         Rating = -1,
                         Artists = null,
                         Authors = null

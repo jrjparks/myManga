@@ -215,7 +215,6 @@ namespace myManga_App.ViewModels.Dialog
                     UserPluginAuthentication.Username = Username;
                     UserPluginAuthentication.Password = Password;
                     App.UserAuthentication.UserPluginAuthentications.Add(UserPluginAuthentication);
-                    App.SaveUserAuthentication();
                 }
                 Extension = null;
                 base.OK();
@@ -228,6 +227,7 @@ namespace myManga_App.ViewModels.Dialog
                 { try { AuthenticationPassword.Clear(); } catch { } }
                 ResetAuthenticationRememberMe();
             }
+            App.SaveUserAuthentication();
         }
         #endregion
 

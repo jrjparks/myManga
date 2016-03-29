@@ -170,7 +170,7 @@ namespace MangaTraders
                 String[] DetailValues = { };
                 if (DetailLinkNodes != null)
                 {
-                    DetailValues = (from HtmlNode LinkNode in DetailLinkNodes select LinkNode.InnerText).ToArray();
+                    DetailValues = (from HtmlNode LinkNode in DetailLinkNodes select HtmlEntity.DeEntitize(LinkNode.InnerText.Trim())).ToArray();
                 }
                 else if (MangaNameNode != null)
                 {
@@ -189,7 +189,7 @@ namespace MangaTraders
                 {
                     default: break;
                     case "MangaName": MangaName = DetailValue; break;
-                    case "Alternate Names": AlternateNames = (from String AltName in DetailValue.Split(',') select AltName.Trim()).ToList(); break;
+                    case "Alternate Names": AlternateNames = (from String AltName in DetailValue.Split(',') select HtmlEntity.DeEntitize(AltName.Trim())).ToList(); break;
                     case "Author": AuthorsArtists = DetailValues.ToList(); break;
                     case "Genre": Genres = DetailValues.ToList(); break;
                     case "Description": Description = DetailValue; break;
@@ -246,8 +246,8 @@ namespace MangaTraders
             Chapters.Reverse();
             MangaObject MangaObj = new MangaObject()
             {
-                Name = MangaName,
-                Description = Description,
+                Name = HtmlEntity.DeEntitize(MangaName),
+                Description = HtmlEntity.DeEntitize(Description),
                 AlternateNames = AlternateNames.ToList(),
                 CoverLocations = { new LocationObject() {
                     Url = Cover,

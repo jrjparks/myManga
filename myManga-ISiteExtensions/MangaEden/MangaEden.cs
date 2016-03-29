@@ -11,6 +11,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Reflection;
+using System.Runtime.Caching;
 using System.Runtime.Serialization.Json;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -21,8 +22,8 @@ namespace MangaEden
     [IExtensionDescription(
         Name = "MangaEden",
         URLFormat = "mangaeden.com",
-        RefererHeader = "http://www.mangaeden.com/",
-        RootUrl = "http://www.mangaeden.com",
+        RefererHeader = "https://www.mangaeden.com/",
+        RootUrl = "https://www.mangaeden.com",
         Author = "James Parks",
         Version = "0.0.1",
         SupportedObjects = SupportedObjects.All,
@@ -30,7 +31,43 @@ namespace MangaEden
         RequiresAuthentication = false)]
     public class MangaEden : ISiteExtension
     {
-        private String LangChars
+        #region MangaEden
+        protected readonly MemoryCache ApiCache;
+
+        public MangaEden()
+        {
+            ApiCache = new MemoryCache("MangaEden-myManga");
+        }
+
+        protected String ApiMangaListCacheKey
+        { get { return String.Format("ApiMangaList-{0}", LanguageId); } }
+
+        /// <summary>
+        /// Get ApiMangaList from cache or load from web
+        /// </summary>
+        protected MangaList ApiMangaList
+        {
+            get
+            {
+                if (!ApiCache.Contains(ApiMangaListCacheKey))
+                {
+                    // Cache API calls for 30 minutes
+                    using (WebClient client = new WebClient())
+                    {
+                        DataContractJsonSerializer apiMangaListJsonSerializer = new DataContractJsonSerializer(typeof(MangaList));
+                        using (MemoryStream ms = new MemoryStream(client.DownloadData(String.Format("{0}/api/list/{1}/", ExtensionDescriptionAttribute.RootUrl, LanguageId))))
+                        { ApiCache.Set(ApiMangaListCacheKey, apiMangaListJsonSerializer.ReadObject(ms), DateTimeOffset.Now.AddMinutes(30)); }
+                    }
+                }
+
+                return ApiCache.Get(ApiMangaListCacheKey) as MangaList;
+            }
+        }
+
+        protected String LanguageUrl(String alias)
+        { return String.Format("/{0}-manga/{1}/", LanguageChars, alias); }
+
+        protected String LanguageChars
         {
             get
             {
@@ -45,7 +82,8 @@ namespace MangaEden
                 }
             }
         }
-        private Int32 LangId
+
+        protected Int32 LanguageId
         {
             get
             {
@@ -60,6 +98,45 @@ namespace MangaEden
                 }
             }
         }
+
+        protected SearchResultObject ToSearchResultObject(MangaItem item)
+        {
+            if (Equals(item, null)) return null;
+            SearchResultObject SearchResultObject = item.ToSearchResultObject();
+            SearchResultObject.ExtensionName = SearchResultObject.Cover.ExtensionName = ExtensionDescriptionAttribute.Name;
+            SearchResultObject.ExtensionLanguage = SearchResultObject.Cover.ExtensionLanguage = ExtensionDescriptionAttribute.Language;
+            return SearchResultObject;
+        }
+
+        protected MangaObject ToMangaObject(MangaDetails details)
+        {
+            if (Equals(details, null)) return null;
+            MangaItem mangaItem = ApiMangaList.Manga.FirstOrDefault(m => Equals(m.Alias, details.Alias));
+            MangaObject MangaObject = details.ToMangaObject();
+            MangaObject.Locations = new List<LocationObject> { new LocationObject() {
+                Enabled = true,
+                ExtensionName = ExtensionDescriptionAttribute.Name,
+                ExtensionLanguage = ExtensionDescriptionAttribute.Language,
+                Url = String.Format("https://www.mangaeden.com/api/manga/{0}", mangaItem.Id)
+            } };
+            foreach (ChapterObject ChapterObject in MangaObject.Chapters)
+            {
+                LocationObject LocObj = ChapterObject.Locations.First();
+                LocObj.ExtensionName = ExtensionDescriptionAttribute.Name;
+                LocObj.ExtensionLanguage = ExtensionDescriptionAttribute.Language;
+            }
+            return MangaObject;
+        }
+
+        protected ChapterObject ToChapterObject(ChapterDetail details)
+        {
+            if (Equals(details, null)) return null;
+            ChapterObject ChapterObject = details.ToChapterObject();
+            foreach (PageObject Page in ChapterObject.Pages)
+            { Page.Url = ExtensionDescriptionAttribute.RootUrl; }
+            return ChapterObject;
+        }
+        #endregion
 
         #region IExtesion
         private IExtensionDescriptionAttribute EDA;
@@ -111,17 +188,21 @@ namespace MangaEden
         }
         #endregion
 
-        public MangaObject ParseMangaObject(String content)
+        public MangaObject ParseMangaObject(String Content)
         {
-            throw new NotImplementedException();
+            DataContractJsonSerializer mangaDetailJsonSerializer = new DataContractJsonSerializer(typeof(MangaDetails));
+            using (MemoryStream ms = new MemoryStream(Encoding.UTF8.GetBytes(Content)))
+            { return ToMangaObject(mangaDetailJsonSerializer.ReadObject(ms) as MangaDetails); }
         }
 
-        public ChapterObject ParseChapterObject(String content)
+        public ChapterObject ParseChapterObject(String Content)
         {
-            throw new NotImplementedException();
+            DataContractJsonSerializer chapterDetailJsonSerializer = new DataContractJsonSerializer(typeof(ChapterDetail));
+            using (MemoryStream ms = new MemoryStream(Encoding.UTF8.GetBytes(Content)))
+            { return ToChapterObject(chapterDetailJsonSerializer.ReadObject(ms) as ChapterDetail); }
         }
 
-        public PageObject ParsePageObject(String content)
+        public PageObject ParsePageObject(String Content)
         {
             throw new NotImplementedException();
         }
@@ -136,41 +217,17 @@ namespace MangaEden
             };
         }
 
-        private SearchResultObject SearchResponseToSearchResultObject(SearchResponse SearchResponse, ref HtmlWeb HtmlWeb)
-        {
-            String Url = String.Format("{0}/{1}", ExtensionDescriptionAttribute.RootUrl, SearchResponse.URL);
-            HtmlDocument MangaDetailPage = HtmlWeb.Load(Url, WebRequestMethods.Http.Get);
-            Regex MangaIdRegex = new Regex(@"window.manga_id2\s=\s");
-            // String MangaId = MangaIdRegex.Match(MangaDetailPage.DocumentNode.InnerHtml);
-
-            SearchResultObject SearchResultObject = new SearchResultObject()
-            {
-                Name = SearchResponse.Label.Substring(0, SearchResponse.Label.Length - 5),  // Remove end language ID
-                Url = String.Format("{0}/{1}", ExtensionDescriptionAttribute.RootUrl, SearchResponse.URL)
-            };
-            return SearchResultObject;
-        }
-
         public List<SearchResultObject> ParseSearch(String Content)
         {
-            DataContractJsonSerializer jsonSerializer = new DataContractJsonSerializer(typeof(SearchResponse[]));
+            // Parse search json
+            DataContractJsonSerializer searchResponseJsonSerializer = new DataContractJsonSerializer(typeof(SearchResponse[]));
             SearchResponse[] SearchResponses;
             using (MemoryStream ms = new MemoryStream(Encoding.UTF8.GetBytes(Content)))
-            { SearchResponses = jsonSerializer.ReadObject(ms) as SearchResponse[]; }
-            HtmlWeb HtmlWeb = new HtmlWeb();
-            HtmlWeb.PreRequest = new HtmlWeb.PreRequestHandler(req =>
-            {
-                req.CookieContainer = new CookieContainer();
-                req.CookieContainer.Add(Cookies);
-                return true;
-            });
-            HtmlDocument ApiMangaList = HtmlWeb.Load(
-                String.Format("{0}/api/list/{1}/", ExtensionDescriptionAttribute.RootUrl, LangId),
-                WebRequestMethods.Http.Get);
+            { SearchResponses = searchResponseJsonSerializer.ReadObject(ms) as SearchResponse[]; }
 
-            return (from SearchResponse in SearchResponses
-                    where SearchResponse.URL.StartsWith(String.Format("/{0}", LangChars))
-                    select SearchResponseToSearchResultObject(SearchResponse, ref HtmlWeb)).ToList();
+            return (from mangaItem in ApiMangaList.Manga
+                    where SearchResponses.Count(sr => Equals(sr.URL, LanguageUrl(mangaItem.Alias))) > 0
+                    select ToSearchResultObject(mangaItem)).ToList();
         }
     }
 }

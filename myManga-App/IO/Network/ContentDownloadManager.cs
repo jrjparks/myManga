@@ -278,16 +278,20 @@ namespace myManga_App.IO.Network
 
             try
             {
-                await Task.Delay(TimeSpan.FromSeconds(1));
-                // Load the PageObject via Async and LimitedTaskFactory
-                PageObject = await ContentTaskFactory.StartNew(() => LoadPageObjectAsync(
-                    MangaObject,
-                    ChapterObject,
-                    PageObject,
-                    cts.Token,
-                    ProgressReporter)).Unwrap();
+                // Only load page from we if ImgUrl is empty.
+                if (String.IsNullOrWhiteSpace(PageObject.ImgUrl))
+                {
+                    await Task.Delay(TimeSpan.FromSeconds(1));
+                    // Load the PageObject via Async and LimitedTaskFactory
+                    PageObject = await ContentTaskFactory.StartNew(() => LoadPageObjectAsync(
+                        MangaObject,
+                        ChapterObject,
+                        PageObject,
+                        cts.Token,
+                        ProgressReporter)).Unwrap();
 
-                ChapterObject = await StorePageObject(MangaObject, ChapterObject, PageObject);
+                    ChapterObject = await StorePageObject(MangaObject, ChapterObject, PageObject);
+                }
 
                 ISiteExtension SiteExtension = App.SiteExtensions.First(_SiteExtension =>
                 { return PageObject.Url.Contains(_SiteExtension.ExtensionDescriptionAttribute.URLFormat); });
@@ -525,7 +529,7 @@ namespace myManga_App.IO.Network
                                 MangaObject DownloadedMangaObject = SiteExtension.ParseMangaObject(Content);
                                 if (!Equals(DownloadedMangaObject, null)) MangaObject.Merge(DownloadedMangaObject);
                             }
-                            catch (Exception)
+                            catch (Exception ex)
                             {
                                 Int32 idx = MangaObject.Locations.FindIndex(_LocationObject => Equals(_LocationObject.ExtensionName, SiteExtension.ExtensionDescriptionAttribute.Name));
                                 MangaObject.Locations[idx].Enabled = false;

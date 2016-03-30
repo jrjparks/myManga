@@ -216,11 +216,16 @@ namespace MangaTraders
                     Released = DateTime.Today;
                 else if (ReleasedTxt.StartsWith("yesterday"))
                     Released = DateTime.Today.AddDays(-1);
-                else if (ReleasedTxt.EndsWith("hours ago"))
+                else if (ReleasedTxt.EndsWith("ago"))
                 {
-                    Int32 hours = 0;
-                    Int32.TryParse(ReleasedTxt.Split(' ')[0], out hours);
-                    Released = DateTime.Now.AddHours(0 - hours);
+                    Int32 tDelta = 0;
+                    Int32.TryParse(ReleasedTxt.Split(' ')[0], out tDelta);
+                    if (ReleasedTxt.Contains("hours"))
+                        Released = Released.AddHours(0 - tDelta);
+                    if (ReleasedTxt.Contains("minutes"))
+                        Released = Released.AddMinutes(0 - tDelta);
+                    if (ReleasedTxt.Contains("seconds"))
+                        Released = Released.AddSeconds(0 - tDelta);
                 }
                 else
                     Released = DateTime.Parse(ReleasedTxt);

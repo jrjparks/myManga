@@ -286,6 +286,9 @@ namespace myManga_App
             */
             Updated = MangaObject.Locations.Count(LocObj => !LocObj.Enabled) > 0;
             MangaObject.Locations.ForEach(LocObj => LocObj.Enabled = true);
+
+            Updated = MangaObject.DatabaseLocations.Count(LocObj => !LocObj.Enabled) > 0;
+            MangaObject.DatabaseLocations.ForEach(LocObj => LocObj.Enabled = true);
             #endregion
 
             #region Check for old location object types.

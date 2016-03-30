@@ -545,7 +545,7 @@ namespace myManga_App.IO.Network
                         {
                             String Name = LoadedExtensionContentResult.Extension.ExtensionDescriptionAttribute.Name,
                                 Language = LoadedExtensionContentResult.Extension.ExtensionDescriptionAttribute.Language;
-                            App.logger.Warn(String.Format("Unable to load from {0}-{1} for {2}.", Name, Language, MangaObject.Name), ex);
+                            App.logger.Warn(String.Format("Unable to parse from {0}-{1} for {2}.", Name, Language, MangaObject.Name), ex);
                         }
                     }
 
@@ -597,8 +597,13 @@ namespace myManga_App.IO.Network
                         Content = Content
                     };
                 }
-                catch
-                { return null; }
+                catch (Exception ex)
+                {
+                    String Name = Extension.ExtensionDescriptionAttribute.Name,
+                        Language = Extension.ExtensionDescriptionAttribute.Language;
+                    App.logger.Warn(String.Format("Unable to load content from {0}-{1} for {2}.", Name, Language, MangaObject.Name), ex);
+                    return null;
+                }
             }
         }
         #endregion
@@ -856,7 +861,13 @@ namespace myManga_App.IO.Network
                         Content = Content
                     };
                 }
-                catch { return null; }
+                catch (Exception ex)
+                {
+                    String Name = Extension.ExtensionDescriptionAttribute.Name,
+                        Language = Extension.ExtensionDescriptionAttribute.Language;
+                    App.logger.Warn(String.Format("Unable to load search content from {0}-{1} for {2}.", Name, Language, SearchTerm), ex);
+                    return null;
+                }
             }
         }
 

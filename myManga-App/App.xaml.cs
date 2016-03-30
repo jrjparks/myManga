@@ -123,6 +123,14 @@ namespace myManga_App
                 if (!Equals(MangaObjectStream, null))
                 { using (MangaObjectStream) { MangaCacheObject.MangaObject = MangaObjectStream.Deserialize<MangaObject>(UserConfiguration.SerializeType); } }
 
+                // Move archive to correct location if needed
+                String CorrectArchivePath = Path.Combine(Path.GetDirectoryName(ArchivePath), MangaCacheObject.ArchiveFileName);
+                if (!Equals(ArchivePath, CorrectArchivePath))
+                {
+                    File.Move(ArchivePath, CorrectArchivePath);
+                    logger.Info(String.Format("MangaObject archive file was moved/renamed to '{0}'.", MangaCacheObject.ArchiveFileName));
+                }
+
                 // MangaObject update check
                 Boolean VersionUpdated = false;
                 if (!Equals(MangaCacheObject.MangaObject, null))
@@ -131,14 +139,27 @@ namespace myManga_App
                 {
                     logger.Info(String.Format("MangaObject version was updated for '{0}'.", MangaCacheObject.MangaObject.Name));
                     await ZipManager.Retry(() => ZipManager.WriteAsync(
-                        ArchivePath, typeof(MangaObject).Name,
+                        CorrectArchivePath, typeof(MangaObject).Name,
                         MangaCacheObject.MangaObject.Serialize(UserConfiguration.SerializeType)),
                         TimeSpan.FromMinutes(1));
                 }
 
                 // Load Cover Image
-                String CoverImageFileName = Path.GetFileName(MangaCacheObject.MangaObject.SelectedCover().Url);
-                Stream CoverImageStream = ZipManager.UnsafeRead(ArchivePath, CoverImageFileName);
+                IEnumerable<String> Entries = ZipManager.UnsafeGetEntries(CorrectArchivePath);
+                LocationObject SelectedCoverLocationObject = MangaCacheObject.MangaObject.SelectedCover();
+                String CoverImageFileName = Path.GetFileName(SelectedCoverLocationObject.Url);
+                if (!Entries.Contains(CoverImageFileName))
+                {
+                    // Try to download the missing cover;
+                    ContentDownloadManager.DownloadCover(MangaCacheObject.MangaObject, SelectedCoverLocationObject);
+                    // If the SelectedCover is not in the archive file select a new cover.
+                    String Url = (from CoverLocation in MangaCacheObject.MangaObject.CoverLocations
+                                  where Entries.Contains(Path.GetFileName(CoverLocation.Url))
+                                  select CoverLocation.Url).FirstOrDefault();
+                    if (!Equals(Url, null))
+                        CoverImageFileName = Path.GetFileName(Url);
+                }
+                Stream CoverImageStream = ZipManager.UnsafeRead(CorrectArchivePath, CoverImageFileName);
                 if (!Equals(CoverImageStream, null))
                 {
                     using (CoverImageStream)
@@ -198,6 +219,14 @@ namespace myManga_App
                 if (!Equals(MangaObjectStream, null))
                 { using (MangaObjectStream) { MangaCacheObject.MangaObject = MangaObjectStream.Deserialize<MangaObject>(UserConfiguration.SerializeType); } }
 
+                // Move archive to correct location if needed
+                String CorrectArchivePath = Path.Combine(Path.GetDirectoryName(ArchivePath), MangaCacheObject.ArchiveFileName);
+                if (!Equals(ArchivePath, CorrectArchivePath))
+                {
+                    File.Move(ArchivePath, CorrectArchivePath);
+                    logger.Info(String.Format("MangaObject archive file was moved/renamed to '{0}'.", MangaCacheObject.ArchiveFileName));
+                }
+
                 // MangaObject update check
                 Boolean VersionUpdated = false;
                 if (!Equals(MangaCacheObject.MangaObject, null))
@@ -206,7 +235,7 @@ namespace myManga_App
                 {
                     logger.Info(String.Format("MangaObject version was updated for '{0}'.", MangaCacheObject.MangaObject.Name));
                     await ZipManager.Retry(() => ZipManager.WriteAsync(
-                        ArchivePath, typeof(MangaObject).Name,
+                        CorrectArchivePath, typeof(MangaObject).Name,
                         MangaCacheObject.MangaObject.Serialize(UserConfiguration.SerializeType)),
                         TimeSpan.FromMinutes(1));
                 }
@@ -214,8 +243,21 @@ namespace myManga_App
                 if (ReloadCoverImage)
                 {
                     // Load Cover Image
-                    String CoverImageFileName = Path.GetFileName(MangaCacheObject.MangaObject.SelectedCover().Url);
-                    Stream CoverImageStream = await ZipManager.Retry(() => ZipManager.ReadAsync(ArchivePath, CoverImageFileName), TimeSpan.FromMinutes(1));
+                    IEnumerable<String> Entries = await ZipManager.Retry(() => ZipManager.GetEntriesAsync(CorrectArchivePath), TimeSpan.FromMinutes(1));
+                    LocationObject SelectedCoverLocationObject = MangaCacheObject.MangaObject.SelectedCover();
+                    String CoverImageFileName = Path.GetFileName(SelectedCoverLocationObject.Url);
+                    if (!Entries.Contains(CoverImageFileName))
+                    {
+                        // Try to download the missing cover;
+                        ContentDownloadManager.DownloadCover(MangaCacheObject.MangaObject, SelectedCoverLocationObject);
+                        // If the SelectedCover is not in the archive file select a new cover.
+                        String Url = (from CoverLocation in MangaCacheObject.MangaObject.CoverLocations
+                                      where Entries.Contains(Path.GetFileName(CoverLocation.Url))
+                                      select CoverLocation.Url).FirstOrDefault();
+                        if (!Equals(Url, null))
+                            CoverImageFileName = Path.GetFileName(Url);
+                    }
+                    Stream CoverImageStream = await ZipManager.Retry(() => ZipManager.ReadAsync(CorrectArchivePath, CoverImageFileName), TimeSpan.FromMinutes(1));
                     if (!Equals(CoverImageStream, null))
                     {
                         using (CoverImageStream)
@@ -263,6 +305,17 @@ namespace myManga_App
         private MangaObject UpdateMangaObjectVersion(MangaObject MangaObject, ref Boolean Updated)
         {
             Updated = false;
+
+            #region Re-enable LocationObjects
+            /*
+            TODO: This is a quick fix and should be removed!
+            */
+            Updated = MangaObject.Locations.Count(LocObj => !LocObj.Enabled) > 0;
+            MangaObject.Locations.ForEach(LocObj => LocObj.Enabled = true);
+
+            Updated = MangaObject.DatabaseLocations.Count(LocObj => !LocObj.Enabled) > 0;
+            MangaObject.DatabaseLocations.ForEach(LocObj => LocObj.Enabled = true);
+            #endregion
 
             #region Check for old location object types.
             Regex NameLanguageSplitRegex = new Regex(@"[^\w]");
@@ -312,9 +365,9 @@ namespace myManga_App
 
             // Remove duplicates
             MangaObject.CoverLocations = (from CoverLocation in MangaObject.CoverLocations
-                                         group CoverLocation by CoverLocation.Url
+                                          group CoverLocation by CoverLocation.Url
                                          into CoverLocationGroups
-                                         select CoverLocationGroups.FirstOrDefault()).ToList();
+                                          select CoverLocationGroups.FirstOrDefault()).ToList();
             MangaObject.CoverLocations.RemoveAll(_ => Equals(_, null));
             MangaObject.Covers.Clear();
             #endregion
@@ -436,6 +489,24 @@ namespace myManga_App
         }
         #endregion
 
+        #region Localization Resource Dictionary
+        public ResourceDictionary LocalizationResourceDictionary
+        {
+            get { return Resources.MergedDictionaries[1]; }
+            set { Resources.MergedDictionaries[1] = value; }
+        }
+        public void ApplyLocalization(String local)
+        {
+            switch (local)
+            {
+                default:
+                case "en-US":
+                    ThemeResourceDictionary.Source = new Uri("/myManga;component/Resources/Localization/Dictionary_en-US.xaml", UriKind.RelativeOrAbsolute);
+                    break;
+            }
+        }
+        #endregion
+
         public AssemblyInformation AssemblyInfo
         { get; private set; }
 
@@ -476,6 +547,8 @@ namespace myManga_App
             InitializeComponent();
         }
 
+        #region Application Events
+
         private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
             logger.Error(sender.GetType().FullName, e.ExceptionObject as Exception);
@@ -487,7 +560,6 @@ namespace myManga_App
             e.Handled = true;
         }
 
-        #region Application Events
         private void App_Startup(object sender, StartupEventArgs e)
         {
             // Load all of the extensions

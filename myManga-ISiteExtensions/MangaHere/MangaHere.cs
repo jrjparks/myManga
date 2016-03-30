@@ -109,9 +109,9 @@ namespace MangaHere
                 Authors = { }, Artists = { },
                 Genres = MangaPropertiesNode.SelectSingleNode(".//ul/li[4]").LastChild.InnerText.Split(new String[] { ", " }, StringSplitOptions.RemoveEmptyEntries);
             if (AuthorsNodeCollection != null)
-                Authors = (from HtmlNode AuthorNode in AuthorsNodeCollection select AuthorNode.InnerText).ToArray();
+                Authors = (from HtmlNode AuthorNode in AuthorsNodeCollection select HtmlEntity.DeEntitize(AuthorNode.InnerText)).ToArray();
             if (ArtistsNodeCollection != null)
-                Artists = (from HtmlNode ArtistNode in ArtistsNodeCollection select ArtistNode.InnerText).ToArray();
+                Artists = (from HtmlNode ArtistNode in ArtistsNodeCollection select HtmlEntity.DeEntitize(ArtistNode.InnerText)).ToArray();
 
             List<ChapterObject> Chapters = new List<ChapterObject>();
             HtmlNodeCollection RawChapterList = MangaDetailsNode.SelectNodes(".//div[contains(@class,'detail_list')]/ul[1]/li");
@@ -146,9 +146,9 @@ namespace MangaHere
 
             MangaObject MangaObj = new MangaObject()
             {
-                Name = MangaName,
+                Name = HtmlEntity.DeEntitize(MangaName),
                 Description = HtmlEntity.DeEntitize(Desciption),
-                AlternateNames = AlternateNames.ToList(),
+                AlternateNames = (from AltName in AlternateNames select HtmlEntity.DeEntitize(AltName)).ToList(),
                 CoverLocations = { new LocationObject() {
                     Url = Cover,
                     ExtensionName = ExtensionDescriptionAttribute.Name,
@@ -220,8 +220,11 @@ namespace MangaHere
                     {
                         String Name = SearchResultNode.SelectSingleNode(".//dt/a[1]").Attributes["rel"].Value,
                             Url = SearchResultNode.SelectSingleNode(".//dt/a[1]").Attributes["href"].Value;
-                        HtmlWeb.PreRequest = new HtmlAgilityPack.HtmlWeb.PreRequestHandler(req =>
+                        HtmlWeb.PreRequest = new HtmlWeb.PreRequestHandler(req =>
                         {
+                            req.CookieContainer = new CookieContainer();
+                            if (!Equals(Cookies, null))
+                                req.CookieContainer.Add(Cookies);
                             req.Method = "POST";
                             req.ContentType = "application/x-www-form-urlencoded";
                             String PayloadContent = String.Format("name={0}", Uri.EscapeDataString(Name));

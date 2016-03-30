@@ -150,7 +150,7 @@ namespace MangaReader
 
             return new MangaObject()
             {
-                Name = MangaName,
+                Name = HtmlEntity.DeEntitize(MangaName),
                 MangaType = MangaType,
                 PageFlowDirection = PageFlowDirection,
                 Description = HtmlEntity.DeEntitize(Desciption),
@@ -228,7 +228,7 @@ namespace MangaReader
                         ExtensionLanguage = ExtensionDescriptionAttribute.Language,
                         Name = Name,
                         Url = String.Format("{0}{1}", ExtensionDescriptionAttribute.RootUrl, Link),
-                        Id = Id,
+                        Id = Id.ToString(),
                         Rating = -1,
                         Artists = null,
                         Authors = null

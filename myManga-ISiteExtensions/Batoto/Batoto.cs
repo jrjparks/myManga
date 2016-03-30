@@ -433,7 +433,7 @@ namespace Batoto
                             ExtensionLanguage = ExtensionDescriptionAttribute.Language,
                             Name = Name,
                             Url = Link,
-                            Id = Id,
+                            Id = Id.ToString(),
                             Rating = Double.Parse(SearchResultNode.SelectSingleNode(".//td[3]/div").Attributes["title"].Value.Substring(0, 4)),
                             Artists = Author_Artists.ToList(),
                             Authors = Author_Artists.ToList()

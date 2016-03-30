@@ -12,20 +12,20 @@ namespace myMangaSiteExtension.Interfaces
         /// </summary>
         /// <param name="content">String of page HTML content.</param>
         /// <returns>MangaObject of parsed page.</returns>
-        MangaObject ParseMangaObject(String content);
+        MangaObject ParseMangaObject(String Content);
 
         /// <summary>
         /// Parse a ChapterObject from a page.
         /// </summary>
         /// <param name="content">String of page HTML content.</param>
         /// <returns>ChapterObject of parsed page.</returns>
-        ChapterObject ParseChapterObject(String content);
+        ChapterObject ParseChapterObject(String Content);
 
         /// <summary>
         /// Parse a PageObject from a page.
         /// </summary>
         /// <param name="content">String of page HTML content.</param>
         /// <returns>PageObject of parsed page.</returns>
-        PageObject ParsePageObject(String content);
+        PageObject ParsePageObject(String Content);
     }
 }

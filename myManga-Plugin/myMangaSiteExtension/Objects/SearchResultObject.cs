@@ -10,7 +10,7 @@ namespace myMangaSiteExtension.Objects
     [DebuggerStepThrough]
     public class SearchResultObject
     {
-        public Int32 Id { get; set; }
+        public String Id { get; set; }
         public Double Rating { get; set; }
         public String Name { get; set; }
         public String Description { get; set; }

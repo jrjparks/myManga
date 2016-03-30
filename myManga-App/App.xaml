@@ -8,6 +8,9 @@
                 <!-- DO NOT MOVE THIS! DO NOT ADD ANYTHING BEFORE THIS! -->
                 <ResourceDictionary Source="/myManga;component/Themes/LightTheme.xaml"/>
                 
+                <!-- DO NOT MOVE THIS! DO NOT ADD ANYTHING BEFORE THIS! -->
+                <ResourceDictionary Source="/myManga;component/Resources/Localization/Dictionary_en-US.xaml"/>
+                
                 <ResourceDictionary Source="/myManga;component/Themes/CoreResourceDictionary.xaml"/>
                 <ResourceDictionary Source="/myManga;component/Controls/Window/myMangaWindow.xaml"/>
             </ResourceDictionary.MergedDictionaries>

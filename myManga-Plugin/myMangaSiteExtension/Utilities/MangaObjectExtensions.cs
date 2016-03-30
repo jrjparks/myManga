@@ -153,8 +153,7 @@ namespace myMangaSiteExtension.Utilities
             // Description
             // Prefer database description if longer.
             if (databaseAsMaster || preferDatabaseDescription ||
-                String.Equals(value.Description, null) ||
-                String.Equals(value.Description, String.Empty) ||
+                String.IsNullOrWhiteSpace(value.Description) ||
                 value.Description.Length < databaseObject.Description.Length)
                 if (!String.IsNullOrWhiteSpace(databaseObject.Description))
                     value.Description = databaseObject.Description;
@@ -197,7 +196,7 @@ namespace myMangaSiteExtension.Utilities
         }
 
         public static String MangaFileName(this MangaObject value)
-        { return (value != null && value.Name != null) ? new String(value.Name.Where(Char.IsLetterOrDigit).ToArray()) : String.Empty; }
+        { return (value != null && value.Name != null) ? new String(value.Name.Replace(' ', '-').Where(c => Char.IsLetterOrDigit(c) || Equals(c, '-')).ToArray()).ToLower() : String.Empty; }
 
         //Yes the archive is a zip file, read the docs
         public static String MangaArchiveName(this MangaObject value, String Extension = "zip")
@@ -245,7 +244,8 @@ namespace myMangaSiteExtension.Utilities
             rVal = value.Chapters.Find(c => c.Chapter == bookmark_object.Chapter && c.SubChapter == bookmark_object.SubChapter);
             if (!ChapterObject.Equals(rVal, null)) return rVal; // Return Bookmark of CS
             rVal = value.Chapters.Find(c => c.Chapter == bookmark_object.Chapter);
-            return rVal; // Return Bookmark of C or null
+            if (!ChapterObject.Equals(rVal, null)) return rVal; // Return Bookmark of C
+            return value.Chapters.First(); // Return Bookmark of C or null
         }
     }
 }

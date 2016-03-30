@@ -123,13 +123,13 @@ namespace MangaHelpers
                     case "Original title":
                     case "Alternative Titles":
                         foreach (String value in DetailValue.Split(new Char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
-                            if (!AlternateNames.Contains(value)) AlternateNames.Add(value);
+                            if (!AlternateNames.Contains(value)) AlternateNames.Add(HtmlEntity.DeEntitize(value));
                         break;
 
                     case "Writer(s)":
                     case "Artist(s)":
                         foreach (String value in DetailValue.Split(new Char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
-                            if (!Staff.Contains(value)) Staff.Add(value);
+                            if (!Staff.Contains(value)) Staff.Add(HtmlEntity.DeEntitize(value));
                         break;
 
                     case "Year":
@@ -147,7 +147,7 @@ namespace MangaHelpers
 
             return new DatabaseObject()
             {
-                Name = Name,
+                Name = HtmlEntity.DeEntitize(Name),
                 AlternateNames = AlternateNames,
                 Covers = Covers,
                 Description = HtmlEntity.DeEntitize(SummaryNode.InnerText),

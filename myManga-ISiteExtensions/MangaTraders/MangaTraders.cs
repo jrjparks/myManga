@@ -170,7 +170,7 @@ namespace MangaTraders
                 String[] DetailValues = { };
                 if (DetailLinkNodes != null)
                 {
-                    DetailValues = (from HtmlNode LinkNode in DetailLinkNodes select LinkNode.InnerText).ToArray();
+                    DetailValues = (from HtmlNode LinkNode in DetailLinkNodes select HtmlEntity.DeEntitize(LinkNode.InnerText.Trim())).ToArray();
                 }
                 else if (MangaNameNode != null)
                 {
@@ -189,7 +189,7 @@ namespace MangaTraders
                 {
                     default: break;
                     case "MangaName": MangaName = DetailValue; break;
-                    case "Alternate Names": AlternateNames = (from String AltName in DetailValue.Split(',') select AltName.Trim()).ToList(); break;
+                    case "Alternate Names": AlternateNames = (from String AltName in DetailValue.Split(',') select HtmlEntity.DeEntitize(AltName.Trim())).ToList(); break;
                     case "Author": AuthorsArtists = DetailValues.ToList(); break;
                     case "Genre": Genres = DetailValues.ToList(); break;
                     case "Description": Description = DetailValue; break;
@@ -216,11 +216,16 @@ namespace MangaTraders
                     Released = DateTime.Today;
                 else if (ReleasedTxt.StartsWith("yesterday"))
                     Released = DateTime.Today.AddDays(-1);
-                else if (ReleasedTxt.EndsWith("hours ago"))
+                else if (ReleasedTxt.EndsWith("ago"))
                 {
-                    Int32 hours = 0;
-                    Int32.TryParse(ReleasedTxt.Split(' ')[0], out hours);
-                    Released = DateTime.Now.AddHours(0 - hours);
+                    Int32 tDelta = 0;
+                    Int32.TryParse(ReleasedTxt.Split(' ')[0], out tDelta);
+                    if (ReleasedTxt.Contains("hours"))
+                        Released = Released.AddHours(0 - tDelta);
+                    if (ReleasedTxt.Contains("minutes"))
+                        Released = Released.AddMinutes(0 - tDelta);
+                    if (ReleasedTxt.Contains("seconds"))
+                        Released = Released.AddSeconds(0 - tDelta);
                 }
                 else
                     Released = DateTime.Parse(ReleasedTxt);
@@ -246,8 +251,8 @@ namespace MangaTraders
             Chapters.Reverse();
             MangaObject MangaObj = new MangaObject()
             {
-                Name = MangaName,
-                Description = Description,
+                Name = HtmlEntity.DeEntitize(MangaName),
+                Description = HtmlEntity.DeEntitize(Description),
                 AlternateNames = AlternateNames.ToList(),
                 CoverLocations = { new LocationObject() {
                     Url = Cover,

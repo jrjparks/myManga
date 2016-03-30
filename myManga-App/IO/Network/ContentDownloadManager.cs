@@ -431,6 +431,7 @@ namespace myManga_App.IO.Network
         private sealed class ExtensionContentResult
         {
             public IExtension Extension { get; set; }
+            public LocationObject Location { get; set; }
             public String Content { get; set; }
         }
         #endregion
@@ -508,6 +509,7 @@ namespace myManga_App.IO.Network
                     select LoadExtensionMangaContent(Extension, MangaObject);
                 List<Task<ExtensionContentResult>> ExtensionContentTasks = ExtensionContentTasksQuery.ToList();
                 Int32 OriginalExtensionContentTasksCount = ExtensionContentTasks.Count;
+                Boolean preferDatabaseDescription = true;
 
                 if (!Equals(progress, null)) progress.Report(10);
                 while (ExtensionContentTasks.Count > 0)
@@ -521,33 +523,29 @@ namespace myManga_App.IO.Network
                     if (!Equals(LoadedExtensionContentResult, null))
                     {
                         String Content = LoadedExtensionContentResult.Content;
-                        if (LoadedExtensionContentResult.Extension is ISiteExtension)
+                        try
                         {
-                            ISiteExtension SiteExtension = LoadedExtensionContentResult.Extension as ISiteExtension;
-                            try
+                            if (LoadedExtensionContentResult.Extension is ISiteExtension)
                             {
-                                MangaObject DownloadedMangaObject = SiteExtension.ParseMangaObject(Content);
-                                if (!Equals(DownloadedMangaObject, null)) MangaObject.Merge(DownloadedMangaObject);
+                                MangaObject DownloadedMangaObject = (LoadedExtensionContentResult.Extension as ISiteExtension).ParseMangaObject(Content);
+                                if (!Equals(DownloadedMangaObject, null))
+                                { MangaObject.Merge(DownloadedMangaObject); }
                             }
-                            catch (Exception ex)
+                            else if (LoadedExtensionContentResult.Extension is IDatabaseExtension)
                             {
-                                Int32 idx = MangaObject.Locations.FindIndex(_LocationObject => Equals(_LocationObject.ExtensionName, SiteExtension.ExtensionDescriptionAttribute.Name));
-                                MangaObject.Locations[idx].Enabled = false;
+                                DatabaseObject DownloadedDatabaseObject = (LoadedExtensionContentResult.Extension as IDatabaseExtension).ParseDatabaseObject(Content);
+                                if (!Equals(DownloadedDatabaseObject, null))
+                                {
+                                    MangaObject.AttachDatabase(DownloadedDatabaseObject, preferDatabaseDescription: preferDatabaseDescription);
+                                    preferDatabaseDescription = false;  // Only prefer the first database
+                                }
                             }
                         }
-                        else if (LoadedExtensionContentResult.Extension is IDatabaseExtension)
+                        catch (Exception ex)
                         {
-                            IDatabaseExtension DatabaseExtension = LoadedExtensionContentResult.Extension as IDatabaseExtension;
-                            try
-                            {
-                                DatabaseObject DownloadedDatabaseObject = DatabaseExtension.ParseDatabaseObject(Content);
-                                if (!Equals(DownloadedDatabaseObject, null)) MangaObject.AttachDatabase(DownloadedDatabaseObject, preferDatabaseDescription: true);
-                            }
-                            catch (Exception)
-                            {
-                                Int32 idx = MangaObject.DatabaseLocations.FindIndex(_LocationObject => Equals(_LocationObject.ExtensionName, DatabaseExtension.ExtensionDescriptionAttribute.Name));
-                                MangaObject.DatabaseLocations[idx].Enabled = false;
-                            }
+                            String Name = LoadedExtensionContentResult.Extension.ExtensionDescriptionAttribute.Name,
+                                Language = LoadedExtensionContentResult.Extension.ExtensionDescriptionAttribute.Language;
+                            App.logger.Warn(String.Format("Unable to load from {0}-{1} for {2}.", Name, Language, MangaObject.Name), ex);
                         }
                     }
 
@@ -595,6 +593,7 @@ namespace myManga_App.IO.Network
                     return new ExtensionContentResult()
                     {
                         Extension = Extension,
+                        Location = LocationObject,
                         Content = Content
                     };
                 }
@@ -823,39 +822,6 @@ namespace myManga_App.IO.Network
             // Remove Database only results
             Int32 RemoveCount = SearchResults.RemoveAll(_ => Equals(_.Locations.Count, 0));
 
-            // Merge same items
-            /* This should be handled above.
-            for (Int32 index = 0; index < SearchResults.Count; ++index)
-            {
-                ct.ThrowIfCancellationRequested();
-                MangaObject item = SearchResults[index];
-                for (Int32 sub_index = index + 1; sub_index < SearchResults.Count;)
-                {
-                    ct.ThrowIfCancellationRequested();
-                    MangaObject sub_item = SearchResults[sub_index];
-                    List<String> ExistingMangaObjectNames = new List<String>(item.AlternateNames),
-                        MangaObjectNames = new List<String>(sub_item.AlternateNames);
-                    ExistingMangaObjectNames.Insert(0, item.Name);
-                    MangaObjectNames.Insert(0, sub_item.Name);
-
-                    ExistingMangaObjectNames = ExistingMangaObjectNames.Select(_ExistingMangaObjectName => SafeAlphaNumeric.Replace(_ExistingMangaObjectName.ToLower(), String.Empty)).ToList();
-                    MangaObjectNames = MangaObjectNames.Select(_MangaObjectNames => SafeAlphaNumeric.Replace(_MangaObjectNames.ToLower(), String.Empty)).ToList();
-
-                    Int32 IntersectCount = ExistingMangaObjectNames.Intersect(MangaObjectNames).Count(),
-                        ExistingThirdCount = (Int32)Math.Ceiling((Double)ExistingMangaObjectNames.Count / 3);
-                    if (IntersectCount >= ExistingThirdCount)
-                    {
-                        item.Merge(sub_item);
-                        SearchResults.RemoveAt(sub_index);
-                    }
-                    else ++sub_index;
-
-                    Int32 MergeProgress = (Int32)Math.Round((Double)index / (Double)SearchResults.Count * 10);
-                    if (!Equals(progress, null)) progress.Report(90 + MergeProgress);
-                }
-            }
-            //*/
-
             if (!Equals(progress, null)) progress.Report(100);
             ct.ThrowIfCancellationRequested();
             return SearchResults;
@@ -875,12 +841,20 @@ namespace myManga_App.IO.Network
                 WebDownloader.Referer = Extension.ExtensionDescriptionAttribute.RefererHeader;
                 try
                 {
-                    String Content = null;
-                    if (Extension is ISiteExtension)
-                    { Content = await Retry(() => ProcessSearchRequest((Extension as ISiteExtension).GetSearchRequestObject(SearchTerm)), DOWNLOAD_TIMEOUT); }
-                    else if (Extension is IDatabaseExtension)
-                    { Content = await Retry(() => ProcessSearchRequest((Extension as IDatabaseExtension).GetSearchRequestObject(SearchTerm)), DOWNLOAD_TIMEOUT); }
-                    return new ExtensionContentResult() { Extension = Extension, Content = Content };
+                    SearchRequestObject sro = Extension.GetSearchRequestObject(SearchTerm);
+                    String Content = await Retry(() => ProcessSearchRequest(sro), DOWNLOAD_TIMEOUT);
+                    return new ExtensionContentResult()
+                    {
+                        Extension = Extension,
+                        Location = new LocationObject()
+                        {
+                            Enabled = true,
+                            Url = sro.Url,
+                            ExtensionName = Extension.ExtensionDescriptionAttribute.Name,
+                            ExtensionLanguage = Extension.ExtensionDescriptionAttribute.Language
+                        },
+                        Content = Content
+                    };
                 }
                 catch { return null; }
             }

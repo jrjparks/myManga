@@ -153,8 +153,7 @@ namespace myMangaSiteExtension.Utilities
             // Description
             // Prefer database description if longer.
             if (databaseAsMaster || preferDatabaseDescription ||
-                String.Equals(value.Description, null) ||
-                String.Equals(value.Description, String.Empty) ||
+                String.IsNullOrWhiteSpace(value.Description) ||
                 value.Description.Length < databaseObject.Description.Length)
                 if (!String.IsNullOrWhiteSpace(databaseObject.Description))
                     value.Description = databaseObject.Description;
@@ -197,7 +196,7 @@ namespace myMangaSiteExtension.Utilities
         }
 
         public static String MangaFileName(this MangaObject value)
-        { return (value != null && value.Name != null) ? new String(value.Name.Where(Char.IsLetterOrDigit).ToArray()) : String.Empty; }
+        { return (value != null && value.Name != null) ? new String(value.Name.Replace(' ', '-').Where(c => Char.IsLetterOrDigit(c) || Equals(c, '-')).ToArray()).ToLower() : String.Empty; }
 
         //Yes the archive is a zip file, read the docs
         public static String MangaArchiveName(this MangaObject value, String Extension = "zip")

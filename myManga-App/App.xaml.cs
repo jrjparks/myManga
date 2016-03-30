@@ -243,7 +243,7 @@ namespace myManga_App
                 if (ReloadCoverImage)
                 {
                     // Load Cover Image
-                    IEnumerable<String> Entries = ZipManager.UnsafeGetEntries(CorrectArchivePath);
+                    IEnumerable<String> Entries = await ZipManager.Retry(() => ZipManager.GetEntriesAsync(CorrectArchivePath), TimeSpan.FromMinutes(1));
                     LocationObject SelectedCoverLocationObject = MangaCacheObject.MangaObject.SelectedCover();
                     String CoverImageFileName = Path.GetFileName(SelectedCoverLocationObject.Url);
                     if (!Entries.Contains(CoverImageFileName))

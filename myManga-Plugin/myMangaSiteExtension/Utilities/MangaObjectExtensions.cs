@@ -244,7 +244,8 @@ namespace myMangaSiteExtension.Utilities
             rVal = value.Chapters.Find(c => c.Chapter == bookmark_object.Chapter && c.SubChapter == bookmark_object.SubChapter);
             if (!ChapterObject.Equals(rVal, null)) return rVal; // Return Bookmark of CS
             rVal = value.Chapters.Find(c => c.Chapter == bookmark_object.Chapter);
-            return rVal; // Return Bookmark of C or null
+            if (!ChapterObject.Equals(rVal, null)) return rVal; // Return Bookmark of C
+            return value.Chapters.First(); // Return Bookmark of C or null
         }
     }
 }

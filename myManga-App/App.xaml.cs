@@ -145,7 +145,20 @@ namespace myManga_App
                 }
 
                 // Load Cover Image
-                String CoverImageFileName = Path.GetFileName(MangaCacheObject.MangaObject.SelectedCover().Url);
+                IEnumerable<String> Entries = ZipManager.UnsafeGetEntries(CorrectArchivePath);
+                LocationObject SelectedCoverLocationObject = MangaCacheObject.MangaObject.SelectedCover();
+                String CoverImageFileName = Path.GetFileName(SelectedCoverLocationObject.Url);
+                if (!Entries.Contains(CoverImageFileName))
+                {
+                    // Try to download the missing cover;
+                    ContentDownloadManager.DownloadCover(MangaCacheObject.MangaObject, SelectedCoverLocationObject);
+                    // If the SelectedCover is not in the archive file select a new cover.
+                    String Url = (from CoverLocation in MangaCacheObject.MangaObject.CoverLocations
+                                  where Entries.Contains(Path.GetFileName(CoverLocation.Url))
+                                  select CoverLocation.Url).FirstOrDefault();
+                    if (!Equals(Url, null))
+                        CoverImageFileName = Path.GetFileName(Url);
+                }
                 Stream CoverImageStream = ZipManager.UnsafeRead(CorrectArchivePath, CoverImageFileName);
                 if (!Equals(CoverImageStream, null))
                 {
@@ -230,7 +243,20 @@ namespace myManga_App
                 if (ReloadCoverImage)
                 {
                     // Load Cover Image
-                    String CoverImageFileName = Path.GetFileName(MangaCacheObject.MangaObject.SelectedCover().Url);
+                    IEnumerable<String> Entries = ZipManager.UnsafeGetEntries(CorrectArchivePath);
+                    LocationObject SelectedCoverLocationObject = MangaCacheObject.MangaObject.SelectedCover();
+                    String CoverImageFileName = Path.GetFileName(SelectedCoverLocationObject.Url);
+                    if (!Entries.Contains(CoverImageFileName))
+                    {
+                        // Try to download the missing cover;
+                        ContentDownloadManager.DownloadCover(MangaCacheObject.MangaObject, SelectedCoverLocationObject);
+                        // If the SelectedCover is not in the archive file select a new cover.
+                        String Url = (from CoverLocation in MangaCacheObject.MangaObject.CoverLocations
+                                      where Entries.Contains(Path.GetFileName(CoverLocation.Url))
+                                      select CoverLocation.Url).FirstOrDefault();
+                        if (!Equals(Url, null))
+                            CoverImageFileName = Path.GetFileName(Url);
+                    }
                     Stream CoverImageStream = await ZipManager.Retry(() => ZipManager.ReadAsync(CorrectArchivePath, CoverImageFileName), TimeSpan.FromMinutes(1));
                     if (!Equals(CoverImageStream, null))
                     {
@@ -463,6 +489,24 @@ namespace myManga_App
         }
         #endregion
 
+        #region Localization Resource Dictionary
+        public ResourceDictionary LocalizationResourceDictionary
+        {
+            get { return Resources.MergedDictionaries[1]; }
+            set { Resources.MergedDictionaries[1] = value; }
+        }
+        public void ApplyLocalization(String local)
+        {
+            switch (local)
+            {
+                default:
+                case "en-US":
+                    ThemeResourceDictionary.Source = new Uri("/myManga;component/Resources/Localization/Dictionary_en-US.xaml", UriKind.RelativeOrAbsolute);
+                    break;
+            }
+        }
+        #endregion
+
         public AssemblyInformation AssemblyInfo
         { get; private set; }
 
@@ -503,6 +547,8 @@ namespace myManga_App
             InitializeComponent();
         }
 
+        #region Application Events
+
         private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
             logger.Error(sender.GetType().FullName, e.ExceptionObject as Exception);
@@ -514,7 +560,6 @@ namespace myManga_App
             e.Handled = true;
         }
 
-        #region Application Events
         private void App_Startup(object sender, StartupEventArgs e)
         {
             // Load all of the extensions

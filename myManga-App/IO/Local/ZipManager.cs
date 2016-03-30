@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Linq;
 
 namespace myManga_App.IO.Local
 {
@@ -17,6 +19,38 @@ namespace myManga_App.IO.Local
         {
             if (semaphore != null)
                 semaphore.Dispose();
+        }
+
+        public IEnumerable<String> GetEntries(String FileName)
+        {
+            Task<IEnumerable<String>> getEntriesTask = Task.Run(() => GetEntriesAsync(FileName));
+            getEntriesTask.Wait();
+            return getEntriesTask.Result;
+        }
+
+        public async Task<IEnumerable<String>> GetEntriesAsync(String FileName)
+        {
+            try
+            {
+                await semaphore.WaitAsync();
+                using (ZipArchive zipArchive = new ZipArchive(new FileStream(FileName, FileMode.Open, FileAccess.ReadWrite, FileShare.None), ZipArchiveMode.Read))
+                { return from Entry in zipArchive.Entries select Entry.FullName; }
+            }
+            catch
+            { return null; }
+            finally
+            { semaphore.Release(); }
+        }
+
+        public IEnumerable<String> UnsafeGetEntries(String FileName)
+        {
+            try
+            {
+                using (ZipArchive zipArchive = new ZipArchive(new FileStream(FileName, FileMode.Open, FileAccess.ReadWrite, FileShare.None), ZipArchiveMode.Read))
+                { return from Entry in zipArchive.Entries select Entry.FullName; }
+            }
+            catch
+            { return null; }
         }
 
         public Stream Read(String FileName, String EntryName)

@@ -82,6 +82,40 @@ namespace MangaPark
         #endregion
 
         #region ISiteExtension
+        public SearchRequestObject GetSearchRequestObject(string SearchTerm)
+        {
+            return new SearchRequestObject()
+            {
+                Url = String.Format("{0}/search?q={1}", ExtensionDescriptionAttribute.RootUrl, Uri.EscapeUriString(SearchTerm)),
+                Method = SearchMethod.GET,
+                Referer = ExtensionDescriptionAttribute.RefererHeader
+            };
+        }
+
+        public List<SearchResultObject> ParseSearch(string Content)
+        {
+            List<SearchResultObject> SearchResults = new List<SearchResultObject>();
+            HtmlDocument SearchResultDocument = new HtmlDocument();
+            SearchResultDocument.LoadHtml(Content);
+            if (Equals(SearchResultDocument.DocumentNode.SelectSingleNode(".//div[contains(@class, 'manga-list')]/div[contains(@class, 'no-match')]"), null)) return SearchResults;
+
+            HtmlNodeCollection HtmlSearchResults = SearchResultDocument.DocumentNode.SelectNodes(".//div[contains(@class, 'manga-list')]/div[contains(@class, 'item')]");
+            if (!Equals(HtmlSearchResults, null))
+            {
+                foreach (HtmlNode SearchResultNode in HtmlSearchResults)
+                {
+                    try
+                    {
+                        HtmlNode TitleImgNode = SearchResultNode.SelectSingleNode(".//tbody/tr/td[1]/a");
+                        String Name = TitleImgNode.GetAttributeValue("title", "Unknown"),
+                            CoverUrl = TitleImgNode.SelectSingleNode(".//img").GetAttributeValue("src", null);
+                    }
+                    catch { }
+                }
+            }
+            return SearchResults;
+        }
+
         public MangaObject ParseMangaObject(string Content)
         {
             throw new NotImplementedException();
@@ -93,16 +127,6 @@ namespace MangaPark
         }
 
         public PageObject ParsePageObject(string Content)
-        {
-            throw new NotImplementedException();
-        }
-
-        public SearchRequestObject GetSearchRequestObject(string SearchTerm)
-        {
-            throw new NotImplementedException();
-        }
-
-        public List<SearchResultObject> ParseSearch(string Content)
         {
             throw new NotImplementedException();
         }

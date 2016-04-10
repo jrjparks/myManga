@@ -2,6 +2,7 @@
 using myManga_App.Objects.MVVM;
 using myMangaSiteExtension.Primitives.Objects;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -110,9 +111,9 @@ namespace myManga_App.Objects.UserConfig
         }
 
         [XmlIgnore]
-        private readonly ObservableCollection<EnabledExtensionObject> enabledExtensions = new ObservableCollection<EnabledExtensionObject>();
+        private readonly List<EnabledExtensionObject> enabledExtensions = new List<EnabledExtensionObject>();
         [XmlArray, XmlArrayItem("Extension")]
-        public ObservableCollection<EnabledExtensionObject> EnabledExtensions
+        public List<EnabledExtensionObject> EnabledExtensions
         {
             get { return enabledExtensions; }
             set {

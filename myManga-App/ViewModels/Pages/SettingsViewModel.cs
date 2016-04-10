@@ -48,14 +48,14 @@ namespace myManga_App.ViewModels.Pages
         {
             base.SubLostFocus();
             ResetData();
-            App.ApplyTheme(App.UserConfiguration.Theme);
+            App.ApplyTheme(App.CORE.UserConfiguration.Theme);
         }
 
         protected override void SubReturnFocus()
         {
             base.SubReturnFocus();
             ResetData();
-            App.ApplyTheme(App.UserConfiguration.Theme);
+            App.ApplyTheme(App.CORE.UserConfiguration.Theme);
         }
 
         private void UserConfiguration_PropertyChanged(Object sender, PropertyChangedEventArgs e)
@@ -77,7 +77,7 @@ namespace myManga_App.ViewModels.Pages
             UserConfiguration = new UserConfigurationObject();
             PropertyInfo[] UserConfigurationProperties = typeof(UserConfigurationObject).GetProperties();
             foreach (PropertyInfo Property in UserConfigurationProperties)
-            { Property.SetValue(UserConfiguration, Property.GetValue(App.UserConfiguration)); }
+            { Property.SetValue(UserConfiguration, Property.GetValue(App.CORE.UserConfiguration)); }
             UserConfiguration.PropertyChanged += UserConfiguration_PropertyChanged;
 
             SiteExtensionObjects.Clear();
@@ -90,10 +90,10 @@ namespace myManga_App.ViewModels.Pages
 
             foreach (EnabledExtensionObject EnabledSiteExtensionObject in EnabledSiteExtensionObjects)
             {
-                ISiteExtension SiteExtension = App.SiteExtensions[EnabledSiteExtensionObject.Name, EnabledSiteExtensionObject.Language];
+                ISiteExtension SiteExtension = App.CORE.SiteExtensions[EnabledSiteExtensionObject.Name, EnabledSiteExtensionObject.Language];
                 SiteExtensionObjects.Add(new ExtensionObject(SiteExtension, EnabledSiteExtensionObject.Enabled));
             }
-            foreach (ISiteExtension SiteExtension in App.SiteExtensions)
+            foreach (ISiteExtension SiteExtension in App.CORE.SiteExtensions)
             {
                 String Name = String.Format("{0} ({1})", SiteExtension.ExtensionDescriptionAttribute.Name, SiteExtension.ExtensionDescriptionAttribute.Language);
                 ExtensionObject SiteExtensionObject = SiteExtensionObjects.FirstOrDefault(seo => Equals(seo.Name, Name));
@@ -102,10 +102,10 @@ namespace myManga_App.ViewModels.Pages
 
             foreach (EnabledExtensionObject EnabledDatabaseExtensionObject in EnabledDatabaseExtensionObjects)
             {
-                IDatabaseExtension DatabaseExtension = App.DatabaseExtensions[EnabledDatabaseExtensionObject.Name, EnabledDatabaseExtensionObject.Language];
+                IDatabaseExtension DatabaseExtension = App.CORE.DatabaseExtensions[EnabledDatabaseExtensionObject.Name, EnabledDatabaseExtensionObject.Language];
                 DatabaseExtensionObjects.Add(new ExtensionObject(DatabaseExtension, EnabledDatabaseExtensionObject.Enabled));
             }
-            foreach (IDatabaseExtension DatabaseExtension in App.DatabaseExtensions)
+            foreach (IDatabaseExtension DatabaseExtension in App.CORE.DatabaseExtensions)
             {
                 String Name = String.Format("{0} ({1})", DatabaseExtension.ExtensionDescriptionAttribute.Name, DatabaseExtension.ExtensionDescriptionAttribute.Language);
                 ExtensionObject DatabaseExtensionObject = DatabaseExtensionObjects.FirstOrDefault(seo => Equals(seo.Name, Name));
@@ -272,7 +272,7 @@ namespace myManga_App.ViewModels.Pages
             //*/
             PropertyInfo[] UserConfigurationProperties = typeof(UserConfigurationObject).GetProperties();
             foreach (PropertyInfo Property in UserConfigurationProperties)
-            { if (!IgnoreProperties.Contains(Property.Name)) Property.SetValue(App.UserConfiguration, Property.GetValue(UserConfiguration)); }
+            { if (!IgnoreProperties.Contains(Property.Name)) Property.SetValue(App.CORE.UserConfiguration, Property.GetValue(UserConfiguration)); }
 
             Messenger.Instance.Send(true, "PreviousFocusRequest");
         }

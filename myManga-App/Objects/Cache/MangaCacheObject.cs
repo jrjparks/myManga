@@ -19,7 +19,7 @@ namespace myManga_App.Objects.Cache
             get
             {
                 if (!Equals(MangaObject, null))
-                    return MangaObject.MangaArchiveName(App.MANGA_ARCHIVE_EXTENSION);
+                    return MangaObject.MangaArchiveName(App.CORE.MANGA_ARCHIVE_EXTENSION);
                 return initialArchiveFileName;
             }
             set { initialArchiveFileName = value; }
@@ -146,7 +146,7 @@ namespace myManga_App.Objects.Cache
 
                 // Store boolean for if the ResumeChapterObject is null
                 Boolean ResumeChapterIsNull = Equals(ResumeChapterObject, null);
-                String MangaObjectChaptersDirectory = System.IO.Path.Combine(control.App.CHAPTER_ARCHIVE_DIRECTORY, control.MangaObject.MangaFileName());
+                String MangaObjectChaptersDirectory = System.IO.Path.Combine(control.App.CORE.CHAPTER_ARCHIVE_DIRECTORY, control.MangaObject.MangaFileName());
                 control.ChapterCacheObjects = new List<ChapterCacheObject>(
                     from ChapterObject in control.MangaObject.Chapters
                     select new ChapterCacheObject(control.MangaObject, ChapterObject)
@@ -157,7 +157,7 @@ namespace myManga_App.Objects.Cache
                         // Store if the ChapterObject archive exists locally
                         IsLocal = ChapterObject.IsLocal(
                             MangaObjectChaptersDirectory,
-                            control.App.CHAPTER_ARCHIVE_EXTENSION)
+                            control.App.CORE.CHAPTER_ARCHIVE_EXTENSION)
                     });
 
             }

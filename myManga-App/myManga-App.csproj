@@ -92,6 +92,7 @@
     </ApplicationDefinition>
     <Compile Include="Controls\Extensions\ItemsControlExtensions.cs" />
     <Compile Include="Controls\ListBoxExtensions.cs" />
+    <Compile Include="CoreManagement.cs" />
     <Compile Include="Objects\Extensions\ExtensionObject.cs" />
     <Compile Include="Objects\UserConfig\EnabledExtensionObject.cs" />
     <Compile Include="System\Windows\Controls\Behaviors\DragDrop\DragAdorner.cs" />

@@ -18,8 +18,8 @@ namespace myManga_App.Converters
             if (!MangaObject.Equals(manga_object, null))
             {
                 if (!ChapterObject.Equals(chapter_object, null))
-                { return chapter_object.IsLocal(System.IO.Path.Combine(App.CHAPTER_ARCHIVE_DIRECTORY, manga_object.MangaFileName()), App.CHAPTER_ARCHIVE_EXTENSION); }
-                return manga_object.IsLocal(App.MANGA_ARCHIVE_DIRECTORY, App.MANGA_ARCHIVE_EXTENSION);
+                { return chapter_object.IsLocal(System.IO.Path.Combine(App.CORE.CHAPTER_ARCHIVE_DIRECTORY, manga_object.MangaFileName()), App.CORE.CHAPTER_ARCHIVE_EXTENSION); }
+                return manga_object.IsLocal(App.CORE.MANGA_ARCHIVE_DIRECTORY, App.CORE.MANGA_ARCHIVE_EXTENSION);
             }
             return false;
         }

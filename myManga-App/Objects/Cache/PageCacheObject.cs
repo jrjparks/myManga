@@ -16,7 +16,7 @@ namespace myManga_App.Objects.Cache
             get
             {
                 if (!Equals(ChapterObject, null))
-                    return ChapterObject.ChapterArchiveName(App.CHAPTER_ARCHIVE_EXTENSION);
+                    return ChapterObject.ChapterArchiveName(App.CORE.CHAPTER_ARCHIVE_EXTENSION);
                 return initialArchiveFileName;
             }
             set { initialArchiveFileName = value; }
@@ -30,7 +30,7 @@ namespace myManga_App.Objects.Cache
                 if (!Equals(MangaObject, null))
                     if (!Equals(ChapterObject, null))
                         return System.IO.Path.Combine(
-                            App.CHAPTER_ARCHIVE_DIRECTORY,
+                            App.CORE.CHAPTER_ARCHIVE_DIRECTORY,
                             MangaObject.MangaFileName(),
                             ArchiveFileName);
                 return initialArchiveFilePath;

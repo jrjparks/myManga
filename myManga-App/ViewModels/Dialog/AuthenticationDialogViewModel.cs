@@ -202,8 +202,8 @@ namespace myManga_App.ViewModels.Dialog
             // Lookup UserPluginAuthenticationObject and remove it.
             String PluginName = Extension.ExtensionDescriptionAttribute.Name,
                 PluginLanguage = Extension.ExtensionDescriptionAttribute.Language;
-            UserPluginAuthenticationObject UserPluginAuthentication = App.UserAuthentication.UserPluginAuthentications.FirstOrDefault(_ => Equals(_.PluginName, PluginName) && Equals(_.PluginLanguage, PluginLanguage));
-            App.UserAuthentication.UserPluginAuthentications.Remove(UserPluginAuthentication);
+            UserPluginAuthenticationObject UserPluginAuthentication = App.CORE.UserAuthentication.UserPluginAuthentications.FirstOrDefault(_ => Equals(_.PluginName, PluginName) && Equals(_.PluginLanguage, PluginLanguage));
+            App.CORE.UserAuthentication.UserPluginAuthentications.Remove(UserPluginAuthentication);
 
             if (authenticationSuccess)
             {
@@ -214,7 +214,7 @@ namespace myManga_App.ViewModels.Dialog
                     UserPluginAuthentication.PluginLanguage = PluginLanguage;
                     UserPluginAuthentication.Username = Username;
                     UserPluginAuthentication.Password = Password;
-                    App.UserAuthentication.UserPluginAuthentications.Add(UserPluginAuthentication);
+                    App.CORE.UserAuthentication.UserPluginAuthentications.Add(UserPluginAuthentication);
                 }
                 Extension = null;
                 base.OK();

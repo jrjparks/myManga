@@ -59,7 +59,7 @@ namespace myManga_App.Objects.Extensions
             {
                 if(Extension.ExtensionDescriptionAttribute.RequiresAuthentication)
                 {
-                    if(App.UserAuthentication.UserPluginAuthentications.Count(upao => Equals(upao.PluginName, Name)) > 0)
+                    if(App.CORE.UserAuthentication.UserPluginAuthentications.Count(upao => Equals(upao.PluginName, Name)) > 0)
                     { AuthenticationState = AuthenticationState.Invalid; }
                     else
                     { AuthenticationState = AuthenticationState.Required; }

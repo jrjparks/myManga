@@ -60,30 +60,6 @@
       <Project>{e87091a9-4489-408a-91fb-4fc8080d0d9d}</Project>
       <Name>myManga-App</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\myManga-IDatabaseExtensions\AnimeNewsNetwork\AnimeNewsNetwork.csproj">
-      <Project>{58e9513e-d3cc-42e7-9eb7-7fcf222f6670}</Project>
-      <Name>AnimeNewsNetwork</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\myManga-IDatabaseExtensions\MangaHelpers\MangaHelpers.csproj">
-      <Project>{9d1ac8d3-24f3-47de-a950-3f48d20dd017}</Project>
-      <Name>MangaHelpers</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\myManga-IDatabaseExtensions\MangaUpdatesBakaUpdates\MangaUpdatesBakaUpdates.csproj">
-      <Project>{490a4004-2340-414a-9f03-fefff81577ac}</Project>
-      <Name>MangaUpdatesBakaUpdates</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\myManga-ISiteExtensions\Batoto\Batoto.csproj">
-      <Project>{64eb88be-0dba-47f7-b282-b248cda87e79}</Project>
-      <Name>Batoto</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\myManga-ISiteExtensions\MangaHere\MangaHere.csproj">
-      <Project>{93cbcb8c-01cf-4dcd-a675-056cf0be047f}</Project>
-      <Name>MangaHere</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\myManga-ISiteExtensions\MangaTraders\MangaTraders.csproj">
-      <Project>{6a91c9a9-1bad-494f-82ec-047f94c9aae8}</Project>
-      <Name>MangaTraders</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\myManga-Plugin\myMangaSiteExtension\myMangaSiteExtension.csproj">
       <Project>{088e2638-3bed-4b11-a548-36e3539d86f2}</Project>
       <Name>myMangaSiteExtension</Name>
@@ -94,6 +70,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>xcopy "$(SolutionDir)myManga-ISiteExtensions\$(ConfigurationName)\*.mymanga.dll" "$(TargetDir)Plugins\" /F /R /Y /I
+xcopy "$(SolutionDir)myManga-IDatabaseExtensions\$(ConfigurationName)\*.mymanga.dll" "$(TargetDir)Plugins\" /F /R /Y /I</PostBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

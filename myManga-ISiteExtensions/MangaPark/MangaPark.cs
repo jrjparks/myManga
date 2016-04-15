@@ -115,7 +115,7 @@ namespace MangaPark
                             CoverUrl = TitleImgNode.GetAttributeValue("src", null);
                         if (!Equals(CoverUrl, null))
                         {
-                            CoverUrl = Regex.Replace(CoverUrl, @"/\d\.jpg", ".jpg", RegexOptions.Singleline);
+                            CoverUrl = Regex.Replace(CoverUrl, @"/\d+\.jpg", ".jpg", RegexOptions.Singleline);
                             Cover = new LocationObject()
                             {
                                 Enabled = true,

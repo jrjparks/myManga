@@ -27,8 +27,6 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="/myManga;component/Controls/Window/myMangaWindow.xaml"/>
-                <ResourceDictionary Source="/myManga;component/Themes/CoreResourceDictionary.xaml"/>
-                <ResourceDictionary Source="/myManga;component/Resources/Localization/Dictionary_en-US.xaml"/>
                 <ResourceDictionary Source="/myManga;component/Resources/ViewModel-View-Link.xaml"/>
 
                 <ResourceDictionary Source="/myManga;component/Themes/ProgressBar/ProgressBar.xaml"/>

@@ -68,7 +68,6 @@ namespace myManga_App.IO.Network
         /// </summary>
         /// <param name="ConcurrencyMultiplier">Default is 1.</param>
         public ContentDownloadManager(
-            Int32 ConcurrencyMultiplier = 1,
             CoreManagement CORE = null)
         {
             #region CORE
@@ -80,11 +79,15 @@ namespace myManga_App.IO.Network
 
             ActiveDownloadsCache = new MemoryCache("ActiveDownloadsCache");
 
+            Int32 ConcurrencyMultiplier = CORE.UserConfiguration.ConcurrencyMultiplier;
+            if (ConcurrencyMultiplier < 1) ConcurrencyMultiplier = 1;
+            else if (ConcurrencyMultiplier > 10) ConcurrencyMultiplier = 10;
+
             DownloadConcurrency = Environment.ProcessorCount * ConcurrencyMultiplier;
             ImageDownloadConcurrency = DownloadConcurrency / 2;
             TaskConcurrencySemaphore = new SemaphoreSlim(DownloadConcurrency, DownloadConcurrency);
             ImageTaskConcurrencySemaphore = new SemaphoreSlim(ImageDownloadConcurrency, ImageDownloadConcurrency);
-            ServicePointManager.DefaultConnectionLimit = DownloadConcurrency;
+            ServicePointManager.DefaultConnectionLimit = DownloadConcurrency + ImageDownloadConcurrency;
 
             cts = new CancellationTokenSource();
             ContentTaskFactory = Task.Factory;

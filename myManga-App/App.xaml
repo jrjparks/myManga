@@ -6,11 +6,11 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <!-- DO NOT MOVE THIS! DO NOT ADD ANYTHING BEFORE THIS! -->
-                <ResourceDictionary Source="/myManga;component/Themes/LightTheme.xaml"/>
-                
+                <ResourceDictionary x:Name="ThemeResourceDictionary" Source="/myManga;component/Themes/LightTheme.xaml"/>
+
                 <!-- DO NOT MOVE THIS! DO NOT ADD ANYTHING BEFORE THIS! -->
-                <ResourceDictionary Source="/myManga;component/Resources/Localization/Dictionary_en-US.xaml"/>
-                
+                <ResourceDictionary x:Name="LocalizationResourceDictionary" Source="/myManga;component/Resources/Localization/Dictionary_en.xaml"/>
+
                 <ResourceDictionary Source="/myManga;component/Themes/CoreResourceDictionary.xaml"/>
                 <ResourceDictionary Source="/myManga;component/Controls/Window/myMangaWindow.xaml"/>
             </ResourceDictionary.MergedDictionaries>

@@ -195,6 +195,22 @@ namespace myManga_App.Objects.UserConfig
             }
         }
 
+        [XmlIgnore]
+        private Int32 concurrencyMultiplier = 1;
+        [XmlElement]
+        public Int32 ConcurrencyMultiplier
+        {
+            get { return concurrencyMultiplier; }
+            set
+            {
+                OnPropertyChanging();
+                if (value < 1) concurrencyMultiplier = 1;
+                else if (value > 10) concurrencyMultiplier = 10;
+                else concurrencyMultiplier = value;
+                OnPropertyChanged();
+            }
+        }
+
         public UserConfigurationObject()
             : base()
         { CreateEventLinks(); }

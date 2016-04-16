@@ -146,24 +146,24 @@ namespace myManga_App.ViewModels
                 PagesChapterReaderViewModel = new Pages.ChapterReaderViewModel();
                 PagesSettingsViewModel = new Pages.SettingsViewModel();
 
-                // SetValue(SettingsViewModelPropertyKey, new SettingsViewModel());
-
-                Messenger.Instance.RegisterRecipient<BaseViewModel>(this, v =>
+                Messenger.Instance.RegisterRecipient<BaseViewModel>(this, RequestingView =>
                 {
-                    if (ContentViewModel != v)
+                    if (!Equals(ContentViewModel, RequestingView))
                     {
-                        if (!Equals(ContentViewModel, null)) { ContentViewModel.LostFocus(); }
-                        ContentViewModel = v;
+                        if (!Equals(ContentViewModel, null))
+                        { ContentViewModel.LostFocus(); }
+                        ContentViewModel = RequestingView;
                     }
                 }, "FocusRequest");
 
-                Messenger.Instance.RegisterRecipient<Boolean>(this, b =>
+                Messenger.Instance.RegisterRecipient<Boolean>(this, PullPreviousFocus =>
                 {
-                    if (!Equals(PreviousContentViewModel, null) && b)
-                        PreviousContentViewModel.PullFocus();
+                    if (!Equals(PreviousContentViewModel, null))
+                        if (PullPreviousFocus)
+                            PreviousContentViewModel.PullFocus();
                 }, "PreviousFocusRequest");
 
-                ServicePointManager.DefaultConnectionLimit = App.ContentDownloadManager.DownloadConcurrency;
+                ServicePointManager.DefaultConnectionLimit = App.ContentDownloadManager.MaxActiveDownloadCount;
 
                 ActiveDownloadsTimer = new Timer(state =>
                 {   // Monitor the ContentDownloadManager IsActive property
@@ -172,7 +172,7 @@ namespace myManga_App.ViewModels
                         if (!Equals(App.ContentDownloadManager.IsActive, DownloadsActive))
                             DownloadsActive = App.ContentDownloadManager.IsActive;
                     }));
-                }, null, TimeSpan.FromSeconds(3), TimeSpan.FromSeconds(1));
+                }, null, TimeSpan.FromSeconds(3), TimeSpan.FromSeconds(3));
 
                 PagesHomeViewModel.PullFocus();
             }

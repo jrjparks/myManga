@@ -19,8 +19,6 @@
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="/myManga;component/Resources/Localization/Dictionary_en-US.xaml"/>
-                <ResourceDictionary Source="/myManga;component/Themes/CoreResourceDictionary.xaml"/>
                 <ResourceDictionary Source="/myManga;component/Themes/Button/MetroButton.xaml"/>
 
                 <ResourceDictionary Source="/myManga;component/Themes/ListBox/ListBoxes.xaml"/>
@@ -287,14 +285,44 @@
                 <TabItem Header="Advanced" Height="40" Width="100">
                     <ScrollViewer HorizontalScrollBarVisibility="Disabled">
 
-                        <HeaderedContentControl
-                                Header="Storage Serialization"
-                                Margin="2,6" VerticalAlignment="Top">
-                            <ComboBox
-                                x:Name="StorageSerialization"
-                                ItemsSource="{Binding SerializeTypes}"
-                                SelectedItem="{Binding UserConfiguration.SerializeType}"/>
-                        </HeaderedContentControl>
+                        <StackPanel>
+                            
+                            <HeaderedContentControl
+                                    Header="Storage Serialization"
+                                    Margin="2,6" VerticalAlignment="Top">
+                                <ComboBox
+                                    x:Name="StorageSerialization"
+                                    ItemsSource="{Binding SerializeTypes}"
+                                    SelectedItem="{Binding UserConfiguration.SerializeType}"/>
+                            </HeaderedContentControl>
+
+                            <!--
+                            TODO: App Freezes when uncommented
+                            <HeaderedContentControl
+                                    Header="{Binding Value, ElementName=ConcurrencyMultiplier}" 
+                                    HeaderStringFormat="Concurrency Multiplier: {0:0}x"
+                                    Margin="2,6" VerticalAlignment="Top">
+                                <StackPanel>
+                                    <TextBlock
+                                        Text="Restart is required." 
+                                        FontSize="13"
+                                        FontStyle="Italic"
+                                        Foreground="{DynamicResource text-muted}"/>
+                                    <Slider
+                                        x:Name="ConcurrencyMultiplier"
+                                        Minimum="1"
+                                        Maximum="10"
+                                        IsSnapToTickEnabled="True"
+                                        TickFrequency="1"
+                                        LargeChange="2"
+                                        SmallChange="1"
+                                        Value="{Binding UserConfiguration.ConcurrencyMultiplier, FallbackValue=1}"
+                                        TickPlacement="BottomRight"/>
+                                </StackPanel>
+                            </HeaderedContentControl>
+                            -->
+
+                        </StackPanel>
 
                     </ScrollViewer>
                 </TabItem>

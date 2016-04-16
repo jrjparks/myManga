@@ -15,6 +15,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Communication;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Runtime.Caching;
@@ -419,17 +420,20 @@ namespace myManga_App
         }
         public void ApplyTheme(ThemeType theme)
         {
-            switch (theme)
+            RunOnUiThread(delegate
             {
-                default:
-                case ThemeType.Light:
-                    ThemeResourceDictionary.Source = new Uri("/myManga;component/Themes/LightTheme.xaml", UriKind.RelativeOrAbsolute);
-                    break;
+                switch (theme)
+                {
+                    default:
+                    case ThemeType.Light:
+                        ThemeResourceDictionary.Source = new Uri("/myManga;component/Themes/LightTheme.xaml", UriKind.RelativeOrAbsolute);
+                        break;
 
-                case ThemeType.Dark:
-                    ThemeResourceDictionary.Source = new Uri("/myManga;component/Themes/DarkTheme.xaml", UriKind.RelativeOrAbsolute);
-                    break;
-            }
+                    case ThemeType.Dark:
+                        ThemeResourceDictionary.Source = new Uri("/myManga;component/Themes/DarkTheme.xaml", UriKind.RelativeOrAbsolute);
+                        break;
+                }
+            });
         }
         #endregion
 
@@ -439,15 +443,16 @@ namespace myManga_App
             get { return Resources.MergedDictionaries[1]; }
             set { Resources.MergedDictionaries[1] = value; }
         }
-        public void ApplyLocalization(String local)
+        public void ApplyLocalization(CultureInfo cultureInfo)
         {
-            switch (local)
+            RunOnUiThread(delegate
             {
-                default:
-                case "en-US":
-                    ThemeResourceDictionary.Source = new Uri("/myManga;component/Resources/Localization/Dictionary_en-US.xaml", UriKind.RelativeOrAbsolute);
-                    break;
-            }
+                String[] SupportedLanguages = {
+                    "en",
+                };
+                if (SupportedLanguages.Contains(cultureInfo.Name))
+                    ThemeResourceDictionary.Source = new Uri(String.Format("/myManga;component/Resources/Localization/Dictionary_{0}.xaml", cultureInfo.Name), UriKind.RelativeOrAbsolute);
+            });
         }
         #endregion
 
@@ -477,8 +482,11 @@ namespace myManga_App
             ChapterObjectArchiveWatcher.IncludeSubdirectories = true;
             ChapterObjectArchiveWatcher.EnableRaisingEvents = false;
 
+            // Load UserConfig
+            LoadUserConfig();
+
             // Initialize the ContentDownloadManager v2
-            ContentDownloadManager = new ContentDownloadManager(ConcurrencyMultiplier: 2, CORE: CORE);
+            ContentDownloadManager = new ContentDownloadManager(CORE: CORE);
 
             Startup += App_Startup;
             Exit += App_Exit;
@@ -496,12 +504,17 @@ namespace myManga_App
         private void App_DispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
         {
             logger.Error(sender.GetType().FullName, e.Exception);
+
+            #if !DEBUG
+            // Handle error if in release mode.
             e.Handled = true;
+            #endif
         }
 
         private void App_Startup(object sender, StartupEventArgs e)
         {
-            LoadUserConfig();
+            // LoadUserConfig();
+            ApplyTheme(CORE.UserConfiguration.Theme);
             LoadUserAuthenticate();
             CORE.UserConfiguration.UserConfigurationUpdated += (_s, _e) => SaveUserConfiguration();
 
@@ -622,9 +635,7 @@ namespace myManga_App
                 }
 
             if (UserAuthenticationObject.Equals(CORE.UserAuthentication, null))
-            {
-                CORE.UpdateUserAuthentication(new UserAuthenticationObject());
-            }
+            { CORE.UpdateUserAuthentication(new UserAuthenticationObject()); }
 
             CancellationTokenSource cts = new CancellationTokenSource();
             foreach (UserPluginAuthenticationObject upa in CORE.UserAuthentication.UserPluginAuthentications)
@@ -663,7 +674,6 @@ namespace myManga_App
                 { CORE.UserConfiguration.EnabledExtensions.Add(new EnabledExtensionObject(o.Value) { Enabled = Equals(o.Index, 0) }); }
                 SaveUserConfiguration();
             }
-            ApplyTheme(CORE.UserConfiguration.Theme);
         }
 
         public void SaveUserConfiguration()
@@ -690,7 +700,7 @@ namespace myManga_App
         public void RunOnUiThread(Action action)
         {
             if (Dispatcher.Thread == Thread.CurrentThread) action();
-            else Current.Dispatcher.Invoke(DispatcherPriority.Send, action);
+            else Dispatcher.Invoke(DispatcherPriority.Send, action);
         }
     }
 }

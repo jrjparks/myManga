@@ -58,10 +58,6 @@ namespace myManga_App
         public readonly ContentDownloadManager ContentDownloadManager;
         #endregion
 
-        #region Cache
-        public readonly RegionedMemoryCache AppMemoryCache;
-        #endregion
-
         #region IO
         private FileSystemWatcher MangaObjectArchiveWatcher
         { get; set; }
@@ -76,7 +72,7 @@ namespace myManga_App
 
         private async Task<MangaCacheObject> UnsafeDispatcherLoadMangaCacheObjectAsync(String ArchivePath)
         {
-            return await Current.Dispatcher.Invoke(() => UnsafeLoadMangaCacheObjectAsync(ArchivePath));
+            return await Current.Dispatcher.Invoke(() => UnsafeLoadMangaCacheObjectAsync(ArchivePath), DispatcherPriority.ContextIdle);
         }
 
         private async Task<MangaCacheObject> UnsafeLoadMangaCacheObjectAsync(String ArchivePath)
@@ -111,10 +107,9 @@ namespace myManga_App
                 if (VersionUpdated)
                 {
                     logger.Info(String.Format("MangaObject version was updated for '{0}'.", MangaCacheObject.MangaObject.Name));
-                    await CORE.ZipManager.Retry(() => CORE.ZipManager.WriteAsync(
+                    await CORE.ZipManager.WriteAsync(
                         CorrectArchivePath, typeof(MangaObject).Name,
-                        MangaCacheObject.MangaObject.Serialize(CORE.UserConfiguration.SerializeType)),
-                        TimeSpan.FromMinutes(1));
+                        MangaCacheObject.MangaObject.Serialize(CORE.UserConfiguration.SerializeType)).Retry(TimeSpan.FromMinutes(1));
                 }
 
                 // Load Cover Image
@@ -172,7 +167,7 @@ namespace myManga_App
 
         private async Task<MangaCacheObject> DispatcherReloadMangaCacheObjectAsync(String ArchivePath, Boolean ReloadCoverImage = false)
         {
-            return await Current.Dispatcher.Invoke(() => ReloadMangaCacheObjectAsync(ArchivePath, ReloadCoverImage));
+            return await Current.Dispatcher.Invoke(() => ReloadMangaCacheObjectAsync(ArchivePath, ReloadCoverImage), DispatcherPriority.ContextIdle);
         }
 
         private async Task<MangaCacheObject> ReloadMangaCacheObjectAsync(String ArchivePath, Boolean ReloadCoverImage = false)
@@ -183,12 +178,12 @@ namespace myManga_App
                 MangaCacheObject.ArchiveFileName = Path.GetFileName(ArchivePath);
 
                 // Load BookmarkObject Data
-                Stream BookmarkObjectStream = await CORE.ZipManager.Retry(() => CORE.ZipManager.ReadAsync(ArchivePath, typeof(BookmarkObject).Name), TimeSpan.FromMinutes(1));
+                Stream BookmarkObjectStream = await CORE.ZipManager.ReadAsync(ArchivePath, typeof(BookmarkObject).Name).Retry(TimeSpan.FromMinutes(1));
                 if (!Equals(BookmarkObjectStream, null))
                 { using (BookmarkObjectStream) { MangaCacheObject.BookmarkObject = BookmarkObjectStream.Deserialize<BookmarkObject>(CORE.UserConfiguration.SerializeType); } }
 
                 // Load MangaObject Data
-                Stream MangaObjectStream = await CORE.ZipManager.Retry(() => CORE.ZipManager.ReadAsync(ArchivePath, typeof(MangaObject).Name), TimeSpan.FromMinutes(1));
+                Stream MangaObjectStream = await CORE.ZipManager.ReadAsync(ArchivePath, typeof(MangaObject).Name).Retry(TimeSpan.FromMinutes(1));
                 if (!Equals(MangaObjectStream, null))
                 { using (MangaObjectStream) { MangaCacheObject.MangaObject = MangaObjectStream.Deserialize<MangaObject>(CORE.UserConfiguration.SerializeType); } }
 
@@ -207,16 +202,15 @@ namespace myManga_App
                 if (VersionUpdated)
                 {
                     logger.Info(String.Format("MangaObject version was updated for '{0}'.", MangaCacheObject.MangaObject.Name));
-                    await CORE.ZipManager.Retry(() => CORE.ZipManager.WriteAsync(
+                    await CORE.ZipManager.WriteAsync(
                         CorrectArchivePath, typeof(MangaObject).Name,
-                        MangaCacheObject.MangaObject.Serialize(CORE.UserConfiguration.SerializeType)),
-                        TimeSpan.FromMinutes(1));
+                        MangaCacheObject.MangaObject.Serialize(CORE.UserConfiguration.SerializeType)).Retry(TimeSpan.FromMinutes(1));
                 }
 
                 if (ReloadCoverImage)
                 {
                     // Load Cover Image
-                    IEnumerable<String> Entries = await CORE.ZipManager.Retry(() => CORE.ZipManager.GetEntriesAsync(CorrectArchivePath), TimeSpan.FromMinutes(1));
+                    IEnumerable<String> Entries = await CORE.ZipManager.GetEntriesAsync(CorrectArchivePath).Retry(TimeSpan.FromMinutes(1));
                     LocationObject SelectedCoverLocationObject = MangaCacheObject.MangaObject.SelectedCover();
                     String CoverImageFileName = Path.GetFileName(SelectedCoverLocationObject.Url);
                     if (!Entries.Contains(CoverImageFileName))
@@ -230,7 +224,7 @@ namespace myManga_App
                         if (!Equals(Url, null))
                             CoverImageFileName = Path.GetFileName(Url);
                     }
-                    Stream CoverImageStream = await CORE.ZipManager.Retry(() => CORE.ZipManager.ReadAsync(CorrectArchivePath, CoverImageFileName), TimeSpan.FromMinutes(1));
+                    Stream CoverImageStream = await CORE.ZipManager.ReadAsync(CorrectArchivePath, CoverImageFileName).Retry(TimeSpan.FromMinutes(1));
                     if (!Equals(CoverImageStream, null))
                     {
                         using (CoverImageStream)
@@ -353,32 +347,35 @@ namespace myManga_App
             // Rename old schemas to new schema format
             IEnumerable<String> chapterFileZipPaths = Directory.EnumerateFiles(CORE.CHAPTER_ARCHIVE_DIRECTORY, "*.ca.*", SearchOption.AllDirectories),
                 mangaFileZipPaths = Directory.EnumerateFiles(CORE.MANGA_ARCHIVE_DIRECTORY, "*.ma.*", SearchOption.AllDirectories);
-            await Task.Factory.StartNew(() => Parallel.ForEach(mangaFileZipPaths, mangaFileZipPath =>
-            {
-                // Manga Archives
-                Int32 indexOfCA = mangaFileZipPath.LastIndexOf(".ma.");
-                String fileName = mangaFileZipPath.Substring(0, indexOfCA),
-                    fileExtension = mangaFileZipPath.Substring(indexOfCA + 1);
-                if (!Equals(fileExtension, CORE.MANGA_ARCHIVE_EXTENSION))
+
+            await Task.WhenAll(
+                Task.Factory.StartNew(() => Parallel.ForEach(mangaFileZipPaths, mangaFileZipPath =>
                 {
-                    File.Move(
-                        mangaFileZipPath,
-                        String.Format("{0}.{1}", fileName, CORE.MANGA_ARCHIVE_EXTENSION));
-                }
-            }));
-            await Task.Factory.StartNew(() => Parallel.ForEach(chapterFileZipPaths, chapterFileZipPath =>
-            {
-                // Chapter Archives
-                Int32 indexOfCA = chapterFileZipPath.LastIndexOf(".ca.");
-                String fileName = chapterFileZipPath.Substring(0, indexOfCA),
-                    fileExtension = chapterFileZipPath.Substring(indexOfCA + 1);
-                if (!Equals(fileExtension, CORE.CHAPTER_ARCHIVE_EXTENSION))
+                    // Manga Archives
+                    Int32 indexOfCA = mangaFileZipPath.LastIndexOf(".ma.");
+                    String fileName = mangaFileZipPath.Substring(0, indexOfCA),
+                        fileExtension = mangaFileZipPath.Substring(indexOfCA + 1);
+                    if (!Equals(fileExtension, CORE.MANGA_ARCHIVE_EXTENSION))
+                    {
+                        File.Move(
+                            mangaFileZipPath,
+                            String.Format("{0}.{1}", fileName, CORE.MANGA_ARCHIVE_EXTENSION));
+                    }
+                })),
+                Task.Factory.StartNew(() => Parallel.ForEach(chapterFileZipPaths, chapterFileZipPath =>
                 {
-                    File.Move(
-                        chapterFileZipPath,
-                        String.Format("{0}.{1}", fileName, CORE.CHAPTER_ARCHIVE_EXTENSION));
-                }
-            }));
+                    // Chapter Archives
+                    Int32 indexOfCA = chapterFileZipPath.LastIndexOf(".ca.");
+                    String fileName = chapterFileZipPath.Substring(0, indexOfCA),
+                        fileExtension = chapterFileZipPath.Substring(indexOfCA + 1);
+                    if (!Equals(fileExtension, CORE.CHAPTER_ARCHIVE_EXTENSION))
+                    {
+                        File.Move(
+                            chapterFileZipPath,
+                            String.Format("{0}.{1}", fileName, CORE.CHAPTER_ARCHIVE_EXTENSION));
+                    }
+                }))
+            );
         }
 
         /// <summary>
@@ -397,7 +394,7 @@ namespace myManga_App
                 select UnsafeDispatcherLoadMangaCacheObjectAsync(MangaArchivePath);
             List<Task<MangaCacheObject>> MangaCacheObjectTasks = MangaCacheObjectTasksQuery.ToList();
 
-            await Current.Dispatcher.InvokeAsync(() => MangaCacheObjects.Clear());
+            await Current.Dispatcher.InvokeAsync(MangaCacheObjects.Clear);
             while (MangaCacheObjectTasks.Count > 0)
             {
                 Task<MangaCacheObject> completedTask = await Task.WhenAny(MangaCacheObjectTasks);
@@ -459,7 +456,6 @@ namespace myManga_App
 
         public App()
         {
-            AppMemoryCache = new RegionedMemoryCache("AppMemoryCache");
             AssemblyInfo = new AssemblyInformation();
 
             // Configure log4net
@@ -482,7 +478,7 @@ namespace myManga_App
             ChapterObjectArchiveWatcher.EnableRaisingEvents = false;
 
             // Initialize the ContentDownloadManager v2
-            ContentDownloadManager = new ContentDownloadManager(CORE: CORE);
+            ContentDownloadManager = new ContentDownloadManager(ConcurrencyMultiplier: 2, CORE: CORE);
 
             Startup += App_Startup;
             Exit += App_Exit;
@@ -521,7 +517,6 @@ namespace myManga_App
 
         private void App_Exit(object sender, ExitEventArgs e)
         {
-            AppMemoryCache.Dispose();
             MangaObjectArchiveWatcher.Dispose();
             ChapterObjectArchiveWatcher.Dispose();
             CORE.Dispose();
@@ -695,7 +690,7 @@ namespace myManga_App
         public void RunOnUiThread(Action action)
         {
             if (Dispatcher.Thread == Thread.CurrentThread) action();
-            else Dispatcher.Invoke(DispatcherPriority.Send, action);
+            else Current.Dispatcher.Invoke(DispatcherPriority.Send, action);
         }
     }
 }

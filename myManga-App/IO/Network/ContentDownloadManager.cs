@@ -98,6 +98,7 @@ namespace myManga_App.IO.Network
             ActiveDownloadsCache.Dispose();
             TaskConcurrencySemaphore.Dispose();
             ImageTaskConcurrencySemaphore.Dispose();
+            CORE.Dispose();
             try
             {
                 if (!Equals(cts, null))
@@ -176,11 +177,11 @@ namespace myManga_App.IO.Network
 
         private async Task StoreMangaObject(MangaObject MangaObject)
         {
-            await CORE.ZipManager.Retry(() => CORE.ZipManager.WriteAsync(
+            await CORE.ZipManager.WriteAsync(
                 SavePath(MangaObject),
                 MangaObject.GetType().Name,
                 MangaObject.Serialize(SerializeType: CORE.UserConfiguration.SerializeType)
-                ), FILE_ACCESS_TIMEOUT, DEFAULT_DELAY, DELAY_INCREMENT);
+                ).Retry(FILE_ACCESS_TIMEOUT, DEFAULT_DELAY, DELAY_INCREMENT);
         }
         #endregion
 
@@ -270,11 +271,11 @@ namespace myManga_App.IO.Network
 
         private async Task StoreChapterObject(MangaObject MangaObject, ChapterObject ChapterObject)
         {
-            await CORE.ZipManager.Retry(() => CORE.ZipManager.WriteAsync(
+            await CORE.ZipManager.WriteAsync(
                 SavePath(MangaObject, ChapterObject),
                 ChapterObject.GetType().Name,
                 ChapterObject.Serialize(SerializeType: CORE.UserConfiguration.SerializeType)
-                ), FILE_ACCESS_TIMEOUT, DEFAULT_DELAY, DELAY_INCREMENT);
+                ).Retry(FILE_ACCESS_TIMEOUT, DEFAULT_DELAY, DELAY_INCREMENT);
         }
         #endregion
 
@@ -327,11 +328,11 @@ namespace myManga_App.IO.Network
             Int32 index = ChapterObject.Pages.FindIndex(_PageObject => Equals(_PageObject.PageNumber, PageObject.PageNumber));
             ChapterObject.Pages[index] = PageObject;
             // Save the ChapterObject via Async to Save Path with Retry and Timeout of 30min
-            await CORE.ZipManager.Retry(() => CORE.ZipManager.WriteAsync(
+            await CORE.ZipManager.WriteAsync(
                 SavePath(MangaObject, ChapterObject),
                 ChapterObject.GetType().Name,
                 ChapterObject.Serialize(SerializeType: CORE.UserConfiguration.SerializeType)
-                ), FILE_ACCESS_TIMEOUT, DEFAULT_DELAY, DELAY_INCREMENT);
+                ).Retry(FILE_ACCESS_TIMEOUT, DEFAULT_DELAY, DELAY_INCREMENT);
 
             return ChapterObject;
         }
@@ -395,11 +396,11 @@ namespace myManga_App.IO.Network
 
         private async Task StoreImage(String ArchiveName, String EntryName, Stream ImageStream)
         {
-            await CORE.ZipManager.Retry(() => CORE.ZipManager.WriteAsync(
+            await CORE.ZipManager.WriteAsync(
                 ArchiveName,
                 EntryName,
                 ImageStream
-                ), FILE_ACCESS_TIMEOUT, DEFAULT_DELAY, DELAY_INCREMENT);
+                ).Retry(FILE_ACCESS_TIMEOUT, DEFAULT_DELAY, DELAY_INCREMENT);
         }
         #endregion
 
@@ -447,65 +448,7 @@ namespace myManga_App.IO.Network
             public String Content { get; set; }
         }
         #endregion
-
-        #region Retry
-        /// <summary>
-        /// Async Task Retry
-        /// </summary>
-        /// <typeparam name="TResult"></typeparam>
-        /// <param name="method">Task to Retry</param>
-        /// <param name="timeout">Allowed TimeSpan timeout</param>
-        /// <returns>Result from method</returns>
-        public async Task<TResult> Retry<TResult>(Func<Task<TResult>> method, TimeSpan timeout)
-        { return await Retry(method: method, timeout: timeout, delay: TimeSpan.FromSeconds(1), delayIncrement: TimeSpan.Zero); }
-        /// <summary>
-        /// Async Task Retry
-        /// </summary>
-        /// <typeparam name="TResult"></typeparam>
-        /// <param name="method">Task to Retry</param>
-        /// <param name="timeout">Allowed TimeSpan timeout</param>
-        /// <param name="delay"></param>
-        /// <returns>Result from method</returns>
-        public async Task<TResult> Retry<TResult>(Func<Task<TResult>> method, TimeSpan timeout, TimeSpan delay)
-        { return await Retry(method: method, timeout: timeout, delay: delay, delayIncrement: TimeSpan.Zero); }
-        /// <summary>
-        /// Async Task Retry
-        /// </summary>
-        /// <typeparam name="TResult"></typeparam>
-        /// <param name="method">Task to Retry</param>
-        /// <param name="timeout">Allowed TimeSpan timeout</param>
-        /// <param name="delay"></param>
-        /// <param name="delayIncrement"></param>
-        /// <returns>Result from method</returns>
-        public async Task<TResult> Retry<TResult>(Func<Task<TResult>> method, TimeSpan timeout, TimeSpan delay, TimeSpan delayIncrement)
-        {
-            Stopwatch watch = Stopwatch.StartNew();
-            do
-            {
-                try { return await method(); }
-                catch (OperationCanceledException ocex)
-                { throw ocex; } // Handle OperationCanceledException and throw it.
-                catch (Exception ex)
-                {
-                    // If the timeout has elapsed, throw the Exception.
-                    if (watch.Elapsed >= timeout)
-                        throw ex;
-
-                    // await for the delay.
-                    await Task.Delay(delay);
-
-                    // If there is a delayIncrement and it's greater than 0 add it to the delay.
-                    if (delayIncrement > TimeSpan.Zero)
-                        delay.Add(delayIncrement);
-                }
-            }
-            while (watch.Elapsed < timeout);
-            // A timeout occurred.
-            // return the default(TResult).
-            return default(TResult);
-        }
-        #endregion
-
+        
         #region Manga
         private async Task<MangaObject> LoadMangaObjectAsync(MangaObject MangaObject, CancellationToken ct, IProgress<Int32> progress)
         {
@@ -599,9 +542,7 @@ namespace myManga_App.IO.Network
                 WebDownloader.Referer = Extension.ExtensionDescriptionAttribute.RefererHeader;
                 try
                 {
-                    String Content = await Retry(() =>
-                        WebDownloader.DownloadStringTaskAsync(LocationObject.Url),
-                        DOWNLOAD_TIMEOUT);
+                    String Content = await WebDownloader.DownloadStringTaskAsync(LocationObject.Url).Retry(DOWNLOAD_TIMEOUT);
                     return new ExtensionContentResult()
                     {
                         Extension = Extension,
@@ -654,9 +595,10 @@ namespace myManga_App.IO.Network
                             ct.ThrowIfCancellationRequested();
                         };
                         WebDownloader.DownloadProgressChanged += ProgressEventHandler;
-                        ChapterObject DownloadedChapterObject = await Retry(
-                            async () => SiteExtension.ParseChapterObject(await WebDownloader.DownloadStringTaskAsync(LocationObject.Url)),
-                            DOWNLOAD_TIMEOUT);
+
+                        String ChapterWebContent = await WebDownloader.DownloadStringTaskAsync(LocationObject.Url).Retry(DOWNLOAD_TIMEOUT);
+                        ChapterObject DownloadedChapterObject = SiteExtension.ParseChapterObject(ChapterWebContent);
+
                         WebDownloader.DownloadProgressChanged -= ProgressEventHandler;
                         ct.ThrowIfCancellationRequested();
                         if (!Equals(DownloadedChapterObject, null))
@@ -694,9 +636,10 @@ namespace myManga_App.IO.Network
                         ct.ThrowIfCancellationRequested();
                     };
                     WebDownloader.DownloadProgressChanged += ProgressEventHandler;
-                    PageObject = await Retry(
-                        async () => SiteExtension.ParsePageObject(await WebDownloader.DownloadStringTaskAsync(PageObject.Url)),
-                        DOWNLOAD_TIMEOUT);
+
+                    String PageWebContent = await WebDownloader.DownloadStringTaskAsync(PageObject.Url).Retry(DOWNLOAD_TIMEOUT);
+                    PageObject = SiteExtension.ParsePageObject(PageWebContent);
+                    
                     WebDownloader.DownloadProgressChanged -= ProgressEventHandler;
                 }
                 if (!Equals(progress, null)) progress.Report(100);
@@ -859,7 +802,7 @@ namespace myManga_App.IO.Network
                 try
                 {
                     SearchRequestObject sro = Extension.GetSearchRequestObject(SearchTerm);
-                    String Content = await Retry(() => ProcessSearchRequest(sro), DOWNLOAD_TIMEOUT);
+                    String Content = await ProcessSearchRequest(sro).Retry(DOWNLOAD_TIMEOUT);
                     return new ExtensionContentResult()
                     {
                         Extension = Extension,

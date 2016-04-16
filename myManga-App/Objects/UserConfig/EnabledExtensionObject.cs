@@ -97,7 +97,7 @@ namespace myManga_App.Objects.UserConfig
             if (!Equals(InterfaceType, null)) ExtensionType = InterfaceType.Name;
             else ExtensionType = "UnknownExtension";
         }
-        public EnabledExtensionObject(SerializationInfo info, StreamingContext context)
+        private EnabledExtensionObject(SerializationInfo info, StreamingContext context)
             : base(info, context)
         { }
 

@@ -95,6 +95,8 @@
     <Compile Include="CoreManagement.cs" />
     <Compile Include="Objects\Extensions\ExtensionObject.cs" />
     <Compile Include="Objects\UserConfig\EnabledExtensionObject.cs" />
+    <Compile Include="System\Threading\Tasks\ForEach.cs" />
+    <Compile Include="System\Threading\Tasks\Retry.cs" />
     <Compile Include="System\Windows\Controls\Behaviors\DragDrop\DragAdorner.cs" />
     <Compile Include="System\Windows\Controls\Behaviors\DragDrop\Helper.cs" />
     <Compile Include="System\Windows\Controls\Behaviors\DragDrop\InsertAdorner.cs" />

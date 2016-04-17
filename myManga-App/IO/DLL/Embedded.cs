@@ -14,6 +14,7 @@ namespace myManga_App.IO.DLL
         private readonly Assembly EmbeddedAssembly;
         private readonly List<String> ManifestResourceNames;
 
+        private Object DictionaryLock = new Object();
         public Dictionary<String, Assembly> EmbeddedDLLs
         { get; private set; }
 
@@ -56,8 +57,11 @@ namespace myManga_App.IO.DLL
                 if (!Equals(ResourceName, null))
                 {
                     Load(ResourceName);
-                    if (EmbeddedDLLs.ContainsKey(ResourceName))
-                        return EmbeddedDLLs[ResourceName];
+                    lock (DictionaryLock)
+                    {
+                        if (EmbeddedDLLs.ContainsKey(ResourceName))
+                            return EmbeddedDLLs[ResourceName];
+                    }
                 }
             }
             catch (Exception ex)
@@ -67,17 +71,20 @@ namespace myManga_App.IO.DLL
 
         private void Load(String ResourceName)
         {
-            if (!EmbeddedDLLs.ContainsKey(ResourceName))
+            lock (DictionaryLock)
             {
-                using (Stream stream = EmbeddedAssembly.GetManifestResourceStream(ResourceName))
+                if (!EmbeddedDLLs.ContainsKey(ResourceName))
                 {
-                    if (!Equals(stream, null))
+                    using (Stream stream = EmbeddedAssembly.GetManifestResourceStream(ResourceName))
                     {
-                        Byte[] rawAssembly = new Byte[stream.Length];
-                        stream.Read(rawAssembly, 0, rawAssembly.Length);
-                        Assembly LoadedAssembly = Assembly.Load(rawAssembly);
-                        EmbeddedDLLs.Add(ResourceName, LoadedAssembly);
-                        rawAssembly = null;
+                        if (!Equals(stream, null))
+                        {
+                            Byte[] rawAssembly = new Byte[stream.Length];
+                            stream.Read(rawAssembly, 0, rawAssembly.Length);
+                            Assembly LoadedAssembly = Assembly.Load(rawAssembly);
+                            EmbeddedDLLs.Add(ResourceName, LoadedAssembly);
+                            rawAssembly = null;
+                        }
                     }
                 }
             }

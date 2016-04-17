@@ -60,7 +60,7 @@
                         <StackPanel>
 
                             <HeaderedContentControl 
-                                Header="{Binding Value, ElementName=DefaultPageZoomSlider}" 
+                                Header="{Binding Path=UserConfiguration.DefaultPageZoom, Mode=OneWay, FallbackValue=1}" 
                                 HeaderStringFormat="Default Zoom Amount: {0:0.0}x"
                                 Margin="2,6">
                                 <Slider
@@ -286,7 +286,8 @@
                     <ScrollViewer HorizontalScrollBarVisibility="Disabled">
 
                         <StackPanel>
-                            
+
+                            <!--
                             <HeaderedContentControl
                                     Header="Storage Serialization"
                                     Margin="2,6" VerticalAlignment="Top">
@@ -295,32 +296,53 @@
                                     ItemsSource="{Binding SerializeTypes}"
                                     SelectedItem="{Binding UserConfiguration.SerializeType}"/>
                             </HeaderedContentControl>
+                            -->
 
-                            <!--
-                            TODO: App Freezes when uncommented
                             <HeaderedContentControl
-                                    Header="{Binding Value, ElementName=ConcurrencyMultiplier}" 
+                                    Header="{Binding Path=UserConfiguration.ConcurrencyMultiplier, Mode=OneWay, FallbackValue=1}" 
                                     HeaderStringFormat="Concurrency Multiplier: {0:0}x"
-                                    Margin="2,6" VerticalAlignment="Top">
+                                    Margin="2,6">
                                 <StackPanel>
                                     <TextBlock
-                                        Text="Restart is required." 
+                                        Text="A restart is required if changed." 
                                         FontSize="13"
                                         FontStyle="Italic"
                                         Foreground="{DynamicResource text-muted}"/>
+                                    <Separator/>
                                     <Slider
-                                        x:Name="ConcurrencyMultiplier"
+                                        x:Name="ConcurrencyMultiplierSlider"
+                                        Orientation="Horizontal"
                                         Minimum="1"
                                         Maximum="10"
-                                        IsSnapToTickEnabled="True"
+                                        Value="{Binding Path=UserConfiguration.ConcurrencyMultiplier, Mode=TwoWay, FallbackValue=1}" 
+                                        TickPlacement="BottomRight"
                                         TickFrequency="1"
-                                        LargeChange="2"
-                                        SmallChange="1"
-                                        Value="{Binding UserConfiguration.ConcurrencyMultiplier, FallbackValue=1}"
-                                        TickPlacement="BottomRight"/>
+                                        LargeChange="1" 
+                                        SmallChange="1" 
+                                        IsMoveToPointEnabled="True" 
+                                        IsSnapToTickEnabled="True"/>
+                                    <TextBlock
+                                        FontSize="13"
+                                        FontStyle="Italic"
+                                        TextWrapping="WrapWithOverflow"
+                                        Text="This is used to determine how many concurrent downloads can occure at the same time."
+                                        Foreground="{DynamicResource text-muted}"/>
+                                    <TextBlock
+                                        Margin="10,0,0,0"
+                                        FontSize="12"
+                                        FontStyle="Italic"
+                                        TextWrapping="WrapWithOverflow"
+                                        Text="Concurrent Manga Downloads = (Logical Processor Count) * (Concurrency Multiplier)"
+                                        Foreground="{DynamicResource text-muted}"/>
+                                    <TextBlock
+                                        Margin="10,0,0,0"
+                                        FontSize="12"
+                                        FontStyle="Italic"
+                                        TextWrapping="WrapWithOverflow"
+                                        Text="Concurrent Image Downloads = (Concurrent Manga Downloads) / 2"
+                                        Foreground="{DynamicResource text-muted}"/>
                                 </StackPanel>
                             </HeaderedContentControl>
-                            -->
 
                         </StackPanel>
 

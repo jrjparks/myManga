@@ -19,6 +19,21 @@ namespace myManga_App.ViewModels.Pages
 {
     public sealed class SettingsViewModel : BaseViewModel
     {
+        private Boolean RestartRequired = false;
+        private Boolean HandlePropertyChange { get; set; }
+        private void DisablePropertyChange()
+        {
+            if (HandlePropertyChange)
+                UserConfiguration.PropertyChanged -= UserConfiguration_PropertyChanged;
+            HandlePropertyChange = false;
+        }
+        private void EnablePropertyChange()
+        {
+            if (!HandlePropertyChange)
+                UserConfiguration.PropertyChanged += UserConfiguration_PropertyChanged;
+            HandlePropertyChange = true;
+        }
+
         private Timer ActiveDownloadsTimer
         { get; set; }
 
@@ -30,6 +45,9 @@ namespace myManga_App.ViewModels.Pages
             AuthenticationDialog = new AuthenticationDialogViewModel();
             if (!IsInDesignMode)
             {
+                UserConfiguration = new UserConfigurationObject();
+                DisablePropertyChange();
+
                 ActiveDownloadsTimer = new Timer(state =>
                 {   // Monitor the ContentDownloadManager ActiveDownloadKeys property
                     App.RunOnUiThread(new Action(() => { ActiveDownloadKeys = App.ContentDownloadManager.ActiveKeys; }));
@@ -52,26 +70,25 @@ namespace myManga_App.ViewModels.Pages
 
         private void UserConfiguration_PropertyChanged(Object sender, PropertyChangedEventArgs e)
         {
-            UserConfigurationObject UserConfiguration = sender as UserConfigurationObject;
-            switch (e.PropertyName)
+            if (true) //HandlePropertyChange)
             {
-                case "Theme":
-                    App.ApplyTheme(UserConfiguration.Theme);
-                    break;
+                UserConfigurationObject UserConfiguration = sender as UserConfigurationObject;
+                switch (e.PropertyName)
+                {
+                    case "Theme":
+                        App.ApplyTheme(UserConfiguration.Theme);
+                        break;
+                }
             }
         }
 
         private void ResetData()
         {
-            if (!Equals(UserConfiguration, null))   // Cleanup any events from old UserConfigurationObject
-            { UserConfiguration.PropertyChanged -= UserConfiguration_PropertyChanged; }
-
-            UserConfiguration = new UserConfigurationObject();
+            RestartRequired = false;
+            DisablePropertyChange();
             PropertyInfo[] UserConfigurationProperties = typeof(UserConfigurationObject).GetProperties();
             foreach (PropertyInfo Property in UserConfigurationProperties)
             { Property.SetValue(UserConfiguration, Property.GetValue(App.CORE.UserConfiguration)); }
-
-            UserConfiguration.PropertyChanged += UserConfiguration_PropertyChanged;
 
             SiteExtensionObjects.Clear();
             DatabaseExtensionObjects.Clear();
@@ -113,6 +130,8 @@ namespace myManga_App.ViewModels.Pages
             UnknownCount = App.MangaCacheObjects.Count(mco =>
                 Equals(mco.MangaObject.MangaType, MangaObjectType.Unknown));
             TotalCount = MangaCount + ManhwaCount + UnknownCount;
+
+            EnablePropertyChange();
         }
 
         #region Extension Collections
@@ -233,7 +252,9 @@ namespace myManga_App.ViewModels.Pages
 
         private void SaveUserConfiguration()
         {
-            String[] IgnoreProperties = new String[] {
+            DisablePropertyChange();
+
+            String[] PropertyBlacklist = {
                 "WindowSizeHeight",
                 "WindowSizeWidth",
                 "WindowState",
@@ -253,7 +274,16 @@ namespace myManga_App.ViewModels.Pages
 
             PropertyInfo[] UserConfigurationProperties = typeof(UserConfigurationObject).GetProperties();
             foreach (PropertyInfo Property in UserConfigurationProperties)
-            { if (!IgnoreProperties.Contains(Property.Name)) Property.SetValue(App.CORE.UserConfiguration, Property.GetValue(UserConfiguration)); }
+            {
+                if (!PropertyBlacklist.Contains(Property.Name))
+                {
+                    Object currentValue = Property.GetValue(App.CORE.UserConfiguration),
+                        newValue = Property.GetValue(UserConfiguration);
+                    // Only propagate changed values
+                    if (!Equals(newValue, currentValue))
+                    { Property.SetValue(App.CORE.UserConfiguration, Property.GetValue(UserConfiguration)); }
+                }
+            }
             App.SaveUserConfiguration();
 
             ReturnFocus();

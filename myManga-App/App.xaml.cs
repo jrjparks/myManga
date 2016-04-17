@@ -33,6 +33,8 @@ namespace myManga_App
     /// </summary>
     public partial class App : Application
     {
+        private Boolean IsRestarting { get; set; }
+
         #region Logging
         public static readonly log4net.ILog logger = log4net.LogManager.GetLogger(typeof(App));
 
@@ -56,6 +58,7 @@ namespace myManga_App
 
         #region Core
         public readonly CoreManagement CORE = new CoreManagement(logger);
+        public CoreManagement COREProperty { get { return CORE; } }
         public readonly ContentDownloadManager ContentDownloadManager;
         #endregion
 
@@ -505,10 +508,10 @@ namespace myManga_App
         {
             logger.Error(sender.GetType().FullName, e.Exception);
 
-            #if !DEBUG
+#if !DEBUG
             // Handle error if in release mode.
             e.Handled = true;
-            #endif
+#endif
         }
 
         private void App_Startup(object sender, StartupEventArgs e)
@@ -516,7 +519,34 @@ namespace myManga_App
             // LoadUserConfig();
             ApplyTheme(CORE.UserConfiguration.Theme);
             LoadUserAuthenticate();
-            CORE.UserConfiguration.UserConfigurationUpdated += (_s, _e) => SaveUserConfiguration();
+            CORE.UserConfiguration.UserConfigurationUpdated += (_s, _e) =>
+            {
+                String[] PropertyWhitelist = {
+                    "WindowSizeHeight",
+                    "WindowSizeWidth",
+                    "WindowState",
+                    "ViewTypes"
+                },
+                PropertyRestartlist = {
+                    "ConcurrencyMultiplier"
+                };
+                if (PropertyWhitelist.Contains(_e.Value)) { SaveUserConfiguration(); }
+                if (PropertyRestartlist.Contains(_e.Value))
+                {
+                    String[] RestartMessageArray = {
+                        "You have made a change that requires a restart of myManga to take affect.",
+                        "Would you like to restart myManga now?"
+                    };
+                    String RestartMessage = String.Join(Environment.NewLine, RestartMessageArray);
+                    if (MessageBox.Show(
+                        RestartMessage,
+                        "Restart Required!",
+                        MessageBoxButton.YesNo,
+                        MessageBoxImage.Warning,
+                        MessageBoxResult.Yes) == MessageBoxResult.Yes)
+                    { Restart(TimeSpan.FromSeconds(1)); }
+                }
+            };
 
             // Run initial load of cache
             Task.Factory.StartNew(FullMangaCacheObject);
@@ -533,7 +563,22 @@ namespace myManga_App
             MangaObjectArchiveWatcher.Dispose();
             ChapterObjectArchiveWatcher.Dispose();
             CORE.Dispose();
+            if (IsRestarting) { Process.Start(ResourceAssembly.Location); }
         }
+
+        public void Restart() =>
+            Restart(TimeSpan.FromSeconds(1));
+        public void Restart(TimeSpan Delay) =>
+            Task.Factory.StartNew(async state =>
+            {
+                TimeSpan _Delay = (TimeSpan)state;
+                if (_Delay > TimeSpan.Zero) await Task.Delay(_Delay);
+                RunOnUiThread(delegate
+                {
+                    IsRestarting = true;
+                    Shutdown();
+                });
+            }, Delay);
         #endregion
 
         #region File Watcher Events

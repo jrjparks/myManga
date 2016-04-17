@@ -19,8 +19,6 @@
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="/myManga;component/Resources/Localization/Dictionary_en-US.xaml"/>
-                <ResourceDictionary Source="/myManga;component/Themes/CoreResourceDictionary.xaml"/>
                 <ResourceDictionary Source="/myManga;component/Themes/Button/MetroButton.xaml"/>
 
                 <ResourceDictionary Source="/myManga;component/Themes/ListBox/ListBoxes.xaml"/>
@@ -62,7 +60,7 @@
                         <StackPanel>
 
                             <HeaderedContentControl 
-                                Header="{Binding Value, ElementName=DefaultPageZoomSlider}" 
+                                Header="{Binding Path=UserConfiguration.DefaultPageZoom, Mode=OneWay, FallbackValue=1}" 
                                 HeaderStringFormat="Default Zoom Amount: {0:0.0}x"
                                 Margin="2,6">
                                 <Slider
@@ -287,14 +285,72 @@
                 <TabItem Header="Advanced" Height="40" Width="100">
                     <ScrollViewer HorizontalScrollBarVisibility="Disabled">
 
-                        <HeaderedContentControl
-                                Header="Storage Serialization"
-                                Margin="2,6" VerticalAlignment="Top">
-                            <ComboBox
-                                x:Name="StorageSerialization"
-                                ItemsSource="{Binding SerializeTypes}"
-                                SelectedItem="{Binding UserConfiguration.SerializeType}"/>
-                        </HeaderedContentControl>
+                        <StackPanel>
+
+                            <HeaderedContentControl
+                                    Header="{Binding Path=UserConfiguration.ConcurrencyMultiplier, Mode=OneWay, FallbackValue=1}" 
+                                    HeaderStringFormat="Concurrency Multiplier: {0:0}x"
+                                    Margin="2,6">
+                                <StackPanel>
+                                    <TextBlock
+                                        Text="A restart is required if changed." 
+                                        FontSize="13"
+                                        FontStyle="Italic"
+                                        Foreground="{DynamicResource text-muted}"/>
+                                    <Separator/>
+                                    <Slider
+                                        x:Name="ConcurrencyMultiplierSlider"
+                                        Orientation="Horizontal"
+                                        Minimum="1"
+                                        Maximum="10"
+                                        Value="{Binding Path=UserConfiguration.ConcurrencyMultiplier, Mode=TwoWay, FallbackValue=1}" 
+                                        TickPlacement="BottomRight"
+                                        TickFrequency="1"
+                                        LargeChange="1" 
+                                        SmallChange="1" 
+                                        IsMoveToPointEnabled="True" 
+                                        IsSnapToTickEnabled="True"/>
+                                    <TextBlock
+                                        FontSize="13"
+                                        FontStyle="Italic"
+                                        TextWrapping="WrapWithOverflow"
+                                        Text="This is used to determine how many concurrent downloads can occure at the same time."
+                                        Foreground="{DynamicResource text-muted}"/>
+                                    <TextBlock
+                                        Margin="10,0,0,0"
+                                        FontSize="12"
+                                        FontStyle="Italic"
+                                        TextWrapping="WrapWithOverflow"
+                                        Text="Concurrent Manga Downloads = (Logical Processor Count) * (Concurrency Multiplier)"
+                                        Foreground="{DynamicResource text-muted}"/>
+                                    <TextBlock
+                                        Margin="10,0,0,0"
+                                        FontSize="12"
+                                        FontStyle="Italic"
+                                        TextWrapping="WrapWithOverflow"
+                                        Text="Concurrent Image Downloads = (Concurrent Manga Downloads) / 2"
+                                        Foreground="{DynamicResource text-muted}"/>
+                                </StackPanel>
+                            </HeaderedContentControl>
+
+                            <HeaderedContentControl
+                                    Header="Storage Serialization"
+                                    Margin="2,6" VerticalAlignment="Top">
+                                <StackPanel>
+                                    <ComboBox
+                                        x:Name="StorageSerialization"
+                                        ItemsSource="{Binding SerializeTypes}"
+                                        SelectedItem="{Binding UserConfiguration.SerializeType}"/>
+                                    <TextBlock
+                                        FontSize="13"
+                                        FontStyle="Italic"
+                                        TextWrapping="WrapWithOverflow"
+                                        Text="This is should only be changed if you know what you are doing."
+                                        Foreground="{DynamicResource text-muted}"/>
+                                </StackPanel>
+                            </HeaderedContentControl>
+
+                        </StackPanel>
 
                     </ScrollViewer>
                 </TabItem>

@@ -57,7 +57,7 @@ namespace myManga_App.ViewModels.Dialog
 
         private void DeleteAsync(MangaCacheObject MangaCacheObject)
         {
-            String SavePath = Path.Combine(App.MANGA_ARCHIVE_DIRECTORY, MangaCacheObject.MangaObject.MangaArchiveName(App.MANGA_ARCHIVE_EXTENSION));
+            String SavePath = Path.Combine(App.CORE.MANGA_ARCHIVE_DIRECTORY, MangaCacheObject.MangaObject.MangaArchiveName(App.CORE.MANGA_ARCHIVE_EXTENSION));
             MessageBoxResult msgboxResult = MessageBox.Show(String.Format("Are you sure you wish to delete \"{0}\"?", MangaCacheObject.MangaObject.Name), "Delete Manga?", MessageBoxButton.YesNo);
             if (Equals(msgboxResult, MessageBoxResult.Yes))
                 File.Delete(SavePath);

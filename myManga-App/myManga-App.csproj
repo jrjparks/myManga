@@ -92,8 +92,11 @@
     </ApplicationDefinition>
     <Compile Include="Controls\Extensions\ItemsControlExtensions.cs" />
     <Compile Include="Controls\ListBoxExtensions.cs" />
+    <Compile Include="CoreManagement.cs" />
     <Compile Include="Objects\Extensions\ExtensionObject.cs" />
     <Compile Include="Objects\UserConfig\EnabledExtensionObject.cs" />
+    <Compile Include="System\Threading\Tasks\ForEach.cs" />
+    <Compile Include="System\Threading\Tasks\Retry.cs" />
     <Compile Include="System\Windows\Controls\Behaviors\DragDrop\DragAdorner.cs" />
     <Compile Include="System\Windows\Controls\Behaviors\DragDrop\Helper.cs" />
     <Compile Include="System\Windows\Controls\Behaviors\DragDrop\InsertAdorner.cs" />
@@ -202,7 +205,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Resources\Localization\Dictionary_en-US.xaml">
+    <Page Include="Resources\Localization\Dictionary_en.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

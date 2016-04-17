@@ -45,7 +45,13 @@
                                         Stretch="Uniform"
                                         Margin="2,0"
                                         Source="{Binding Icon}"/>
-                                    <TextBlock x:Name="Name" Text="{Binding Name}" FontSize="16" VerticalAlignment="Center" Margin="3,0"/>
+                                    <TextBlock 
+                                        x:Name="Name" 
+                                        Text="{Binding Name}" 
+                                        FontSize="16" 
+                                        VerticalAlignment="Center" 
+                                        Margin="3,0"
+                                        TextTrimming="CharacterEllipsis"/>
                                 </StackPanel>
                                 <StackPanel 
                                     Orientation="Horizontal"

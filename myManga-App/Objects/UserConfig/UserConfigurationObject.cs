@@ -2,6 +2,7 @@
 using myManga_App.Objects.MVVM;
 using myMangaSiteExtension.Primitives.Objects;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -110,9 +111,9 @@ namespace myManga_App.Objects.UserConfig
         }
 
         [XmlIgnore]
-        private readonly ObservableCollection<EnabledExtensionObject> enabledExtensions = new ObservableCollection<EnabledExtensionObject>();
+        private readonly List<EnabledExtensionObject> enabledExtensions = new List<EnabledExtensionObject>();
         [XmlArray, XmlArrayItem("Extension")]
-        public ObservableCollection<EnabledExtensionObject> EnabledExtensions
+        public List<EnabledExtensionObject> EnabledExtensions
         {
             get { return enabledExtensions; }
             set {
@@ -190,6 +191,22 @@ namespace myManga_App.Objects.UserConfig
             {
                 OnPropertyChanging();
                 theme = value;
+                OnPropertyChanged();
+            }
+        }
+
+        [XmlIgnore]
+        private Int32 concurrencyMultiplier = 1;
+        [XmlElement]
+        public Int32 ConcurrencyMultiplier
+        {
+            get { return concurrencyMultiplier; }
+            set
+            {
+                OnPropertyChanging();
+                if (value < 1) concurrencyMultiplier = 1;
+                else if (value > 10) concurrencyMultiplier = 10;
+                else concurrencyMultiplier = value;
                 OnPropertyChanged();
             }
         }

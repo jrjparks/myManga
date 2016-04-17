@@ -23,8 +23,6 @@
     <Controls:DialogUserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="/myManga;component/Resources/Localization/Dictionary_en-US.xaml"/>
-                <ResourceDictionary Source="/myManga;component/Themes/CoreResourceDictionary.xaml"/>
                 <ResourceDictionary Source="/myManga;component/Themes/System/Windows/Controls/DialogUserControl.xaml"/>
 
                 <ResourceDictionary Source="/myManga;component/Themes/Button/MetroButton.xaml"/>

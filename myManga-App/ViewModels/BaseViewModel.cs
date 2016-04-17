@@ -70,7 +70,7 @@ namespace myManga_App.ViewModels
         {
             if (!IsInDesignMode && SupportsViewTypeChange)
             {
-                SerializableViewModelViewType CurrentSerializableViewModelViewType = App.UserConfiguration.ViewTypes.FirstOrDefault(vt => vt.ViewModelName.Equals(GetType().Name));
+                SerializableViewModelViewType CurrentSerializableViewModelViewType = App.CORE.UserConfiguration.ViewTypes.FirstOrDefault(vt => vt.ViewModelName.Equals(GetType().Name));
                 if (CurrentSerializableViewModelViewType != null) CurrentSerializableViewModelViewType.ViewType = ViewType;
                 App.SaveUserConfiguration();
             }
@@ -104,8 +104,8 @@ namespace myManga_App.ViewModels
         {
             if (!IsInDesignMode)
                 if (this.SupportsViewTypeChange = SupportsViewTypeChange)
-                    try { ViewType = App.UserConfiguration.ViewTypes.FirstOrDefault(vt => vt.ViewModelName.Equals(GetType().Name)).ViewType; }
-                    catch { App.UserConfiguration.ViewTypes.Add(new SerializableViewModelViewType() { ViewModelName = GetType().Name, ViewType = ViewType = ViewModelViewType.Normal }); }
+                    try { ViewType = App.CORE.UserConfiguration.ViewTypes.FirstOrDefault(vt => vt.ViewModelName.Equals(GetType().Name)).ViewType; }
+                    catch { App.CORE.UserConfiguration.ViewTypes.Add(new SerializableViewModelViewType() { ViewModelName = GetType().Name, ViewType = ViewType = ViewModelViewType.Normal }); }
         }
 
         #region IDisposable Support

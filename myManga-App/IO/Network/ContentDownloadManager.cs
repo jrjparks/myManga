@@ -1,4 +1,5 @@
-﻿using myManga_App.IO.Local.Object;
+﻿using myManga_App.IO.Local;
+using myManga_App.IO.Local.Object;
 using myManga_App.Objects.UserConfig;
 using myMangaSiteExtension.Enums;
 using myMangaSiteExtension.Interfaces;
@@ -20,7 +21,6 @@ namespace myManga_App.IO.Network
     public sealed class ContentDownloadManager : IDisposable
     {
         #region Read-Only
-        private readonly App App = App.Current as App;
         private readonly TimeSpan FILE_ACCESS_TIMEOUT = TimeSpan.FromMinutes(30);
         private readonly TimeSpan DOWNLOAD_TIMEOUT = TimeSpan.FromSeconds(10);
 
@@ -55,24 +55,43 @@ namespace myManga_App.IO.Network
 
         public IEnumerable<String> ActiveKeys
         { get { return ActiveDownloadsCache.Select(x => x.Key); } }
+
+        private readonly CoreManagement CORE;
+        private readonly SerializeType SerializeType = SerializeType.XML;
         #endregion
 
         #region Constructors
+
         /// <summary>
         /// Create a new ContentDownloadManager
         /// DownloadConcurrency = Environment.ProcessorCount * ConcurrencyMultiplier;
         /// ImageDownloadConcurrency = DownloadConcurrency / 2;
         /// </summary>
         /// <param name="ConcurrencyMultiplier">Default is 1.</param>
-        public ContentDownloadManager(Int32 ConcurrencyMultiplier = 1)
+        public ContentDownloadManager(
+            CoreManagement CORE = null)
         {
+            #region CORE
+            App App = App.Current as App;
+            if (!Equals(CORE, null)) this.CORE = CORE;
+            else if (!Equals(App, null)) this.CORE = App.CORE;
+            else this.CORE = new CoreManagement(log4net.LogManager.GetLogger(typeof(ContentDownloadManager)));
+            #endregion
+
+            // Store the SerializeType on startup.
+            SerializeType = CORE.UserConfiguration.SerializeType;
+
             ActiveDownloadsCache = new MemoryCache("ActiveDownloadsCache");
+
+            Int32 ConcurrencyMultiplier = CORE.UserConfiguration.ConcurrencyMultiplier;
+            if (ConcurrencyMultiplier < 1) ConcurrencyMultiplier = 1;
+            else if (ConcurrencyMultiplier > 10) ConcurrencyMultiplier = 10;
 
             DownloadConcurrency = Environment.ProcessorCount * ConcurrencyMultiplier;
             ImageDownloadConcurrency = DownloadConcurrency / 2;
             TaskConcurrencySemaphore = new SemaphoreSlim(DownloadConcurrency, DownloadConcurrency);
             ImageTaskConcurrencySemaphore = new SemaphoreSlim(ImageDownloadConcurrency, ImageDownloadConcurrency);
-            ServicePointManager.DefaultConnectionLimit = DownloadConcurrency;
+            ServicePointManager.DefaultConnectionLimit = DownloadConcurrency + ImageDownloadConcurrency;
 
             cts = new CancellationTokenSource();
             ContentTaskFactory = Task.Factory;
@@ -86,6 +105,7 @@ namespace myManga_App.IO.Network
             ActiveDownloadsCache.Dispose();
             TaskConcurrencySemaphore.Dispose();
             ImageTaskConcurrencySemaphore.Dispose();
+            CORE.Dispose();
             try
             {
                 if (!Equals(cts, null))
@@ -101,13 +121,13 @@ namespace myManga_App.IO.Network
         #region Save Paths
         private String SavePath(MangaObject MangaObject)
         {
-            String SavePath = Path.Combine(App.MANGA_ARCHIVE_DIRECTORY, MangaObject.MangaArchiveName(App.MANGA_ARCHIVE_EXTENSION));
+            String SavePath = Path.Combine(CORE.MANGA_ARCHIVE_DIRECTORY, MangaObject.MangaArchiveName(CORE.MANGA_ARCHIVE_EXTENSION));
             Path.GetDirectoryName(SavePath).SafeFolder(); // Create folder tree if needed.
             return SavePath;
         }
         private String SavePath(MangaObject MangaObject, ChapterObject ChapterObject)
         {
-            String SavePath = Path.Combine(App.CHAPTER_ARCHIVE_DIRECTORY, MangaObject.MangaFileName(), ChapterObject.ChapterArchiveName(App.CHAPTER_ARCHIVE_EXTENSION));
+            String SavePath = Path.Combine(CORE.CHAPTER_ARCHIVE_DIRECTORY, MangaObject.MangaFileName(), ChapterObject.ChapterArchiveName(CORE.CHAPTER_ARCHIVE_EXTENSION));
             Path.GetDirectoryName(SavePath).SafeFolder(); // Create folder tree if needed.
             return SavePath;
         }
@@ -115,11 +135,11 @@ namespace myManga_App.IO.Network
 
         #region CacheKey
         public String CacheKey(MangaObject MangaObject)
-        { return String.Format("{0}", MangaObject.MangaArchiveName(App.MANGA_ARCHIVE_EXTENSION)); }
+        { return String.Format("{0}", MangaObject.MangaArchiveName(CORE.MANGA_ARCHIVE_EXTENSION)); }
         public String CacheKey(MangaObject MangaObject, ChapterObject ChapterObject)
-        { return String.Format("{0}/{1}", MangaObject.MangaArchiveName(App.MANGA_ARCHIVE_EXTENSION), ChapterObject.ChapterArchiveName(App.CHAPTER_ARCHIVE_EXTENSION)); }
+        { return String.Format("{0}/{1}", MangaObject.MangaArchiveName(CORE.MANGA_ARCHIVE_EXTENSION), ChapterObject.ChapterArchiveName(CORE.CHAPTER_ARCHIVE_EXTENSION)); }
         public String CacheKey(MangaObject MangaObject, ChapterObject ChapterObject, PageObject PageObject)
-        { return String.Format("{0}/{1}/{2}", MangaObject.MangaArchiveName(App.MANGA_ARCHIVE_EXTENSION), ChapterObject.ChapterArchiveName(App.CHAPTER_ARCHIVE_EXTENSION), PageObject.PageNumber); }
+        { return String.Format("{0}/{1}/{2}", MangaObject.MangaArchiveName(CORE.MANGA_ARCHIVE_EXTENSION), ChapterObject.ChapterArchiveName(CORE.CHAPTER_ARCHIVE_EXTENSION), PageObject.PageNumber); }
 
         public Boolean IsCacheKeyActive(String CacheKey)
         { return ActiveDownloadsCache.Contains(CacheKey); }
@@ -152,7 +172,7 @@ namespace myManga_App.IO.Network
             }
             catch (Exception ex)
             {
-                App.logger.Warn(String.Format("[ContentDownloadManager] An exception was thrown while processing {0}.", MangaObject.Name), ex);
+                if(!Equals(CORE.Logger, null)) CORE.Logger.Warn(String.Format("[ContentDownloadManager] An exception was thrown while processing {0}.", MangaObject.Name), ex);
                 throw ex;
             }
             finally
@@ -164,11 +184,11 @@ namespace myManga_App.IO.Network
 
         private async Task StoreMangaObject(MangaObject MangaObject)
         {
-            await App.ZipManager.Retry(() => App.ZipManager.WriteAsync(
+            await CORE.ZipManager.WriteAsync(
                 SavePath(MangaObject),
                 MangaObject.GetType().Name,
-                MangaObject.Serialize(SerializeType: App.UserConfiguration.SerializeType)
-                ), FILE_ACCESS_TIMEOUT, DEFAULT_DELAY, DELAY_INCREMENT);
+                MangaObject.Serialize(SerializeType: SerializeType)
+                ).Retry(FILE_ACCESS_TIMEOUT, DEFAULT_DELAY, DELAY_INCREMENT);
         }
         #endregion
 
@@ -228,7 +248,7 @@ namespace myManga_App.IO.Network
                     select DownloadImageAsync(
                         PageObject.ImgUrl,
                         PageObject.Url,
-                        App.SiteExtensions.First(_SiteExtension => PageObject.Url.Contains(_SiteExtension.ExtensionDescriptionAttribute.URLFormat)).Cookies,
+                        CORE.SiteExtensions.First(_SiteExtension => PageObject.Url.Contains(_SiteExtension.ExtensionDescriptionAttribute.URLFormat)).Cookies,
                         SavePath(MangaObject, ChapterObject),
                         Path.GetFileName(new Uri(PageObject.ImgUrl).LocalPath));
                     List<Task> DownloadImageTasks = DownloadImageTasksQuery.ToList();
@@ -246,7 +266,7 @@ namespace myManga_App.IO.Network
             }
             catch (Exception ex)
             {
-                App.logger.Warn(String.Format("[ContentDownloadManager] An exception was thrown while processing {0}.", MangaObject.Name), ex);
+                if(!Equals(CORE.Logger, null)) CORE.Logger.Warn(String.Format("[ContentDownloadManager] An exception was thrown while processing {0}.", MangaObject.Name), ex);
                 throw ex;
             }
             finally
@@ -258,11 +278,11 @@ namespace myManga_App.IO.Network
 
         private async Task StoreChapterObject(MangaObject MangaObject, ChapterObject ChapterObject)
         {
-            await App.ZipManager.Retry(() => App.ZipManager.WriteAsync(
+            await CORE.ZipManager.WriteAsync(
                 SavePath(MangaObject, ChapterObject),
                 ChapterObject.GetType().Name,
-                ChapterObject.Serialize(SerializeType: App.UserConfiguration.SerializeType)
-                ), FILE_ACCESS_TIMEOUT, DEFAULT_DELAY, DELAY_INCREMENT);
+                ChapterObject.Serialize(SerializeType: SerializeType)
+                ).Retry(FILE_ACCESS_TIMEOUT, DEFAULT_DELAY, DELAY_INCREMENT);
         }
         #endregion
 
@@ -293,14 +313,14 @@ namespace myManga_App.IO.Network
                     ChapterObject = await StorePageObject(MangaObject, ChapterObject, PageObject);
                 }
 
-                ISiteExtension SiteExtension = App.SiteExtensions.First(_SiteExtension =>
+                ISiteExtension SiteExtension = CORE.SiteExtensions.First(_SiteExtension =>
                 { return PageObject.Url.Contains(_SiteExtension.ExtensionDescriptionAttribute.URLFormat); });
                 // Start the DownloadImage task, don't wait.
                 DownloadImage(PageObject.ImgUrl, PageObject.Url, SiteExtension.Cookies, SavePath(MangaObject, ChapterObject), Path.GetFileName(new Uri(PageObject.ImgUrl).LocalPath));
             }
             catch (Exception ex)
             {
-                App.logger.Warn(String.Format("[ContentDownloadManager] An exception was thrown while processing {0}.", MangaObject.Name), ex);
+                if(!Equals(CORE.Logger, null)) CORE.Logger.Warn(String.Format("[ContentDownloadManager] An exception was thrown while processing {0}.", MangaObject.Name), ex);
                 throw ex;
             }
             finally
@@ -315,11 +335,11 @@ namespace myManga_App.IO.Network
             Int32 index = ChapterObject.Pages.FindIndex(_PageObject => Equals(_PageObject.PageNumber, PageObject.PageNumber));
             ChapterObject.Pages[index] = PageObject;
             // Save the ChapterObject via Async to Save Path with Retry and Timeout of 30min
-            await App.ZipManager.Retry(() => App.ZipManager.WriteAsync(
+            await CORE.ZipManager.WriteAsync(
                 SavePath(MangaObject, ChapterObject),
                 ChapterObject.GetType().Name,
-                ChapterObject.Serialize(SerializeType: App.UserConfiguration.SerializeType)
-                ), FILE_ACCESS_TIMEOUT, DEFAULT_DELAY, DELAY_INCREMENT);
+                ChapterObject.Serialize(SerializeType: SerializeType)
+                ).Retry(FILE_ACCESS_TIMEOUT, DEFAULT_DELAY, DELAY_INCREMENT);
 
             return ChapterObject;
         }
@@ -332,15 +352,15 @@ namespace myManga_App.IO.Network
             // Load the Cover Image via Async and LimitedTaskFactory
             CookieCollection Cookies = null;
             String Referer = String.Format("{0}://{1}", CoverImageUri.Scheme, CoverImageUri.Host);
-            if (App.Extensions.Contains(LocationObject.ExtensionName, LocationObject.ExtensionLanguage))
+            if (CORE.Extensions.Contains(LocationObject.ExtensionName, LocationObject.ExtensionLanguage))
             {
-                IExtension Extension = App.Extensions[LocationObject.ExtensionName, LocationObject.ExtensionLanguage];
+                IExtension Extension = CORE.Extensions[LocationObject.ExtensionName, LocationObject.ExtensionLanguage];
                 Cookies = Extension.Cookies;
                 Referer = Extension.ExtensionDescriptionAttribute.RefererHeader;
             }
-            else if (App.Extensions.Contains(LocationObject.ExtensionName))
+            else if (CORE.Extensions.Contains(LocationObject.ExtensionName))
             {
-                IExtension Extension = App.Extensions[LocationObject.ExtensionName];
+                IExtension Extension = CORE.Extensions[LocationObject.ExtensionName];
                 Cookies = Extension.Cookies;
                 Referer = Extension.ExtensionDescriptionAttribute.RefererHeader;
             }
@@ -371,7 +391,7 @@ namespace myManga_App.IO.Network
             }
             catch (Exception ex)
             {
-                App.logger.Warn(String.Format("[ContentDownloadManager] An exception was thrown while processing {0}.", Url), ex);
+                if(!Equals(CORE.Logger, null)) CORE.Logger.Warn(String.Format("[ContentDownloadManager] An exception was thrown while processing {0}.", Url), ex);
                 throw ex;
             }
             finally
@@ -383,11 +403,11 @@ namespace myManga_App.IO.Network
 
         private async Task StoreImage(String ArchiveName, String EntryName, Stream ImageStream)
         {
-            await App.ZipManager.Retry(() => App.ZipManager.WriteAsync(
+            await CORE.ZipManager.WriteAsync(
                 ArchiveName,
                 EntryName,
                 ImageStream
-                ), FILE_ACCESS_TIMEOUT, DEFAULT_DELAY, DELAY_INCREMENT);
+                ).Retry(FILE_ACCESS_TIMEOUT, DEFAULT_DELAY, DELAY_INCREMENT);
         }
         #endregion
 
@@ -406,9 +426,9 @@ namespace myManga_App.IO.Network
         /// <param name="Extensions">IEnumerable<IExtension> to filter</param>
         /// <param name="EnabledExtensions">IEnumerable<EnabledExtensionObject> to use for filter</param>
         /// <returns></returns>
-        public IEnumerable<IExtension> ValidExtensions(IEnumerable<IExtension> Extensions, IEnumerable<EnabledExtensionObject> EnabledExtensions) => Extensions.Where(Extension =>
+        public IEnumerable<IExtension> ValidExtensions(IEnumerable<IExtension> Extensions, IEnumerable<EnabledExtensionObject> EnabledExtensions, SupportedObjects Supported = SupportedObjects.All) => Extensions.Where(Extension =>
         {
-            if (!Extension.ExtensionDescriptionAttribute.SupportedObjects.HasFlag(SupportedObjects.Manga)) return false;
+            if (!Extension.ExtensionDescriptionAttribute.SupportedObjects.HasFlag(Supported)) return false;
             if (Extension.ExtensionDescriptionAttribute.RequiresAuthentication) if (!Extension.IsAuthenticated) return false;
 
             Int32 Count = EnabledExtensions.Where(EnExt => EnExt.Enabled).Count(EnExt => EnExt.EqualsIExtension(Extension));
@@ -435,65 +455,7 @@ namespace myManga_App.IO.Network
             public String Content { get; set; }
         }
         #endregion
-
-        #region Retry
-        /// <summary>
-        /// Async Task Retry
-        /// </summary>
-        /// <typeparam name="TResult"></typeparam>
-        /// <param name="method">Task to Retry</param>
-        /// <param name="timeout">Allowed TimeSpan timeout</param>
-        /// <returns>Result from method</returns>
-        public async Task<TResult> Retry<TResult>(Func<Task<TResult>> method, TimeSpan timeout)
-        { return await Retry(method: method, timeout: timeout, delay: TimeSpan.FromSeconds(1), delayIncrement: TimeSpan.Zero); }
-        /// <summary>
-        /// Async Task Retry
-        /// </summary>
-        /// <typeparam name="TResult"></typeparam>
-        /// <param name="method">Task to Retry</param>
-        /// <param name="timeout">Allowed TimeSpan timeout</param>
-        /// <param name="delay"></param>
-        /// <returns>Result from method</returns>
-        public async Task<TResult> Retry<TResult>(Func<Task<TResult>> method, TimeSpan timeout, TimeSpan delay)
-        { return await Retry(method: method, timeout: timeout, delay: delay, delayIncrement: TimeSpan.Zero); }
-        /// <summary>
-        /// Async Task Retry
-        /// </summary>
-        /// <typeparam name="TResult"></typeparam>
-        /// <param name="method">Task to Retry</param>
-        /// <param name="timeout">Allowed TimeSpan timeout</param>
-        /// <param name="delay"></param>
-        /// <param name="delayIncrement"></param>
-        /// <returns>Result from method</returns>
-        public async Task<TResult> Retry<TResult>(Func<Task<TResult>> method, TimeSpan timeout, TimeSpan delay, TimeSpan delayIncrement)
-        {
-            Stopwatch watch = Stopwatch.StartNew();
-            do
-            {
-                try { return await method(); }
-                catch (OperationCanceledException ocex)
-                { throw ocex; } // Handle OperationCanceledException and throw it.
-                catch (Exception ex)
-                {
-                    // If the timeout has elapsed, throw the Exception.
-                    if (watch.Elapsed >= timeout)
-                        throw ex;
-
-                    // await for the delay.
-                    await Task.Delay(delay);
-
-                    // If there is a delayIncrement and it's greater than 0 add it to the delay.
-                    if (delayIncrement > TimeSpan.Zero)
-                        delay.Add(delayIncrement);
-                }
-            }
-            while (watch.Elapsed < timeout);
-            // A timeout occurred.
-            // return the default(TResult).
-            return default(TResult);
-        }
-        #endregion
-
+        
         #region Manga
         private async Task<MangaObject> LoadMangaObjectAsync(MangaObject MangaObject, CancellationToken ct, IProgress<Int32> progress)
         {
@@ -505,7 +467,7 @@ namespace myManga_App.IO.Network
                 if (!Equals(progress, null)) progress.Report(5);
 
                 IEnumerable<Task<ExtensionContentResult>> ExtensionContentTasksQuery =
-                    from Extension in ValidExtensions(App.Extensions, App.UserConfiguration.EnabledExtensions)
+                    from Extension in ValidExtensions(CORE.Extensions, CORE.UserConfiguration.EnabledExtensions)
                     select LoadExtensionMangaContent(Extension, MangaObject);
                 List<Task<ExtensionContentResult>> ExtensionContentTasks = ExtensionContentTasksQuery.ToList();
                 Int32 OriginalExtensionContentTasksCount = ExtensionContentTasks.Count;
@@ -545,7 +507,7 @@ namespace myManga_App.IO.Network
                         {
                             String Name = LoadedExtensionContentResult.Extension.ExtensionDescriptionAttribute.Name,
                                 Language = LoadedExtensionContentResult.Extension.ExtensionDescriptionAttribute.Language;
-                            App.logger.Warn(String.Format("Unable to parse from {0}-{1} for {2}.", Name, Language, MangaObject.Name), ex);
+                            if(!Equals(CORE.Logger, null)) CORE.Logger.Warn(String.Format("Unable to parse from {0}-{1} for {2}.", Name, Language, MangaObject.Name), ex);
                         }
                     }
 
@@ -587,9 +549,7 @@ namespace myManga_App.IO.Network
                 WebDownloader.Referer = Extension.ExtensionDescriptionAttribute.RefererHeader;
                 try
                 {
-                    String Content = await Retry(() =>
-                        WebDownloader.DownloadStringTaskAsync(LocationObject.Url),
-                        DOWNLOAD_TIMEOUT);
+                    String Content = await WebDownloader.DownloadStringTaskAsync(LocationObject.Url).Retry(DOWNLOAD_TIMEOUT);
                     return new ExtensionContentResult()
                     {
                         Extension = Extension,
@@ -601,7 +561,7 @@ namespace myManga_App.IO.Network
                 {
                     String Name = Extension.ExtensionDescriptionAttribute.Name,
                         Language = Extension.ExtensionDescriptionAttribute.Language;
-                    App.logger.Warn(String.Format("Unable to load content from {0}-{1} for {2}.", Name, Language, MangaObject.Name), ex);
+                    if(!Equals(CORE.Logger, null)) CORE.Logger.Warn(String.Format("Unable to load content from {0}-{1} for {2}.", Name, Language, MangaObject.Name), ex);
                     return null;
                 }
             }
@@ -617,10 +577,10 @@ namespace myManga_App.IO.Network
                 ct.ThrowIfCancellationRequested();
 
                 // Store valid ISiteExtension
-                IEnumerable<ISiteExtension> ValidSiteExtensions = ValidExtensions(App.SiteExtensions, App.UserConfiguration.EnabledExtensions).Cast<ISiteExtension>();
+                IEnumerable<ISiteExtension> ValidSiteExtensions = ValidExtensions(CORE.SiteExtensions, CORE.UserConfiguration.EnabledExtensions).Cast<ISiteExtension>();
 
                 // Re-Order the Chapter's LocationObjects to the EnabledExtensions order.
-                IEnumerable<LocationObject> OrderedChapterObjectLocations = from EnExt in App.UserConfiguration.EnabledExtensions
+                IEnumerable<LocationObject> OrderedChapterObjectLocations = from EnExt in CORE.UserConfiguration.EnabledExtensions
                                                                             where ChapterObject.Locations.Exists(LocObj => EnExt.EqualsLocationObject(LocObj))
                                                                             select ChapterObject.Locations.FirstOrDefault(LocObj => EnExt.EqualsLocationObject(LocObj));
 
@@ -642,9 +602,10 @@ namespace myManga_App.IO.Network
                             ct.ThrowIfCancellationRequested();
                         };
                         WebDownloader.DownloadProgressChanged += ProgressEventHandler;
-                        ChapterObject DownloadedChapterObject = await Retry(
-                            async () => SiteExtension.ParseChapterObject(await WebDownloader.DownloadStringTaskAsync(LocationObject.Url)),
-                            DOWNLOAD_TIMEOUT);
+
+                        String ChapterWebContent = await WebDownloader.DownloadStringTaskAsync(LocationObject.Url).Retry(DOWNLOAD_TIMEOUT);
+                        ChapterObject DownloadedChapterObject = SiteExtension.ParseChapterObject(ChapterWebContent);
+
                         WebDownloader.DownloadProgressChanged -= ProgressEventHandler;
                         ct.ThrowIfCancellationRequested();
                         if (!Equals(DownloadedChapterObject, null))
@@ -671,7 +632,7 @@ namespace myManga_App.IO.Network
                 await TaskConcurrencySemaphore.WaitAsync(ct);
                 ct.ThrowIfCancellationRequested();
 
-                ISiteExtension SiteExtension = App.SiteExtensions.First(_SiteExtension => PageObject.Url.Contains(_SiteExtension.ExtensionDescriptionAttribute.URLFormat));
+                ISiteExtension SiteExtension = CORE.SiteExtensions.First(_SiteExtension => PageObject.Url.Contains(_SiteExtension.ExtensionDescriptionAttribute.URLFormat));
                 using (WebDownloader WebDownloader = new WebDownloader(SiteExtension.Cookies))
                 {
                     WebDownloader.Referer = SiteExtension.ExtensionDescriptionAttribute.RefererHeader;
@@ -682,9 +643,10 @@ namespace myManga_App.IO.Network
                         ct.ThrowIfCancellationRequested();
                     };
                     WebDownloader.DownloadProgressChanged += ProgressEventHandler;
-                    PageObject = await Retry(
-                        async () => SiteExtension.ParsePageObject(await WebDownloader.DownloadStringTaskAsync(PageObject.Url)),
-                        DOWNLOAD_TIMEOUT);
+
+                    String PageWebContent = await WebDownloader.DownloadStringTaskAsync(PageObject.Url).Retry(DOWNLOAD_TIMEOUT);
+                    PageObject = SiteExtension.ParsePageObject(PageWebContent);
+                    
                     WebDownloader.DownloadProgressChanged -= ProgressEventHandler;
                 }
                 if (!Equals(progress, null)) progress.Report(100);
@@ -739,7 +701,7 @@ namespace myManga_App.IO.Network
 
             Boolean firstResponse = true;
             IEnumerable<Task<ExtensionContentResult>> ExtensionContentTasksQuery =
-                from Extension in ValidExtensions(App.Extensions, App.UserConfiguration.EnabledExtensions)
+                from Extension in ValidExtensions(CORE.Extensions, CORE.UserConfiguration.EnabledExtensions)
                 select LoadExtensionSearchContent(Extension, SearchTerm);
             List<Task<ExtensionContentResult>> ExtensionContentTasks = ExtensionContentTasksQuery.ToList();
             Int32 OriginalExtensionContentTasksCount = ExtensionContentTasks.Count;
@@ -847,7 +809,7 @@ namespace myManga_App.IO.Network
                 try
                 {
                     SearchRequestObject sro = Extension.GetSearchRequestObject(SearchTerm);
-                    String Content = await Retry(() => ProcessSearchRequest(sro), DOWNLOAD_TIMEOUT);
+                    String Content = await ProcessSearchRequest(sro).Retry(DOWNLOAD_TIMEOUT);
                     return new ExtensionContentResult()
                     {
                         Extension = Extension,
@@ -865,7 +827,7 @@ namespace myManga_App.IO.Network
                 {
                     String Name = Extension.ExtensionDescriptionAttribute.Name,
                         Language = Extension.ExtensionDescriptionAttribute.Language;
-                    App.logger.Warn(String.Format("Unable to load search content from {0}-{1} for {2}.", Name, Language, SearchTerm), ex);
+                    if(!Equals(CORE.Logger, null)) CORE.Logger.Warn(String.Format("Unable to load search content from {0}-{1} for {2}.", Name, Language, SearchTerm), ex);
                     return null;
                 }
             }

@@ -19,6 +19,21 @@ namespace myManga_App.ViewModels.Pages
 {
     public sealed class SettingsViewModel : BaseViewModel
     {
+        private Boolean RestartRequired = false;
+        private Boolean HandlePropertyChange { get; set; }
+        private void DisablePropertyChange()
+        {
+            if (HandlePropertyChange)
+                UserConfiguration.PropertyChanged -= UserConfiguration_PropertyChanged;
+            HandlePropertyChange = false;
+        }
+        private void EnablePropertyChange()
+        {
+            if (!HandlePropertyChange)
+                UserConfiguration.PropertyChanged += UserConfiguration_PropertyChanged;
+            HandlePropertyChange = true;
+        }
+
         private Timer ActiveDownloadsTimer
         { get; set; }
 
@@ -30,7 +45,9 @@ namespace myManga_App.ViewModels.Pages
             AuthenticationDialog = new AuthenticationDialogViewModel();
             if (!IsInDesignMode)
             {
-                ResetData();
+                UserConfiguration = new UserConfigurationObject();
+                DisablePropertyChange();
+
                 ActiveDownloadsTimer = new Timer(state =>
                 {   // Monitor the ContentDownloadManager ActiveDownloadKeys property
                     App.RunOnUiThread(new Action(() => { ActiveDownloadKeys = App.ContentDownloadManager.ActiveKeys; }));
@@ -40,60 +57,52 @@ namespace myManga_App.ViewModels.Pages
 
         protected override void SubPullFocus()
         {
-            base.SubPullFocus();
             ResetData();
+            base.SubPullFocus();
         }
 
         protected override void SubLostFocus()
         {
+            ResetData();
+            App.ApplyTheme(App.CORE.UserConfiguration.Theme);
             base.SubLostFocus();
-            ResetData();
-            App.ApplyTheme(App.UserConfiguration.Theme);
-        }
-
-        protected override void SubReturnFocus()
-        {
-            base.SubReturnFocus();
-            ResetData();
-            App.ApplyTheme(App.UserConfiguration.Theme);
         }
 
         private void UserConfiguration_PropertyChanged(Object sender, PropertyChangedEventArgs e)
         {
-            UserConfigurationObject UserConfiguration = sender as UserConfigurationObject;
-            switch (e.PropertyName)
+            if (true) //HandlePropertyChange)
             {
-                case "Theme":
-                    App.ApplyTheme(UserConfiguration.Theme);
-                    break;
+                UserConfigurationObject UserConfiguration = sender as UserConfigurationObject;
+                switch (e.PropertyName)
+                {
+                    case "Theme":
+                        App.ApplyTheme(UserConfiguration.Theme);
+                        break;
+                }
             }
         }
 
         private void ResetData()
         {
-            if (!Equals(UserConfiguration, null))   // Cleanup any events from old UserConfigurationObject
-            { UserConfiguration.PropertyChanged -= UserConfiguration_PropertyChanged; }
-
-            UserConfiguration = new UserConfigurationObject();
+            RestartRequired = false;
+            DisablePropertyChange();
             PropertyInfo[] UserConfigurationProperties = typeof(UserConfigurationObject).GetProperties();
             foreach (PropertyInfo Property in UserConfigurationProperties)
-            { Property.SetValue(UserConfiguration, Property.GetValue(App.UserConfiguration)); }
-            UserConfiguration.PropertyChanged += UserConfiguration_PropertyChanged;
+            { Property.SetValue(UserConfiguration, Property.GetValue(App.CORE.UserConfiguration)); }
 
             SiteExtensionObjects.Clear();
             DatabaseExtensionObjects.Clear();
 
-            // Load SiteExtensions
-
+            // Load Extensions
             IEnumerable<EnabledExtensionObject> EnabledSiteExtensionObjects = UserConfiguration.EnabledExtensions.Where(ext => Equals(ext.ExtensionType, typeof(ISiteExtension).Name));
             IEnumerable<EnabledExtensionObject> EnabledDatabaseExtensionObjects = UserConfiguration.EnabledExtensions.Where(ext => Equals(ext.ExtensionType, typeof(IDatabaseExtension).Name));
 
             foreach (EnabledExtensionObject EnabledSiteExtensionObject in EnabledSiteExtensionObjects)
             {
-                ISiteExtension SiteExtension = App.SiteExtensions[EnabledSiteExtensionObject.Name, EnabledSiteExtensionObject.Language];
+                ISiteExtension SiteExtension = App.CORE.SiteExtensions[EnabledSiteExtensionObject.Name, EnabledSiteExtensionObject.Language];
                 SiteExtensionObjects.Add(new ExtensionObject(SiteExtension, EnabledSiteExtensionObject.Enabled));
             }
-            foreach (ISiteExtension SiteExtension in App.SiteExtensions)
+            foreach (ISiteExtension SiteExtension in App.CORE.SiteExtensions)
             {
                 String Name = String.Format("{0} ({1})", SiteExtension.ExtensionDescriptionAttribute.Name, SiteExtension.ExtensionDescriptionAttribute.Language);
                 ExtensionObject SiteExtensionObject = SiteExtensionObjects.FirstOrDefault(seo => Equals(seo.Name, Name));
@@ -102,15 +111,16 @@ namespace myManga_App.ViewModels.Pages
 
             foreach (EnabledExtensionObject EnabledDatabaseExtensionObject in EnabledDatabaseExtensionObjects)
             {
-                IDatabaseExtension DatabaseExtension = App.DatabaseExtensions[EnabledDatabaseExtensionObject.Name, EnabledDatabaseExtensionObject.Language];
+                IDatabaseExtension DatabaseExtension = App.CORE.DatabaseExtensions[EnabledDatabaseExtensionObject.Name, EnabledDatabaseExtensionObject.Language];
                 DatabaseExtensionObjects.Add(new ExtensionObject(DatabaseExtension, EnabledDatabaseExtensionObject.Enabled));
             }
-            foreach (IDatabaseExtension DatabaseExtension in App.DatabaseExtensions)
+            foreach (IDatabaseExtension DatabaseExtension in App.CORE.DatabaseExtensions)
             {
                 String Name = String.Format("{0} ({1})", DatabaseExtension.ExtensionDescriptionAttribute.Name, DatabaseExtension.ExtensionDescriptionAttribute.Language);
                 ExtensionObject DatabaseExtensionObject = DatabaseExtensionObjects.FirstOrDefault(seo => Equals(seo.Name, Name));
                 if (Equals(DatabaseExtensionObject, null)) DatabaseExtensionObjects.Add(new ExtensionObject(DatabaseExtension, false));
             }
+
             MangaCount = App.MangaCacheObjects.Count(mco =>
                 Equals(mco.MangaObject.MangaType, MangaObjectType.Manga));
             ManhwaCount = App.MangaCacheObjects.Count(mco =>
@@ -120,6 +130,8 @@ namespace myManga_App.ViewModels.Pages
             UnknownCount = App.MangaCacheObjects.Count(mco =>
                 Equals(mco.MangaObject.MangaType, MangaObjectType.Unknown));
             TotalCount = MangaCount + ManhwaCount + UnknownCount;
+
+            EnablePropertyChange();
         }
 
         #region Extension Collections
@@ -220,7 +232,7 @@ namespace myManga_App.ViewModels.Pages
             "UserConfiguration",
             typeof(UserConfigurationObject),
             typeof(SettingsViewModel),
-            null);
+            new PropertyMetadata());
         private static readonly DependencyProperty UserConfigurationProperty = UserConfigurationPropertyKey.DependencyProperty;
 
         public UserConfigurationObject UserConfiguration
@@ -240,7 +252,9 @@ namespace myManga_App.ViewModels.Pages
 
         private void SaveUserConfiguration()
         {
-            String[] IgnoreProperties = new String[] {
+            DisablePropertyChange();
+
+            String[] PropertyBlacklist = {
                 "WindowSizeHeight",
                 "WindowSizeWidth",
                 "WindowState",
@@ -250,31 +264,29 @@ namespace myManga_App.ViewModels.Pages
             foreach (ExtensionObject ExtensionObject in SiteExtensionObjects)
             {
                 UserConfiguration.EnabledExtensions.Add(new EnabledExtensionObject(ExtensionObject.Extension)
-                {
-                    Enabled = ExtensionObject.Enabled
-                });
+                { Enabled = ExtensionObject.Enabled });
             }
             foreach (ExtensionObject ExtensionObject in DatabaseExtensionObjects)
             {
                 UserConfiguration.EnabledExtensions.Add(new EnabledExtensionObject(ExtensionObject.Extension)
-                {
-                    Enabled = ExtensionObject.Enabled
-                });
+                { Enabled = ExtensionObject.Enabled });
             }
-            /*
-            UserConfiguration.EnabledSiteExtensions.Clear();
-            foreach (ExtensionObject ExtensionObject in SiteExtensionObjects)
-            { if (ExtensionObject.Enabled) UserConfiguration.EnabledSiteExtensions.Add(ExtensionObject.Name); }
 
-            UserConfiguration.EnabledDatabaseExtensions.Clear();
-            foreach (ExtensionObject ExtensionObject in DatabaseExtensionObjects)
-            { if (ExtensionObject.Enabled) UserConfiguration.EnabledDatabaseExtensions.Add(ExtensionObject.Name); }
-            //*/
             PropertyInfo[] UserConfigurationProperties = typeof(UserConfigurationObject).GetProperties();
             foreach (PropertyInfo Property in UserConfigurationProperties)
-            { if (!IgnoreProperties.Contains(Property.Name)) Property.SetValue(App.UserConfiguration, Property.GetValue(UserConfiguration)); }
+            {
+                if (!PropertyBlacklist.Contains(Property.Name))
+                {
+                    Object currentValue = Property.GetValue(App.CORE.UserConfiguration),
+                        newValue = Property.GetValue(UserConfiguration);
+                    // Only propagate changed values
+                    if (!Equals(newValue, currentValue))
+                    { Property.SetValue(App.CORE.UserConfiguration, Property.GetValue(UserConfiguration)); }
+                }
+            }
+            App.SaveUserConfiguration();
 
-            Messenger.Instance.Send(true, "PreviousFocusRequest");
+            ReturnFocus();
         }
         #endregion
 
@@ -284,9 +296,7 @@ namespace myManga_App.ViewModels.Pages
         { get { return cancelConfigurationCommand ?? (cancelConfigurationCommand = new DelegateCommand(CancelConfiguration)); } }
 
         private void CancelConfiguration()
-        {
-            ReturnFocus();
-        }
+        { ReturnFocus(); }
         #endregion
 
         #region Authentication Dialog

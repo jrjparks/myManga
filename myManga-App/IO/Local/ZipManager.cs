@@ -158,37 +158,5 @@ namespace myManga_App.IO.Local
             finally
             { semaphore.Release(); }
         }
-
-        public async Task<TResult> Retry<TResult>(Func<Task<TResult>> method, TimeSpan timeout)
-        { return await Retry(method: method, timeout: timeout, delay: TimeSpan.FromSeconds(1), delayIncrement: TimeSpan.Zero); }
-        public async Task<TResult> Retry<TResult>(Func<Task<TResult>> method, TimeSpan timeout, TimeSpan delay)
-        { return await Retry(method: method, timeout: timeout, delay: delay, delayIncrement: TimeSpan.Zero); }
-        public async Task<TResult> Retry<TResult>(Func<Task<TResult>> method, TimeSpan timeout, TimeSpan delay, TimeSpan delayIncrement)
-        {
-            Stopwatch watch = Stopwatch.StartNew();
-            do
-            {
-                try { return await method(); }
-                catch (OperationCanceledException ocex)
-                { throw ocex; } // Handle OperationCanceledException and throw it.
-                catch (Exception ex)
-                {
-                    // If the timeout has elapsed, throw the Exception.
-                    if (watch.Elapsed >= timeout)
-                        throw ex;
-
-                    // await for the delay.
-                    await Task.Delay(delay);
-
-                    // If there is a delayIncrement and it's greater than 0 add it to the delay.
-                    if (delayIncrement > TimeSpan.Zero)
-                        delay.Add(delayIncrement);
-                }
-            }
-            while (watch.Elapsed < timeout);
-            // A timeout occurred.
-            // return the default(TResult).
-            return default(TResult);
-        }
     }
 }

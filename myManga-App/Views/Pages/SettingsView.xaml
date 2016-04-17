@@ -287,17 +287,6 @@
 
                         <StackPanel>
 
-                            <!--
-                            <HeaderedContentControl
-                                    Header="Storage Serialization"
-                                    Margin="2,6" VerticalAlignment="Top">
-                                <ComboBox
-                                    x:Name="StorageSerialization"
-                                    ItemsSource="{Binding SerializeTypes}"
-                                    SelectedItem="{Binding UserConfiguration.SerializeType}"/>
-                            </HeaderedContentControl>
-                            -->
-
                             <HeaderedContentControl
                                     Header="{Binding Path=UserConfiguration.ConcurrencyMultiplier, Mode=OneWay, FallbackValue=1}" 
                                     HeaderStringFormat="Concurrency Multiplier: {0:0}x"
@@ -340,6 +329,23 @@
                                         FontStyle="Italic"
                                         TextWrapping="WrapWithOverflow"
                                         Text="Concurrent Image Downloads = (Concurrent Manga Downloads) / 2"
+                                        Foreground="{DynamicResource text-muted}"/>
+                                </StackPanel>
+                            </HeaderedContentControl>
+
+                            <HeaderedContentControl
+                                    Header="Storage Serialization"
+                                    Margin="2,6" VerticalAlignment="Top">
+                                <StackPanel>
+                                    <ComboBox
+                                        x:Name="StorageSerialization"
+                                        ItemsSource="{Binding SerializeTypes}"
+                                        SelectedItem="{Binding UserConfiguration.SerializeType}"/>
+                                    <TextBlock
+                                        FontSize="13"
+                                        FontStyle="Italic"
+                                        TextWrapping="WrapWithOverflow"
+                                        Text="This is should only be changed if you know what you are doing."
                                         Foreground="{DynamicResource text-muted}"/>
                                 </StackPanel>
                             </HeaderedContentControl>

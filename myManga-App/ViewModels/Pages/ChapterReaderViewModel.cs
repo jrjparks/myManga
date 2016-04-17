@@ -178,7 +178,7 @@ namespace myManga_App.ViewModels.Pages
             await App.CORE.ZipManager.WriteAsync(
                     MangaArchiveFilePath,
                     typeof(BookmarkObject).Name,
-                    BookmarkObject.Serialize(App.CORE.UserConfiguration.SerializeType)).Retry(TIMEOUT);
+                    BookmarkObject.Serialize(App.SerializeType)).Retry(TIMEOUT);
         }
         #endregion
 
@@ -433,7 +433,7 @@ namespace myManga_App.ViewModels.Pages
                     Stream ChapterObjectStream = await App.CORE.ZipManager.ReadAsync(ChapterArchiveFilePath, typeof(ChapterObject).Name).Retry(TIMEOUT);
                     LoadChapterObjectAsyncCTS.Token.ThrowIfCancellationRequested();
                     using (ChapterObjectStream)
-                    { ChapterObject = ChapterObjectStream.Deserialize<ChapterObject>(SerializeType: App.CORE.UserConfiguration.SerializeType); }
+                    { ChapterObject = ChapterObjectStream.Deserialize<ChapterObject>(SerializeType: App.SerializeType); }
                 }
                 catch (OperationCanceledException) { }
                 catch (Exception ex) { throw ex; }
@@ -460,7 +460,7 @@ namespace myManga_App.ViewModels.Pages
                     Stream BookmarkObjectStream = await App.CORE.ZipManager.ReadAsync(MangaArchiveFilePath, typeof(BookmarkObject).Name).Retry(TIMEOUT);
                     LoadBookmarkObjectAsyncCTS.Token.ThrowIfCancellationRequested();
                     using (BookmarkObjectStream)
-                    { BookmarkObject = BookmarkObjectStream.Deserialize<BookmarkObject>(SerializeType: App.CORE.UserConfiguration.SerializeType); }
+                    { BookmarkObject = BookmarkObjectStream.Deserialize<BookmarkObject>(SerializeType: App.SerializeType); }
 
                     if (Equals(BookmarkObject, null)) BookmarkObject = new BookmarkObject();
 

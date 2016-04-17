@@ -57,6 +57,7 @@ namespace myManga_App.IO.Network
         { get { return ActiveDownloadsCache.Select(x => x.Key); } }
 
         private readonly CoreManagement CORE;
+        private readonly SerializeType SerializeType = SerializeType.XML;
         #endregion
 
         #region Constructors
@@ -76,6 +77,9 @@ namespace myManga_App.IO.Network
             else if (!Equals(App, null)) this.CORE = App.CORE;
             else this.CORE = new CoreManagement(log4net.LogManager.GetLogger(typeof(ContentDownloadManager)));
             #endregion
+
+            // Store the SerializeType on startup.
+            SerializeType = CORE.UserConfiguration.SerializeType;
 
             ActiveDownloadsCache = new MemoryCache("ActiveDownloadsCache");
 
@@ -183,7 +187,7 @@ namespace myManga_App.IO.Network
             await CORE.ZipManager.WriteAsync(
                 SavePath(MangaObject),
                 MangaObject.GetType().Name,
-                MangaObject.Serialize(SerializeType: CORE.UserConfiguration.SerializeType)
+                MangaObject.Serialize(SerializeType: SerializeType)
                 ).Retry(FILE_ACCESS_TIMEOUT, DEFAULT_DELAY, DELAY_INCREMENT);
         }
         #endregion
@@ -277,7 +281,7 @@ namespace myManga_App.IO.Network
             await CORE.ZipManager.WriteAsync(
                 SavePath(MangaObject, ChapterObject),
                 ChapterObject.GetType().Name,
-                ChapterObject.Serialize(SerializeType: CORE.UserConfiguration.SerializeType)
+                ChapterObject.Serialize(SerializeType: SerializeType)
                 ).Retry(FILE_ACCESS_TIMEOUT, DEFAULT_DELAY, DELAY_INCREMENT);
         }
         #endregion
@@ -334,7 +338,7 @@ namespace myManga_App.IO.Network
             await CORE.ZipManager.WriteAsync(
                 SavePath(MangaObject, ChapterObject),
                 ChapterObject.GetType().Name,
-                ChapterObject.Serialize(SerializeType: CORE.UserConfiguration.SerializeType)
+                ChapterObject.Serialize(SerializeType: SerializeType)
                 ).Retry(FILE_ACCESS_TIMEOUT, DEFAULT_DELAY, DELAY_INCREMENT);
 
             return ChapterObject;

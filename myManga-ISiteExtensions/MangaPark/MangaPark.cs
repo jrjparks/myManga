@@ -275,28 +275,28 @@ namespace MangaPark
 
             // Book Link
             String bookLink = String.Empty;
-            Match bookLinkMatch = Regex.Match(Content, @"_book_link\s=\s'(?<URL>[\w\d-/]+)';");
+            Match bookLinkMatch = Regex.Match(Content, @"_book_link\s=\s'(?<URL>.+?)';");
             if (bookLinkMatch.Success && bookLinkMatch.Groups["URL"].Success)
                 bookLink = bookLinkMatch.Groups["URL"].Value;
             else throw new MissingFieldException("Unable to locate _book_link for page.", "_book_link");
 
             // Prev Link
             String prevLink = String.Empty;
-            Match prevLinkMatch = Regex.Match(Content, @"_prev_link\s=\s'(?<URL>[\w\d-/]+)';");
+            Match prevLinkMatch = Regex.Match(Content, @"_prev_link\s=\s'(?<URL>.+?)';");
             if (prevLinkMatch.Success && prevLinkMatch.Groups["URL"].Success)
                 prevLink = prevLinkMatch.Groups["URL"].Value;
             else throw new MissingFieldException("Unable to locate _prev_link for page.", "_prev_link");
 
             // Next Link
             String nextLink = String.Empty;
-            Match nextLinkMatch = Regex.Match(Content, @"_next_link\s=\s'(?<URL>[\w\d-/]+)';");
+            Match nextLinkMatch = Regex.Match(Content, @"_next_link\s=\s'(?<URL>.+?)';");
             if (nextLinkMatch.Success && nextLinkMatch.Groups["URL"].Success)
                 nextLink = nextLinkMatch.Groups["URL"].Value;
             else throw new MissingFieldException("Unable to locate _next_link for page.", "_next_link");
 
             // PageNumber
             UInt32 PageNumber = 0;
-            Match pageNumberMatch = Regex.Match(Content, @"_page_sn\s=\s'(?<PageNumber>\d+)';");
+            Match pageNumberMatch = Regex.Match(Content, @"_page_sn\s=\s'(?<PageNumber>\d+?)';");
             if (pageNumberMatch.Success && pageNumberMatch.Groups["PageNumber"].Success)
                 UInt32.TryParse(pageNumberMatch.Groups["PageNumber"].Value, out PageNumber);
             else throw new MissingFieldException("Unable to locate _page_sn for page.", "_page_sn");
@@ -308,8 +308,9 @@ namespace MangaPark
                 mangaNameUrl = mangaNameUrlMatch.Groups["Name"].Value;
             else throw new MissingFieldException("Unable to locate _manga_name for page.", "_manga_name");
 
-            String ImgSrc = PageObjectDocument.DocumentNode.SelectSingleNode(".//img[@id='img-1']").GetAttributeValue("src", null);
-            String Name = ImgSrc.ToString().Split('/').Last();
+            Uri ImgUri = new Uri(PageObjectDocument.DocumentNode.SelectSingleNode(".//img[@id='img-1']").GetAttributeValue("src", null));
+            String ImgSrc = ImgUri.GetLeftPart(UriPartial.Path);
+            String Name = Path.GetFileName(ImgUri.LocalPath);
 
             return new PageObject()
             {
@@ -318,7 +319,7 @@ namespace MangaPark
                 Url = String.Format("{0}/manga/{1}{2}/{3}", ExtensionDescriptionAttribute.RootUrl, mangaNameUrl, bookLink, PageNumber),
                 PageNumber = PageNumber,
                 NextUrl = nextLink.Contains(bookLink) ? String.Format("{0}{1}", ExtensionDescriptionAttribute.RootUrl, nextLink): null,
-                PrevUrl = nextLink.Contains(bookLink) ? String.Format("{0}{1}", ExtensionDescriptionAttribute.RootUrl, prevLink) : null
+                PrevUrl = prevLink.Contains(bookLink) ? String.Format("{0}{1}", ExtensionDescriptionAttribute.RootUrl, prevLink) : null
             };
         }
         #endregion

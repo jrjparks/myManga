@@ -58,8 +58,11 @@ namespace myManga_App
 
         #region Core
         public readonly CoreManagement CORE = new CoreManagement(logger);
-        public CoreManagement COREProperty { get { return CORE; } }
+        public readonly SerializeType SerializeType = SerializeType.XML;
         public readonly ContentDownloadManager ContentDownloadManager;
+
+        // Used for Bindings
+        public CoreManagement COREProperty { get { return CORE; } }
         #endregion
 
         #region IO
@@ -76,7 +79,7 @@ namespace myManga_App
 
         private async Task<MangaCacheObject> UnsafeDispatcherLoadMangaCacheObjectAsync(String ArchivePath)
         {
-            return await Current.Dispatcher.Invoke(() => UnsafeLoadMangaCacheObjectAsync(ArchivePath), DispatcherPriority.ContextIdle);
+            return await Current.Dispatcher.Invoke(() => UnsafeLoadMangaCacheObjectAsync(ArchivePath), DispatcherPriority.Background);
         }
 
         private async Task<MangaCacheObject> UnsafeLoadMangaCacheObjectAsync(String ArchivePath)
@@ -89,12 +92,12 @@ namespace myManga_App
                 // Load BookmarkObject Data
                 Stream BookmarkObjectStream = CORE.ZipManager.UnsafeRead(ArchivePath, typeof(BookmarkObject).Name);
                 if (!Equals(BookmarkObjectStream, null))
-                { using (BookmarkObjectStream) { MangaCacheObject.BookmarkObject = BookmarkObjectStream.Deserialize<BookmarkObject>(CORE.UserConfiguration.SerializeType); } }
+                { using (BookmarkObjectStream) { MangaCacheObject.BookmarkObject = BookmarkObjectStream.Deserialize<BookmarkObject>(SerializeType); } }
 
                 // Load MangaObject Data
                 Stream MangaObjectStream = CORE.ZipManager.UnsafeRead(ArchivePath, typeof(MangaObject).Name);
                 if (!Equals(MangaObjectStream, null))
-                { using (MangaObjectStream) { MangaCacheObject.MangaObject = MangaObjectStream.Deserialize<MangaObject>(CORE.UserConfiguration.SerializeType); } }
+                { using (MangaObjectStream) { MangaCacheObject.MangaObject = MangaObjectStream.Deserialize<MangaObject>(SerializeType); } }
 
                 // Move archive to correct location if needed
                 String CorrectArchivePath = Path.Combine(Path.GetDirectoryName(ArchivePath), MangaCacheObject.ArchiveFileName);
@@ -113,7 +116,7 @@ namespace myManga_App
                     logger.Info(String.Format("MangaObject version was updated for '{0}'.", MangaCacheObject.MangaObject.Name));
                     await CORE.ZipManager.WriteAsync(
                         CorrectArchivePath, typeof(MangaObject).Name,
-                        MangaCacheObject.MangaObject.Serialize(CORE.UserConfiguration.SerializeType)).Retry(TimeSpan.FromMinutes(1));
+                        MangaCacheObject.MangaObject.Serialize(SerializeType)).Retry(TimeSpan.FromMinutes(1));
                 }
 
                 // Load Cover Image
@@ -163,15 +166,14 @@ namespace myManga_App
             }
             catch (Exception ex)
             {
-                logger.Warn("Unable to read Manga Archive.", ex);
-                MessageBox.Show(String.Format("Unable to read Manga Archive.\nFile: {0}\nException:\n{1}\n\n{2}", ArchivePath, ex.Message, ex.StackTrace));
+                logger.Error(String.Format("Unable to read Manga Archive.\nFile: {0}", ArchivePath), ex);
                 return null;
             }
         }
 
         private async Task<MangaCacheObject> DispatcherReloadMangaCacheObjectAsync(String ArchivePath, Boolean ReloadCoverImage = false)
         {
-            return await Current.Dispatcher.Invoke(() => ReloadMangaCacheObjectAsync(ArchivePath, ReloadCoverImage), DispatcherPriority.ContextIdle);
+            return await Current.Dispatcher.Invoke(() => ReloadMangaCacheObjectAsync(ArchivePath, ReloadCoverImage), DispatcherPriority.Background);
         }
 
         private async Task<MangaCacheObject> ReloadMangaCacheObjectAsync(String ArchivePath, Boolean ReloadCoverImage = false)
@@ -184,12 +186,12 @@ namespace myManga_App
                 // Load BookmarkObject Data
                 Stream BookmarkObjectStream = await CORE.ZipManager.ReadAsync(ArchivePath, typeof(BookmarkObject).Name).Retry(TimeSpan.FromMinutes(1));
                 if (!Equals(BookmarkObjectStream, null))
-                { using (BookmarkObjectStream) { MangaCacheObject.BookmarkObject = BookmarkObjectStream.Deserialize<BookmarkObject>(CORE.UserConfiguration.SerializeType); } }
+                { using (BookmarkObjectStream) { MangaCacheObject.BookmarkObject = BookmarkObjectStream.Deserialize<BookmarkObject>(SerializeType); } }
 
                 // Load MangaObject Data
                 Stream MangaObjectStream = await CORE.ZipManager.ReadAsync(ArchivePath, typeof(MangaObject).Name).Retry(TimeSpan.FromMinutes(1));
                 if (!Equals(MangaObjectStream, null))
-                { using (MangaObjectStream) { MangaCacheObject.MangaObject = MangaObjectStream.Deserialize<MangaObject>(CORE.UserConfiguration.SerializeType); } }
+                { using (MangaObjectStream) { MangaCacheObject.MangaObject = MangaObjectStream.Deserialize<MangaObject>(SerializeType); } }
 
                 // Move archive to correct location if needed
                 String CorrectArchivePath = Path.Combine(Path.GetDirectoryName(ArchivePath), MangaCacheObject.ArchiveFileName);
@@ -208,7 +210,7 @@ namespace myManga_App
                     logger.Info(String.Format("MangaObject version was updated for '{0}'.", MangaCacheObject.MangaObject.Name));
                     await CORE.ZipManager.WriteAsync(
                         CorrectArchivePath, typeof(MangaObject).Name,
-                        MangaCacheObject.MangaObject.Serialize(CORE.UserConfiguration.SerializeType)).Retry(TimeSpan.FromMinutes(1));
+                        MangaCacheObject.MangaObject.Serialize(SerializeType)).Retry(TimeSpan.FromMinutes(1));
                 }
 
                 if (ReloadCoverImage)
@@ -261,8 +263,7 @@ namespace myManga_App
             }
             catch (Exception ex)
             {
-                logger.Warn("Unable to read Manga Archive.", ex);
-                MessageBox.Show(String.Format("Unable to read Manga Archive.\nFile: {0}\nException:\n{1}\n\n{2}", ArchivePath, ex.Message, ex.StackTrace));
+                logger.Error(String.Format("Unable to read Manga Archive.\nFile: {0}", ArchivePath), ex);
                 return null;
             }
         }
@@ -388,6 +389,7 @@ namespace myManga_App
         /// <returns>Time taken to load cache.</returns>
         private async Task<TimeSpan> FullMangaCacheObject()
         {
+            Boolean ErrorOccured = false;
             Stopwatch loadWatch = Stopwatch.StartNew();
             await RenameSchema();
 
@@ -407,10 +409,25 @@ namespace myManga_App
                 MangaCacheObject LoadedMangaCacheObject = await completedTask;
                 if (!Equals(LoadedMangaCacheObject, null))
                 { await Current.Dispatcher.InvokeAsync(() => MangaCacheObjects.Add(LoadedMangaCacheObject)); }
+                else ErrorOccured = true;
             }
 
             TimeSpan loadTime = loadWatch.Elapsed;
             loadWatch.Stop();
+            if (ErrorOccured)
+            {
+                String[] ErrorMessageArray = {
+                        "There was an error when attempting to load a manga on startup.",
+                        "Please check the most recent log file for the full error."
+                    };
+                String ErrorMessage = String.Join(Environment.NewLine, ErrorMessageArray);
+                MessageBox.Show(
+                    ErrorMessage,
+                    "Error During Loading Manga!",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error,
+                    MessageBoxResult.OK);
+            }
             return loadTime;
         }
         #endregion
@@ -487,6 +504,7 @@ namespace myManga_App
 
             // Load UserConfig
             LoadUserConfig();
+            SerializeType = CORE.UserConfiguration.SerializeType;
 
             // Initialize the ContentDownloadManager v2
             ContentDownloadManager = new ContentDownloadManager(CORE: CORE);
@@ -516,37 +534,9 @@ namespace myManga_App
 
         private void App_Startup(object sender, StartupEventArgs e)
         {
-            // LoadUserConfig();
             ApplyTheme(CORE.UserConfiguration.Theme);
+            CORE.UserConfiguration.UserConfigurationUpdated += UserConfiguration_UserConfigurationUpdated;
             LoadUserAuthenticate();
-            CORE.UserConfiguration.UserConfigurationUpdated += (_s, _e) =>
-            {
-                String[] PropertyWhitelist = {
-                    "WindowSizeHeight",
-                    "WindowSizeWidth",
-                    "WindowState",
-                    "ViewTypes"
-                },
-                PropertyRestartlist = {
-                    "ConcurrencyMultiplier"
-                };
-                if (PropertyWhitelist.Contains(_e.Value)) { SaveUserConfiguration(); }
-                if (PropertyRestartlist.Contains(_e.Value))
-                {
-                    String[] RestartMessageArray = {
-                        "You have made a change that requires a restart of myManga to take affect.",
-                        "Would you like to restart myManga now?"
-                    };
-                    String RestartMessage = String.Join(Environment.NewLine, RestartMessageArray);
-                    if (MessageBox.Show(
-                        RestartMessage,
-                        "Restart Required!",
-                        MessageBoxButton.YesNo,
-                        MessageBoxImage.Warning,
-                        MessageBoxResult.Yes) == MessageBoxResult.Yes)
-                    { Restart(TimeSpan.FromSeconds(1)); }
-                }
-            };
 
             // Run initial load of cache
             Task.Factory.StartNew(FullMangaCacheObject);
@@ -566,19 +556,35 @@ namespace myManga_App
             if (IsRestarting) { Process.Start(ResourceAssembly.Location); }
         }
 
-        public void Restart() =>
-            Restart(TimeSpan.FromSeconds(1));
-        public void Restart(TimeSpan Delay) =>
-            Task.Factory.StartNew(async state =>
+        private void UserConfiguration_UserConfigurationUpdated(Object sender, GenericEventArgs<String> e)
+        {
+            String[] PropertyWhitelist = {
+                    "WindowSizeHeight",
+                    "WindowSizeWidth",
+                    "WindowState",
+                    "ViewTypes"
+                },
+                PropertyRestartlist = {
+                    "SerializeType",
+                    "ConcurrencyMultiplier"
+                };
+            if (PropertyWhitelist.Contains(e.Value)) { SaveUserConfiguration(); }
+            if (PropertyRestartlist.Contains(e.Value))
             {
-                TimeSpan _Delay = (TimeSpan)state;
-                if (_Delay > TimeSpan.Zero) await Task.Delay(_Delay);
-                RunOnUiThread(delegate
-                {
-                    IsRestarting = true;
-                    Shutdown();
-                });
-            }, Delay);
+                String[] RestartMessageArray = {
+                        "You have made a change that requires a restart of myManga to take affect.",
+                        "Would you like to restart myManga now?"
+                    };
+                String RestartMessage = String.Join(Environment.NewLine, RestartMessageArray);
+                if (MessageBox.Show(
+                    RestartMessage,
+                    "Restart Required!",
+                    MessageBoxButton.YesNo,
+                    MessageBoxImage.Warning,
+                    MessageBoxResult.Yes) == MessageBoxResult.Yes)
+                { Restart(TimeSpan.FromSeconds(1)); }
+            }
+        }
         #endregion
 
         #region File Watcher Events
@@ -747,5 +753,19 @@ namespace myManga_App
             if (Dispatcher.Thread == Thread.CurrentThread) action();
             else Dispatcher.Invoke(DispatcherPriority.Send, action);
         }
+
+        public void Restart() =>
+            Restart(TimeSpan.FromSeconds(1));
+        public void Restart(TimeSpan Delay) =>
+            Task.Factory.StartNew(async state =>
+            {
+                TimeSpan _Delay = (TimeSpan)state;
+                if (_Delay > TimeSpan.Zero) await Task.Delay(_Delay);
+                RunOnUiThread(delegate
+                {
+                    IsRestarting = true;
+                    Shutdown();
+                });
+            }, Delay);
     }
 }

@@ -13,7 +13,7 @@ using System.Xml.Serialization;
 
 namespace myManga_App.Objects.UserConfig
 {
-    [Serializable, XmlRoot]//, DebuggerStepThrough]
+    [Serializable, XmlRoot, DebuggerStepThrough]
     public sealed class UserConfigurationObject : SerializableObject, INotifyPropertyChanging, INotifyPropertyChanged
     {
         #region NotifyPropertyChange

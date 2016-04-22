@@ -39,6 +39,7 @@
     <Windows:ThemedWindow.DataContext>
         <ViewModels:MainViewModel/>
     </Windows:ThemedWindow.DataContext>
+    
     <Grid x:Name="grid">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -93,7 +94,7 @@
                     </StackPanel>
                 </Controls:MetroToggleButton>
 
-                <Rectangle Height="1" Fill="{DynamicResource window-theme-primary}"/>
+                <Rectangle Height="1" Fill="{DynamicResource window-theme-primary}" Margin="-5,0,0,0"/>
 
                 <Controls:MetroButton
                     x:Name="HomeButton"
@@ -163,7 +164,7 @@
                 Grid.Row="2">
 
                 <Grid
-                    Margin="4,4,0,4"
+                    Margin="0,4"
                     TextElement.FontFamily="{DynamicResource OpenIconic}"
                     TextElement.FontSize="19"
                     Visibility="{Binding ContentViewModel.SupportsViewTypeChange, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
@@ -217,79 +218,13 @@
             </StackPanel>
         </Grid>
 
-        <Grid
-            Grid.Row="0"
-			Grid.ColumnSpan="2"
-            Visibility="Collapsed">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition/>
-                <ColumnDefinition Width="Auto"/>
-            </Grid.ColumnDefinitions>
-
-            <StackPanel
-			    Grid.Row="0"
-			    Orientation="Horizontal"
-			    TextElement.FontSize="20"
-			    TextElement.FontFamily="{DynamicResource OpenIconic}">
-                <Controls:MetroButton
-                    Content="{DynamicResource HomeTabHeaderContent}"
-				    ToolTip="{DynamicResource HomeTabHeaderName}"
-				    Command="{Binding HomeCommand}"
-				    MinWidth="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"
-                    Margin="3px 0px"/>
-                <Controls:MetroButton
-				    Content="{DynamicResource SearchTabHeaderContent}"
-				    ToolTip="{DynamicResource SearchTabHeaderName}"
-				    Command="{Binding SearchCommand}"
-				    MinWidth="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"
-                    Margin="3px 0px"/>
-                <Controls:MetroButton
-				    Content="{DynamicResource ReaderTabHeaderContent}"
-				    ToolTip="{DynamicResource ReaderTabHeaderName}"
-				    Command="{Binding ReadCommand}"
-				    MinWidth="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"
-                    Margin="3px 0px"/>
-            </StackPanel>
-
-            <ProgressBar
-                Grid.Column="1"
-                IsIndeterminate="{Binding DownloadsActive}"
-                Style="{DynamicResource PerformanceProgressBar}"/>
-
-            <StackPanel
-			    Grid.Column="2"
-			    Orientation="Horizontal">
-                <StackPanel 
-                    Orientation="Horizontal" 
-                    TextElement.FontFamily="{DynamicResource OpenIconic}"
-                    TextElement.FontSize="20"
-                    VerticalAlignment="Center"
-                    Visibility="{Binding ContentViewModel.SupportsViewTypeChange, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
-                    <Controls:MetroRadioButton 
-                        Content="{DynamicResource oi-list}" 
-                        IsChecked="{Binding ContentViewModel.ViewType, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static MVVM:ViewModelViewType.Normal}, Mode=TwoWay}"/>
-                    <Controls:MetroRadioButton 
-                        Content="{DynamicResource oi-grid-four-up}"
-                        IsChecked="{Binding ContentViewModel.ViewType, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static MVVM:ViewModelViewType.Grid}, Mode=TwoWay}"/>
-                </StackPanel>
-                <Controls:MetroButton
-				    TextElement.FontSize="20"
-				    TextElement.FontFamily="{DynamicResource OpenIconic}"
-				    Content="{DynamicResource oi-wrench}"
-				    ContentStringFormat="Settings {0}"
-				    ToolTip="Settings"
-				    Command="{Binding SettingsCommand}"
-				    MinWidth="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"/>
-            </StackPanel>
-
-        </Grid>
-
         <Border
 			Grid.Row="1"
 			Grid.Column="1"
             BorderBrush="{DynamicResource window-theme-primary}"
-            BorderThickness="1,1,0,0">
+            BorderThickness="1,1,0,0"
+            Margin="0,0,-5,-5"
+            Padding="0,0,5,5">
             <ContentPresenter
 			    Content="{Binding ContentViewModel}"/>
         </Border>

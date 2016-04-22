@@ -7,6 +7,7 @@ using myMangaSiteExtension.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -233,10 +234,43 @@ namespace Batoto
                     if (VolChapMatch.Groups["SubChapter"].Success)
                         UInt32.TryParse(VolChapMatch.Groups["SubChapter"].Value, out SubChapter);
 
-                    DateTime Released = DateTime.MinValue;
+                    DateTime Released = DateTime.Now;
                     if (ReleaseData.Contains("-"))
+                    {
                         ReleaseData = ReleaseData.Split(new String[] { " - " }, StringSplitOptions.RemoveEmptyEntries)[0];
-                    DateTime.TryParse(ReleaseData, out Released);
+                        DateTime.TryParseExact(ReleaseData, "dd MMMM yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out Released);
+                    }
+                    else if (ReleaseData.EndsWith("ago"))
+                    {
+                        String[] ReleaseDataParts = ReleaseData.Split(new Char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                        Double Offset = 1;
+                        if (!Double.TryParse(ReleaseDataParts[0], out Offset)) Offset = 1;
+                        Offset *= -1;
+                        switch (ReleaseDataParts[1].ToLower())
+                        {
+                            default:
+                            case "seconds":
+                                Released = Released.AddSeconds(Offset);
+                                break;
+
+                            case "minutes":
+                                Released = Released.AddMinutes(Offset);
+                                break;
+
+                            case "hours":
+                                Released = Released.AddHours(Offset);
+                                break;
+
+                            case "days":
+                                Released = Released.AddDays(Offset);
+                                break;
+
+                            case "weeks":
+                                Released = Released.AddDays(7 * Offset);
+                                break;
+                        }
+                    }
+
                     String ChapterUrl = VolChapNameNode.Attributes["href"].Value;
                     String ChapterHash = ChapterUrl.Split('#').Last().Split('_').First();
                     ChapterUrl = String.Format("https://bato.to/areader?id={0}&p=1&supress_webtoon=t", ChapterHash);

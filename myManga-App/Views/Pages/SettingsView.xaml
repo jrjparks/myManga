@@ -50,7 +50,7 @@
             Padding="10,0,0,0"
             BorderThickness="1,0,0,0">
 
-            <TabItem Header="General" Height="40" Width="100">
+            <TabItem x:Name="tabItem" Header="General" Height="40" Width="100">
                 <ScrollViewer HorizontalScrollBarVisibility="Disabled">
 
                     <StackPanel>
@@ -444,7 +444,7 @@
             Orientation="Vertical"
             HorizontalAlignment="Left"
             VerticalAlignment="Bottom"
-            Width="92">
+            Width="{Binding ActualWidth, ElementName=tabItem, Mode=OneWay}" Margin="2,0,0,0">
 
             <Controls:MetroButton
                 Content="Save"

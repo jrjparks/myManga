@@ -40,7 +40,7 @@
         <ViewModels:MainViewModel/>
     </Windows:ThemedWindow.DataContext>
     
-    <Grid x:Name="grid">
+    <Grid x:Name="grid" Margin="-5,0,-5,-5">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition/>
@@ -75,6 +75,8 @@
                 Orientation="Vertical"
                 Grid.Row="0">
 
+                <Rectangle Height="1" Fill="{DynamicResource window-theme-primary}"/>
+
                 <Controls:MetroToggleButton
                     x:Name="MenuButton"
                     HorizontalContentAlignment="Left">
@@ -94,7 +96,7 @@
                     </StackPanel>
                 </Controls:MetroToggleButton>
 
-                <Rectangle Height="1" Fill="{DynamicResource window-theme-primary}" Margin="-5,0,0,0"/>
+                <Rectangle Height="1" Fill="{DynamicResource window-theme-primary}"/>
 
                 <Controls:MetroButton
                     x:Name="HomeButton"
@@ -180,18 +182,30 @@
                     </Grid.RowDefinitions>
 
                     <Controls:MetroRadioButton
-                        Content="{DynamicResource oi-list-rich}"
                         Grid.Row="0"
                         Grid.Column="0"
-                        Height="{Binding ActualHeight, ElementName=SettingsHeaderIcon, Mode=OneWay}"
-                        IsChecked="{Binding ContentViewModel.ViewType, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static MVVM:ViewModelViewType.Normal}, Mode=TwoWay}"/>
+                        IsChecked="{Binding ContentViewModel.ViewType, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static MVVM:ViewModelViewType.Normal}, Mode=TwoWay}">
+                        <TextBlock
+                            x:Name="ListViewIcon"
+                            FontFamily="{DynamicResource OpenIconic}" 
+                            FontSize="19"
+                            Text="{DynamicResource oi-list-rich}"
+                            Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"
+                            Padding="5"/>
+                    </Controls:MetroRadioButton>
 
-                    <Controls:MetroRadioButton 
-                        Content="{DynamicResource oi-grid-two-up}"
+                    <Controls:MetroRadioButton
                         Grid.Row="1"
                         Grid.Column="1"
-                        Height="{Binding ActualHeight, ElementName=SettingsHeaderIcon, Mode=OneWay}"
-                        IsChecked="{Binding ContentViewModel.ViewType, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static MVVM:ViewModelViewType.Grid}, Mode=TwoWay}"/>
+                        IsChecked="{Binding ContentViewModel.ViewType, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static MVVM:ViewModelViewType.Grid}, Mode=TwoWay}">
+                        <TextBlock
+                            x:Name="GridViewIcon"
+                            FontFamily="{DynamicResource OpenIconic}" 
+                            FontSize="19"
+                            Text="{DynamicResource oi-grid-two-up}"
+                            Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"
+                            Padding="5"/>
+                    </Controls:MetroRadioButton>
 
                 </Grid>
 
@@ -223,7 +237,6 @@
 			Grid.Column="1"
             BorderBrush="{DynamicResource window-theme-primary}"
             BorderThickness="1,1,0,0"
-            Margin="0,0,-5,-5"
             Padding="0,0,5,5">
             <ContentPresenter
 			    Content="{Binding ContentViewModel}"/>

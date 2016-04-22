@@ -30,135 +30,131 @@
             <Converters:BooleanInverter x:Key="BooleanInverter"/>
         </ResourceDictionary>
     </UserControl.Resources>
-    <Border 
-        Background="{DynamicResource window-background}"
+    <Grid
         TextElement.Foreground="{DynamicResource window-foreground}"
         TextBlock.Foreground="{DynamicResource window-foreground}"
-        BorderBrush="{DynamicResource window-theme-primary}"
-        BorderThickness="0,1,0,0">
-        <Grid>
+        Background="{DynamicResource window-background}">
 
-            <ListBox
-                x:Name="MangaCacheObjects"
-                Padding="1,34,1,1"
-                SelectionMode="Single"
-                ItemContainerStyle="{StaticResource GridMangaCacheObjectListBoxItem}"
-                SelectedItem="{Binding SelectedMangaCacheObject}"
-                ItemsSource="{Binding Path=MangaCacheObjects, Mode=OneWay, Source={x:Static Application.Current}}">
-                <ListBox.Template>
-                    <ControlTemplate TargetType="{x:Type ListBox}">
-                        <ScrollViewer
-                            HorizontalScrollBarVisibility="Disabled"
-                            VerticalScrollBarVisibility="Visible"
-                            HorizontalContentAlignment="Stretch"
+        <ListBox
+            x:Name="MangaCacheObjects"
+            Padding="1,34,1,1"
+            SelectionMode="Single"
+            ItemContainerStyle="{StaticResource GridMangaCacheObjectListBoxItem}"
+            SelectedItem="{Binding SelectedMangaCacheObject}"
+            ItemsSource="{Binding Path=MangaCacheObjects, Mode=OneWay, Source={x:Static Application.Current}}">
+            <ListBox.Template>
+                <ControlTemplate TargetType="{x:Type ListBox}">
+                    <ScrollViewer
+                        HorizontalScrollBarVisibility="Disabled"
+                        VerticalScrollBarVisibility="Visible"
+                        HorizontalContentAlignment="Stretch"
+                        VirtualizingPanel.IsVirtualizing="True"
+                        VirtualizingPanel.IsVirtualizingWhenGrouping="True"
+                        VirtualizingPanel.VirtualizationMode="Recycling">
+                        <Controls:BalancedWrapPanel
+                            Margin="{TemplateBinding Padding}"
+                            IsItemsHost="True"
                             VirtualizingPanel.IsVirtualizing="True"
                             VirtualizingPanel.IsVirtualizingWhenGrouping="True"
-                            VirtualizingPanel.VirtualizationMode="Recycling">
-                            <Controls:BalancedWrapPanel
-                                Margin="{TemplateBinding Padding}"
-                                IsItemsHost="True"
-                                VirtualizingPanel.IsVirtualizing="True"
-                                VirtualizingPanel.IsVirtualizingWhenGrouping="True"
-                                VirtualizingPanel.VirtualizationMode="Recycling"
-                                ItemWidth="160" ItemHeight="240"
-                                HorizontalAlignment="Stretch" 
-                                AlignLastItems="True"/>
-                        </ScrollViewer>
-                    </ControlTemplate>
-                </ListBox.Template>
-            </ListBox>
+                            VirtualizingPanel.VirtualizationMode="Recycling"
+                            ItemWidth="160" ItemHeight="240"
+                            HorizontalAlignment="Stretch" 
+                            AlignLastItems="True"/>
+                    </ScrollViewer>
+                </ControlTemplate>
+            </ListBox.Template>
+        </ListBox>
 
-            <Border
-                HorizontalAlignment="Left"
-                VerticalAlignment="Top"
-                Background="{DynamicResource window-background}"
-                BorderBrush="{DynamicResource window-theme-primary}"
-                BorderThickness="0,0,1,1">
+        <Border
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top"
+            Background="{DynamicResource window-background}"
+            BorderBrush="{DynamicResource window-theme-primary}"
+            BorderThickness="0,0,1,1">
 
-                <Grid
-                    Width="300"
-                    TextElement.FontSize="16">
+            <Grid
+                Width="300"
+                TextElement.FontSize="16">
 
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="1*"/>
-                        <ColumnDefinition Width="Auto"/>
-                    </Grid.ColumnDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
 
-                    <Grid.InputBindings>
-                        <KeyBinding Command="{Binding Command, ElementName=SearchButton}" CommandParameter="{Binding CommandParameter, ElementName=SearchButton}" Key="Return"/>
-                        <KeyBinding Command="{Binding Command, ElementName=ClearSearchButton}" Key="Esc"/>
-                    </Grid.InputBindings>
+                <Grid.InputBindings>
+                    <KeyBinding Command="{Binding Command, ElementName=SearchButton}" CommandParameter="{Binding CommandParameter, ElementName=SearchButton}" Key="Return"/>
+                    <KeyBinding Command="{Binding Command, ElementName=ClearSearchButton}" Key="Esc"/>
+                </Grid.InputBindings>
 
-                    <Controls:MetroButton
-				        x:Name="SearchButton"
-                        Grid.Column="0"
-				        FontFamily="{DynamicResource OpenIconic}"
-				        Content="{DynamicResource oi-magnifying-glass}"
-				        Command="{Binding ForwardSearchTermCommand}"
-                        CommandParameter="{Binding SearchTerm}"
-				        ToolTip="Search"
-				        Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"/>
+                <Controls:MetroButton
+				    x:Name="SearchButton"
+                    Grid.Column="0"
+				    FontFamily="{DynamicResource OpenIconic}"
+				    Content="{DynamicResource oi-magnifying-glass}"
+				    Command="{Binding ForwardSearchTermCommand}"
+                    CommandParameter="{Binding SearchTerm}"
+				    ToolTip="Search"
+				    Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"/>
 
-                    <TextBox
-				        x:Name="SearchBox"
-                        Grid.Column="1"
-                        VerticalAlignment="Center" 
-                        BorderBrush="{DynamicResource window-theme-primary}"
-                        BorderThickness="0,0,0,1"
-                        SelectionBrush="{DynamicResource window-theme-primary}"
-                        Background="{x:Null}"
-				        Text="{Binding SearchTerm, UpdateSourceTrigger=PropertyChanged}"/>
+                <TextBox
+				    x:Name="SearchBox"
+                    Grid.Column="1"
+                    VerticalAlignment="Center" 
+                    BorderBrush="{DynamicResource window-theme-primary}"
+                    BorderThickness="0,0,0,1"
+                    SelectionBrush="{DynamicResource window-theme-primary}"
+                    Background="{x:Null}"
+				    Text="{Binding SearchTerm, UpdateSourceTrigger=PropertyChanged}"/>
 
-                    <Controls:MetroButton
-				        x:Name="ClearSearchButton"
-                        Grid.Column="2"
-				        FontFamily="{DynamicResource OpenIconic}"
-				        Content="{DynamicResource oi-delete}"
-				        Command="{Binding ClearSearchTermCommand}"
-				        ToolTip="Clear Search"
-				        Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"/>
+                <Controls:MetroButton
+				    x:Name="ClearSearchButton"
+                    Grid.Column="2"
+				    FontFamily="{DynamicResource OpenIconic}"
+				    Content="{DynamicResource oi-delete}"
+				    Command="{Binding ClearSearchTermCommand}"
+				    ToolTip="Clear Search"
+				    Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"/>
 
-                </Grid>
+            </Grid>
 
-            </Border>
+        </Border>
 
-            <Border
-                HorizontalAlignment="Right"
-                VerticalAlignment="Top"
-                Background="{DynamicResource window-background}"
-                BorderBrush="{DynamicResource window-theme-primary}"
-                BorderThickness="1,0,0,1">
+        <Border
+            HorizontalAlignment="Right"
+            VerticalAlignment="Top"
+            Background="{DynamicResource window-background}"
+            BorderBrush="{DynamicResource window-theme-primary}"
+            BorderThickness="1,0,0,1">
 
-                <Border.Margin>
-                    <Thickness Right="{x:Static SystemParameters.VerticalScrollBarWidth}"/>
-                </Border.Margin>
+            <Border.Margin>
+                <Thickness Right="{x:Static SystemParameters.VerticalScrollBarWidth}"/>
+            </Border.Margin>
 
-                <StackPanel
-                    Orientation="Horizontal"
-                    TextElement.FontSize="16">
+            <StackPanel
+                Orientation="Horizontal"
+                TextElement.FontSize="16">
 
-                    <Controls:MetroButton
-			            x:Name="RefreshListButton"
-			            Content="Refresh List"
-                        VerticalContentAlignment="Center"
-			            Command="{Binding RefreshListCommand}"/>
+                <Controls:MetroButton
+			        x:Name="RefreshListButton"
+			        Content="Refresh List"
+                    VerticalContentAlignment="Center"
+			        Command="{Binding RefreshListCommand}"/>
 
-                    <Rectangle Width="25"/>
+                <Rectangle Width="25"/>
 
-                    <Controls:MetroButton
-			            x:Name="MoreInfoButton"
-			            Content="More Information"
-                        VerticalContentAlignment="Center"
-                        Command="{Binding ShowMangaCacheObjectDialogCommand}"
-                        CommandParameter="{Binding SelectedMangaCacheObject}"/>
+                <Controls:MetroButton
+			        x:Name="MoreInfoButton"
+			        Content="More Information"
+                    VerticalContentAlignment="Center"
+                    Command="{Binding ShowMangaCacheObjectDialogCommand}"
+                    CommandParameter="{Binding SelectedMangaCacheObject}"/>
 
-                </StackPanel>
+            </StackPanel>
 
-            </Border>
+        </Border>
 
-            <ContentPresenter Content="{Binding MangaCacheObjectDialog}"/>
+        <ContentPresenter Content="{Binding MangaCacheObjectDialog}"/>
 
-        </Grid>
-    </Border>
+    </Grid>
 </UserControl>

@@ -3,14 +3,14 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:ScreenBrightness="clr-namespace:myManga_App.Controls.ScreenBrightness"
     xmlns:Controls="clr-namespace:System.Windows.Controls"
-    xmlns:window="clr-namespace:myManga_App.Controls.Window">
+    xmlns:Windows="clr-namespace:System.Windows">
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="/myManga;component/Themes/CoreResourceDictionary.xaml"/>
         <ResourceDictionary Source="/myManga;component/Themes/Button/MetroButton.xaml"/>
         <ResourceDictionary Source="/myManga;component/Themes/Slider/BrightnessControl.xaml"/>
     </ResourceDictionary.MergedDictionaries>
 
-    <Style TargetType="{x:Type window:myMangaWindow}" x:Key="myMangaWindow">
+    <Style TargetType="{x:Type Windows:ThemedWindow}" x:Key="ThemedWindow">
         <Setter Property="Foreground" Value="{DynamicResource window-foreground}"/>
         <Setter Property="Background" Value="{DynamicResource window-background}"/>
         <Setter Property="TextElement.Foreground" Value="{DynamicResource text-dark}"/>
@@ -31,7 +31,7 @@
         </Setter>
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="{x:Type window:myMangaWindow}">
+                <ControlTemplate TargetType="{x:Type Windows:ThemedWindow}">
                     <Border
                         x:Name="WindowBorder"
                         Margin="{Binding Source={x:Static SystemParameters.WindowNonClientFrameThickness}}"

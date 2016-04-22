@@ -79,7 +79,7 @@ namespace myManga_App
 
         private async Task<MangaCacheObject> UnsafeDispatcherLoadMangaCacheObjectAsync(String ArchivePath)
         {
-            return await Current.Dispatcher.Invoke(() => UnsafeLoadMangaCacheObjectAsync(ArchivePath), DispatcherPriority.Background);
+            return await Current.Dispatcher.Invoke(() => UnsafeLoadMangaCacheObjectAsync(ArchivePath), DispatcherPriority.DataBind);
         }
 
         private async Task<MangaCacheObject> UnsafeLoadMangaCacheObjectAsync(String ArchivePath)
@@ -173,7 +173,7 @@ namespace myManga_App
 
         private async Task<MangaCacheObject> DispatcherReloadMangaCacheObjectAsync(String ArchivePath, Boolean ReloadCoverImage = false)
         {
-            return await Current.Dispatcher.Invoke(() => ReloadMangaCacheObjectAsync(ArchivePath, ReloadCoverImage), DispatcherPriority.Background);
+            return await Current.Dispatcher.Invoke(() => ReloadMangaCacheObjectAsync(ArchivePath, ReloadCoverImage), DispatcherPriority.DataBind);
         }
 
         private async Task<MangaCacheObject> ReloadMangaCacheObjectAsync(String ArchivePath, Boolean ReloadCoverImage = false)
@@ -397,7 +397,8 @@ namespace myManga_App
 
             IEnumerable<Task<MangaCacheObject>> MangaCacheObjectTasksQuery =
                 from MangaArchivePath in MangaArchivePaths
-                select UnsafeDispatcherLoadMangaCacheObjectAsync(MangaArchivePath);
+                // select UnsafeDispatcherLoadMangaCacheObjectAsync(MangaArchivePath);
+                select DispatcherReloadMangaCacheObjectAsync(MangaArchivePath, true);
             List<Task<MangaCacheObject>> MangaCacheObjectTasks = MangaCacheObjectTasksQuery.ToList();
 
             await Current.Dispatcher.InvokeAsync(MangaCacheObjects.Clear);

@@ -147,7 +147,7 @@
     <Compile Include="System\Runtime\Caching\RegionedMemoryCache.cs" />
     <Compile Include="System\Threading\Tasks\Schedulers\LimitedConcurrencyTaskScheduler.cs" />
     <Compile Include="System\Windows\Controls\MetroButton.cs" />
-    <Compile Include="Controls\Window\myMangaWindow.cs" />
+    <Compile Include="System\Windows\ThemedWindow.cs" />
     <Compile Include="ViewModels\BaseViewModel.cs" />
     <Compile Include="ViewModels\Dialog\AuthenticationDialogViewModel.cs" />
     <Compile Include="ViewModels\Dialog\DialogViewModel.cs" />
@@ -289,7 +289,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\Window\myMangaWindow.xaml">
+    <Page Include="Themes\System\Windows\ThemedWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

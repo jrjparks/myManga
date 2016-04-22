@@ -38,429 +38,423 @@
             <Converters:BooleanToVisibilityConverter x:Key="BooleanToCollapsedConverter" TrueValue="Collapsed" FalseValue="Visible"/>
         </ResourceDictionary>
     </UserControl.Resources>
-    <Border
+    <Grid
         Background="{DynamicResource window-background}"
         TextElement.Foreground="{DynamicResource window-foreground}"
         TextBlock.Foreground="{DynamicResource window-foreground}"
-        BorderBrush="{DynamicResource window-theme-primary}"
-        BorderThickness="0,1,0,0"
         TextElement.FontSize="16">
+        <ContentPresenter Panel.ZIndex="10" Content="{Binding AuthenticationDialog}"/>
 
-        <Grid>
-            <ContentPresenter Panel.ZIndex="10" Content="{Binding AuthenticationDialog}"/>
+        <TabControl
+            TabStripPlacement="Left"
+            Padding="10,0,0,0"
+            BorderThickness="1,0,0,0">
 
-            <TabControl
-                TabStripPlacement="Left"
-                Padding="10,0,0,0"
-                BorderThickness="1,0,0,0">
+            <TabItem Header="General" Height="40" Width="100">
+                <ScrollViewer HorizontalScrollBarVisibility="Disabled">
 
-                <TabItem Header="General" Height="40" Width="100">
-                    <ScrollViewer HorizontalScrollBarVisibility="Disabled">
+                    <StackPanel>
 
-                        <StackPanel>
+                        <HeaderedContentControl 
+                            Header="{Binding Path=UserConfiguration.DefaultPageZoom, Mode=OneWay, FallbackValue=1}" 
+                            HeaderStringFormat="Default Zoom Amount: {0:0.0}x"
+                            Margin="2,6">
+                            <Slider
+                                x:Name="DefaultPageZoomSlider"
+                                Grid.Column="2"
+                                Orientation="Horizontal"
+                                Minimum="0.5"
+                                Maximum="2"
+                                Value="{Binding Path=UserConfiguration.DefaultPageZoom, Mode=TwoWay, FallbackValue=1}" 
+                                TickPlacement="BottomRight"
+                                TickFrequency="0.1"
+                                LargeChange="0.5" 
+                                SmallChange="0.1" 
+                                IsMoveToPointEnabled="True" 
+                                IsSnapToTickEnabled="True"/>
+                        </HeaderedContentControl>
 
-                            <HeaderedContentControl 
-                                Header="{Binding Path=UserConfiguration.DefaultPageZoom, Mode=OneWay, FallbackValue=1}" 
-                                HeaderStringFormat="Default Zoom Amount: {0:0.0}x"
-                                Margin="2,6">
-                                <Slider
-                                    x:Name="DefaultPageZoomSlider"
+                        <HeaderedContentControl 
+                            Header="Recent Chapters"
+                            Margin="2,6">
+                            <Grid Margin="15,0,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="15"/>
+                                    <ColumnDefinition/>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                </Grid.RowDefinitions>
+
+                                <TextBlock 
+                                    Grid.Row="0"
+                                    Text="Remove" 
+                                    VerticalAlignment="Center" 
+                                    TextWrapping="Wrap"/>
+                                <Controls:MetroToggleButton
+                                    Grid.Row="0"
                                     Grid.Column="2"
-                                    Orientation="Horizontal"
-                                    Minimum="0.5"
-                                    Maximum="2"
-                                    Value="{Binding Path=UserConfiguration.DefaultPageZoom, Mode=TwoWay, FallbackValue=1}" 
+                                    x:Name="RemoveBackChaptersToggleButton"
+                                    HorizontalAlignment="Left"
+                                    Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"
+                                    IsChecked="{Binding UserConfiguration.RemoveBackChapters, FallbackValue=False}" 
+                                    FontFamily="{DynamicResource OpenIconic}"
+                                    Content="{DynamicResource oi-check}"/>
+
+                                <TextBlock 
+                                    Grid.Row="1"
+                                    Text="{Binding Value, ElementName=BackChaptersToKeepSlider, StringFormat=Amount\ to\ Keep:\ {0,3:#,0}}"
+                                    VerticalAlignment="Center" 
+                                    TextWrapping="Wrap"/>
+                                <Slider
+                                    Grid.Row="1"
+                                    Grid.Column="2"
+                                    x:Name="BackChaptersToKeepSlider"
+                                    IsEnabled="{Binding ElementName=RemoveBackChaptersToggleButton, Path=IsChecked}"
+                                    Value="{Binding UserConfiguration.BackChaptersToKeep, FallbackValue=3}"
+                                    Minimum="2" Maximum="20"
                                     TickPlacement="BottomRight"
-                                    TickFrequency="0.1"
-                                    LargeChange="0.5" 
-                                    SmallChange="0.1" 
+                                    TickFrequency="1"
+                                    LargeChange="5" 
+                                    SmallChange="1" />
+                            </Grid>
+
+                        </HeaderedContentControl>
+
+                        <HeaderedContentControl Header="Theme" Margin="2,6">
+                            <StackPanel Orientation="Horizontal">
+                                <RadioButton 
+                                    Margin="0,0,5,0"
+                                    GroupName="Theme" 
+                                    VerticalContentAlignment="Center"
+                                    IsChecked="{Binding Path=UserConfiguration.Theme, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static Objects:ThemeType.Light}}">
+                                    <RadioButton.Resources>
+                                        <ResourceDictionary Source="/myManga;component/Themes/LightTheme.xaml"/>
+                                    </RadioButton.Resources>
+                                    <RadioButton.Template>
+                                        <ControlTemplate TargetType="RadioButton">
+                                            <ContentPresenter/>
+                                        </ControlTemplate>
+                                    </RadioButton.Template>
+                                    <Border
+                                        Height="100"
+                                        Width="100"
+                                        BorderThickness="1"
+                                        BorderBrush="{DynamicResource window-theme-primary}"
+                                        Background="{DynamicResource window-background}"
+                                        TextElement.Foreground="{DynamicResource window-foreground}">
+                                        <Grid Margin="3">
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition/>
+                                                <RowDefinition/>
+                                                <RowDefinition/>
+                                                <RowDefinition/>
+                                            </Grid.RowDefinitions>
+                                            <Rectangle Grid.Row="0" Fill="{DynamicResource window-theme-primary}"/>
+                                            <Rectangle Grid.Row="1" Fill="{DynamicResource window-theme-primary-disabled}"/>
+                                            <Rectangle Grid.Row="2" Fill="{DynamicResource window-theme-secondary}"/>
+                                            <Rectangle Grid.Row="3" Fill="{DynamicResource window-theme-secondary-disabled}"/>
+                                            <TextBlock Grid.Row="0" TextAlignment="Center" Text="Light" Foreground="{DynamicResource text-dark}"/>
+                                            <TextBlock Grid.Row="1" TextAlignment="Center" Text="Light" Foreground="{DynamicResource text-light}"/>
+                                            <TextBlock Grid.Row="2" TextAlignment="Center" Text="Light" Foreground="{DynamicResource text-muted}"/>
+                                        </Grid>
+                                    </Border>
+                                </RadioButton>
+                                <RadioButton 
+                                    Margin="0,0,5,0"
+                                    GroupName="Theme" 
+                                    VerticalContentAlignment="Center"
+                                    IsChecked="{Binding Path=UserConfiguration.Theme, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static Objects:ThemeType.Dark}}">
+                                    <RadioButton.Resources>
+                                        <ResourceDictionary Source="/myManga;component/Themes/DarkTheme.xaml"/>
+                                    </RadioButton.Resources>
+                                    <RadioButton.Template>
+                                        <ControlTemplate TargetType="RadioButton">
+                                            <ContentPresenter/>
+                                        </ControlTemplate>
+                                    </RadioButton.Template>
+                                    <Border
+                                        Height="100"
+                                        Width="100"
+                                        BorderThickness="1"
+                                        BorderBrush="{DynamicResource window-theme-primary}"
+                                        Background="{DynamicResource window-background}"
+                                        TextElement.Foreground="{DynamicResource window-foreground}">
+                                        <Grid Margin="3">
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition/>
+                                                <RowDefinition/>
+                                                <RowDefinition/>
+                                                <RowDefinition/>
+                                            </Grid.RowDefinitions>
+                                            <Rectangle Grid.Row="0" Fill="{DynamicResource window-theme-primary}"/>
+                                            <Rectangle Grid.Row="1" Fill="{DynamicResource window-theme-primary-disabled}"/>
+                                            <Rectangle Grid.Row="2" Fill="{DynamicResource window-theme-secondary}"/>
+                                            <Rectangle Grid.Row="3" Fill="{DynamicResource window-theme-secondary-disabled}"/>
+                                            <TextBlock Grid.Row="0" TextAlignment="Center" Text="Dark" Foreground="{DynamicResource text-dark}"/>
+                                            <TextBlock Grid.Row="1" TextAlignment="Center" Text="Dark" Foreground="{DynamicResource text-light}"/>
+                                            <TextBlock Grid.Row="2" TextAlignment="Center" Text="Dark" Foreground="{DynamicResource text-muted}"/>
+                                        </Grid>
+                                    </Border>
+                                </RadioButton>
+                            </StackPanel>
+                        </HeaderedContentControl>
+
+                    </StackPanel>
+
+                </ScrollViewer>
+            </TabItem>
+
+            <TabItem Header="Extensions" Height="40" Width="100">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition Width="5"/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+
+                    <HeaderedContentControl
+                        Header="Site Extensions"
+                        Grid.Column="0">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition/>
+                            </Grid.RowDefinitions>
+
+                            <Controls:MetroButton
+                                Grid.Row="0"
+                                Content="Authenticate Selected Site"
+                                Command="{Binding AuthenticateExtensionCommand}"
+                                CommandParameter="{Binding ElementName=SiteExtensionObjects, Path=SelectedItem}"/>
+
+                            <ListBox
+                                Grid.Row="1"
+                                x:Name="SiteExtensionObjects"
+                                ItemsSource="{Binding SiteExtensionObjects}"
+                                ItemContainerStyle="{StaticResource ExtensionObjectListBoxItem}"
+                                VirtualizingPanel.ScrollUnit="Pixel"
+                                VirtualizingPanel.VirtualizationMode="Recycling"
+                                HorizontalContentAlignment="Stretch"
+                                DragDrop:Helper.IsDragSource="True"
+                                DragDrop:Helper.IsDropTarget="True"
+                                DragDrop:Helper.DragDropTemplate="{StaticResource ExtensionObjectTemplate}"/>
+                        </Grid>
+
+                    </HeaderedContentControl>
+
+                    <HeaderedContentControl
+                        Header="Database Extensions"
+                        Grid.Column="2">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition/>
+                            </Grid.RowDefinitions>
+
+                            <Controls:MetroButton
+                                Grid.Row="0"
+                                Content="Authenticate Selected Database"
+                                Command="{Binding AuthenticateExtensionCommand}"
+                                CommandParameter="{Binding ElementName=DatabaseExtensionObjects, Path=SelectedItem}"/>
+
+                            <ListBox
+                                Grid.Row="1"
+                                x:Name="DatabaseExtensionObjects"
+                                ItemsSource="{Binding DatabaseExtensionObjects}"
+                                ItemContainerStyle="{StaticResource ExtensionObjectListBoxItem}"
+                                VirtualizingPanel.ScrollUnit="Pixel"
+                                VirtualizingPanel.VirtualizationMode="Recycling"
+                                HorizontalContentAlignment="Stretch"
+                                DragDrop:Helper.IsDragSource="True"
+                                DragDrop:Helper.IsDropTarget="True"
+                                DragDrop:Helper.DragDropTemplate="{StaticResource ExtensionObjectTemplate}"/>
+                        </Grid>
+
+                    </HeaderedContentControl>
+
+                </Grid>
+            </TabItem>
+
+            <TabItem Header="Advanced" Height="40" Width="100">
+                <ScrollViewer HorizontalScrollBarVisibility="Disabled">
+
+                    <StackPanel>
+
+                        <HeaderedContentControl
+                                Header="{Binding Path=UserConfiguration.ConcurrencyMultiplier, Mode=OneWay, FallbackValue=1}" 
+                                HeaderStringFormat="Concurrency Multiplier: {0:0}x"
+                                Margin="2,6">
+                            <StackPanel>
+                                <TextBlock
+                                    Text="A restart is required if changed." 
+                                    FontSize="13"
+                                    FontStyle="Italic"
+                                    Foreground="{DynamicResource text-muted}"/>
+                                <Separator/>
+                                <Slider
+                                    x:Name="ConcurrencyMultiplierSlider"
+                                    Orientation="Horizontal"
+                                    Minimum="1"
+                                    Maximum="10"
+                                    Value="{Binding Path=UserConfiguration.ConcurrencyMultiplier, Mode=TwoWay, FallbackValue=1}" 
+                                    TickPlacement="BottomRight"
+                                    TickFrequency="1"
+                                    LargeChange="1" 
+                                    SmallChange="1" 
                                     IsMoveToPointEnabled="True" 
                                     IsSnapToTickEnabled="True"/>
-                            </HeaderedContentControl>
-
-                            <HeaderedContentControl 
-                                Header="Recent Chapters"
-                                Margin="2,6">
-                                <Grid Margin="15,0,0,0">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="Auto"/>
-                                        <ColumnDefinition Width="15"/>
-                                        <ColumnDefinition/>
-                                    </Grid.ColumnDefinitions>
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition/>
-                                        <RowDefinition/>
-                                    </Grid.RowDefinitions>
-
-                                    <TextBlock 
-                                        Grid.Row="0"
-                                        Text="Remove" 
-                                        VerticalAlignment="Center" 
-                                        TextWrapping="Wrap"/>
-                                    <Controls:MetroToggleButton
-                                        Grid.Row="0"
-                                        Grid.Column="2"
-                                        x:Name="RemoveBackChaptersToggleButton"
-                                        HorizontalAlignment="Left"
-                                        Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"
-                                        IsChecked="{Binding UserConfiguration.RemoveBackChapters, FallbackValue=False}" 
-                                        FontFamily="{DynamicResource OpenIconic}"
-                                        Content="{DynamicResource oi-check}"/>
-
-                                    <TextBlock 
-                                        Grid.Row="1"
-                                        Text="{Binding Value, ElementName=BackChaptersToKeepSlider, StringFormat=Amount\ to\ Keep:\ {0,3:#,0}}"
-                                        VerticalAlignment="Center" 
-                                        TextWrapping="Wrap"/>
-                                    <Slider
-                                        Grid.Row="1"
-                                        Grid.Column="2"
-                                        x:Name="BackChaptersToKeepSlider"
-                                        IsEnabled="{Binding ElementName=RemoveBackChaptersToggleButton, Path=IsChecked}"
-                                        Value="{Binding UserConfiguration.BackChaptersToKeep, FallbackValue=3}"
-                                        Minimum="2" Maximum="20"
-                                        TickPlacement="BottomRight"
-                                        TickFrequency="1"
-                                        LargeChange="5" 
-                                        SmallChange="1" />
-                                </Grid>
-
-                            </HeaderedContentControl>
-
-                            <HeaderedContentControl Header="Theme" Margin="2,6">
-                                <StackPanel Orientation="Horizontal">
-                                    <RadioButton 
-                                        Margin="0,0,5,0"
-                                        GroupName="Theme" 
-                                        VerticalContentAlignment="Center"
-                                        IsChecked="{Binding Path=UserConfiguration.Theme, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static Objects:ThemeType.Light}}">
-                                        <RadioButton.Resources>
-                                            <ResourceDictionary Source="/myManga;component/Themes/LightTheme.xaml"/>
-                                        </RadioButton.Resources>
-                                        <RadioButton.Template>
-                                            <ControlTemplate TargetType="RadioButton">
-                                                <ContentPresenter/>
-                                            </ControlTemplate>
-                                        </RadioButton.Template>
-                                        <Border
-                                            Height="100"
-                                            Width="100"
-                                            BorderThickness="1"
-                                            BorderBrush="{DynamicResource window-theme-primary}"
-                                            Background="{DynamicResource window-background}"
-                                            TextElement.Foreground="{DynamicResource window-foreground}">
-                                            <Grid Margin="3">
-                                                <Grid.RowDefinitions>
-                                                    <RowDefinition/>
-                                                    <RowDefinition/>
-                                                    <RowDefinition/>
-                                                    <RowDefinition/>
-                                                </Grid.RowDefinitions>
-                                                <Rectangle Grid.Row="0" Fill="{DynamicResource window-theme-primary}"/>
-                                                <Rectangle Grid.Row="1" Fill="{DynamicResource window-theme-primary-disabled}"/>
-                                                <Rectangle Grid.Row="2" Fill="{DynamicResource window-theme-secondary}"/>
-                                                <Rectangle Grid.Row="3" Fill="{DynamicResource window-theme-secondary-disabled}"/>
-                                                <TextBlock Grid.Row="0" TextAlignment="Center" Text="Light" Foreground="{DynamicResource text-dark}"/>
-                                                <TextBlock Grid.Row="1" TextAlignment="Center" Text="Light" Foreground="{DynamicResource text-light}"/>
-                                                <TextBlock Grid.Row="2" TextAlignment="Center" Text="Light" Foreground="{DynamicResource text-muted}"/>
-                                            </Grid>
-                                        </Border>
-                                    </RadioButton>
-                                    <RadioButton 
-                                        Margin="0,0,5,0"
-                                        GroupName="Theme" 
-                                        VerticalContentAlignment="Center"
-                                        IsChecked="{Binding Path=UserConfiguration.Theme, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static Objects:ThemeType.Dark}}">
-                                        <RadioButton.Resources>
-                                            <ResourceDictionary Source="/myManga;component/Themes/DarkTheme.xaml"/>
-                                        </RadioButton.Resources>
-                                        <RadioButton.Template>
-                                            <ControlTemplate TargetType="RadioButton">
-                                                <ContentPresenter/>
-                                            </ControlTemplate>
-                                        </RadioButton.Template>
-                                        <Border
-                                            Height="100"
-                                            Width="100"
-                                            BorderThickness="1"
-                                            BorderBrush="{DynamicResource window-theme-primary}"
-                                            Background="{DynamicResource window-background}"
-                                            TextElement.Foreground="{DynamicResource window-foreground}">
-                                            <Grid Margin="3">
-                                                <Grid.RowDefinitions>
-                                                    <RowDefinition/>
-                                                    <RowDefinition/>
-                                                    <RowDefinition/>
-                                                    <RowDefinition/>
-                                                </Grid.RowDefinitions>
-                                                <Rectangle Grid.Row="0" Fill="{DynamicResource window-theme-primary}"/>
-                                                <Rectangle Grid.Row="1" Fill="{DynamicResource window-theme-primary-disabled}"/>
-                                                <Rectangle Grid.Row="2" Fill="{DynamicResource window-theme-secondary}"/>
-                                                <Rectangle Grid.Row="3" Fill="{DynamicResource window-theme-secondary-disabled}"/>
-                                                <TextBlock Grid.Row="0" TextAlignment="Center" Text="Dark" Foreground="{DynamicResource text-dark}"/>
-                                                <TextBlock Grid.Row="1" TextAlignment="Center" Text="Dark" Foreground="{DynamicResource text-light}"/>
-                                                <TextBlock Grid.Row="2" TextAlignment="Center" Text="Dark" Foreground="{DynamicResource text-muted}"/>
-                                            </Grid>
-                                        </Border>
-                                    </RadioButton>
-                                </StackPanel>
-                            </HeaderedContentControl>
-
-                        </StackPanel>
-
-                    </ScrollViewer>
-                </TabItem>
-
-                <TabItem Header="Extensions" Height="40" Width="100">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition/>
-                            <ColumnDefinition Width="5"/>
-                            <ColumnDefinition/>
-                        </Grid.ColumnDefinitions>
-
-                        <HeaderedContentControl
-                            Header="Site Extensions"
-                            Grid.Column="0">
-                            <Grid>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition/>
-                                </Grid.RowDefinitions>
-
-                                <Controls:MetroButton
-                                    Grid.Row="0"
-                                    Content="Authenticate Selected Site"
-                                    Command="{Binding AuthenticateExtensionCommand}"
-                                    CommandParameter="{Binding ElementName=SiteExtensionObjects, Path=SelectedItem}"/>
-
-                                <ListBox
-                                    Grid.Row="1"
-                                    x:Name="SiteExtensionObjects"
-                                    ItemsSource="{Binding SiteExtensionObjects}"
-                                    ItemContainerStyle="{StaticResource ExtensionObjectListBoxItem}"
-                                    VirtualizingPanel.ScrollUnit="Pixel"
-                                    VirtualizingPanel.VirtualizationMode="Recycling"
-                                    HorizontalContentAlignment="Stretch"
-                                    DragDrop:Helper.IsDragSource="True"
-                                    DragDrop:Helper.IsDropTarget="True"
-                                    DragDrop:Helper.DragDropTemplate="{StaticResource ExtensionObjectTemplate}"/>
-                            </Grid>
-
+                                <TextBlock
+                                    FontSize="13"
+                                    FontStyle="Italic"
+                                    TextWrapping="WrapWithOverflow"
+                                    Text="This is used to determine how many concurrent downloads can occure at the same time."
+                                    Foreground="{DynamicResource text-muted}"/>
+                                <TextBlock
+                                    Margin="10,0,0,0"
+                                    FontSize="12"
+                                    FontStyle="Italic"
+                                    TextWrapping="WrapWithOverflow"
+                                    Text="Concurrent Manga Downloads = (Logical Processor Count) * (Concurrency Multiplier)"
+                                    Foreground="{DynamicResource text-muted}"/>
+                                <TextBlock
+                                    Margin="10,0,0,0"
+                                    FontSize="12"
+                                    FontStyle="Italic"
+                                    TextWrapping="WrapWithOverflow"
+                                    Text="Concurrent Image Downloads = (Concurrent Manga Downloads) / 2"
+                                    Foreground="{DynamicResource text-muted}"/>
+                            </StackPanel>
                         </HeaderedContentControl>
 
                         <HeaderedContentControl
-                            Header="Database Extensions"
-                            Grid.Column="2">
-                            <Grid>
+                                Header="Storage Serialization"
+                                Margin="2,6" VerticalAlignment="Top">
+                            <StackPanel>
+                                <ComboBox
+                                    x:Name="StorageSerialization"
+                                    ItemsSource="{Binding SerializeTypes}"
+                                    SelectedItem="{Binding UserConfiguration.SerializeType}"/>
+                                <TextBlock
+                                    FontSize="13"
+                                    FontStyle="Italic"
+                                    TextWrapping="WrapWithOverflow"
+                                    Text="This is should only be changed if you know what you are doing."
+                                    Foreground="{DynamicResource text-muted}"/>
+                            </StackPanel>
+                        </HeaderedContentControl>
+
+                    </StackPanel>
+
+                </ScrollViewer>
+            </TabItem>
+
+            <TabItem Header="Status" Height="40" Width="100">
+                <ScrollViewer HorizontalScrollBarVisibility="Disabled">
+                    <StackPanel Orientation="Vertical">
+                        <HeaderedContentControl
+                            Header="Library Size"
+                            Margin="2,6"
+                            VerticalAlignment="Top">
+                            <Grid Margin="15,0,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="15"/>
+                                    <ColumnDefinition/>
+                                </Grid.ColumnDefinitions>
                                 <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
                                     <RowDefinition/>
                                 </Grid.RowDefinitions>
 
-                                <Controls:MetroButton
+                                <TextBlock 
                                     Grid.Row="0"
-                                    Content="Authenticate Selected Database"
-                                    Command="{Binding AuthenticateExtensionCommand}"
-                                    CommandParameter="{Binding ElementName=DatabaseExtensionObjects, Path=SelectedItem}"/>
+                                    Text="Manga" 
+                                    VerticalAlignment="Center" 
+                                    TextWrapping="Wrap"/>
+                                <TextBlock
+                                    Grid.Row="0"
+                                    Grid.Column="2"
+                                    VerticalAlignment="Center" 
+                                    TextWrapping="Wrap"
+                                    Text="{Binding MangaCount, FallbackValue=0}"/>
 
-                                <ListBox
+                                <TextBlock 
                                     Grid.Row="1"
-                                    x:Name="DatabaseExtensionObjects"
-                                    ItemsSource="{Binding DatabaseExtensionObjects}"
-                                    ItemContainerStyle="{StaticResource ExtensionObjectListBoxItem}"
-                                    VirtualizingPanel.ScrollUnit="Pixel"
-                                    VirtualizingPanel.VirtualizationMode="Recycling"
-                                    HorizontalContentAlignment="Stretch"
-                                    DragDrop:Helper.IsDragSource="True"
-                                    DragDrop:Helper.IsDropTarget="True"
-                                    DragDrop:Helper.DragDropTemplate="{StaticResource ExtensionObjectTemplate}"/>
+                                    Text="Manhwa/Manhua"
+                                    VerticalAlignment="Center" 
+                                    TextWrapping="Wrap"/>
+                                <TextBlock
+                                    Grid.Row="1"
+                                    Grid.Column="2"
+                                    VerticalAlignment="Center" 
+                                    TextWrapping="Wrap"
+                                    Text="{Binding ManhwaCount, FallbackValue=0}"/>
+
+                                <TextBlock 
+                                    Grid.Row="2"
+                                    Text="Unknown"
+                                    VerticalAlignment="Center" 
+                                    TextWrapping="Wrap"/>
+                                <TextBlock
+                                    Grid.Row="2"
+                                    Grid.Column="2"
+                                    VerticalAlignment="Center" 
+                                    TextWrapping="Wrap"
+                                    Text="{Binding UnknownCount, FallbackValue=0}"/>
+
+                                <TextBlock 
+                                    Grid.Row="3"
+                                    Text="Total"
+                                    VerticalAlignment="Center" 
+                                    TextWrapping="Wrap"/>
+                                <TextBlock
+                                    Grid.Row="3"
+                                    Grid.Column="2"
+                                    VerticalAlignment="Center" 
+                                    TextWrapping="Wrap"
+                                    Text="{Binding TotalCount, FallbackValue=0}"/>
                             </Grid>
-
                         </HeaderedContentControl>
+                        <HeaderedContentControl
+                            Header="Active Download Keys"
+                            Margin="2,6"
+                            VerticalAlignment="Top">
+                            <ItemsControl
+                                x:Name="ActiveDownloadKeys"
+                                Margin="15,0,0,0"
+                                FontSize="10pt"
+                                ItemsSource="{Binding ActiveDownloadKeys}"
+                                VirtualizingPanel.ScrollUnit="Pixel"
+                                VirtualizingPanel.VirtualizationMode="Recycling"
+                                HorizontalContentAlignment="Stretch"/>
+                        </HeaderedContentControl>
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
 
-                    </Grid>
-                </TabItem>
-
-                <TabItem Header="Advanced" Height="40" Width="100">
-                    <ScrollViewer HorizontalScrollBarVisibility="Disabled">
-
-                        <StackPanel>
-
-                            <HeaderedContentControl
-                                    Header="{Binding Path=UserConfiguration.ConcurrencyMultiplier, Mode=OneWay, FallbackValue=1}" 
-                                    HeaderStringFormat="Concurrency Multiplier: {0:0}x"
-                                    Margin="2,6">
-                                <StackPanel>
-                                    <TextBlock
-                                        Text="A restart is required if changed." 
-                                        FontSize="13"
-                                        FontStyle="Italic"
-                                        Foreground="{DynamicResource text-muted}"/>
-                                    <Separator/>
-                                    <Slider
-                                        x:Name="ConcurrencyMultiplierSlider"
-                                        Orientation="Horizontal"
-                                        Minimum="1"
-                                        Maximum="10"
-                                        Value="{Binding Path=UserConfiguration.ConcurrencyMultiplier, Mode=TwoWay, FallbackValue=1}" 
-                                        TickPlacement="BottomRight"
-                                        TickFrequency="1"
-                                        LargeChange="1" 
-                                        SmallChange="1" 
-                                        IsMoveToPointEnabled="True" 
-                                        IsSnapToTickEnabled="True"/>
-                                    <TextBlock
-                                        FontSize="13"
-                                        FontStyle="Italic"
-                                        TextWrapping="WrapWithOverflow"
-                                        Text="This is used to determine how many concurrent downloads can occure at the same time."
-                                        Foreground="{DynamicResource text-muted}"/>
-                                    <TextBlock
-                                        Margin="10,0,0,0"
-                                        FontSize="12"
-                                        FontStyle="Italic"
-                                        TextWrapping="WrapWithOverflow"
-                                        Text="Concurrent Manga Downloads = (Logical Processor Count) * (Concurrency Multiplier)"
-                                        Foreground="{DynamicResource text-muted}"/>
-                                    <TextBlock
-                                        Margin="10,0,0,0"
-                                        FontSize="12"
-                                        FontStyle="Italic"
-                                        TextWrapping="WrapWithOverflow"
-                                        Text="Concurrent Image Downloads = (Concurrent Manga Downloads) / 2"
-                                        Foreground="{DynamicResource text-muted}"/>
-                                </StackPanel>
-                            </HeaderedContentControl>
-
-                            <HeaderedContentControl
-                                    Header="Storage Serialization"
-                                    Margin="2,6" VerticalAlignment="Top">
-                                <StackPanel>
-                                    <ComboBox
-                                        x:Name="StorageSerialization"
-                                        ItemsSource="{Binding SerializeTypes}"
-                                        SelectedItem="{Binding UserConfiguration.SerializeType}"/>
-                                    <TextBlock
-                                        FontSize="13"
-                                        FontStyle="Italic"
-                                        TextWrapping="WrapWithOverflow"
-                                        Text="This is should only be changed if you know what you are doing."
-                                        Foreground="{DynamicResource text-muted}"/>
-                                </StackPanel>
-                            </HeaderedContentControl>
-
-                        </StackPanel>
-
-                    </ScrollViewer>
-                </TabItem>
-
-                <TabItem Header="Status" Height="40" Width="100">
-                    <ScrollViewer HorizontalScrollBarVisibility="Disabled">
-                        <StackPanel Orientation="Vertical">
-                            <HeaderedContentControl
-                                Header="Library Size"
-                                Margin="2,6"
-                                VerticalAlignment="Top">
-                                <Grid Margin="15,0,0,0">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="Auto"/>
-                                        <ColumnDefinition Width="15"/>
-                                        <ColumnDefinition/>
-                                    </Grid.ColumnDefinitions>
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition/>
-                                        <RowDefinition/>
-                                        <RowDefinition/>
-                                        <RowDefinition/>
-                                    </Grid.RowDefinitions>
-
-                                    <TextBlock 
-                                        Grid.Row="0"
-                                        Text="Manga" 
-                                        VerticalAlignment="Center" 
-                                        TextWrapping="Wrap"/>
-                                    <TextBlock
-                                        Grid.Row="0"
-                                        Grid.Column="2"
-                                        VerticalAlignment="Center" 
-                                        TextWrapping="Wrap"
-                                        Text="{Binding MangaCount, FallbackValue=0}"/>
-
-                                    <TextBlock 
-                                        Grid.Row="1"
-                                        Text="Manhwa/Manhua"
-                                        VerticalAlignment="Center" 
-                                        TextWrapping="Wrap"/>
-                                    <TextBlock
-                                        Grid.Row="1"
-                                        Grid.Column="2"
-                                        VerticalAlignment="Center" 
-                                        TextWrapping="Wrap"
-                                        Text="{Binding ManhwaCount, FallbackValue=0}"/>
-
-                                    <TextBlock 
-                                        Grid.Row="2"
-                                        Text="Unknown"
-                                        VerticalAlignment="Center" 
-                                        TextWrapping="Wrap"/>
-                                    <TextBlock
-                                        Grid.Row="2"
-                                        Grid.Column="2"
-                                        VerticalAlignment="Center" 
-                                        TextWrapping="Wrap"
-                                        Text="{Binding UnknownCount, FallbackValue=0}"/>
-
-                                    <TextBlock 
-                                        Grid.Row="3"
-                                        Text="Total"
-                                        VerticalAlignment="Center" 
-                                        TextWrapping="Wrap"/>
-                                    <TextBlock
-                                        Grid.Row="3"
-                                        Grid.Column="2"
-                                        VerticalAlignment="Center" 
-                                        TextWrapping="Wrap"
-                                        Text="{Binding TotalCount, FallbackValue=0}"/>
-                                </Grid>
-                            </HeaderedContentControl>
-                            <HeaderedContentControl
-                                Header="Active Download Keys"
-                                Margin="2,6"
-                                VerticalAlignment="Top">
-                                <ItemsControl
-                                    x:Name="ActiveDownloadKeys"
-                                    Margin="15,0,0,0"
-                                    FontSize="10pt"
-                                    ItemsSource="{Binding ActiveDownloadKeys}"
-                                    VirtualizingPanel.ScrollUnit="Pixel"
-                                    VirtualizingPanel.VirtualizationMode="Recycling"
-                                    HorizontalContentAlignment="Stretch"/>
-                            </HeaderedContentControl>
-                        </StackPanel>
-                    </ScrollViewer>
-                </TabItem>
-
-            </TabControl>
+        </TabControl>
 
 
-            <StackPanel
-                Orientation="Vertical"
-                HorizontalAlignment="Left"
-                VerticalAlignment="Bottom"
-                Width="92">
+        <StackPanel
+            Orientation="Vertical"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Bottom"
+            Width="92">
 
-                <Controls:MetroButton
-                    Content="Save"
-                    Command="{Binding SaveUserConfigurationCommand}"/>
+            <Controls:MetroButton
+                Content="Save"
+                Command="{Binding SaveUserConfigurationCommand}"/>
 
-                <Controls:MetroButton
-                    Content="Cancel"
-                    Command="{Binding CancelConfigurationCommand}"/>
+            <Controls:MetroButton
+                Content="Cancel"
+                Command="{Binding CancelConfigurationCommand}"/>
 
-            </StackPanel>
+        </StackPanel>
 
-        </Grid>
-
-    </Border>
+    </Grid>
 </UserControl>

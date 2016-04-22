@@ -13,7 +13,7 @@
                 <ResourceDictionary x:Name="LocalizationResourceDictionary" Source="/myManga;component/Resources/Localization/Dictionary_en.xaml"/>
 
                 <ResourceDictionary Source="/myManga;component/Themes/CoreResourceDictionary.xaml"/>
-                <ResourceDictionary Source="/myManga;component/Controls/Window/myMangaWindow.xaml"/>
+                <ResourceDictionary Source="/myManga;component/Themes/System/Windows/ThemedWindow.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

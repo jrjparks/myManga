@@ -44,14 +44,18 @@
                         SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
                         BorderBrush="{TemplateBinding BorderBrush}"
                         BorderThickness="{TemplateBinding BorderThickness}"
-                        Background="{TemplateBinding Background}">
+                        Background="{TemplateBinding Background}"
+                        TextElement.Foreground="{TemplateBinding Foreground}"
+                        TextBlock.Foreground="{TemplateBinding Foreground}">
                         <ContentPresenter
                             x:Name="Content"
                             Content="{TemplateBinding Content}"
                             ContentTemplate="{TemplateBinding ContentTemplate}"
                             ContentStringFormat="{TemplateBinding ContentStringFormat}"
+                            
                             TextElement.Foreground="{TemplateBinding Foreground}"
                             TextBlock.Foreground="{TemplateBinding Foreground}"
+                            
                             SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
                             HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                             VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
@@ -59,21 +63,21 @@
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
                             <Setter Property="Foreground" Value="{Binding Path=PrimaryBrush, RelativeSource={RelativeSource AncestorType={x:Type Controls:MetroButton}}}"/>
-                            <Setter TargetName="Chrome" Property="Background" Value="{Binding Path=SecondaryBrush, RelativeSource={RelativeSource AncestorType={x:Type Controls:MetroButton}}}"/>
                             <Setter TargetName="Content" Property="TextElement.Foreground" Value="{Binding Path=PrimaryBrush, RelativeSource={RelativeSource AncestorType={x:Type Controls:MetroButton}}}"/>
                             <Setter TargetName="Content" Property="TextBlock.Foreground" Value="{Binding Path=PrimaryBrush, RelativeSource={RelativeSource AncestorType={x:Type Controls:MetroButton}}}"/>
+                            <Setter TargetName="Chrome" Property="Background" Value="{Binding Path=SecondaryBrush, RelativeSource={RelativeSource AncestorType={x:Type Controls:MetroButton}}}"/>
                         </Trigger>
                         <Trigger Property="IsPressed" Value="True">
                             <Setter Property="Foreground" Value="{Binding Path=SecondaryBrush, RelativeSource={RelativeSource AncestorType={x:Type Controls:MetroButton}}}"/>
-                            <Setter TargetName="Chrome" Property="Background" Value="{Binding Path=PrimaryBrush, RelativeSource={RelativeSource AncestorType={x:Type Controls:MetroButton}}}"/>
                             <Setter TargetName="Content" Property="TextElement.Foreground" Value="{Binding Path=SecondaryBrush, RelativeSource={RelativeSource AncestorType={x:Type Controls:MetroButton}}}"/>
                             <Setter TargetName="Content" Property="TextBlock.Foreground" Value="{Binding Path=SecondaryBrush, RelativeSource={RelativeSource AncestorType={x:Type Controls:MetroButton}}}"/>
+                            <Setter TargetName="Chrome" Property="Background" Value="{Binding Path=PrimaryBrush, RelativeSource={RelativeSource AncestorType={x:Type Controls:MetroButton}}}"/>
                         </Trigger>
                         <Trigger Property="IsEnabled" Value="False">
                             <Setter Property="Foreground" Value="{Binding Path=PrimaryDisabledBrush, RelativeSource={RelativeSource AncestorType={x:Type Controls:MetroButton}}}"/>
-                            <Setter TargetName="Chrome" Property="Background" Value="{Binding Path=SecondaryDisabledBrush, RelativeSource={RelativeSource AncestorType={x:Type Controls:MetroButton}}}"/>
                             <Setter TargetName="Content" Property="TextElement.Foreground" Value="{Binding Path=PrimaryDisabledBrush, RelativeSource={RelativeSource AncestorType={x:Type Controls:MetroButton}}}"/>
                             <Setter TargetName="Content" Property="TextBlock.Foreground" Value="{Binding Path=PrimaryDisabledBrush, RelativeSource={RelativeSource AncestorType={x:Type Controls:MetroButton}}}"/>
+                            <Setter TargetName="Chrome" Property="Background" Value="{Binding Path=SecondaryDisabledBrush, RelativeSource={RelativeSource AncestorType={x:Type Controls:MetroButton}}}"/>
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -116,36 +120,38 @@
                             Content="{TemplateBinding Content}"
                             ContentTemplate="{TemplateBinding ContentTemplate}"
                             ContentStringFormat="{TemplateBinding ContentStringFormat}"
+                            
                             TextElement.Foreground="{TemplateBinding Foreground}"
                             TextBlock.Foreground="{TemplateBinding Foreground}"
+                            
                             SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
                             HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                             VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter Property="Foreground" Value="{Binding Path=PrimaryBrush, RelativeSource={RelativeSource AncestorType={x:Type Controls:MetroButton}}}"/>
-                            <Setter TargetName="Chrome" Property="Background" Value="{Binding Path=SecondaryBrush, RelativeSource={RelativeSource AncestorType={x:Type Controls:MetroToggleButton}}}"/>
+                            <Setter Property="Foreground" Value="{Binding Path=PrimaryBrush, RelativeSource={RelativeSource AncestorType={x:Type Controls:MetroToggleButton}}}"/>
                             <Setter TargetName="Content" Property="TextElement.Foreground" Value="{Binding Path=PrimaryBrush, RelativeSource={RelativeSource AncestorType={x:Type Controls:MetroToggleButton}}}"/>
-                            <Setter TargetName="Content" Property="TextBlock.Foreground" Value="{Binding Path=PrimaryBrush, RelativeSource={RelativeSource AncestorType={x:Type Controls:MetroButton}}}"/>
+                            <Setter TargetName="Content" Property="TextBlock.Foreground" Value="{Binding Path=PrimaryBrush, RelativeSource={RelativeSource AncestorType={x:Type Controls:MetroToggleButton}}}"/>
+                            <Setter TargetName="Chrome" Property="Background" Value="{Binding Path=SecondaryBrush, RelativeSource={RelativeSource AncestorType={x:Type Controls:MetroToggleButton}}}"/>
                         </Trigger>
                         <Trigger Property="IsPressed" Value="True">
-                            <Setter Property="Foreground" Value="{Binding Path=SecondaryBrush, RelativeSource={RelativeSource AncestorType={x:Type Controls:MetroButton}}}"/>
-                            <Setter TargetName="Chrome" Property="Background" Value="{Binding Path=PrimaryBrush, RelativeSource={RelativeSource AncestorType={x:Type Controls:MetroToggleButton}}}"/>
+                            <Setter Property="Foreground" Value="{Binding Path=SecondaryBrush, RelativeSource={RelativeSource AncestorType={x:Type Controls:MetroToggleButton}}}"/>
                             <Setter TargetName="Content" Property="TextElement.Foreground" Value="{Binding Path=SecondaryBrush, RelativeSource={RelativeSource AncestorType={x:Type Controls:MetroToggleButton}}}"/>
-                            <Setter TargetName="Content" Property="TextBlock.Foreground" Value="{Binding Path=SecondaryBrush, RelativeSource={RelativeSource AncestorType={x:Type Controls:MetroButton}}}"/>
+                            <Setter TargetName="Content" Property="TextBlock.Foreground" Value="{Binding Path=SecondaryBrush, RelativeSource={RelativeSource AncestorType={x:Type Controls:MetroToggleButton}}}"/>
+                            <Setter TargetName="Chrome" Property="Background" Value="{Binding Path=PrimaryBrush, RelativeSource={RelativeSource AncestorType={x:Type Controls:MetroToggleButton}}}"/>
                         </Trigger>
                         <Trigger Property="IsChecked" Value="True">
-                            <Setter Property="Foreground" Value="{Binding Path=SecondaryBrush, RelativeSource={RelativeSource AncestorType={x:Type Controls:MetroButton}}}"/>
-                            <Setter TargetName="Chrome" Property="Background" Value="{Binding Path=PrimaryBrush, RelativeSource={RelativeSource AncestorType={x:Type Controls:MetroToggleButton}}}"/>
+                            <Setter Property="Foreground" Value="{Binding Path=SecondaryBrush, RelativeSource={RelativeSource AncestorType={x:Type Controls:MetroToggleButton}}}"/>
                             <Setter TargetName="Content" Property="TextElement.Foreground" Value="{Binding Path=SecondaryBrush, RelativeSource={RelativeSource AncestorType={x:Type Controls:MetroToggleButton}}}"/>
-                            <Setter TargetName="Content" Property="TextBlock.Foreground" Value="{Binding Path=SecondaryBrush, RelativeSource={RelativeSource AncestorType={x:Type Controls:MetroButton}}}"/>
+                            <Setter TargetName="Content" Property="TextBlock.Foreground" Value="{Binding Path=SecondaryBrush, RelativeSource={RelativeSource AncestorType={x:Type Controls:MetroToggleButton}}}"/>
+                            <Setter TargetName="Chrome" Property="Background" Value="{Binding Path=PrimaryBrush, RelativeSource={RelativeSource AncestorType={x:Type Controls:MetroToggleButton}}}"/>
                         </Trigger>
                         <Trigger Property="IsEnabled" Value="False">
-                            <Setter Property="Foreground" Value="{Binding Path=PrimaryDisabledBrush, RelativeSource={RelativeSource AncestorType={x:Type Controls:MetroButton}}}"/>
-                            <Setter TargetName="Chrome" Property="Background" Value="{Binding Path=SecondaryDisabledBrush, RelativeSource={RelativeSource AncestorType={x:Type Controls:MetroToggleButton}}}"/>
+                            <Setter Property="Foreground" Value="{Binding Path=PrimaryDisabledBrush, RelativeSource={RelativeSource AncestorType={x:Type Controls:MetroToggleButton}}}"/>
                             <Setter TargetName="Content" Property="TextElement.Foreground" Value="{Binding Path=PrimaryDisabledBrush, RelativeSource={RelativeSource AncestorType={x:Type Controls:MetroToggleButton}}}"/>
-                            <Setter TargetName="Content" Property="TextBlock.Foreground" Value="{Binding Path=PrimaryDisabledBrush, RelativeSource={RelativeSource AncestorType={x:Type Controls:MetroButton}}}"/>
+                            <Setter TargetName="Content" Property="TextBlock.Foreground" Value="{Binding Path=PrimaryDisabledBrush, RelativeSource={RelativeSource AncestorType={x:Type Controls:MetroToggleButton}}}"/>
+                            <Setter TargetName="Chrome" Property="Background" Value="{Binding Path=SecondaryDisabledBrush, RelativeSource={RelativeSource AncestorType={x:Type Controls:MetroToggleButton}}}"/>
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -188,36 +194,38 @@
                             Content="{TemplateBinding Content}"
                             ContentTemplate="{TemplateBinding ContentTemplate}"
                             ContentStringFormat="{TemplateBinding ContentStringFormat}"
+                            
                             TextElement.Foreground="{TemplateBinding Foreground}"
                             TextBlock.Foreground="{TemplateBinding Foreground}"
+                            
                             SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
                             HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                             VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter Property="Foreground" Value="{Binding Path=PrimaryBrush, RelativeSource={RelativeSource AncestorType={x:Type Controls:MetroButton}}}"/>
-                            <Setter TargetName="Chrome" Property="Background" Value="{Binding Path=SecondaryBrush, RelativeSource={RelativeSource AncestorType={x:Type Controls:MetroRadioButton}}}"/>
+                            <Setter Property="Foreground" Value="{Binding Path=PrimaryBrush, RelativeSource={RelativeSource AncestorType={x:Type Controls:MetroRadioButton}}}"/>
+                            <Setter Property="Background" Value="{Binding Path=SecondaryBrush, RelativeSource={RelativeSource AncestorType={x:Type Controls:MetroRadioButton}}}"/>
                             <Setter TargetName="Content" Property="TextElement.Foreground" Value="{Binding Path=PrimaryBrush, RelativeSource={RelativeSource AncestorType={x:Type Controls:MetroRadioButton}}}"/>
-                            <Setter TargetName="Content" Property="TextBlock.Foreground" Value="{Binding Path=PrimaryBrush, RelativeSource={RelativeSource AncestorType={x:Type Controls:MetroButton}}}"/>
+                            <Setter TargetName="Content" Property="TextBlock.Foreground" Value="{Binding Path=PrimaryBrush, RelativeSource={RelativeSource AncestorType={x:Type Controls:MetroRadioButton}}}"/>
                         </Trigger>
                         <Trigger Property="IsPressed" Value="True">
-                            <Setter Property="Foreground" Value="{Binding Path=SecondaryBrush, RelativeSource={RelativeSource AncestorType={x:Type Controls:MetroButton}}}"/>
-                            <Setter TargetName="Chrome" Property="Background" Value="{Binding Path=PrimaryBrush, RelativeSource={RelativeSource AncestorType={x:Type Controls:MetroRadioButton}}}"/>
+                            <Setter Property="Foreground" Value="{Binding Path=SecondaryBrush, RelativeSource={RelativeSource AncestorType={x:Type Controls:MetroRadioButton}}}"/>
                             <Setter TargetName="Content" Property="TextElement.Foreground" Value="{Binding Path=SecondaryBrush, RelativeSource={RelativeSource AncestorType={x:Type Controls:MetroRadioButton}}}"/>
-                            <Setter TargetName="Content" Property="TextBlock.Foreground" Value="{Binding Path=SecondaryBrush, RelativeSource={RelativeSource AncestorType={x:Type Controls:MetroButton}}}"/>
+                            <Setter TargetName="Content" Property="TextBlock.Foreground" Value="{Binding Path=SecondaryBrush, RelativeSource={RelativeSource AncestorType={x:Type Controls:MetroRadioButton}}}"/>
+                            <Setter TargetName="Chrome" Property="Background" Value="{Binding Path=PrimaryBrush, RelativeSource={RelativeSource AncestorType={x:Type Controls:MetroRadioButton}}}"/>
                         </Trigger>
                         <Trigger Property="IsChecked" Value="True">
-                            <Setter Property="Foreground" Value="{Binding Path=SecondaryBrush, RelativeSource={RelativeSource AncestorType={x:Type Controls:MetroButton}}}"/>
-                            <Setter TargetName="Chrome" Property="Background" Value="{Binding Path=PrimaryBrush, RelativeSource={RelativeSource AncestorType={x:Type Controls:MetroRadioButton}}}"/>
+                            <Setter Property="Foreground" Value="{Binding Path=SecondaryBrush, RelativeSource={RelativeSource AncestorType={x:Type Controls:MetroRadioButton}}}"/>
                             <Setter TargetName="Content" Property="TextElement.Foreground" Value="{Binding Path=SecondaryBrush, RelativeSource={RelativeSource AncestorType={x:Type Controls:MetroRadioButton}}}"/>
-                            <Setter TargetName="Content" Property="TextBlock.Foreground" Value="{Binding Path=SecondaryBrush, RelativeSource={RelativeSource AncestorType={x:Type Controls:MetroButton}}}"/>
+                            <Setter TargetName="Content" Property="TextBlock.Foreground" Value="{Binding Path=SecondaryBrush, RelativeSource={RelativeSource AncestorType={x:Type Controls:MetroRadioButton}}}"/>
+                            <Setter TargetName="Chrome" Property="Background" Value="{Binding Path=PrimaryBrush, RelativeSource={RelativeSource AncestorType={x:Type Controls:MetroRadioButton}}}"/>
                         </Trigger>
                         <Trigger Property="IsEnabled" Value="False">
-                            <Setter Property="Foreground" Value="{Binding Path=PrimaryDisabledBrush, RelativeSource={RelativeSource AncestorType={x:Type Controls:MetroButton}}}"/>
-                            <Setter TargetName="Chrome" Property="Background" Value="{Binding Path=SecondaryDisabledBrush, RelativeSource={RelativeSource AncestorType={x:Type Controls:MetroRadioButton}}}"/>
+                            <Setter Property="Foreground" Value="{Binding Path=PrimaryDisabledBrush, RelativeSource={RelativeSource AncestorType={x:Type Controls:MetroRadioButton}}}"/>
                             <Setter TargetName="Content" Property="TextElement.Foreground" Value="{Binding Path=PrimaryDisabledBrush, RelativeSource={RelativeSource AncestorType={x:Type Controls:MetroRadioButton}}}"/>
-                            <Setter TargetName="Content" Property="TextBlock.Foreground" Value="{Binding Path=PrimaryDisabledBrush, RelativeSource={RelativeSource AncestorType={x:Type Controls:MetroButton}}}"/>
+                            <Setter TargetName="Content" Property="TextBlock.Foreground" Value="{Binding Path=PrimaryDisabledBrush, RelativeSource={RelativeSource AncestorType={x:Type Controls:MetroRadioButton}}}"/>
+                            <Setter TargetName="Chrome" Property="Background" Value="{Binding Path=SecondaryDisabledBrush, RelativeSource={RelativeSource AncestorType={x:Type Controls:MetroRadioButton}}}"/>
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>

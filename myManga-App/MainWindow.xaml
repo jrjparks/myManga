@@ -19,10 +19,10 @@
     x:Name="myMangaMainWindow"
     MinWidth="720"
     MinHeight="720"
+    Padding="5"
     Icon="/myManga;component/Resources/Icon.ico"
     SnapsToDevicePixels="True"
-    Style="{StaticResource ThemedWindow}"
-    Padding="5">
+    Style="{StaticResource ThemedWindowStyle}">
     <Windows:ThemedWindow.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -39,8 +39,8 @@
     <Windows:ThemedWindow.DataContext>
         <ViewModels:MainViewModel/>
     </Windows:ThemedWindow.DataContext>
-    
-    <Grid x:Name="grid" Margin="-5,0,-5,-5">
+
+    <Grid x:Name="grid">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition/>
@@ -60,7 +60,6 @@
 
         <Grid
             x:Name="Menu"
-            Panel.ZIndex="99"
             Grid.Column="0"
             Grid.RowSpan="2"
             TextBlock.FontSize="16">
@@ -80,7 +79,8 @@
                 <Controls:MetroToggleButton
                     x:Name="MenuButton"
                     HorizontalContentAlignment="Left">
-                    <StackPanel Orientation="Horizontal">
+                    <StackPanel 
+                        Orientation="Horizontal">
                         <TextBlock
                             x:Name="MenuHeaderIcon"
                             FontFamily="{DynamicResource OpenIconic}"
@@ -236,8 +236,7 @@
 			Grid.Row="1"
 			Grid.Column="1"
             BorderBrush="{DynamicResource window-theme-primary}"
-            BorderThickness="1,1,0,0"
-            Padding="0,0,5,5">
+            BorderThickness="1,1,0,0">
             <ContentPresenter
 			    Content="{Binding ContentViewModel}"/>
         </Border>

@@ -46,6 +46,7 @@ Consolidates information from multiple sites.
  * [MangaReader.net](http://www.mangareader.net/)
  * [MangaPanda.com](http://www.mangapanda.com/)
  * [MangaHere.com](http://www.mangahere.com/)
+ * [MangaPark.me](http://www.mangapark.me/)
 * Databases
  * [MangaHelpers](http://www.mangahelpers.com/manga/)
  * [Anime News Network](http://www.animenewsnetwork.com/)

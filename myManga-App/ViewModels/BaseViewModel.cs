@@ -79,10 +79,18 @@ namespace myManga_App.ViewModels
         #endregion
 
         #region Focus Management
+        public Boolean IsFocused { get; protected set; }
+
+        #region Focused
+        public void Focused() { IsFocused = true; SubFocused(); }
+        protected virtual void SubFocused() { }
+        #endregion
 
         #region Pull
         public void PullFocus() { Messenger.Instance.Send(this, "FocusRequest"); SubPullFocus(); }
         protected virtual void SubPullFocus() { }
+
+        public virtual Boolean CanPullFocus() { return true; }
         #endregion
 
         #region Lost

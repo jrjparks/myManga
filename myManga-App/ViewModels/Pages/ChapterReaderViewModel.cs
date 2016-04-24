@@ -121,6 +121,13 @@ namespace myManga_App.ViewModels.Pages
                 }, "ChapterObjectArchiveWatcher");
             }
         }
+
+        public override bool CanPullFocus()
+        {
+            if (Equals(MangaObject, null)) return false;
+            if (Equals(ChapterObject, null)) return false;
+            return base.CanPullFocus();
+        }
         #endregion
 
         #region Reader Objects

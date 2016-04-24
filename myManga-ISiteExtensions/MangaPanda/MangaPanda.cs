@@ -7,6 +7,7 @@ using myMangaSiteExtension.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Reflection;
@@ -146,7 +147,7 @@ namespace MangaPanda
                                                         ExtensionLanguage = ExtensionDescriptionAttribute.Language,
                                                         Url = String.Format("{0}{1}", ExtensionDescriptionAttribute.RootUrl, ChapterNode.SelectSingleNode(".//td[1]/a").Attributes["href"].Value) }
                                                 },
-                                            Released = DateTime.Parse(ChapterNode.SelectSingleNode(".//td[2]").InnerText)
+                                            Released = DateTime.ParseExact(ChapterNode.SelectSingleNode(".//td[2]").InnerText, "MM/dd/yyyy", CultureInfo.InvariantCulture)
                                         }).ToArray();
 
             return new MangaObject()
@@ -160,7 +161,7 @@ namespace MangaPanda
                 Authors = (from Author in Authors select HtmlEntity.DeEntitize(Author)).ToList(),
                 Artists = (from Artist in Artists select HtmlEntity.DeEntitize(Artist)).ToList(),
                 Genres = Genres.ToList(),
-                Released = DateTime.Parse(Release),
+                Released = DateTime.ParseExact(Release, "MM/dd/yyyy", CultureInfo.InvariantCulture),
                 Chapters = Chapters.ToList()
             };
         }

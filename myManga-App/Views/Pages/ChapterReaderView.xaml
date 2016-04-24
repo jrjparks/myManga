@@ -46,7 +46,10 @@
         <KeyBinding Command="{Binding IncreasePageZoomCommand}" Key="OemPlus" Modifiers="Ctrl"/>
         <KeyBinding Command="{Binding IncreasePageZoomCommand}" Key="Add" Modifiers="Ctrl"/>
     </UserControl.InputBindings>
-    <Grid>
+    <Grid
+        TextElement.Foreground="{DynamicResource window-foreground}"
+        TextBlock.Foreground="{DynamicResource window-foreground}"
+        Background="{DynamicResource window-background}">
         <Grid.RowDefinitions>
             <RowDefinition MinHeight="24" Height="Auto"/>
             <RowDefinition/>

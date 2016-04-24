@@ -92,6 +92,7 @@
     </ApplicationDefinition>
     <Compile Include="Controls\Extensions\ItemsControlExtensions.cs" />
     <Compile Include="Controls\ListBoxExtensions.cs" />
+    <Compile Include="Converters\ConditionalValueConverter.cs" />
     <Compile Include="CoreManagement.cs" />
     <Compile Include="Objects\Extensions\ExtensionObject.cs" />
     <Compile Include="Objects\UserConfig\EnabledExtensionObject.cs" />
@@ -112,7 +113,6 @@
     <Compile Include="Converters\EnumToBooleanConverter.cs" />
     <Compile Include="Converters\EqualsConverter.cs" />
     <Compile Include="Converters\LocationListToCSV.cs" />
-    <Compile Include="Converters\ObjectIsLocal.cs" />
     <Compile Include="Converters\StringArrayToCSV.cs" />
     <Compile Include="IO\DLL\Embedded.cs" />
     <Compile Include="IO\DLL\Loader.cs" />
@@ -147,7 +147,7 @@
     <Compile Include="System\Runtime\Caching\RegionedMemoryCache.cs" />
     <Compile Include="System\Threading\Tasks\Schedulers\LimitedConcurrencyTaskScheduler.cs" />
     <Compile Include="System\Windows\Controls\MetroButton.cs" />
-    <Compile Include="Controls\Window\myMangaWindow.cs" />
+    <Compile Include="System\Windows\ThemedWindow.cs" />
     <Compile Include="ViewModels\BaseViewModel.cs" />
     <Compile Include="ViewModels\Dialog\AuthenticationDialogViewModel.cs" />
     <Compile Include="ViewModels\Dialog\DialogViewModel.cs" />
@@ -289,7 +289,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\Window\myMangaWindow.xaml">
+    <Page Include="Themes\System\Windows\ThemedWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -19,7 +19,6 @@ namespace myManga_App.ViewModels.Pages
 {
     public sealed class SettingsViewModel : BaseViewModel
     {
-        private Boolean RestartRequired = false;
         private Boolean HandlePropertyChange { get; set; }
         private void DisablePropertyChange()
         {
@@ -70,7 +69,7 @@ namespace myManga_App.ViewModels.Pages
 
         private void UserConfiguration_PropertyChanged(Object sender, PropertyChangedEventArgs e)
         {
-            if (true) //HandlePropertyChange)
+            if (HandlePropertyChange)
             {
                 UserConfigurationObject UserConfiguration = sender as UserConfigurationObject;
                 switch (e.PropertyName)
@@ -84,7 +83,6 @@ namespace myManga_App.ViewModels.Pages
 
         private void ResetData()
         {
-            RestartRequired = false;
             DisablePropertyChange();
             PropertyInfo[] UserConfigurationProperties = typeof(UserConfigurationObject).GetProperties();
             foreach (PropertyInfo Property in UserConfigurationProperties)

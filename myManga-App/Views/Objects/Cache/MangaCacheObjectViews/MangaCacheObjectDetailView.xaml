@@ -376,6 +376,7 @@
                 VerticalScrollBarVisibility="Visible"
                 PanningMode="VerticalOnly">
                 <TextBlock
+                    Padding="5"
 			        Text="{Binding MangaCacheObject.MangaObject.Description}"
 			        TextWrapping="WrapWithOverflow"
 			        FontSize="16"

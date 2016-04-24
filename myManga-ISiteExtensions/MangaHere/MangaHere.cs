@@ -6,6 +6,7 @@ using myMangaSiteExtension.Objects;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -123,6 +124,15 @@ namespace MangaHere
                 String ChapterNumber = ChapterTitle.Substring(ChapterTitle.LastIndexOf(' ') + 1).Trim();
                 volChapSub = volChapSub.Concat(ChapterNumber.Split(new char[] { '.' }, StringSplitOptions.RemoveEmptyEntries)).ToArray();
 
+                DateTime Released = DateTime.Now;
+                String ReleasedData = ChapterNode.SelectSingleNode(".//span[2]").InnerText;
+                if (ReleasedData.ToLower().Equals("today"))
+                { Released = DateTime.Today; }
+                else if (ReleasedData.ToLower().Equals("yesterday"))
+                { Released = DateTime.Today.AddDays(-1); }
+                else
+                { Released = DateTime.ParseExact(ReleasedData, "MMM d, yyyy", CultureInfo.InvariantCulture); }
+
                 ChapterObject Chapter = new ChapterObject()
                 {
                     Name = ChapterTitle,
@@ -134,7 +144,7 @@ namespace MangaHere
                                 ExtensionLanguage = ExtensionDescriptionAttribute.Language,
                                 Url = ChapterNode.SelectSingleNode(".//span[1]/a").Attributes["href"].Value }
                         },
-                    Released = ChapterNode.SelectSingleNode(".//span[2]").InnerText.ToLower().Equals("today") ? DateTime.Today : (ChapterNode.SelectSingleNode(".//span[2]").InnerText.ToLower().Equals("yesterday") ? DateTime.Today.AddDays(-1) : DateTime.Parse(ChapterNode.SelectSingleNode(".//span[2]").InnerText))
+                    Released = Released
                 };
                 if (volChapSub.Length == 3)
                     Chapter.SubChapter = UInt32.Parse(volChapSub[2]);
@@ -256,7 +266,7 @@ namespace MangaHere
                             Cover = Cover,
                             Url = Url,
                             ExtensionName = ExtensionDescriptionAttribute.Name,
-                        ExtensionLanguage = ExtensionDescriptionAttribute.Language
+                            ExtensionLanguage = ExtensionDescriptionAttribute.Language
                         });
                     }
                     catch { }

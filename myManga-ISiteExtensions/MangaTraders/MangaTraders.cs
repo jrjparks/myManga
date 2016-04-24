@@ -7,6 +7,7 @@ using myMangaSiteExtension.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -228,7 +229,7 @@ namespace MangaTraders
                         Released = Released.AddSeconds(0 - tDelta);
                 }
                 else
-                    Released = DateTime.Parse(ReleasedTxt);
+                    Released = DateTime.ParseExact(ReleasedTxt, "MM/dd/yyyy", CultureInfo.InvariantCulture);
 
                 ChapterObject Chapter = new ChapterObject()
                 {

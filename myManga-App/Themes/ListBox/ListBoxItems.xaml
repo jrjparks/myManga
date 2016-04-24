@@ -10,8 +10,6 @@
         <ResourceDictionary Source="/myManga;component/Themes/CoreResourceDictionary.xaml"/>
         <ResourceDictionary Source="/myManga;component/Themes/ProgressBar/ProgressBar.xaml"/>
     </ResourceDictionary.MergedDictionaries>
-    <converters:ObjectIsLocal x:Key="ObjectIsLocal"/>
-    <converters:EqualsConverter x:Key="EqualsConverter"/>
 
     <converters:StringListToCSV x:Key="StringListToCSV"/>
     <converters:LocationListToCSV x:Key="LocationListToCSV"/>

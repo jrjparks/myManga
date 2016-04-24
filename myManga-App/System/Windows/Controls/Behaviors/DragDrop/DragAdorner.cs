@@ -38,7 +38,7 @@ namespace System.Windows.Controls.Behaviors.DragDrop
         {
             //this.Left = Left - 1;
             //this.Top = Top + 13;
-            this.Left = Left - DesiredSize.Width;
+            this.Left = Left; // - DesiredSize.Width;
             this.Top = Top;
             if (!Equals(AdornerLayer, null))
             { try { AdornerLayer.Update(AdornedElement); } catch { } }

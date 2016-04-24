@@ -33,108 +33,104 @@
             <Converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" TrueValue="Visible" FalseValue="Collapsed"/>
         </ResourceDictionary>
     </UserControl.Resources>
-    <Border
-        Background="{DynamicResource window-background}"
+    <Grid
         TextElement.Foreground="{DynamicResource window-foreground}"
         TextBlock.Foreground="{DynamicResource window-foreground}"
-        BorderBrush="{DynamicResource window-theme-primary}"
-        BorderThickness="0,1,0,0">
-        <Grid>
+        Background="{DynamicResource window-background}">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="300"/>
+            <ColumnDefinition Width="{x:Static SystemParameters.VerticalScrollBarWidth}"/>
+            <ColumnDefinition Width="3*"/>
+        </Grid.ColumnDefinitions>
+
+        <ListBox
+            x:Name="MangaCacheObjects"
+            Grid.ColumnSpan="2"
+			ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+            ScrollViewer.VerticalScrollBarVisibility="Auto"
+            VirtualizingPanel.ScrollUnit="Pixel"
+            VirtualizingPanel.VirtualizationMode="Recycling"
+            ItemContainerStyle="{StaticResource DetailsMangaObjectListBoxItem}"
+            SelectedItem="{Binding SelectedSearchResultMangaObject}"
+            ItemsSource="{Binding Path=SearchResultMangaObjectCollection, Mode=OneWay}"
+            Padding="0,24,0,0"/>
+
+        <Grid
+            x:Name="SearchGrid"
+            VerticalAlignment="Top"
+            TextElement.FontSize="16"
+            Margin="0,0,1,0">
+
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="300"/>
-                <ColumnDefinition Width="{x:Static SystemParameters.VerticalScrollBarWidth}"/>
-                <ColumnDefinition Width="3*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
 
-            <ListBox
-                x:Name="MangaCacheObjects"
-                Grid.ColumnSpan="2"
-				ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                ScrollViewer.VerticalScrollBarVisibility="Auto"
-                VirtualizingPanel.ScrollUnit="Pixel"
-                VirtualizingPanel.VirtualizationMode="Recycling"
-                ItemContainerStyle="{StaticResource DetailsMangaObjectListBoxItem}"
-                SelectedItem="{Binding SelectedSearchResultMangaObject}"
-                ItemsSource="{Binding Path=SearchResultMangaObjectCollection, Mode=OneWay}"
-                Padding="0,24,0,0"/>
+            <Grid.InputBindings>
+                <KeyBinding Command="{Binding Command, ElementName=SearchButton}" CommandParameter="{Binding CommandParameter, ElementName=SearchButton}" Key="Return"/>
+                <KeyBinding Command="{Binding Command, ElementName=ClearSearchButton}" Key="Esc"/>
+            </Grid.InputBindings>
 
-            <Grid
-                x:Name="SearchGrid"
-                VerticalAlignment="Top"
-                TextElement.FontSize="16"
-                Margin="0,0,1,0">
+            <Controls:MetroButton
+				x:Name="SearchButton"
+				Grid.Column="0"
+				FontFamily="{DynamicResource OpenIconic}"
+				Content="{DynamicResource oi-magnifying-glass}"
+				Command="{Binding SearchAsyncCommand}"
+                CommandParameter="{Binding SearchTerm}"
+				ToolTip="Search"
+				Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"/>
 
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="1*"/>
-                    <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
+            <TextBox
+				x:Name="SearchBox"
+				Grid.Column="1"
+                VerticalAlignment="Center" 
+                BorderBrush="{DynamicResource window-theme-primary}"
+                BorderThickness="0,0,0,1"
+                SelectionBrush="{DynamicResource window-theme-primary}"
+                Background="{x:Null}"
+				Text="{Binding SearchTerm, UpdateSourceTrigger=PropertyChanged}"/>
 
-                <Grid.InputBindings>
-                    <KeyBinding Command="{Binding Command, ElementName=SearchButton}" CommandParameter="{Binding CommandParameter, ElementName=SearchButton}" Key="Return"/>
-                    <KeyBinding Command="{Binding Command, ElementName=ClearSearchButton}" Key="Esc"/>
-                </Grid.InputBindings>
-
-                <Controls:MetroButton
-				    x:Name="SearchButton"
-				    Grid.Column="0"
-				    FontFamily="{DynamicResource OpenIconic}"
-				    Content="{DynamicResource oi-magnifying-glass}"
-				    Command="{Binding SearchAsyncCommand}"
-                    CommandParameter="{Binding SearchTerm}"
-				    ToolTip="Search"
-				    Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"/>
-
-                <TextBox
-				    x:Name="SearchBox"
-				    Grid.Column="1"
-                    VerticalAlignment="Center" 
-                    BorderBrush="{DynamicResource window-theme-primary}"
-                    BorderThickness="0,0,0,1"
-                    SelectionBrush="{DynamicResource window-theme-primary}"
-                    Background="{x:Null}"
-				    Text="{Binding SearchTerm, UpdateSourceTrigger=PropertyChanged}"/>
-
-                <Controls:MetroButton
-				    x:Name="ClearSearchButton"
-				    Grid.Column="2"
-				    FontFamily="{DynamicResource OpenIconic}"
-				    Content="{DynamicResource oi-delete}"
-				    Command="{Binding ClearSearchTermCommand}"
-				    ToolTip="Clear Search"
-				    Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"/>
-
-            </Grid>
-
-            <Grid
-                Grid.Column="2"
-                Visibility="{Binding SelectedSearchResultMangaObject, TargetNullValue=Collapsed, FallbackValue=Visible}">
-                <Rectangle Fill="Gray" Margin="3"/>
-                <MangaObjectViews:MangaObjectView
-                    DataContext="{Binding SelectedSearchResultMangaObject}"/>
-                <Controls:MetroButton
-                    VerticalAlignment="Bottom"
-                    FontFamily="{DynamicResource OpenIconic}"
-                    Content="{DynamicResource oi-data-transfer-download}"
-                    ContentStringFormat="{}{0} Add to Library {0}"
-                    FontSize="18"
-                    Command="{Binding DownloadResultCommand}"
-                    CommandParameter="{Binding SelectedSearchResultMangaObject}"/>
-                <!-- DETAIL VIEW -->
-            </Grid>
-
-            <ProgressBar
-                Height="5"
-                Minimum="0"
-                Maximum="100"
-                Value="{Binding SearchProgress, Mode=OneWay, FallbackValue=50}"
-                Visibility="{Binding SearchProgressActive, Converter={StaticResource BooleanToVisibilityConverter}, FallbackValue=Collapsed}"
-                Grid.ColumnSpan="3"
-                VerticalAlignment="Bottom"
-                Foreground="{DynamicResource window-theme-primary}" 
-                Background="{DynamicResource window-background}" 
-                BorderThickness="0"/>
+            <Controls:MetroButton
+				x:Name="ClearSearchButton"
+				Grid.Column="2"
+				FontFamily="{DynamicResource OpenIconic}"
+				Content="{DynamicResource oi-delete}"
+				Command="{Binding ClearSearchTermCommand}"
+				ToolTip="Clear Search"
+				Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"/>
 
         </Grid>
-    </Border>
+
+        <Grid
+            Grid.Column="2"
+            Visibility="{Binding SelectedSearchResultMangaObject, TargetNullValue=Collapsed, FallbackValue=Visible}">
+            <Rectangle Fill="Gray" Margin="3"/>
+            <MangaObjectViews:MangaObjectView
+                DataContext="{Binding SelectedSearchResultMangaObject}"/>
+            <Controls:MetroButton
+                VerticalAlignment="Bottom"
+                FontFamily="{DynamicResource OpenIconic}"
+                Content="{DynamicResource oi-data-transfer-download}"
+                ContentStringFormat="{}{0} Add to Library {0}"
+                FontSize="18"
+                Command="{Binding DownloadResultCommand}"
+                CommandParameter="{Binding SelectedSearchResultMangaObject}"/>
+            <!-- DETAIL VIEW -->
+        </Grid>
+
+        <ProgressBar
+            Height="5"
+            Minimum="0"
+            Maximum="100"
+            Value="{Binding SearchProgress, Mode=OneWay, FallbackValue=50}"
+            Visibility="{Binding SearchProgressActive, Converter={StaticResource BooleanToVisibilityConverter}, FallbackValue=Collapsed}"
+            Grid.ColumnSpan="3"
+            VerticalAlignment="Bottom"
+            Foreground="{DynamicResource window-theme-primary}" 
+            Background="{DynamicResource window-background}" 
+            BorderThickness="0"/>
+
+    </Grid>
 </UserControl>

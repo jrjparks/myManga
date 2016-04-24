@@ -27,6 +27,7 @@
                 <ResourceDictionary Source="/myManga;component/Themes/ProgressBar/ProgressBar.xaml"/>
             </ResourceDictionary.MergedDictionaries>
             <Converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" TrueValue="Visible" FalseValue="Collapsed"/>
+            <Converters:BooleanToVisibilityConverter x:Key="InvBooleanToVisibilityConverter" TrueValue="Hidden" FalseValue="Visible"/>
             <Converters:BooleanInverter x:Key="BooleanInverter"/>
         </ResourceDictionary>
     </UserControl.Resources>
@@ -37,7 +38,7 @@
 
         <ListBox
             x:Name="MangaCacheObjects"
-            Padding="1,34,1,1"
+            Padding="1,45,1,1"
             SelectionMode="Single"
             ItemContainerStyle="{StaticResource GridMangaCacheObjectListBoxItem}"
             SelectedItem="{Binding SelectedMangaCacheObject}"
@@ -70,7 +71,8 @@
             VerticalAlignment="Top"
             Background="{DynamicResource window-background}"
             BorderBrush="{DynamicResource window-theme-primary}"
-            BorderThickness="0,0,1,1">
+            BorderThickness="0,0,1,1"
+            Height="40">
 
             <Grid
                 Width="300"
@@ -125,7 +127,8 @@
             VerticalAlignment="Top"
             Background="{DynamicResource window-background}"
             BorderBrush="{DynamicResource window-theme-primary}"
-            BorderThickness="1,0,0,1">
+            BorderThickness="1,0,0,1"
+            Height="40">
 
             <Border.Margin>
                 <Thickness Right="{x:Static SystemParameters.VerticalScrollBarWidth}"/>
@@ -155,6 +158,7 @@
         </Border>
 
         <ContentPresenter Content="{Binding MangaCacheObjectDialog}"/>
+        <!--Visibility="{Binding IsInDesignMode, Converter={StaticResource InvBooleanToVisibilityConverter}, FallbackValue=Collapsed}"-->
 
     </Grid>
 </UserControl>

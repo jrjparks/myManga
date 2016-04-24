@@ -11,6 +11,7 @@
     xmlns:Converters="clr-namespace:myManga_App.Converters" 
     xmlns:Controls="clr-namespace:System.Windows.Controls"
     xmlns:Windows="clr-namespace:System.Windows"
+    xmlns:System="clr-namespace:System;assembly=mscorlib"
     x:Class="myManga_App.MainWindow"
     Title="{DynamicResource AppTitle}"
     WindowState="{Binding Path=COREProperty.UserConfiguration.WindowState, Mode=TwoWay, Source={x:Static Application.Current}, UpdateSourceTrigger=PropertyChanged}"
@@ -32,13 +33,24 @@
                 <ResourceDictionary Source="/myManga;component/Themes/ProgressBar/ProgressBar.xaml"/>
                 <ResourceDictionary Source="/myManga;component/Themes/ProgressBar/Spinner.xaml"/>
             </ResourceDictionary.MergedDictionaries>
+            <Converters:ConditionalValueConverter 
+                x:Key="ConditionalValueConverter" 
+                Reference="True" 
+                ValueType="System.Windows.Shell.TaskbarItemProgressState, PresentationFramework, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35"
+                TrueValue="Indeterminate"
+                FalseValue="None"/>
             <Converters:EnumToBooleanConverter x:Key="EnumToBooleanConverter"/>
             <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+            <System:Double x:Key="MenuButtonSize">39</System:Double>
         </ResourceDictionary>
     </Windows:ThemedWindow.Resources>
     <Windows:ThemedWindow.DataContext>
         <ViewModels:MainViewModel/>
     </Windows:ThemedWindow.DataContext>
+    <Window.TaskbarItemInfo>
+        <TaskbarItemInfo
+            ProgressState="{Binding DownloadsActive, Converter={StaticResource ConditionalValueConverter}}"/>
+    </Window.TaskbarItemInfo>
 
     <Grid x:Name="grid">
         <Grid.RowDefinitions>
@@ -52,7 +64,7 @@
 
         <ProgressBar
             Grid.ColumnSpan="2"
-            Margin="144,-23,304,0"
+            Margin="304,-23,304,0"
             IsIndeterminate="{Binding DownloadsActive}"
             Style="{DynamicResource PerformanceProgressBar}" 
             VerticalAlignment="Top"
@@ -78,9 +90,11 @@
 
                 <Controls:MetroToggleButton
                     x:Name="MenuButton"
-                    HorizontalContentAlignment="Left">
+                    HorizontalContentAlignment="Left"
+                    Height="{StaticResource MenuButtonSize}">
                     <StackPanel 
-                        Orientation="Horizontal">
+                        Orientation="Horizontal"
+                        TextElement.Foreground="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground)}">
                         <TextBlock
                             x:Name="MenuHeaderIcon"
                             FontFamily="{DynamicResource OpenIconic}"
@@ -101,8 +115,12 @@
                 <Controls:MetroButton
                     x:Name="HomeButton"
                     HorizontalContentAlignment="Left"
-				    Command="{Binding HomeCommand}">
-                    <StackPanel Orientation="Horizontal">
+				    Command="{Binding NavigatePagesCommand}"
+                    CommandParameter="{Binding PagesHomeViewModel}"
+                    Height="{StaticResource MenuButtonSize}">
+                    <StackPanel 
+                        Orientation="Horizontal"
+                        TextElement.Foreground="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground)}">
                         <TextBlock
                             x:Name="HomeHeaderIcon"
                             FontFamily="{DynamicResource OpenIconic}" 
@@ -121,8 +139,12 @@
                 <Controls:MetroButton
                     x:Name="SearchButton"
                     HorizontalContentAlignment="Left"
-				    Command="{Binding SearchCommand}">
-                    <StackPanel Orientation="Horizontal">
+				    Command="{Binding NavigatePagesCommand}"
+                    CommandParameter="{Binding PagesSearchViewModel}"
+                    Height="{StaticResource MenuButtonSize}">
+                    <StackPanel 
+                        Orientation="Horizontal"
+                        TextElement.Foreground="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground)}">
                         <TextBlock
                             x:Name="SearchHeaderIcon"
                             FontFamily="{DynamicResource OpenIconic}" 
@@ -141,8 +163,12 @@
                 <Controls:MetroButton
                     x:Name="ReadButton"
                     HorizontalContentAlignment="Left"
-				    Command="{Binding ReadCommand}">
-                    <StackPanel Orientation="Horizontal">
+				    Command="{Binding NavigatePagesCommand}"
+                    CommandParameter="{Binding PagesChapterReaderViewModel}"
+                    Height="{StaticResource MenuButtonSize}">
+                    <StackPanel 
+                        Orientation="Horizontal"
+                        TextElement.Foreground="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground)}">
                         <TextBlock
                             x:Name="ReadHeaderIcon"
                             FontFamily="{DynamicResource OpenIconic}" 
@@ -152,7 +178,7 @@
                             Padding="5"/>
                         <TextBlock
                             x:Name="ReadHeaderLabel"
-                            Text="Read"
+                            Text="Reader"
                             Padding="5"
                             Visibility="{Binding IsChecked, Converter={StaticResource BooleanToVisibilityConverter}, ElementName=MenuButton}"/>
                     </StackPanel>
@@ -170,12 +196,6 @@
                     TextElement.FontFamily="{DynamicResource OpenIconic}"
                     TextElement.FontSize="19"
                     Visibility="{Binding ContentViewModel.SupportsViewTypeChange, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
-                    <!--
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition/>
-                        <ColumnDefinition/>
-                    </Grid.ColumnDefinitions>
-                    -->
                     <Grid.RowDefinitions>
                         <RowDefinition/>
                         <RowDefinition/>
@@ -184,26 +204,28 @@
                     <Controls:MetroRadioButton
                         Grid.Row="0"
                         Grid.Column="0"
+                        Height="{StaticResource MenuButtonSize}"
                         IsChecked="{Binding ContentViewModel.ViewType, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static MVVM:ViewModelViewType.Normal}, Mode=TwoWay}">
                         <TextBlock
                             x:Name="ListViewIcon"
                             FontFamily="{DynamicResource OpenIconic}" 
                             FontSize="19"
                             Text="{DynamicResource oi-list-rich}"
-                            Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"
+                            TextElement.Foreground="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground)}"
                             Padding="5"/>
                     </Controls:MetroRadioButton>
 
                     <Controls:MetroRadioButton
                         Grid.Row="1"
                         Grid.Column="1"
+                        Height="{StaticResource MenuButtonSize}"
                         IsChecked="{Binding ContentViewModel.ViewType, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static MVVM:ViewModelViewType.Grid}, Mode=TwoWay}">
                         <TextBlock
                             x:Name="GridViewIcon"
                             FontFamily="{DynamicResource OpenIconic}" 
                             FontSize="19"
                             Text="{DynamicResource oi-grid-two-up}"
-                            Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"
+                            TextElement.Foreground="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground)}"
                             Padding="5"/>
                     </Controls:MetroRadioButton>
 
@@ -211,9 +233,13 @@
 
                 <Controls:MetroButton
                     x:Name="SettingsButton"
-				    Command="{Binding SettingsCommand}"
-                    HorizontalContentAlignment="Left">
-                    <StackPanel Orientation="Horizontal">
+				    Command="{Binding NavigatePagesCommand}"
+                    CommandParameter="{Binding PagesSettingsViewModel}"
+                    HorizontalContentAlignment="Left"
+                    Height="{StaticResource MenuButtonSize}">
+                    <StackPanel 
+                        Orientation="Horizontal"
+                        TextElement.Foreground="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground)}">
                         <TextBlock
                             x:Name="SettingsHeaderIcon"
                             FontFamily="{DynamicResource OpenIconic}" 

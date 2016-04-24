@@ -59,146 +59,149 @@
                             Header="{Binding Path=UserConfiguration.DefaultPageZoom, Mode=OneWay, FallbackValue=1}" 
                             HeaderStringFormat="Default Zoom Amount: {0:0.0}x"
                             Margin="2,6">
-                            <Slider
-                                x:Name="DefaultPageZoomSlider"
-                                Grid.Column="2"
-                                Orientation="Horizontal"
-                                Minimum="0.5"
-                                Maximum="2"
-                                Value="{Binding Path=UserConfiguration.DefaultPageZoom, Mode=TwoWay, FallbackValue=1}" 
-                                TickPlacement="BottomRight"
-                                TickFrequency="0.1"
-                                LargeChange="0.5" 
-                                SmallChange="0.1" 
-                                IsMoveToPointEnabled="True" 
-                                IsSnapToTickEnabled="True"/>
+                            <StackPanel Orientation="Vertical">
+                                <TextBlock
+                                    Text="Sets the zoom when opening chapter for reading." 
+                                    FontSize="13"
+                                    FontStyle="Italic"
+                                    TextWrapping="Wrap"
+                                    Foreground="{DynamicResource text-muted}"/>
+                                <Separator/>
+                                <Slider
+                                    x:Name="DefaultPageZoomSlider"
+                                    Grid.Column="2"
+                                    Orientation="Horizontal"
+                                    Minimum="0.5"
+                                    Maximum="2"
+                                    Value="{Binding Path=UserConfiguration.DefaultPageZoom, Mode=TwoWay, FallbackValue=1}" 
+                                    TickPlacement="BottomRight"
+                                    TickFrequency="0.1"
+                                    LargeChange="0.5" 
+                                    SmallChange="0.1" 
+                                    IsMoveToPointEnabled="True" 
+                                    IsSnapToTickEnabled="True"/>
+                            </StackPanel>
                         </HeaderedContentControl>
 
                         <HeaderedContentControl 
                             Header="Recent Chapters"
                             Margin="2,6">
-                            <Grid Margin="15,0,0,0">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto"/>
-                                    <ColumnDefinition Width="15"/>
-                                    <ColumnDefinition/>
-                                </Grid.ColumnDefinitions>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition/>
-                                    <RowDefinition/>
-                                </Grid.RowDefinitions>
+                            <StackPanel Orientation="Vertical">
+                                <TextBlock
+                                    Text="Determines how many previous chapters to keep if enabled." 
+                                    FontSize="13"
+                                    FontStyle="Italic"
+                                    TextWrapping="Wrap"
+                                    Foreground="{DynamicResource text-muted}"/>
+                                <Separator/>
+                                
+                                <Grid Margin="15,0,0,0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="15"/>
+                                        <ColumnDefinition/>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition/>
+                                        <RowDefinition/>
+                                    </Grid.RowDefinitions>
 
-                                <TextBlock 
-                                    Grid.Row="0"
-                                    Text="Remove" 
-                                    VerticalAlignment="Center" 
-                                    TextWrapping="Wrap"/>
-                                <Controls:MetroToggleButton
-                                    Grid.Row="0"
-                                    Grid.Column="2"
-                                    x:Name="RemoveBackChaptersToggleButton"
-                                    HorizontalAlignment="Left"
-                                    Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"
-                                    IsChecked="{Binding UserConfiguration.RemoveBackChapters, FallbackValue=False}" 
-                                    FontFamily="{DynamicResource OpenIconic}"
-                                    Content="{DynamicResource oi-check}"/>
+                                    <TextBlock 
+                                        Grid.Row="0"
+                                        Text="Remove" 
+                                        VerticalAlignment="Center" 
+                                        TextWrapping="Wrap"/>
+                                    <Controls:MetroToggleButton
+                                        Grid.Row="0"
+                                        Grid.Column="2"
+                                        x:Name="RemoveBackChaptersToggleButton"
+                                        HorizontalAlignment="Left"
+                                        Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"
+                                        IsChecked="{Binding UserConfiguration.RemoveBackChapters, FallbackValue=False}" 
+                                        FontFamily="{DynamicResource OpenIconic}"
+                                        Content="{DynamicResource oi-check}"/>
 
-                                <TextBlock 
-                                    Grid.Row="1"
-                                    Text="{Binding Value, ElementName=BackChaptersToKeepSlider, StringFormat=Amount\ to\ Keep:\ {0,3:#,0}}"
-                                    VerticalAlignment="Center" 
-                                    TextWrapping="Wrap"/>
-                                <Slider
-                                    Grid.Row="1"
-                                    Grid.Column="2"
-                                    x:Name="BackChaptersToKeepSlider"
-                                    IsEnabled="{Binding ElementName=RemoveBackChaptersToggleButton, Path=IsChecked}"
-                                    Value="{Binding UserConfiguration.BackChaptersToKeep, FallbackValue=3}"
-                                    Minimum="2" Maximum="20"
-                                    TickPlacement="BottomRight"
-                                    TickFrequency="1"
-                                    LargeChange="5" 
-                                    SmallChange="1" />
-                            </Grid>
+                                    <TextBlock 
+                                        Grid.Row="1"
+                                        Text="{Binding Value, ElementName=BackChaptersToKeepSlider, StringFormat=Amount\ to\ Keep:\ {0,3:#,0}}"
+                                        VerticalAlignment="Center" 
+                                        TextWrapping="Wrap"/>
+                                    <Slider
+                                        Grid.Row="1"
+                                        Grid.Column="2"
+                                        x:Name="BackChaptersToKeepSlider"
+                                        IsEnabled="{Binding ElementName=RemoveBackChaptersToggleButton, Path=IsChecked}"
+                                        Value="{Binding UserConfiguration.BackChaptersToKeep, FallbackValue=3}"
+                                        Minimum="2" Maximum="20"
+                                        TickPlacement="BottomRight"
+                                        TickFrequency="1"
+                                        LargeChange="5" 
+                                        SmallChange="1" />
+                                </Grid>
+                            </StackPanel>
 
                         </HeaderedContentControl>
 
                         <HeaderedContentControl Header="Theme" Margin="2,6">
-                            <StackPanel Orientation="Horizontal">
-                                <RadioButton 
-                                    Margin="0,0,5,0"
-                                    GroupName="Theme" 
-                                    VerticalContentAlignment="Center"
-                                    IsChecked="{Binding Path=UserConfiguration.Theme, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static Objects:ThemeType.Light}}">
-                                    <RadioButton.Resources>
-                                        <ResourceDictionary Source="/myManga;component/Themes/LightTheme.xaml"/>
-                                    </RadioButton.Resources>
-                                    <RadioButton.Template>
-                                        <ControlTemplate TargetType="RadioButton">
-                                            <ContentPresenter/>
-                                        </ControlTemplate>
-                                    </RadioButton.Template>
-                                    <Border
-                                        Height="100"
-                                        Width="100"
-                                        BorderThickness="1"
-                                        BorderBrush="{DynamicResource window-theme-primary}"
-                                        Background="{DynamicResource window-background}"
-                                        TextElement.Foreground="{DynamicResource window-foreground}">
-                                        <Grid Margin="3">
-                                            <Grid.RowDefinitions>
-                                                <RowDefinition/>
-                                                <RowDefinition/>
-                                                <RowDefinition/>
-                                                <RowDefinition/>
-                                            </Grid.RowDefinitions>
-                                            <Rectangle Grid.Row="0" Fill="{DynamicResource window-theme-primary}"/>
-                                            <Rectangle Grid.Row="1" Fill="{DynamicResource window-theme-primary-disabled}"/>
-                                            <Rectangle Grid.Row="2" Fill="{DynamicResource window-theme-secondary}"/>
-                                            <Rectangle Grid.Row="3" Fill="{DynamicResource window-theme-secondary-disabled}"/>
-                                            <TextBlock Grid.Row="0" TextAlignment="Center" Text="Light" Foreground="{DynamicResource text-dark}"/>
-                                            <TextBlock Grid.Row="1" TextAlignment="Center" Text="Light" Foreground="{DynamicResource text-light}"/>
-                                            <TextBlock Grid.Row="2" TextAlignment="Center" Text="Light" Foreground="{DynamicResource text-muted}"/>
-                                        </Grid>
-                                    </Border>
-                                </RadioButton>
-                                <RadioButton 
-                                    Margin="0,0,5,0"
-                                    GroupName="Theme" 
-                                    VerticalContentAlignment="Center"
-                                    IsChecked="{Binding Path=UserConfiguration.Theme, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static Objects:ThemeType.Dark}}">
-                                    <RadioButton.Resources>
-                                        <ResourceDictionary Source="/myManga;component/Themes/DarkTheme.xaml"/>
-                                    </RadioButton.Resources>
-                                    <RadioButton.Template>
-                                        <ControlTemplate TargetType="RadioButton">
-                                            <ContentPresenter/>
-                                        </ControlTemplate>
-                                    </RadioButton.Template>
-                                    <Border
-                                        Height="100"
-                                        Width="100"
-                                        BorderThickness="1"
-                                        BorderBrush="{DynamicResource window-theme-primary}"
-                                        Background="{DynamicResource window-background}"
-                                        TextElement.Foreground="{DynamicResource window-foreground}">
-                                        <Grid Margin="3">
-                                            <Grid.RowDefinitions>
-                                                <RowDefinition/>
-                                                <RowDefinition/>
-                                                <RowDefinition/>
-                                                <RowDefinition/>
-                                            </Grid.RowDefinitions>
-                                            <Rectangle Grid.Row="0" Fill="{DynamicResource window-theme-primary}"/>
-                                            <Rectangle Grid.Row="1" Fill="{DynamicResource window-theme-primary-disabled}"/>
-                                            <Rectangle Grid.Row="2" Fill="{DynamicResource window-theme-secondary}"/>
-                                            <Rectangle Grid.Row="3" Fill="{DynamicResource window-theme-secondary-disabled}"/>
-                                            <TextBlock Grid.Row="0" TextAlignment="Center" Text="Dark" Foreground="{DynamicResource text-dark}"/>
-                                            <TextBlock Grid.Row="1" TextAlignment="Center" Text="Dark" Foreground="{DynamicResource text-light}"/>
-                                            <TextBlock Grid.Row="2" TextAlignment="Center" Text="Dark" Foreground="{DynamicResource text-muted}"/>
-                                        </Grid>
-                                    </Border>
-                                </RadioButton>
+                            <HeaderedContentControl.Resources>
+                                <Style TargetType="RadioButton" x:Key="{x:Type RadioButton}">
+                                    <Setter Property="Margin" Value="0,0,5,0"/>
+                                    <Setter Property="GroupName" Value="Theme"/>
+                                    <Setter Property="VerticalContentAlignment" Value="Center"/>
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="RadioButton">
+                                                <Border
+                                                    Height="100"
+                                                    Width="100"
+                                                    BorderThickness="1"
+                                                    BorderBrush="{DynamicResource window-theme-primary}"
+                                                    Background="{DynamicResource window-background}"
+                                                    TextElement.Foreground="{DynamicResource window-foreground}">
+                                                    <Grid Margin="3">
+                                                        <Grid.RowDefinitions>
+                                                            <RowDefinition/>
+                                                            <RowDefinition/>
+                                                            <RowDefinition/>
+                                                            <RowDefinition/>
+                                                        </Grid.RowDefinitions>
+                                                        <Rectangle Grid.Row="0" Fill="{DynamicResource window-theme-primary}"/>
+                                                        <Rectangle Grid.Row="1" Fill="{DynamicResource window-theme-primary-disabled}"/>
+                                                        <Rectangle Grid.Row="2" Fill="{DynamicResource window-theme-secondary}"/>
+                                                        <Rectangle Grid.Row="3" Fill="{DynamicResource window-theme-secondary-disabled}"/>
+                                                        <TextBlock Grid.Row="0" TextAlignment="Center" Text="TEXT" Foreground="{DynamicResource text-dark}"/>
+                                                        <TextBlock Grid.Row="1" TextAlignment="Center" Text="TEXT" Foreground="{DynamicResource text-light}"/>
+                                                        <TextBlock Grid.Row="2" TextAlignment="Center" Text="TEXT" Foreground="{DynamicResource text-muted}"/>
+                                                        <TextBlock Grid.Row="3" TextAlignment="Center" Text="TEXT" Foreground="{DynamicResource window-theme-primary}"/>
+                                                    </Grid>
+                                                </Border>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </HeaderedContentControl.Resources>
+                            <StackPanel Orientation="Vertical">
+                                <TextBlock
+                                    Text="Changes the colors of the application." 
+                                    FontSize="13"
+                                    FontStyle="Italic"
+                                    TextWrapping="Wrap"
+                                    Foreground="{DynamicResource text-muted}"/>
+                                <Separator/>
+                                <WrapPanel Orientation="Horizontal">
+                                    <RadioButton
+                                        IsChecked="{Binding Path=UserConfiguration.Theme, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static Objects:ThemeType.Light}}">
+                                        <RadioButton.Resources>
+                                            <ResourceDictionary Source="/myManga;component/Themes/LightTheme.xaml"/>
+                                        </RadioButton.Resources>
+                                    </RadioButton>
+                                    <RadioButton
+                                        IsChecked="{Binding Path=UserConfiguration.Theme, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static Objects:ThemeType.Dark}}">
+                                        <RadioButton.Resources>
+                                            <ResourceDictionary Source="/myManga;component/Themes/DarkTheme.xaml"/>
+                                        </RadioButton.Resources>
+                                    </RadioButton>
+                                </WrapPanel>
                             </StackPanel>
                         </HeaderedContentControl>
 
@@ -208,74 +211,89 @@
             </TabItem>
 
             <TabItem Header="Extensions" Height="40" Width="100">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition/>
-                        <ColumnDefinition Width="5"/>
-                        <ColumnDefinition/>
-                    </Grid.ColumnDefinitions>
+                <StackPanel Orientation="Vertical">
+                    <TextBlock
+                        Text="Setting the order of sites/plugins here will determine the preferred order for downloading. Remember to save." 
+                        FontSize="13"
+                        FontStyle="Italic"
+                        TextWrapping="Wrap"
+                        Foreground="{DynamicResource text-muted}"/>
+                    <TextBlock
+                        Text="To Authenticate with a site, select it in the list below and press 'Authenticate Selected'." 
+                        FontSize="13"
+                        FontStyle="Italic"
+                        TextWrapping="Wrap"
+                        Foreground="{DynamicResource text-muted}"/>
+                    <Separator/>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition Width="5"/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
 
-                    <HeaderedContentControl
-                        Header="Site Extensions"
-                        Grid.Column="0">
-                        <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition/>
-                            </Grid.RowDefinitions>
+                        <HeaderedContentControl
+                            Header="Site Extensions"
+                            Grid.Column="0">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition/>
+                                </Grid.RowDefinitions>
 
-                            <Controls:MetroButton
-                                Grid.Row="0"
-                                Content="Authenticate Selected Site"
-                                Command="{Binding AuthenticateExtensionCommand}"
-                                CommandParameter="{Binding ElementName=SiteExtensionObjects, Path=SelectedItem}"/>
+                                <Controls:MetroButton
+                                    Grid.Row="0"
+                                    Content="Authenticate Selected Site"
+                                    Command="{Binding AuthenticateExtensionCommand}"
+                                    CommandParameter="{Binding ElementName=SiteExtensionObjects, Path=SelectedItem}"/>
 
-                            <ListBox
-                                Grid.Row="1"
-                                x:Name="SiteExtensionObjects"
-                                ItemsSource="{Binding SiteExtensionObjects}"
-                                ItemContainerStyle="{StaticResource ExtensionObjectListBoxItem}"
-                                VirtualizingPanel.ScrollUnit="Pixel"
-                                VirtualizingPanel.VirtualizationMode="Recycling"
-                                HorizontalContentAlignment="Stretch"
-                                DragDrop:Helper.IsDragSource="True"
-                                DragDrop:Helper.IsDropTarget="True"
-                                DragDrop:Helper.DragDropTemplate="{StaticResource ExtensionObjectTemplate}"/>
-                        </Grid>
+                                <ListBox
+                                    Grid.Row="1"
+                                    x:Name="SiteExtensionObjects"
+                                    ItemsSource="{Binding SiteExtensionObjects}"
+                                    ItemContainerStyle="{StaticResource ExtensionObjectListBoxItem}"
+                                    VirtualizingPanel.ScrollUnit="Pixel"
+                                    VirtualizingPanel.VirtualizationMode="Recycling"
+                                    HorizontalContentAlignment="Stretch"
+                                    DragDrop:Helper.IsDragSource="True"
+                                    DragDrop:Helper.IsDropTarget="True"
+                                    DragDrop:Helper.DragDropTemplate="{StaticResource ExtensionObjectTemplate}"/>
+                            </Grid>
 
-                    </HeaderedContentControl>
+                        </HeaderedContentControl>
 
-                    <HeaderedContentControl
-                        Header="Database Extensions"
-                        Grid.Column="2">
-                        <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition/>
-                            </Grid.RowDefinitions>
+                        <HeaderedContentControl
+                            Header="Database Extensions"
+                            Grid.Column="2">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition/>
+                                </Grid.RowDefinitions>
 
-                            <Controls:MetroButton
-                                Grid.Row="0"
-                                Content="Authenticate Selected Database"
-                                Command="{Binding AuthenticateExtensionCommand}"
-                                CommandParameter="{Binding ElementName=DatabaseExtensionObjects, Path=SelectedItem}"/>
+                                <Controls:MetroButton
+                                    Grid.Row="0"
+                                    Content="Authenticate Selected Database"
+                                    Command="{Binding AuthenticateExtensionCommand}"
+                                    CommandParameter="{Binding ElementName=DatabaseExtensionObjects, Path=SelectedItem}"/>
 
-                            <ListBox
-                                Grid.Row="1"
-                                x:Name="DatabaseExtensionObjects"
-                                ItemsSource="{Binding DatabaseExtensionObjects}"
-                                ItemContainerStyle="{StaticResource ExtensionObjectListBoxItem}"
-                                VirtualizingPanel.ScrollUnit="Pixel"
-                                VirtualizingPanel.VirtualizationMode="Recycling"
-                                HorizontalContentAlignment="Stretch"
-                                DragDrop:Helper.IsDragSource="True"
-                                DragDrop:Helper.IsDropTarget="True"
-                                DragDrop:Helper.DragDropTemplate="{StaticResource ExtensionObjectTemplate}"/>
-                        </Grid>
+                                <ListBox
+                                    Grid.Row="1"
+                                    x:Name="DatabaseExtensionObjects"
+                                    ItemsSource="{Binding DatabaseExtensionObjects}"
+                                    ItemContainerStyle="{StaticResource ExtensionObjectListBoxItem}"
+                                    VirtualizingPanel.ScrollUnit="Pixel"
+                                    VirtualizingPanel.VirtualizationMode="Recycling"
+                                    HorizontalContentAlignment="Stretch"
+                                    DragDrop:Helper.IsDragSource="True"
+                                    DragDrop:Helper.IsDropTarget="True"
+                                    DragDrop:Helper.DragDropTemplate="{StaticResource ExtensionObjectTemplate}"/>
+                            </Grid>
 
-                    </HeaderedContentControl>
+                        </HeaderedContentControl>
 
-                </Grid>
+                    </Grid>
+                </StackPanel>
             </TabItem>
 
             <TabItem Header="Advanced" Height="40" Width="100">
@@ -447,10 +465,12 @@
             Width="{Binding ActualWidth, ElementName=tabItem, Mode=OneWay}" Margin="2,0,0,0">
 
             <Controls:MetroButton
+                Height="39"
                 Content="Save"
                 Command="{Binding SaveUserConfigurationCommand}"/>
 
             <Controls:MetroButton
+                Height="39"
                 Content="Cancel"
                 Command="{Binding CancelConfigurationCommand}"/>
 

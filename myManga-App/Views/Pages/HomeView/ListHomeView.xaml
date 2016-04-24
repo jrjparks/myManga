@@ -47,7 +47,7 @@
             ItemContainerStyle="{StaticResource DetailsMangaCacheObjectListBoxItem}"
             SelectedItem="{Binding SelectedMangaCacheObject}"
             ItemsSource="{Binding Path=MangaCacheObjects, Mode=OneWay, Source={x:Static Application.Current}}"
-            Padding="0,24,0,26"/>
+            Padding="0,40,0,40"/>
 
         <Grid Margin="0,0,1,0">
             <Grid.RowDefinitions>
@@ -57,7 +57,8 @@
             </Grid.RowDefinitions>
 
             <Grid
-                TextElement.FontSize="16">
+                TextElement.FontSize="18"
+                Height="39">
 
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
@@ -104,6 +105,8 @@
             <Controls:MetroButton
 			    x:Name="RefreshListButton"
                 Grid.Row="2"
+                Height="39"
+                FontSize="18"
 			    Content="Refresh List"
                 VerticalContentAlignment="Center"
 			    Command="{Binding RefreshListCommand}"/>
@@ -128,11 +131,11 @@
         </Grid>
 
         <Border
-			HorizontalAlignment="Right" 
+			HorizontalAlignment="Left" 
 			VerticalAlignment="Top"
             BorderBrush="{DynamicResource window-theme-primary}"
-            BorderThickness="1,1,1,0"
-            Margin="0,-33,200,0"
+            BorderThickness="1,0,1,1"
+            Margin="350,-1,0,0"
             Grid.ColumnSpan="3">
             <StackPanel 
                 Orientation="Horizontal"

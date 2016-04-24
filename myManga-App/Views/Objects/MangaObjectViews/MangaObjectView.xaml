@@ -236,6 +236,7 @@
             VerticalScrollBarVisibility="Visible"
             PanningMode="VerticalOnly">
             <TextBlock
+                Padding="5"
 			    Text="{Binding Description}"
 			    TextWrapping="WrapWithOverflow"
 			    FontSize="16"

@@ -82,43 +82,13 @@ namespace myManga_App.ViewModels
         #endregion
 
         #endregion
-
-        #region Header Buttons
-
-        #region Home
-        private DelegateCommand homeCommand;
-        public ICommand HomeCommand
-        { get { return homeCommand ?? (homeCommand = new DelegateCommand(PagesHomeViewModel.PullFocus)); } }
+        
+        #region Navigate Pages
+        private DelegateCommand<BaseViewModel> navigatePagesCommand;
+        public ICommand NavigatePagesCommand
+        { get { return navigatePagesCommand ?? (navigatePagesCommand = new DelegateCommand<BaseViewModel>(vm => vm.PullFocus(), vm => !Equals(vm, null) && vm.CanPullFocus())); } }
         #endregion
-
-        #region Search
-        private DelegateCommand searchCommand;
-        public ICommand SearchCommand
-        { get { return searchCommand ?? (searchCommand = new DelegateCommand(PagesSearchViewModel.PullFocus)); } }
-        #endregion
-
-        #region Settings
-        private DelegateCommand _SettingsCommand;
-        public ICommand SettingsCommand
-        { get { return _SettingsCommand ?? (_SettingsCommand = new DelegateCommand(PagesSettingsViewModel.PullFocus)); } }
-        #endregion
-
-        #region Read
-        private DelegateCommand readCommand;
-        public ICommand ReadCommand
-        { get { return readCommand ?? (readCommand = new DelegateCommand(PagesChapterReaderViewModel.PullFocus, CanOpenRead)); } }
-
-        private Boolean CanOpenRead()
-        {
-            if (Equals(PagesChapterReaderViewModel, null)) return false;
-            if (Equals(PagesChapterReaderViewModel.MangaObject, null)) return false;
-            if (Equals(PagesChapterReaderViewModel.ChapterObject, null)) return false;
-            return true;
-        }
-        #endregion
-
-        #endregion
-
+        
         #region Download Active
         private Timer ActiveDownloadsTimer
         { get; set; }
@@ -153,6 +123,7 @@ namespace myManga_App.ViewModels
                         if (!Equals(ContentViewModel, null))
                         { ContentViewModel.LostFocus(); }
                         ContentViewModel = RequestingView;
+                        RequestingView.Focused();
                     }
                 }, "FocusRequest");
 

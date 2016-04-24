@@ -53,55 +53,61 @@
             ItemContainerStyle="{StaticResource DetailsMangaObjectListBoxItem}"
             SelectedItem="{Binding SelectedSearchResultMangaObject}"
             ItemsSource="{Binding Path=SearchResultMangaObjectCollection, Mode=OneWay}"
-            Padding="0,24,0,0"/>
+            Padding="0,40,0,0"/>
 
-        <Grid
-            x:Name="SearchGrid"
+        <Border
             VerticalAlignment="Top"
-            TextElement.FontSize="16"
-            Margin="0,0,1,0">
+            HorizontalAlignment="Left"
+            Width="299"
+            Height="40"
+            TextElement.FontSize="18"
+            BorderThickness="0,0,1,1"
+            BorderBrush="{DynamicResource window-theme-primary}">
+            <Grid
+                x:Name="SearchGrid">
 
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="1*"/>
-                <ColumnDefinition Width="Auto"/>
-            </Grid.ColumnDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
 
-            <Grid.InputBindings>
-                <KeyBinding Command="{Binding Command, ElementName=SearchButton}" CommandParameter="{Binding CommandParameter, ElementName=SearchButton}" Key="Return"/>
-                <KeyBinding Command="{Binding Command, ElementName=ClearSearchButton}" Key="Esc"/>
-            </Grid.InputBindings>
+                <Grid.InputBindings>
+                    <KeyBinding Command="{Binding Command, ElementName=SearchButton}" CommandParameter="{Binding CommandParameter, ElementName=SearchButton}" Key="Return"/>
+                    <KeyBinding Command="{Binding Command, ElementName=ClearSearchButton}" Key="Esc"/>
+                </Grid.InputBindings>
 
-            <Controls:MetroButton
-				x:Name="SearchButton"
-				Grid.Column="0"
-				FontFamily="{DynamicResource OpenIconic}"
-				Content="{DynamicResource oi-magnifying-glass}"
-				Command="{Binding SearchAsyncCommand}"
-                CommandParameter="{Binding SearchTerm}"
-				ToolTip="Search"
-				Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"/>
+                <Controls:MetroButton
+				    x:Name="SearchButton"
+				    Grid.Column="0"
+				    FontFamily="{DynamicResource OpenIconic}"
+				    Content="{DynamicResource oi-magnifying-glass}"
+				    Command="{Binding SearchAsyncCommand}"
+                    CommandParameter="{Binding SearchTerm}"
+				    ToolTip="Search"
+				    Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"/>
 
-            <TextBox
-				x:Name="SearchBox"
-				Grid.Column="1"
-                VerticalAlignment="Center" 
-                BorderBrush="{DynamicResource window-theme-primary}"
-                BorderThickness="0,0,0,1"
-                SelectionBrush="{DynamicResource window-theme-primary}"
-                Background="{x:Null}"
-				Text="{Binding SearchTerm, UpdateSourceTrigger=PropertyChanged}"/>
+                <TextBox
+				    x:Name="SearchBox"
+				    Grid.Column="1"
+                    VerticalAlignment="Center" 
+                    BorderBrush="{DynamicResource window-theme-primary}"
+                    BorderThickness="0,0,0,1"
+                    SelectionBrush="{DynamicResource window-theme-primary}"
+                    Background="{x:Null}"
+				    Text="{Binding SearchTerm, UpdateSourceTrigger=PropertyChanged}"/>
 
-            <Controls:MetroButton
-				x:Name="ClearSearchButton"
-				Grid.Column="2"
-				FontFamily="{DynamicResource OpenIconic}"
-				Content="{DynamicResource oi-delete}"
-				Command="{Binding ClearSearchTermCommand}"
-				ToolTip="Clear Search"
-				Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"/>
+                <Controls:MetroButton
+				    x:Name="ClearSearchButton"
+				    Grid.Column="2"
+				    FontFamily="{DynamicResource OpenIconic}"
+				    Content="{DynamicResource oi-delete}"
+				    Command="{Binding ClearSearchTermCommand}"
+				    ToolTip="Clear Search"
+				    Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"/>
 
-        </Grid>
+            </Grid>
+        </Border>
 
         <Grid
             Grid.Column="2"

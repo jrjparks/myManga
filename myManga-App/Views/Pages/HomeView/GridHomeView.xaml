@@ -69,14 +69,14 @@
         <Border
             HorizontalAlignment="Left"
             VerticalAlignment="Top"
+            Width="299"
+            Height="40"
             Background="{DynamicResource window-background}"
             BorderBrush="{DynamicResource window-theme-primary}"
             BorderThickness="0,0,1,1"
-            Height="40">
+            TextElement.FontSize="18">
 
-            <Grid
-                Width="300"
-                TextElement.FontSize="16">
+            <Grid>
 
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>

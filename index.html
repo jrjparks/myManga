@@ -168,6 +168,18 @@
         } catch (err) {}
     </script>
 
+    <script type="text/javascript">
+        // Open imgur images in a new tab onclick.
+        var imgs = document.querySelectorAll('img[src*="imgur.com"]');
+        var imgsArr = Array.prototype.slice.call(imgs);
+        imgsArr.forEach(function(img) {
+            img.style.cursor = 'pointer';
+            img.onclick = function(e) {
+                window.open(this.src, '_blank');
+            };
+        });
+    </script>
+
 </body>
 
 </html>

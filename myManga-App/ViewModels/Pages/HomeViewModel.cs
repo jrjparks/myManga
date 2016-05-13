@@ -21,6 +21,7 @@ namespace myManga_App.ViewModels.Pages
         public HomeViewModel()
             : base(SupportsViewTypeChange: true)
         {
+            FilterMode = FilterOptions.Default;
             MangaCacheObjectDialog = new MangaCacheObjectDialogViewModel();
             MangaCacheObjectDialog.MangaCacheObjectDetail = new MangaCacheObjectDetailViewModel();
 
@@ -141,36 +142,82 @@ namespace myManga_App.ViewModels.Pages
         private ICollectionView MangaCacheObjectView
         { get; set; }
 
+        [Flags]
+        public enum GroupingOptions
+        {
+            Default = 0,
+            Ignore_New = 1 << 0,
+            Ignore_MoreToRead = 1 << 1,
+        }
+
         private void ConfigureMangaArchiveCacheObjectView()
         {
             MangaCacheObjectView = CollectionViewSource.GetDefaultView(App.MangaCacheObjects);
 
             if (MangaCacheObjectView.CanGroup)
             {
-                MangaCacheObjectView.GroupDescriptions.Clear();
-                MangaCacheObjectView.GroupDescriptions.Add(new PropertyGroupDescription("IsNewManga"));
-                MangaCacheObjectView.GroupDescriptions.Add(new PropertyGroupDescription("HasMoreToRead"));
-
+                ApplyGrouping(MangaCacheObjectView, "IsNewManga", "HasMoreToRead");
                 ActivateLiveGrouping(MangaCacheObjectView, "IsNewManga", "HasMoreToRead");
             }
             if (MangaCacheObjectView.CanSort)
             {
-                MangaCacheObjectView.SortDescriptions.Clear();
-                MangaCacheObjectView.SortDescriptions.Add(new SortDescription("IsNewManga", ListSortDirection.Descending));
-                MangaCacheObjectView.SortDescriptions.Add(new SortDescription("HasMoreToRead", ListSortDirection.Descending));
-                MangaCacheObjectView.SortDescriptions.Add(new SortDescription("MangaObject.Name", ListSortDirection.Ascending));
-
+                ApplySorting(MangaCacheObjectView,
+                    new SortDescription("IsNewManga", ListSortDirection.Descending),
+                    new SortDescription("HasMoreToRead", ListSortDirection.Descending),
+                    new SortDescription("MangaObject.Name", ListSortDirection.Ascending));
                 ActivateLiveSorting(MangaCacheObjectView, "IsNewManga", "HasMoreToRead", "MangaObject.Name");
             }
             MangaCacheObjectView.Filter = FilterMangaCacheObject;
             ActivateLiveFiltering(MangaCacheObjectView, "MangaObject", "BookmarkObject");
         }
 
+        [Flags]
+        public enum FilterOptions
+        {
+            Default = 0,
+            Hide_Unread = 1 << 0,
+            Hide_Read = 1 << 1,
+            Hide_New = 1 << 2,
+        }
+        public FilterOptions FilterMode { get; set; }
+
         private Boolean FilterMangaCacheObject(object item)
         {
             MangaCacheObject MangaCacheObject = item as MangaCacheObject;
             if (String.IsNullOrWhiteSpace(SearchTerm)) return true;
             return MangaCacheObject.MangaObject.IsNameMatch(SearchTerm);
+        }
+
+        private void ApplyGrouping(ICollectionView collectionView, params String[] groupPropertyNames)
+        {
+            IList<PropertyGroupDescription> groupDescriptions =
+                (from groupPropertyName in groupPropertyNames
+                 select new PropertyGroupDescription(groupPropertyName)).ToList();
+            ApplyGrouping(collectionView, groupDescriptions);
+        }
+        private void ApplyGrouping(ICollectionView collectionView, params PropertyGroupDescription[] groupDescriptions)
+        { ApplyGrouping(collectionView, groupDescriptions.ToList()); }
+        private void ApplyGrouping(ICollectionView collectionView, IList<PropertyGroupDescription> groupDescriptions)
+        {
+            collectionView.GroupDescriptions.Clear();
+            foreach (PropertyGroupDescription groupDescription in groupDescriptions)
+            { collectionView.GroupDescriptions.Add(groupDescription); }
+        }
+
+        private void ApplySorting(ICollectionView collectionView, params String[] sortPropertyNames)
+        {
+            IList<SortDescription> sortDescriptions =
+                (from sortPropertyName in sortPropertyNames
+                 select new SortDescription(sortPropertyName, ListSortDirection.Ascending)).ToList();
+            ApplySorting(collectionView, sortDescriptions.ToList());
+        }
+        private void ApplySorting(ICollectionView collectionView, params SortDescription[] sortDescriptions)
+        { ApplySorting(collectionView, sortDescriptions.ToList()); }
+        private void ApplySorting(ICollectionView collectionView, IList<SortDescription> sortDescriptions)
+        {
+            collectionView.SortDescriptions.Clear();
+            foreach (SortDescription sortDescription in sortDescriptions)
+            { collectionView.SortDescriptions.Add(sortDescription); }
         }
 
         private void ActivateLiveSorting(ICollectionView collectionView, params String[] propertyNames)

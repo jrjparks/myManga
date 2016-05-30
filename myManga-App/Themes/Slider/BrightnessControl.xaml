@@ -4,6 +4,7 @@
     xmlns:ScreenBrightness="clr-namespace:myManga_App.Controls.ScreenBrightness">
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="/myManga;component/Themes/CoreResourceDictionary.xaml"/>
+        <ResourceDictionary Source="/myManga;component/Resources/Images/OpenIconic.xaml"/>
     </ResourceDictionary.MergedDictionaries>
 
     <Style TargetType="{x:Type RepeatButton}" x:Key="BrightnessControlRepeatButton">
@@ -33,30 +34,30 @@
                         BorderThickness="3"
                         BorderBrush="{DynamicResource window-foreground-disabled}"
                         Background="{DynamicResource window-foreground-disabled}">
-                        <TextBlock
+                        <Viewbox
                             x:Name="ThumbIcon"
-                            FontFamily="{DynamicResource OpenIconic}" 
-                            Text="{DynamicResource oi-lightbulb}" 
-                            Foreground="{DynamicResource window-theme-primary}"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            Margin="0,-3,0,0"/>
+                            RenderTransform="1 0 0 1 -2 0">
+                            <Path
+                                x:Name="ThumbIconPath" Margin="1"
+                                Style="{StaticResource iconic-lightbulb}"
+                                Fill="{DynamicResource window-theme-primary}"/>
+                        </Viewbox>
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
                             <Setter TargetName="ThumbBorder" Property="Background" Value="{DynamicResource window-foreground-disabled}"/>
                             <Setter TargetName="ThumbBorder" Property="BorderBrush" Value="{DynamicResource window-theme-primary}"/>
-                            <Setter TargetName="ThumbIcon" Property="Foreground" Value="{DynamicResource window-theme-primary}"/>
+                            <Setter TargetName="ThumbIconPath" Property="Fill" Value="{DynamicResource window-theme-primary}"/>
                         </Trigger>
                         <Trigger Property="IsDragging" Value="True">
                             <Setter TargetName="ThumbBorder" Property="Background" Value="{DynamicResource window-theme-primary}"/>
                             <Setter TargetName="ThumbBorder" Property="BorderBrush" Value="{DynamicResource window-theme-secondary}"/>
-                            <Setter TargetName="ThumbIcon" Property="Foreground" Value="{DynamicResource window-theme-secondary}"/>
+                            <Setter TargetName="ThumbIconPath" Property="Fill" Value="{DynamicResource window-theme-secondary}"/>
                         </Trigger>
                         <Trigger Property="IsEnabled" Value="False">
                             <Setter TargetName="ThumbBorder" Property="Background" Value="{DynamicResource window-foreground-disabled}"/>
                             <Setter TargetName="ThumbBorder" Property="BorderBrush" Value="{DynamicResource window-foreground-disabled}"/>
-                            <Setter TargetName="ThumbIcon" Property="Foreground" Value="{DynamicResource window-foreground-disabled}"/>
+                            <Setter TargetName="ThumbIconPath" Property="Fill" Value="{DynamicResource window-foreground-disabled}"/>
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>

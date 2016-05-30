@@ -4,7 +4,7 @@
     xmlns:local="clr-namespace:myManga_App.Views.Objects.Cache.MangaCacheObjectViews"
     xmlns:converters="clr-namespace:myManga_App.Converters">
     <ResourceDictionary.MergedDictionaries>
-        <ResourceDictionary Source="/myManga;component/Themes/CoreResourceDictionary.xaml"/>
+        <ResourceDictionary Source="/myManga;component/Resources/Images/OpenIconic.xaml"/>
         <ResourceDictionary Source="/myManga;component/Themes/ListBox/ListBoxItems.xaml"/>
     </ResourceDictionary.MergedDictionaries>
     <converters:StringListToCSV x:Key="StringListToCSV"/>
@@ -92,17 +92,19 @@
                                     StrokeThickness="1"
                                     Fill="{DynamicResource window-theme-primary}"
                                     Stroke="{DynamicResource window-theme-secondary}"/>
-                                <TextBlock
+                                <Viewbox
                                     x:Name="Icon"
                                     HorizontalAlignment="Left"
                                     VerticalAlignment="Top"
-                                    FontFamily="{DynamicResource OpenIconic}"
-                                    FontSize="20"
+                                    Height="24"
+                                    Width="{Binding Height, Mode=OneWay, RelativeSource={RelativeSource Self}}"
                                     Margin="3">
-                                    <TextBlock.Effect>
-                                        <DropShadowEffect Color="{TemplateBinding Background}" ShadowDepth="0"/>
-                                    </TextBlock.Effect>
-                                </TextBlock>
+                                    <Path x:Name="IconPath" Style="{StaticResource iconic}" Fill="{TemplateBinding Foreground}">
+                                        <Path.Effect>
+                                            <DropShadowEffect Color="{TemplateBinding Background}" ShadowDepth="0"/>
+                                        </Path.Effect>
+                                    </Path>
+                                </Viewbox>
                             </Grid>
                         </Grid>
 
@@ -118,11 +120,11 @@
                         </Trigger>
                         <DataTrigger Binding="{Binding HasMoreToRead}" Value="True">
                             <Setter TargetName="IconGrid" Property="Visibility" Value="Visible"/>
-                            <Setter TargetName="Icon" Property="Text" Value="{DynamicResource oi-badge}"/>
+                            <Setter TargetName="IconPath" Property="Style" Value="{StaticResource iconic-badge}"/>
                         </DataTrigger>
                         <DataTrigger Binding="{Binding IsNewManga}" Value="True">
                             <Setter TargetName="IconGrid" Property="Visibility" Value="Visible"/>
-                            <Setter TargetName="Icon" Property="Text" Value="{DynamicResource oi-star}"/>
+                            <Setter TargetName="IconPath" Property="Style" Value="{DynamicResource iconic-star}"/>
                         </DataTrigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -231,22 +233,19 @@
                                     StrokeThickness="1"
                                     Fill="{DynamicResource window-theme-primary}"
                                     Stroke="{DynamicResource window-theme-secondary}"/>
-                                <Grid
+                                <Viewbox
+                                    x:Name="Icon"
                                     HorizontalAlignment="Right"
                                     VerticalAlignment="Top"
                                     Width="20"
                                     Height="20"
                                     Margin="3">
-                                    <TextBlock
-                                        x:Name="Icon"
-                                        TextAlignment="Center"
-                                        FontFamily="{DynamicResource OpenIconic}"
-                                        FontSize="20">
-                                        <TextBlock.Effect>
+                                    <Path x:Name="IconPath" Style="{StaticResource iconic}" Fill="{TemplateBinding Foreground}">
+                                        <Path.Effect>
                                             <DropShadowEffect Color="{TemplateBinding Background}" ShadowDepth="0"/>
-                                        </TextBlock.Effect>
-                                    </TextBlock>
-                                </Grid>
+                                        </Path.Effect>
+                                    </Path>
+                                </Viewbox>
                             </Grid>
 
                         </Grid>
@@ -263,11 +262,11 @@
                         </Trigger>
                         <DataTrigger Binding="{Binding HasMoreToRead}" Value="True">
                             <Setter TargetName="IconGrid" Property="Visibility" Value="Visible"/>
-                            <Setter TargetName="Icon" Property="Text" Value="{DynamicResource oi-badge}"/>
+                            <Setter TargetName="IconPath" Property="Style" Value="{StaticResource iconic-badge}"/>
                         </DataTrigger>
                         <DataTrigger Binding="{Binding IsNewManga}" Value="True">
                             <Setter TargetName="IconGrid" Property="Visibility" Value="Visible"/>
-                            <Setter TargetName="Icon" Property="Text" Value="{DynamicResource oi-star}"/>
+                            <Setter TargetName="IconPath" Property="Style" Value="{StaticResource iconic-star}"/>
                         </DataTrigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>

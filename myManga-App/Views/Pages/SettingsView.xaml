@@ -462,6 +462,8 @@
             Orientation="Vertical"
             HorizontalAlignment="Left"
             VerticalAlignment="Bottom"
+            TextElement.FontSize="16"
+            TextElement.FontWeight="Bold"
             Width="{Binding ActualWidth, ElementName=tabItem, Mode=OneWay}" Margin="2,0,0,0">
 
             <Controls:MetroButton

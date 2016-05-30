@@ -1,0 +1,1110 @@
+﻿<!--Open Iconic (https://useiconic.com/open)-->
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!--BEGIN account-login-->
+    <Geometry x:Key="iconic-geometry-account-login">M3 0v1h4v5h-4v1h5v-7h-5zm1 2v1h-4v1h4v1l2-1.5-2-1.5z</Geometry>
+    <Path x:Key="iconic-path-account-login" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-account-login}"/>
+    <!--END account-login-->
+
+    <!--BEGIN account-logout-->
+    <Geometry x:Key="iconic-geometry-account-logout">M3 0v1h4v5h-4v1h5v-7h-5zm-1 2l-2 1.5 2 1.5v-1h4v-1h-4v-1z</Geometry>
+    <Path x:Key="iconic-path-account-logout" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-account-logout}"/>
+    <!--END account-logout-->
+
+    <!--BEGIN action-redo-->
+    <Geometry x:Key="iconic-geometry-action-redo">M3.5 0c-1.93 0-3.5 1.57-3.5 3.5 0-1.38 1.12-2.5 2.5-2.5s2.5 1.12 2.5 2.5v.5h-1l2 2 2-2h-1v-.5c0-1.93-1.57-3.5-3.5-3.5z</Geometry>
+    <Path x:Key="iconic-path-action-redo" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-action-redo}" RenderTransform="1 0 0 1 0 1"/>
+    <!--END action-redo-->
+
+    <!--BEGIN action-undo-->
+    <Geometry x:Key="iconic-geometry-action-undo">M4.5 0c-1.93 0-3.5 1.57-3.5 3.5v.5h-1l2 2 2-2h-1v-.5c0-1.38 1.12-2.5 2.5-2.5s2.5 1.12 2.5 2.5c0-1.93-1.57-3.5-3.5-3.5z</Geometry>
+    <Path x:Key="iconic-path-action-undo" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-action-undo}" RenderTransform="1 0 0 1 0 1"/>
+    <!--END action-undo-->
+
+    <!--BEGIN align-center-->
+    <Geometry x:Key="iconic-geometry-align-center">M0 0v1h8v-1h-8zm1 2v1h6v-1h-6zm-1 2v1h8v-1h-8zm1 2v1h6v-1h-6z</Geometry>
+    <Path x:Key="iconic-path-align-center" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-align-center}"/>
+    <!--END align-center-->
+
+    <!--BEGIN align-left-->
+    <Geometry x:Key="iconic-geometry-align-left">M0 0v1h8v-1h-8zm0 2v1h6v-1h-6zm0 2v1h8v-1h-8zm0 2v1h6v-1h-6z</Geometry>
+    <Path x:Key="iconic-path-align-left" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-align-left}"/>
+    <!--END align-left-->
+
+    <!--BEGIN align-right-->
+    <Geometry x:Key="iconic-geometry-align-right">M0 0v1h8v-1h-8zm2 2v1h6v-1h-6zm-2 2v1h8v-1h-8zm2 2v1h6v-1h-6z</Geometry>
+    <Path x:Key="iconic-path-align-right" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-align-right}"/>
+    <!--END align-right-->
+
+    <!--BEGIN aperture-->
+    <Geometry x:Key="iconic-geometry-aperture">M4 0c-.69 0-1.34.19-1.91.5l3.22 2.34.75-2.25c-.6-.36-1.31-.59-2.06-.59zm-2.75 1.13c-.76.73-1.25 1.74-1.25 2.88 0 .25.02.48.06.72l3.09-2.22-1.91-1.38zm5.63.13l-1.22 3.75h2.19c.08-.32.16-.65.16-1 0-1.07-.44-2.03-1.13-2.75zm-4.72 3.22l-1.75 1.25c.55 1.13 1.6 1.99 2.88 2.22l-1.13-3.47zm1.56 1.53l.63 1.97c1.33-.12 2.46-.88 3.09-1.97h-3.72z</Geometry>
+    <Path x:Key="iconic-path-aperture" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-aperture}"/>
+    <!--END aperture-->
+
+    <!--BEGIN arrow-bottom-->
+    <Geometry x:Key="iconic-geometry-arrow-bottom">M2 0v5h-2l2.53 3 2.47-3h-2v-5h-1z</Geometry>
+    <Path x:Key="iconic-path-arrow-bottom" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-arrow-bottom}" RenderTransform="1 0 0 1 1 0"/>
+    <!--END arrow-bottom-->
+
+    <!--BEGIN arrow-circle-bottom-->
+    <Geometry x:Key="iconic-geometry-arrow-circle-bottom">M4 0c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm-1 1h2v3h2l-3 3-3-3h2v-3z</Geometry>
+    <Path x:Key="iconic-path-arrow-circle-bottom" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-arrow-circle-bottom}"/>
+    <!--END arrow-circle-bottom-->
+
+    <!--BEGIN arrow-circle-left-->
+    <Geometry x:Key="iconic-geometry-arrow-circle-left">M4 0c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm0 1v2h3v2h-3v2l-3-3 3-3z</Geometry>
+    <Path x:Key="iconic-path-arrow-circle-left" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-arrow-circle-left}"/>
+    <!--END arrow-circle-left-->
+
+    <!--BEGIN arrow-circle-right-->
+    <Geometry x:Key="iconic-geometry-arrow-circle-right">M4 0c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm0 1l3 3-3 3v-2h-3v-2h3v-2z</Geometry>
+    <Path x:Key="iconic-path-arrow-circle-right" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-arrow-circle-right}"/>
+    <!--END arrow-circle-right-->
+
+    <!--BEGIN arrow-circle-top-->
+    <Geometry x:Key="iconic-geometry-arrow-circle-top">M4 0c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm0 1l3 3h-2v3h-2v-3h-2l3-3z</Geometry>
+    <Path x:Key="iconic-path-arrow-circle-top" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-arrow-circle-top}"/>
+    <!--END arrow-circle-top-->
+
+    <!--BEGIN arrow-left-->
+    <Geometry x:Key="iconic-geometry-arrow-left">M3 0l-3 2.53 3 2.47v-2h5v-1h-5v-2z</Geometry>
+    <Path x:Key="iconic-path-arrow-left" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-arrow-left}" RenderTransform="1 0 0 1 0 1"/>
+    <!--END arrow-left-->
+
+    <!--BEGIN arrow-right-->
+    <Geometry x:Key="iconic-geometry-arrow-right">M5 0v2h-5v1h5v2l3-2.53-3-2.47z</Geometry>
+    <Path x:Key="iconic-path-arrow-right" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-arrow-right}" RenderTransform="1 0 0 1 0 1"/>
+    <!--END arrow-right-->
+
+    <!--BEGIN arrow-thick-bottom-->
+    <Geometry x:Key="iconic-geometry-arrow-thick-bottom">M2 0v5h-2l3.03 3 2.97-3h-2v-5h-2z</Geometry>
+    <Path x:Key="iconic-path-arrow-thick-bottom" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-arrow-thick-bottom}" RenderTransform="1 0 0 1 1 0"/>
+    <!--END arrow-thick-bottom-->
+
+    <!--BEGIN arrow-thick-left-->
+    <Geometry x:Key="iconic-geometry-arrow-thick-left">M3 0l-3 3.03 3 2.97v-2h5v-2h-5v-2z</Geometry>
+    <Path x:Key="iconic-path-arrow-thick-left" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-arrow-thick-left}" RenderTransform="1 0 0 1 0 1"/>
+    <!--END arrow-thick-left-->
+
+    <!--BEGIN arrow-thick-right-->
+    <Geometry x:Key="iconic-geometry-arrow-thick-right">M5 0v2h-5v2h5v2l3-3.03-3-2.97z</Geometry>
+    <Path x:Key="iconic-path-arrow-thick-right" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-arrow-thick-right}" RenderTransform="1 0 0 1 0 1"/>
+    <!--END arrow-thick-right-->
+
+    <!--BEGIN arrow-thick-top-->
+    <Geometry x:Key="iconic-geometry-arrow-thick-top">M2.97 0l-2.97 3h2v5h2v-5h2l-3.03-3z</Geometry>
+    <Path x:Key="iconic-path-arrow-thick-top" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-arrow-thick-top}" RenderTransform="1 0 0 1 1 0"/>
+    <!--END arrow-thick-top-->
+
+    <!--BEGIN arrow-top-->
+    <Geometry x:Key="iconic-geometry-arrow-top">M2.47 0l-2.47 3h2v5h1v-5h2l-2.53-3z</Geometry>
+    <Path x:Key="iconic-path-arrow-top" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-arrow-top}" RenderTransform="1 0 0 1 1 0"/>
+    <!--END arrow-top-->
+
+    <!--BEGIN audio-spectrum-->
+    <Geometry x:Key="iconic-geometry-audio-spectrum">M4 0v8h1v-8h-1zm-2 1v6h1v-6h-1zm4 1v4h1v-4h-1zm-6 1v2h1v-2h-1z</Geometry>
+    <Path x:Key="iconic-path-audio-spectrum" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-audio-spectrum}"/>
+    <!--END audio-spectrum-->
+
+    <!--BEGIN audio-->
+    <Path x:Key="iconic-path-audio" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-audio}" RenderTransform="1 0 0 1 0 1"/>
+    <!--END audio-->
+
+    <!--BEGIN badge-->
+    <Geometry x:Key="iconic-geometry-badge">M2 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm-1 4.81v3.19l1-1 1 1v-3.19c-.31.11-.65.19-1 .19s-.69-.08-1-.19z</Geometry>
+    <Path x:Key="iconic-path-badge" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-badge}" RenderTransform="1 0 0 1 2 0"/>
+    <!--END badge-->
+
+    <!--BEGIN ban-->
+    <Geometry x:Key="iconic-geometry-ban">M4 0c-2.2 0-4 1.8-4 4s1.8 4 4 4 4-1.8 4-4-1.8-4-4-4zm0 1c.66 0 1.26.21 1.75.56l-4.19 4.19c-.35-.49-.56-1.09-.56-1.75 0-1.66 1.34-3 3-3zm2.44 1.25c.35.49.56 1.09.56 1.75 0 1.66-1.34 3-3 3-.66 0-1.26-.21-1.75-.56l4.19-4.19z</Geometry>
+    <Path x:Key="iconic-path-ban" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-ban}"/>
+    <!--END ban-->
+
+    <!--BEGIN bar-chart-->
+    <Geometry x:Key="iconic-geometry-bar-chart">M0 0v7h8v-1h-7v-6h-1zm5 0v5h2v-5h-2zm-3 2v3h2v-3h-2z</Geometry>
+    <Path x:Key="iconic-path-bar-chart" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-bar-chart}"/>
+    <!--END bar-chart-->
+
+    <!--BEGIN basket-->
+    <Geometry x:Key="iconic-geometry-basket">M3.97 0c-.13.01-.26.08-.34.19l-2.34 2.81h-1.28v1h1v3.66c0 .18.16.34.34.34h5.31c.18 0 .34-.16.34-.34v-3.66h1v-1h-1.28c-.27-.33-2.39-2.86-2.41-2.88-.11-.09-.22-.14-.34-.13zm.03 1.28l1.44 1.72h-2.88l1.44-1.72zm-1.5 3.72c.28 0 .5.22.5.5v1c0 .28-.22.5-.5.5s-.5-.22-.5-.5v-1c0-.28.22-.5.5-.5zm3 0c.28 0 .5.22.5.5v1c0 .28-.22.5-.5.5s-.5-.22-.5-.5v-1c0-.28.22-.5.5-.5z</Geometry>
+    <Path x:Key="iconic-path-basket" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-basket}"/>
+    <!--END basket-->
+
+    <!--BEGIN battery-empty-->
+    <Geometry x:Key="iconic-geometry-battery-empty">M.09 0c-.06 0-.09.04-.09.09v5.81c0 .05.04.09.09.09h6.81c.05 0 .09-.04.09-.09v-1.91h1v-2h-1v-1.91c0-.06-.04-.09-.09-.09h-6.81zm.91 1h5v4h-5v-4z</Geometry>
+    <Path x:Key="iconic-path-battery-empty" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-battery-empty}" RenderTransform="1 0 0 1 0 1"/>
+    <!--END battery-empty-->
+
+    <!--BEGIN battery-full-->
+    <Geometry x:Key="iconic-geometry-battery-full">M.09 0c-.06 0-.09.04-.09.09v5.81c0 .05.04.09.09.09h6.81c.05 0 .09-.04.09-.09v-1.91h1v-2h-1v-1.91c0-.06-.04-.09-.09-.09h-6.81z</Geometry>
+    <Path x:Key="iconic-path-battery-full" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-battery-full}" RenderTransform="1 0 0 1 0 1"/>
+    <!--END battery-full-->
+
+    <!--BEGIN beaker-->
+    <Geometry x:Key="iconic-geometry-beaker">M1.34 0a.5.5 0 0 0 .16 1h.5v1.41c-.09.17-1.2 2.31-1.66 3.09-.16.26-.34.61-.34 1.06 0 .39.15.77.41 1.03s.64.41 1.03.41h5.13c.38 0 .74-.16 1-.41h.03c.26-.26.41-.64.41-1.03 0-.45-.19-.8-.34-1.06-.46-.78-1.57-2.92-1.66-3.09v-1.41h.5a.5.5 0 1 0 0-1h-5a.5.5 0 0 0-.09 0 .5.5 0 0 0-.06 0zm1.66 1h2v1.63l.06.09s.63 1.23 1.19 2.28h-4.5c.56-1.05 1.19-2.28 1.19-2.28l.06-.09v-1.63z</Geometry>
+    <Path x:Key="iconic-path-beaker" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-beaker}"/>
+    <!--END beaker-->
+
+    <!--BEGIN bell-->
+    <Geometry x:Key="iconic-geometry-bell">M4 0c-1.1 0-2 .9-2 2 0 1.04-.52 1.98-1.34 2.66-.41.34-.66.82-.66 1.34h8c0-.52-.24-1-.66-1.34-.82-.68-1.34-1.62-1.34-2.66 0-1.1-.89-2-2-2zm-1 7c0 .55.45 1 1 1s1-.45 1-1h-2z</Geometry>
+    <Path x:Key="iconic-path-bell" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-bell}"/>
+    <!--END bell-->
+
+    <!--BEGIN bluetooth-->
+    <Geometry x:Key="iconic-geometry-bluetooth">M1.5 0v2.5l-.75-.75-.75.75 1.5 1.5-1.5 1.5.75.75.75-.75v2.5h.5l3.5-2.5-2.25-1.53 2.25-1.47-3.5-2.5h-.5zm1 1.5l1.5 1-1.5 1v-2zm0 3l1.5 1-1.5 1v-2z</Geometry>
+    <Path x:Key="iconic-path-bluetooth" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-bluetooth}" RenderTransform="1 0 0 1 1 0"/>
+    <!--END bluetooth-->
+
+    <!--BEGIN bold-->
+    <Geometry x:Key="iconic-geometry-bold">M0 0v1c.55 0 1 .45 1 1v4c0 .55-.45 1-1 1v1h5.5c1.38 0 2.5-1.12 2.5-2.5 0-1-.59-1.85-1.44-2.25.27-.34.44-.78.44-1.25 0-1.1-.89-2-2-2h-5zm3 1h1c.55 0 1 .45 1 1s-.45 1-1 1h-1v-2zm0 3h1.5c.83 0 1.5.67 1.5 1.5s-.67 1.5-1.5 1.5h-1.5v-3z</Geometry>
+    <Path x:Key="iconic-path-bold" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-bold}"/>
+    <!--END bold-->
+
+    <!--BEGIN bolt-->
+    <Geometry x:Key="iconic-geometry-bolt">M3 0l-3 5h2v3l3-5h-2v-3z</Geometry>
+    <Path x:Key="iconic-path-bolt" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-bolt}" RenderTransform="1 0 0 1 1 0"/>
+    <!--END bolt-->
+
+    <!--BEGIN bookmark-->
+    <Geometry x:Key="iconic-geometry-bookmark">M0 0v8l2-2 2 2v-8h-4z</Geometry>
+    <Path x:Key="iconic-path-bookmark" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-bookmark}" RenderTransform="1 0 0 1 2 0"/>
+    <!--END bookmark-->
+
+    <!--BEGIN book-->
+    <Geometry x:Key="iconic-geometry-book">M1 0c-.07 0-.13.01-.19.03-.39.08-.7.39-.78.78-.03.06-.03.12-.03.19v5.5c0 .83.67 1.5 1.5 1.5h5.5v-1h-5.5c-.28 0-.5-.22-.5-.5s.22-.5.5-.5h5.5v-5.5c0-.28-.22-.5-.5-.5h-.5v3l-1-1-1 1v-3h-3z</Geometry>
+    <Path x:Key="iconic-path-book" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-book}"/>
+    <!--END book-->
+
+    <!--BEGIN box-->
+    <Geometry x:Key="iconic-geometry-box">M0 0v1h8v-1h-8zm0 2v5.91c0 .05.04.09.09.09h7.81c.05 0 .09-.04.09-.09v-5.91h-2.97v1.03h-2.03v-1.03h-3z</Geometry>
+    <Path x:Key="iconic-path-box" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-box}"/>
+    <!--END box-->
+
+    <!--BEGIN briefcase-->
+    <Geometry x:Key="iconic-geometry-briefcase">M3 0c-.55 0-1 .45-1 1v1h-1.91c-.06 0-.09.04-.09.09v2.41c0 .28.22.5.5.5h7c.28 0 .5-.22.5-.5v-2.41c0-.06-.04-.09-.09-.09h-1.91v-1c0-.55-.45-1-1-1h-2zm0 1h2v1h-2v-1zm-3 4.91v2c0 .05.04.09.09.09h7.81c.05 0 .09-.04.09-.09v-2c-.16.06-.32.09-.5.09h-7c-.18 0-.34-.04-.5-.09z</Geometry>
+    <Path x:Key="iconic-path-briefcase" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-briefcase}"/>
+    <!--END briefcase-->
+
+    <!--BEGIN british-pound-->
+    <Path x:Key="iconic-path-british-pound" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-british-pound}" RenderTransform="1 0 0 1 1 0"/>
+    <!--END british-pound-->
+
+    <!--BEGIN browser-->
+    <Geometry x:Key="iconic-geometry-browser">M.34 0a.5.5 0 0 0-.34.5v7a.5.5 0 0 0 .5.5h7a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.5-.5h-7a.5.5 0 0 0-.09 0 .5.5 0 0 0-.06 0zm1.16 1c.28 0 .5.22.5.5s-.22.5-.5.5-.5-.22-.5-.5.22-.5.5-.5zm2 0h3c.28 0 .5.22.5.5s-.22.5-.5.5h-3c-.28 0-.5-.22-.5-.5s.22-.5.5-.5zm-2.5 2h6v4h-6v-4z</Geometry>
+    <Path x:Key="iconic-path-browser" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-browser}"/>
+    <!--END browser-->
+
+    <!--BEGIN brush-->
+    <Geometry x:Key="iconic-geometry-brush">M7.44.03c-.03 0-.04.02-.06.03l-3.75 2.66c-.04.03-.1.11-.13.16l-.13.25c.72.23 1.27.78 1.5 1.5l.25-.13c.05-.03.12-.08.16-.13l2.66-3.75c.03-.05.04-.09 0-.13l-.44-.44c-.02-.02-.04-.03-.06-.03zm-4.78 3.97c-.74 0-1.31.61-1.31 1.34 0 .99-.55 1.85-1.34 2.31.39.22.86.34 1.34.34 1.47 0 2.66-1.18 2.66-2.66 0-.74-.61-1.34-1.34-1.34z</Geometry>
+    <Path x:Key="iconic-path-brush" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-brush}"/>
+    <!--END brush-->
+
+    <!--BEGIN bug-->
+    <Geometry x:Key="iconic-geometry-bug">M3.5 0c-1.19 0-1.98 1.69-1.19 2.5-.09.07-.2.14-.28.22l-1.31-.66a.5.5 0 0 0-.34-.06.5.5 0 0 0-.09.94l1.16.56c-.09.16-.19.33-.25.5h-.69a.5.5 0 0 0-.09 0 .5.5 0 1 0 .09 1h.5c0 .23.02.45.06.66l-.78.41a.5.5 0 1 0 .44.88l.66-.34c.25.46.62.85 1.03 1.09.35-.19.59-.44.59-.72v-1.44a.5.5 0 0 0 0-.09v-.81a.5.5 0 0 0 0-.22c.05-.23.26-.41.5-.41.28 0 .5.22.5.5v.88a.5.5 0 0 0 0 .09v.06a.5.5 0 0 0 0 .09v1.34c0 .27.24.53.59.72.41-.25.79-.63 1.03-1.09l.66.34a.5.5 0 1 0 .44-.88l-.78-.41c.04-.21.06-.43.06-.66h.5a.5.5 0 1 0 0-1h-.69c-.06-.17-.16-.34-.25-.5l1.16-.56a.5.5 0 0 0-.31-.94.5.5 0 0 0-.13.06l-1.31.66c-.09-.08-.19-.15-.28-.22.78-.83 0-2.5-1.19-2.5z</Geometry>
+    <Path x:Key="iconic-path-bug" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-bug}"/>
+    <!--END bug-->
+
+    <!--BEGIN bullhorn-->
+    <Geometry x:Key="iconic-geometry-bullhorn">M6 0v6c.03.01.07 0 .09 0h.81c.05 0 .09-.04.09-.09v-5.81c0-.06-.04-.09-.09-.09h-.91zm-1 .5l-2.91 1.47c-.05.02-.13.03-.19.03h-1.81c-.06 0-.09.04-.09.09v1.81c0 .06.04.09.09.09h.91l1.03 2.72c.11.25.44.36.69.25.25-.11.36-.44.25-.69l-.75-1.78c.03-.14.13-.22.28-.22v-.03l2.5 1.25v-5z</Geometry>
+    <Path x:Key="iconic-path-bullhorn" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-bullhorn}"/>
+    <!--END bullhorn-->
+
+    <!--BEGIN calculator-->
+    <Geometry x:Key="iconic-geometry-calculator">M.09 0c-.06 0-.09.04-.09.09v7.81c0 .05.04.09.09.09h6.81c.05 0 .09-.04.09-.09v-7.81c0-.06-.04-.09-.09-.09h-6.81zm.91 1h5v2h-5v-2zm0 3h1v1h-1v-1zm2 0h1v1h-1v-1zm2 0h1v3h-1v-3zm-4 2h1v1h-1v-1zm2 0h1v1h-1v-1z</Geometry>
+    <Path x:Key="iconic-path-calculator" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-calculator}"/>
+    <!--END calculator-->
+
+    <!--BEGIN calendar-->
+    <Geometry x:Key="iconic-geometry-calendar">M0 0v2h7v-2h-7zm0 3v4.91c0 .05.04.09.09.09h6.81c.05 0 .09-.04.09-.09v-4.91h-7zm1 1h1v1h-1v-1zm2 0h1v1h-1v-1zm2 0h1v1h-1v-1zm-4 2h1v1h-1v-1zm2 0h1v1h-1v-1z</Geometry>
+    <Path x:Key="iconic-path-calendar" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-calendar}"/>
+    <!--END calendar-->
+
+    <!--BEGIN camera-slr-->
+    <Geometry x:Key="iconic-geometry-camera-slr">M4.09 0c-.05 0-.1.04-.13.09l-.94 1.81c-.02.05-.07.09-.13.09h-1.41c-.83 0-1.5.67-1.5 1.5v4.41c0 .05.04.09.09.09h7.81c.05 0 .09-.04.09-.09v-5.81c0-.06-.04-.09-.09-.09h-.81c-.05 0-.1-.04-.13-.09l-.94-1.81c-.03-.05-.07-.09-.13-.09h-1.81zm-2.59 3c.28 0 .5.22.5.5s-.22.5-.5.5-.5-.22-.5-.5.22-.5.5-.5zm3.5 0c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2zm0 1c-.55 0-1 .45-1 1s.45 1 1 1 1-.45 1-1-.45-1-1-1z</Geometry>
+    <Path x:Key="iconic-path-camera-slr" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-camera-slr}"/>
+    <!--END camera-slr-->
+
+    <!--BEGIN caret-bottom-->
+    <Geometry x:Key="iconic-geometry-caret-bottom">M0 0l4 4 4-4h-8z</Geometry>
+    <Path x:Key="iconic-path-caret-bottom" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-caret-bottom}" RenderTransform="1 0 0 1 0 2"/>
+    <!--END caret-bottom-->
+
+    <!--BEGIN caret-left-->
+    <Geometry x:Key="iconic-geometry-caret-left">M4 0l-4 4 4 4v-8z</Geometry>
+    <Path x:Key="iconic-path-caret-left" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-caret-left}" RenderTransform="1 0 0 1 2 0"/>
+    <!--END caret-left-->
+
+    <!--BEGIN caret-right-->
+    <Geometry x:Key="iconic-geometry-caret-right">M0 0v8l4-4-4-4z</Geometry>
+    <Path x:Key="iconic-path-caret-right" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-caret-right}" RenderTransform="1 0 0 1 2 0"/>
+    <!--END caret-right-->
+
+    <!--BEGIN caret-top-->
+    <Geometry x:Key="iconic-geometry-caret-top">M4 0l-4 4h8l-4-4z</Geometry>
+    <Path x:Key="iconic-path-caret-top" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-caret-top}" RenderTransform="1 0 0 1 0 2"/>
+    <!--END caret-top-->
+
+    <!--BEGIN cart-->
+    <Path x:Key="iconic-path-cart" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-cart}" RenderTransform="1 0 0 1 0 1"/>
+    <!--END cart-->
+
+    <!--BEGIN chat-->
+    <Geometry x:Key="iconic-geometry-chat">M0 0v5l1-1h1v-3h3v-1h-5zm3 2v4h4l1 1v-5h-5z</Geometry>
+    <Path x:Key="iconic-path-chat" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-chat}"/>
+    <!--END chat-->
+
+    <!--BEGIN check-->
+    <Geometry x:Key="iconic-geometry-check">M6.41 0l-.69.72-2.78 2.78-.81-.78-.72-.72-1.41 1.41.72.72 1.5 1.5.69.72.72-.72 3.5-3.5.72-.72-1.44-1.41z</Geometry>
+    <Path x:Key="iconic-path-check" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-check}" RenderTransform="1 0 0 1 0 1"/>
+    <!--END check-->
+
+    <!--BEGIN chevron-bottom-->
+    <Geometry x:Key="iconic-geometry-chevron-bottom">M1.5 0l-1.5 1.5 4 4 4-4-1.5-1.5-2.5 2.5-2.5-2.5z</Geometry>
+    <Path x:Key="iconic-path-chevron-bottom" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-chevron-bottom}" RenderTransform="1 0 0 1 0 1"/>
+    <!--END chevron-bottom-->
+
+    <!--BEGIN chevron-left-->
+    <Geometry x:Key="iconic-geometry-chevron-left">M4 0l-4 4 4 4 1.5-1.5-2.5-2.5 2.5-2.5-1.5-1.5z</Geometry>
+    <Path x:Key="iconic-path-chevron-left" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-chevron-left}" RenderTransform="1 0 0 1 1 0"/>
+    <!--END chevron-left-->
+
+    <!--BEGIN chevron-right-->
+    <Geometry x:Key="iconic-geometry-chevron-right">M1.5 0l-1.5 1.5 2.5 2.5-2.5 2.5 1.5 1.5 4-4-4-4z</Geometry>
+    <Path x:Key="iconic-path-chevron-right" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-chevron-right}" RenderTransform="1 0 0 1 1 0"/>
+    <!--END chevron-right-->
+
+    <!--BEGIN chevron-top-->
+    <Geometry x:Key="iconic-geometry-chevron-top">M4 0l-4 4 1.5 1.5 2.5-2.5 2.5 2.5 1.5-1.5-4-4z</Geometry>
+    <Path x:Key="iconic-path-chevron-top" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-chevron-top}" RenderTransform="1 0 0 1 0 1"/>
+    <!--END chevron-top-->
+
+    <!--BEGIN circle-check-->
+    <Geometry x:Key="iconic-geometry-circle-check">M4 0c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm2 1.78l.72.72-3.22 3.22-1.72-1.72.72-.72 1 1 2.5-2.5z</Geometry>
+    <Path x:Key="iconic-path-circle-check" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-circle-check}"/>
+    <!--END circle-check-->
+
+    <!--BEGIN circle-x-->
+    <Geometry x:Key="iconic-geometry-circle-x">M4 0c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm-1.5 1.78l1.5 1.5 1.5-1.5.72.72-1.5 1.5 1.5 1.5-.72.72-1.5-1.5-1.5 1.5-.72-.72 1.5-1.5-1.5-1.5.72-.72z</Geometry>
+    <Path x:Key="iconic-path-circle-x" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-circle-x}"/>
+    <!--END circle-x-->
+
+    <!--BEGIN clipboard-->
+    <Geometry x:Key="iconic-geometry-clipboard">M3.5 0c-.28 0-.5.22-.5.5v.5h-.75c-.14 0-.25.11-.25.25v.75h3v-.75c0-.14-.11-.25-.25-.25h-.75v-.5c0-.28-.22-.5-.5-.5zm-3.25 1c-.14 0-.25.11-.25.25v6.5c0 .14.11.25.25.25h6.5c.14 0 .25-.11.25-.25v-6.5c0-.14-.11-.25-.25-.25h-.75v2h-5v-2h-.75z</Geometry>
+    <Path x:Key="iconic-path-clipboard" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-clipboard}"/>
+    <!--END clipboard-->
+
+    <!--BEGIN clock-->
+    <Geometry x:Key="iconic-geometry-clock">M4 0c-2.2 0-4 1.8-4 4s1.8 4 4 4 4-1.8 4-4-1.8-4-4-4zm0 1c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm-.5 1v2.22l.16.13.5.5.34.38.72-.72-.38-.34-.34-.34v-1.81h-1z</Geometry>
+    <Path x:Key="iconic-path-clock" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-clock}"/>
+    <!--END clock-->
+
+    <!--BEGIN cloud-download-->
+    <Geometry x:Key="iconic-geometry-cloud-download">M4.5 0c-1.21 0-2.27.86-2.5 2-1.1 0-2 .9-2 2 0 .37.11.71.28 1h2.72v-.5c0-.83.67-1.5 1.5-1.5s1.5.67 1.5 1.5v.5h1.91c.06-.16.09-.32.09-.5 0-.65-.42-1.29-1-1.5v-.5c0-1.38-1.12-2.5-2.5-2.5zm-.16 4a.5.5 0 0 0-.34.5v1.5h-1.5l2 2 2-2h-1.5v-1.5a.5.5 0 0 0-.59-.5.5.5 0 0 0-.06 0z</Geometry>
+    <Path x:Key="iconic-path-cloud-download" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-cloud-download}"/>
+    <!--END cloud-download-->
+
+    <!--BEGIN cloud-->
+    <Geometry x:Key="iconic-geometry-cloud">M4.5 0c-1.21 0-2.27.86-2.5 2-1.1 0-2 .9-2 2s.9 2 2 2h4.5c.83 0 1.5-.67 1.5-1.5 0-.65-.42-1.29-1-1.5v-.5c0-1.38-1.12-2.5-2.5-2.5z</Geometry>
+    <Path x:Key="iconic-path-cloud" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-cloud}" RenderTransform="1 0 0 1 0 1"/>
+    <!--END cloud-->
+
+    <!--BEGIN cloud-upload-->
+    <Geometry x:Key="iconic-geometry-cloud-upload">M4.5 0c-1.21 0-2.27.86-2.5 2-1.1 0-2 .9-2 2 0 .37.11.71.28 1h2.22l2-2 2 2h1.41c.06-.16.09-.32.09-.5 0-.65-.42-1.29-1-1.5v-.5c0-1.38-1.12-2.5-2.5-2.5zm0 4.5l-2.5 2.5h2v.5a.5.5 0 1 0 1 0v-.5h2l-2.5-2.5z</Geometry>
+    <Path x:Key="iconic-path-cloud-upload" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-cloud-upload}"/>
+    <!--END cloud-upload-->
+
+    <!--BEGIN cloudy-->
+    <Geometry x:Key="iconic-geometry-cloudy">M2.5 0c-1.38 0-2.5 1.12-2.5 2.5 0 .39.09.74.25 1.06.3-.21.64-.37 1-.47.55-1.25 1.82-2.09 3.25-2.09-.46-.6-1.18-1-2-1zm2 2c-1.21 0-2.27.86-2.5 2-1.1 0-2 .9-2 2s.9 2 2 2h4.5c.83 0 1.5-.67 1.5-1.5 0-.65-.42-1.29-1-1.5v-.5c0-1.38-1.12-2.5-2.5-2.5z</Geometry>
+    <Path x:Key="iconic-path-cloudy" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-cloudy}"/>
+    <!--END cloudy-->
+
+    <!--BEGIN code-->
+    <Geometry x:Key="iconic-geometry-code">M5 0l-3 6h1l3-6h-1zm-4 1l-1 2 1 2h1l-1-2 1-2h-1zm5 0l1 2-1 2h1l1-2-1-2h-1z</Geometry>
+    <Path x:Key="iconic-path-code" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-code}" RenderTransform="1 0 0 1 0 1"/>
+    <!--END code-->
+
+    <!--BEGIN cog-->
+    <Geometry x:Key="iconic-geometry-cog">M3.5 0l-.5 1.19c-.1.03-.19.08-.28.13l-1.19-.5-.72.72.5 1.19c-.05.1-.09.18-.13.28l-1.19.5v1l1.19.5c.04.1.08.18.13.28l-.5 1.19.72.72 1.19-.5c.09.04.18.09.28.13l.5 1.19h1l.5-1.19c.09-.04.19-.08.28-.13l1.19.5.72-.72-.5-1.19c.04-.09.09-.19.13-.28l1.19-.5v-1l-1.19-.5c-.03-.09-.08-.19-.13-.28l.5-1.19-.72-.72-1.19.5c-.09-.04-.19-.09-.28-.13l-.5-1.19h-1zm.5 2.5c.83 0 1.5.67 1.5 1.5s-.67 1.5-1.5 1.5-1.5-.67-1.5-1.5.67-1.5 1.5-1.5z</Geometry>
+    <Path x:Key="iconic-path-cog" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-cog}"/>
+    <!--END cog-->
+
+    <!--BEGIN collapse-down-->
+    <Geometry x:Key="iconic-geometry-collapse-down">M0 0v2h8v-2h-8zm2 3l2 2 2-2h-4zm-2 4v1h8v-1h-8z</Geometry>
+    <Path x:Key="iconic-path-collapse-down" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-collapse-down}"/>
+    <!--END collapse-down-->
+
+    <!--BEGIN collapse-left-->
+    <Geometry x:Key="iconic-geometry-collapse-left">M0 0v8h1v-8h-1zm6 0v8h2v-8h-2zm-1 2l-2 2 2 2v-4z</Geometry>
+    <Path x:Key="iconic-path-collapse-left" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-collapse-left}"/>
+    <!--END collapse-left-->
+
+    <!--BEGIN collapse-right-->
+    <Geometry x:Key="iconic-geometry-collapse-right">M0 0v8h2v-8h-2zm7 0v8h1v-8h-1zm-4 2v4l2-2-2-2z</Geometry>
+    <Path x:Key="iconic-path-collapse-right" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-collapse-right}"/>
+    <!--END collapse-right-->
+
+    <!--BEGIN collapse-up-->
+    <Geometry x:Key="iconic-geometry-collapse-up">M0 0v1h8v-1h-8zm4 3l-2 2h4l-2-2zm-4 3v2h8v-2h-8z</Geometry>
+    <Path x:Key="iconic-path-collapse-up" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-collapse-up}"/>
+    <!--END collapse-up-->
+
+    <!--BEGIN command-->
+    <Geometry x:Key="iconic-geometry-command">M1.5 0c-.83 0-1.5.67-1.5 1.5s.67 1.5 1.5 1.5h.5v1h-.5c-.83 0-1.5.67-1.5 1.5s.67 1.5 1.5 1.5 1.5-.67 1.5-1.5v-.5h1v.5c0 .83.67 1.5 1.5 1.5s1.5-.67 1.5-1.5-.67-1.5-1.5-1.5h-.5v-1h.5c.83 0 1.5-.67 1.5-1.5s-.67-1.5-1.5-1.5-1.5.67-1.5 1.5v.5h-1v-.5c0-.83-.67-1.5-1.5-1.5zm0 1c.28 0 .5.22.5.5v.5h-.5c-.28 0-.5-.22-.5-.5s.22-.5.5-.5zm4 0c.28 0 .5.22.5.5s-.22.5-.5.5h-.5v-.5c0-.28.22-.5.5-.5zm-2.5 2h1v1h-1v-1zm-1.5 2h.5v.5c0 .28-.22.5-.5.5s-.5-.22-.5-.5.22-.5.5-.5zm3.5 0h.5c.28 0 .5.22.5.5s-.22.5-.5.5-.5-.22-.5-.5v-.5z</Geometry>
+    <Path x:Key="iconic-path-command" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-command}"/>
+    <!--END command-->
+
+    <!--BEGIN comment-square-->
+    <Geometry x:Key="iconic-geometry-comment-square">M.09 0c-.06 0-.09.04-.09.09v5.81c0 .05.04.09.09.09h5.91l2 2v-7.91c0-.06-.04-.09-.09-.09h-7.81z</Geometry>
+    <Path x:Key="iconic-path-comment-square" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-comment-square}"/>
+    <!--END comment-square-->
+
+    <!--BEGIN compass-->
+    <Geometry x:Key="iconic-geometry-compass">M4 0c-2.2 0-4 1.8-4 4s1.8 4 4 4 4-1.8 4-4-1.8-4-4-4zm0 1c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm2 1l-3 1-1 3 3-1 1-3zm-2 1.5c.28 0 .5.22.5.5s-.22.5-.5.5-.5-.22-.5-.5.22-.5.5-.5z</Geometry>
+    <Path x:Key="iconic-path-compass" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-compass}"/>
+    <!--END compass-->
+
+    <!--BEGIN contrast-->
+    <Geometry x:Key="iconic-geometry-contrast">M4 0c-2.2 0-4 1.8-4 4s1.8 4 4 4 4-1.8 4-4-1.8-4-4-4zm0 1c1.66 0 3 1.34 3 3s-1.34 3-3 3v-6z</Geometry>
+    <Path x:Key="iconic-path-contrast" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-contrast}"/>
+    <!--END contrast-->
+
+    <!--BEGIN copywriting-->
+    <Geometry x:Key="iconic-geometry-copywriting">M0 0v1h8v-1h-8zm0 2v1h5v-1h-5zm0 3v1h8v-1h-8zm0 2v1h6v-1h-6zm7.5 0c-.28 0-.5.22-.5.5s.22.5.5.5.5-.22.5-.5-.22-.5-.5-.5z</Geometry>
+    <Path x:Key="iconic-path-copywriting" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-copywriting}"/>
+    <!--END copywriting-->
+
+    <!--BEGIN credit-card-->
+    <Geometry x:Key="iconic-geometry-credit-card">M.25 0c-.14 0-.25.11-.25.25v.75h8v-.75c0-.14-.11-.25-.25-.25h-7.5zm-.25 2v3.75c0 .14.11.25.25.25h7.5c.14 0 .25-.11.25-.25v-3.75h-8zm1 2h1v1h-1v-1zm2 0h1v1h-1v-1z</Geometry>
+    <Path x:Key="iconic-path-credit-card" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-credit-card}" RenderTransform="1 0 0 1 0 1"/>
+    <!--END credit-card-->
+
+    <!--BEGIN crop-->
+    <Geometry x:Key="iconic-geometry-crop">M1 0v1h-1v1h1v5h5v1h1v-1h1v-1h-1v-4.5l1-1-.5-.5-1 1h-4.5v-1h-1zm1 2h3.5l-3.5 3.5v-3.5zm4 .5v3.5h-3.5l3.5-3.5z</Geometry>
+    <Path x:Key="iconic-path-crop" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-crop}"/>
+    <!--END crop-->
+
+    <!--BEGIN dashboard-->
+    <Geometry x:Key="iconic-geometry-dashboard">M4 0c-2.2 0-4 1.8-4 4s1.8 4 4 4 4-1.8 4-4-1.8-4-4-4zm0 1c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 1c-.28 0-.5.22-.5.5s.22.5.5.5.5-.22.5-.5-.22-.5-.5-.5zm-1.66 1a.5.5 0 0 0-.19.84l.91.91c-.02.08-.06.16-.06.25 0 .55.45 1 1 1s1-.45 1-1-.45-1-1-1c-.09 0-.17.04-.25.06l-.91-.91a.5.5 0 0 0-.44-.16.5.5 0 0 0-.06 0zm3.16 0c-.28 0-.5.22-.5.5s.22.5.5.5.5-.22.5-.5-.22-.5-.5-.5z</Geometry>
+    <Path x:Key="iconic-path-dashboard" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-dashboard}"/>
+    <!--END dashboard-->
+
+    <!--BEGIN data-transfer-download-->
+    <Geometry x:Key="iconic-geometry-data-transfer-download">M3 0v3h-2l3 3 3-3h-2v-3h-2zm-3 7v1h8v-1h-8z</Geometry>
+    <Path x:Key="iconic-path-data-transfer-download" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-data-transfer-download}"/>
+    <!--END data-transfer-download-->
+
+    <!--BEGIN data-transfer-upload-->
+    <Geometry x:Key="iconic-geometry-data-transfer-upload">M0 0v1h8v-1h-8zm4 2l-3 3h2v3h2v-3h2l-3-3z</Geometry>
+    <Path x:Key="iconic-path-data-transfer-upload" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-data-transfer-upload}"/>
+    <!--END data-transfer-upload-->
+
+    <!--BEGIN delete-->
+    <Geometry x:Key="iconic-geometry-delete">M2 0l-2 3 2 3h6v-6h-6zm1.5.78l1.5 1.5 1.5-1.5.72.72-1.5 1.5 1.5 1.5-.72.72-1.5-1.5-1.5 1.5-.72-.72 1.5-1.5-1.5-1.5.72-.72z</Geometry>
+    <Path x:Key="iconic-path-delete" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-delete}" RenderTransform="1 0 0 1 0 1"/>
+    <!--END delete-->
+
+    <!--BEGIN dial-->
+    <Geometry x:Key="iconic-geometry-dial">M4 0c-2.2 0-4 1.8-4 4h1c0-1.66 1.34-3 3-3s3 1.34 3 3h1c0-2.2-1.8-4-4-4zm-.59 2.09c-.81.25-1.41 1.01-1.41 1.91 0 1.11.9 2 2 2 1.11 0 2-.89 2-2 0-.9-.59-1.65-1.41-1.91l-.59.88-.59-.88z</Geometry>
+    <Path x:Key="iconic-path-dial" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-dial}" RenderTransform="1 0 0 1 0 1"/>
+    <!--END dial-->
+
+    <!--BEGIN document-->
+    <Geometry x:Key="iconic-geometry-document">M0 0v8h7v-4h-4v-4h-3zm4 0v3h3l-3-3zm-3 2h1v1h-1v-1zm0 2h1v1h-1v-1zm0 2h4v1h-4v-1z</Geometry>
+    <Path x:Key="iconic-path-document" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-document}"/>
+    <!--END document-->
+
+    <!--BEGIN dollar-->
+    <Path x:Key="iconic-path-dollar" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-dollar}" RenderTransform="1 0 0 1 1 0"/>
+    <!--END dollar-->
+
+    <!--BEGIN double-quote-sans-left-->
+    <Geometry x:Key="iconic-geometry-double-quote-sans-left">M0 0v6l3-3v-3h-3zm5 0v6l3-3v-3h-3z</Geometry>
+    <Path x:Key="iconic-path-double-quote-sans-left" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-double-quote-sans-left}" RenderTransform="1 0 0 1 0 1"/>
+    <!--END double-quote-sans-left-->
+
+    <!--BEGIN double-quote-sans-right-->
+    <Geometry x:Key="iconic-geometry-double-quote-sans-right">M3 0l-3 3v3h3v-6zm5 0l-3 3v3h3v-6z</Geometry>
+    <Path x:Key="iconic-path-double-quote-sans-right" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-double-quote-sans-right}" RenderTransform="1 0 0 1 0 1"/>
+    <!--END double-quote-sans-right-->
+
+    <!--BEGIN double-quote-serif-left-->
+    <Geometry x:Key="iconic-geometry-double-quote-serif-left">M3 0c-1.65 0-3 1.35-3 3v3h3v-3h-2c0-1.11.89-2 2-2v-1zm5 0c-1.65 0-3 1.35-3 3v3h3v-3h-2c0-1.11.89-2 2-2v-1z</Geometry>
+    <Path x:Key="iconic-path-double-quote-serif-left" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-double-quote-serif-left}" RenderTransform="1 0 0 1 0 1"/>
+    <!--END double-quote-serif-left-->
+
+    <!--BEGIN double-quote-serif-right-->
+    <Geometry x:Key="iconic-geometry-double-quote-serif-right">M0 0v3h2c0 1.11-.89 2-2 2v1c1.65 0 3-1.35 3-3v-3h-3zm5 0v3h2c0 1.11-.89 2-2 2v1c1.65 0 3-1.35 3-3v-3h-3z</Geometry>
+    <Path x:Key="iconic-path-double-quote-serif-right" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-double-quote-serif-right}" RenderTransform="1 0 0 1 0 1"/>
+    <!--END double-quote-serif-right-->
+
+    <!--BEGIN droplet-->
+    <Geometry x:Key="iconic-geometry-droplet">M3 0l-.34.34c-.11.11-2.66 2.69-2.66 4.88 0 1.65 1.35 3 3 3s3-1.35 3-3c0-2.18-2.55-4.77-2.66-4.88l-.34-.34zm-1.5 4.72c.28 0 .5.22.5.5 0 .55.45 1 1 1 .28 0 .5.22.5.5s-.22.5-.5.5c-1.1 0-2-.9-2-2 0-.28.22-.5.5-.5z</Geometry>
+    <Path x:Key="iconic-path-droplet" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-droplet}" RenderTransform="1 0 0 1 1 0"/>
+    <!--END droplet-->
+
+    <!--BEGIN eject-->
+    <Geometry x:Key="iconic-geometry-eject">M4 0l-4 5h8l-4-5zm-4 6v2h8v-2h-8z</Geometry>
+    <Path x:Key="iconic-path-eject" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-eject}"/>
+    <!--END eject-->
+
+    <!--BEGIN elevator-->
+    <Geometry x:Key="iconic-geometry-elevator">M3 0l-3 3h6l-3-3zm-3 5l3 3 3-3h-6z</Geometry>
+    <Path x:Key="iconic-path-elevator" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-elevator}" RenderTransform="1 0 0 1 1 0"/>
+    <!--END elevator-->
+
+    <!--BEGIN ellipses-->
+    <Geometry x:Key="iconic-geometry-ellipses">M0 0v2h2v-2h-2zm3 0v2h2v-2h-2zm3 0v2h2v-2h-2z</Geometry>
+    <Path x:Key="iconic-path-ellipses" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-ellipses}" RenderTransform="1 0 0 1 0 3"/>
+    <!--END ellipses-->
+
+    <!--BEGIN envelope-closed-->
+    <Geometry x:Key="iconic-geometry-envelope-closed">M0 0v1l4 2 4-2v-1h-8zm0 2v4h8v-4l-4 2-4-2z</Geometry>
+    <Path x:Key="iconic-path-envelope-closed" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-envelope-closed}" RenderTransform="1 0 0 1 0 1"/>
+    <!--END envelope-closed-->
+
+    <!--BEGIN envelope-open-->
+    <Geometry x:Key="iconic-geometry-envelope-open">M4 0l-4 2v6h8v-6l-4-2zm0 1.13l3 1.5v1.88l-3 1.5-3-1.5v-1.88l3-1.5zm-2 1.88v1l2 1 2-1v-1h-4z</Geometry>
+    <Path x:Key="iconic-path-envelope-open" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-envelope-open}"/>
+    <!--END envelope-open-->
+
+    <!--BEGIN euro-->
+    <Path x:Key="iconic-path-euro" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-euro}" RenderTransform="1 0 0 1 -1 0"/>
+    <!--END euro-->
+
+    <!--BEGIN excerpt-->
+    <Geometry x:Key="iconic-geometry-excerpt">M0 0v1h7v-1h-7zm0 2v1h5v-1h-5zm0 2v1h8v-1h-8zm0 2v1h1v-1h-1zm2 0v1h1v-1h-1zm2 0v1h1v-1h-1z</Geometry>
+    <Path x:Key="iconic-path-excerpt" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-excerpt}"/>
+    <!--END excerpt-->
+
+    <!--BEGIN expand-down-->
+    <Geometry x:Key="iconic-geometry-expand-down">M0 0v1h8v-1h-8zm2 2l2 2 2-2h-4zm-2 4v2h8v-2h-8z</Geometry>
+    <Path x:Key="iconic-path-expand-down" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-expand-down}"/>
+    <!--END expand-down-->
+
+    <!--BEGIN expand-left-->
+    <Geometry x:Key="iconic-geometry-expand-left">M0 0v8h1v-8h-1zm6 0v8h2v-8h-2zm-4 2v4l2-2-2-2z</Geometry>
+    <Path x:Key="iconic-path-expand-left" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-expand-left}"/>
+    <!--END expand-left-->
+
+    <!--BEGIN expand-right-->
+    <Geometry x:Key="iconic-geometry-expand-right">M0 0v8h2v-8h-2zm7 0v8h1v-8h-1zm-1 2l-2 2 2 2v-4z</Geometry>
+    <Path x:Key="iconic-path-expand-right" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-expand-right}"/>
+    <!--END expand-right-->
+
+    <!--BEGIN expand-up-->
+    <Geometry x:Key="iconic-geometry-expand-up">M0 0v2h8v-2h-8zm4 4l-2 2h4l-2-2zm-4 3v1h8v-1h-8z</Geometry>
+    <Path x:Key="iconic-path-expand-up" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-expand-up}"/>
+    <!--END expand-up-->
+
+    <!--BEGIN external-link-->
+    <Geometry x:Key="iconic-geometry-external-link">M0 0v8h8v-2h-1v1h-6v-6h1v-1h-2zm4 0l1.5 1.5-2.5 2.5 1 1 2.5-2.5 1.5 1.5v-4h-4z</Geometry>
+    <Path x:Key="iconic-path-external-link" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-external-link}"/>
+    <!--END external-link-->
+
+    <!--BEGIN eyedropper-->
+    <Geometry x:Key="iconic-geometry-eyedropper">M3.31 0a.5.5 0 0 0-.19.84l.63.63-3.59 3.66-.16.16v2.7199999999999998h2.69l.16-.16 3.66-3.66.63.66a.5.5 0 1 0 .72-.69l-.94-.94.66-.66c.59-.58.59-1.54 0-2.13-.57-.57-1.56-.57-2.13 0l-.66.66-.94-.94a.5.5 0 0 0-.47-.16.5.5 0 0 0-.06 0zm1.16 2.19l1.31 1.31-3.16 3.16-1.28-1.31 3.13-3.16z</Geometry>
+    <Path x:Key="iconic-path-eyedropper" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-eyedropper}"/>
+    <!--END eyedropper-->
+
+    <!--BEGIN eye-->
+    <Path x:Key="iconic-path-eye" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-eye}" RenderTransform="1 0 0 1 0 1"/>
+    <!--END eye-->
+
+    <!--BEGIN file-->
+    <Geometry x:Key="iconic-geometry-file">M0 0v8h7v-4h-4v-4h-3zm4 0v3h3l-3-3z</Geometry>
+    <Path x:Key="iconic-path-file" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-file}"/>
+    <!--END file-->
+
+    <!--BEGIN fire-->
+    <Geometry x:Key="iconic-geometry-fire">M2 0c1 2-2 3-2 5s2 3 2 3c-.98-1.98 2-3 2-5s-2-3-2-3zm3 3c1 2-2 3-2 5h3c.4 0 1-.5 1-2 0-2-2-3-2-3z</Geometry>
+    <Path x:Key="iconic-path-fire" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-fire}"/>
+    <!--END fire-->
+
+    <!--BEGIN flag-->
+    <Geometry x:Key="iconic-geometry-flag">M0 0v8h1v-8h-1zm2 0v4h2v1h4l-2-1.97 2-2.03h-3v-1h-3z</Geometry>
+    <Path x:Key="iconic-path-flag" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-flag}"/>
+    <!--END flag-->
+
+    <!--BEGIN flash-->
+    <Geometry x:Key="iconic-geometry-flash">M1.5 0l-1.5 3h2l-.66 2h-1.34l1 3 3-3h-1.5l1.5-3h-2l1-2h-1.5z</Geometry>
+    <Path x:Key="iconic-path-flash" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-flash}" RenderTransform="1 0 0 1 2 0"/>
+    <!--END flash-->
+
+    <!--BEGIN folder-->
+    <Geometry x:Key="iconic-geometry-folder">M0 0v2h8v-1h-5v-1h-3zm0 3v4.5c0 .28.22.5.5.5h7c.28 0 .5-.22.5-.5v-4.5h-8z</Geometry>
+    <Path x:Key="iconic-path-folder" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-folder}"/>
+    <!--END folder-->
+
+    <!--BEGIN fork-->
+    <Geometry x:Key="iconic-geometry-fork">M1.5 0c-.83 0-1.5.67-1.5 1.5 0 .66.41 1.2 1 1.41v2.19c-.59.2-1 .75-1 1.41 0 .83.67 1.5 1.5 1.5s1.5-.67 1.5-1.5c0-.6-.34-1.1-.84-1.34.09-.09.21-.16.34-.16h2c.82 0 1.5-.68 1.5-1.5v-.59c.59-.2 1-.75 1-1.41 0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5c0 .66.41 1.2 1 1.41v.59c0 .28-.22.5-.5.5h-2c-.17 0-.35.04-.5.09v-1.19c.59-.2 1-.75 1-1.41 0-.83-.67-1.5-1.5-1.5z</Geometry>
+    <Path x:Key="iconic-path-fork" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-fork}"/>
+    <!--END fork-->
+
+    <!--BEGIN fullscreen-enter-->
+    <Geometry x:Key="iconic-geometry-fullscreen-enter">M0 0v4l1.5-1.5 1.5 1.5 1-1-1.5-1.5 1.5-1.5h-4zm5 4l-1 1 1.5 1.5-1.5 1.5h4v-4l-1.5 1.5-1.5-1.5z</Geometry>
+    <Path x:Key="iconic-path-fullscreen-enter" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-fullscreen-enter}"/>
+    <!--END fullscreen-enter-->
+
+    <!--BEGIN fullscreen-exit-->
+    <Geometry x:Key="iconic-geometry-fullscreen-exit">M1 0l-1 1 1.5 1.5-1.5 1.5h4v-4l-1.5 1.5-1.5-1.5zm3 4v4l1.5-1.5 1.5 1.5 1-1-1.5-1.5 1.5-1.5h-4z</Geometry>
+    <Path x:Key="iconic-path-fullscreen-exit" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-fullscreen-exit}"/>
+    <!--END fullscreen-exit-->
+
+    <!--BEGIN globe-->
+    <Geometry x:Key="iconic-geometry-globe">M4 0c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm0 1c.33 0 .64.09.94.19-.21.2-.45.38-.41.56.04.18.69.13.69.5 0 .27-.42.35-.13.66.35.35-.64.98-.66 1.44-.03.83.84.97 1.53.97.42 0 .53.2.5.44-.54.77-1.46 1.25-2.47 1.25-.38 0-.73-.09-1.06-.22.22-.44-.28-1.31-.75-1.59-.23-.23-.72-.14-1-.25-.09-.27-.18-.54-.19-.84.03-.05.08-.09.16-.09.19 0 .45.38.59.34.18-.04-.74-1.31-.31-1.56.2-.12.6.39.47-.16-.12-.51.36-.28.66-.41.26-.11.45-.41.13-.59-.06-.03-.13-.1-.22-.19.45-.27.97-.44 1.53-.44zm2.31 1.09c.18.22.32.46.44.72 0 .01 0 .02 0 .03-.04.07-.11.11-.22.22-.28.28-.32-.21-.44-.31-.13-.12-.6.02-.66-.13-.07-.18.5-.42.88-.53z</Geometry>
+    <Path x:Key="iconic-path-globe" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-globe}"/>
+    <!--END globe-->
+
+    <!--BEGIN graph-->
+    <Geometry x:Key="iconic-geometry-graph">M7.03 0l-3.03 3-1-1-3 3.03 1 1 2-2.03 1 1 4-4-.97-1zm-7.03 7v1h8v-1h-8z</Geometry>
+    <Path x:Key="iconic-path-graph" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-graph}"/>
+    <!--END graph-->
+
+    <!--BEGIN grid-four-up-->
+    <Geometry x:Key="iconic-geometry-grid-four-up">M0 0v1h1v-1h-1zm2 0v1h1v-1h-1zm2 0v1h1v-1h-1zm2 0v1h1v-1h-1zm-6 2v1h1v-1h-1zm2 0v1h1v-1h-1zm2 0v1h1v-1h-1zm2 0v1h1v-1h-1zm-6 2v1h1v-1h-1zm2 0v1h1v-1h-1zm2 0v1h1v-1h-1zm2 0v1h1v-1h-1zm-6 2v1h1v-1h-1zm2 0v1h1v-1h-1zm2 0v1h1v-1h-1zm2 0v1h1v-1h-1z</Geometry>
+    <Path x:Key="iconic-path-grid-four-up" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-grid-four-up}"/>
+    <!--END grid-four-up-->
+
+    <!--BEGIN grid-three-up-->
+    <Geometry x:Key="iconic-geometry-grid-three-up">M0 0v2h2v-2h-2zm3 0v2h2v-2h-2zm3 0v2h2v-2h-2zm-6 3v2h2v-2h-2zm3 0v2h2v-2h-2zm3 0v2h2v-2h-2zm-6 3v2h2v-2h-2zm3 0v2h2v-2h-2zm3 0v2h2v-2h-2z</Geometry>
+    <Path x:Key="iconic-path-grid-three-up" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-grid-three-up}"/>
+    <!--END grid-three-up-->
+
+    <!--BEGIN grid-two-up-->
+    <Geometry x:Key="iconic-geometry-grid-two-up">M0 0v3h3v-3h-3zm5 0v3h3v-3h-3zm-5 5v3h3v-3h-3zm5 0v3h3v-3h-3z</Geometry>
+    <Path x:Key="iconic-path-grid-two-up" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-grid-two-up}"/>
+    <!--END grid-two-up-->
+
+    <!--BEGIN hard-drive-->
+    <Geometry x:Key="iconic-geometry-hard-drive">M.19 0c-.11 0-.19.08-.19.19v3.31c0 .28.22.5.5.5h6c.28 0 .5-.22.5-.5v-3.31c0-.11-.08-.19-.19-.19h-6.63zm-.19 4.91v2.91c0 .11.08.19.19.19h6.63c.11 0 .19-.08.19-.19v-2.91c-.16.06-.32.09-.5.09h-6c-.18 0-.34-.04-.5-.09zm5.5 1.09c.28 0 .5.22.5.5s-.22.5-.5.5-.5-.22-.5-.5.22-.5.5-.5z</Geometry>
+    <Path x:Key="iconic-path-hard-drive" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-hard-drive}"/>
+    <!--END hard-drive-->
+
+    <!--BEGIN header-->
+    <Geometry x:Key="iconic-geometry-header">M0 0v1h.5c.28 0 .5.22.5.5v4c0 .28-.22.5-.5.5h-.5v1h3v-1h-.5c-.28 0-.5-.22-.5-.5v-1.5h3v1.5c0 .28-.22.5-.5.5h-.5v1h3v-1h-.5c-.28 0-.5-.22-.5-.5v-4c0-.28.22-.5.5-.5h.5v-1h-3v1h.5c.28 0 .5.22.5.5v1.5h-3v-1.5c0-.28.22-.5.5-.5h.5v-1h-3z</Geometry>
+    <Path x:Key="iconic-path-header" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-header}"/>
+    <!--END header-->
+
+    <!--BEGIN headphones-->
+    <Geometry x:Key="iconic-geometry-headphones">M4 0c-1.65 0-3 1.35-3 3v1h-.5a.5.5 0 0 0-.5.5v2a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-3.5c0-1.11.89-2 2-2 1.11 0 2 .89 2 2v3.5a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-2a.5.5 0 0 0-.5-.5h-.5v-1c0-1.65-1.35-3-3-3z</Geometry>
+    <Path x:Key="iconic-path-headphones" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-headphones}"/>
+    <!--END headphones-->
+
+    <!--BEGIN heart-->
+    <Path x:Key="iconic-path-heart" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-heart}" RenderTransform="1 0 0 1 0 1"/>
+    <!--END heart-->
+
+    <!--BEGIN home-->
+    <Geometry x:Key="iconic-geometry-home">M4 0l-4 3h1v4h2v-2h2v2h2v-4.03l1 .03-4-3z</Geometry>
+    <Path x:Key="iconic-path-home" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-home}"/>
+    <!--END home-->
+
+    <!--BEGIN image-->
+    <Geometry x:Key="iconic-geometry-image">M0 0v8h8v-8h-8zm1 1h6v3l-1-1-1 1 2 2v1h-1l-4-4-1 1v-3z</Geometry>
+    <Path x:Key="iconic-path-image" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-image}"/>
+    <!--END image-->
+
+    <!--BEGIN inbox-->
+    <Geometry x:Key="iconic-geometry-inbox">M.19 0c-.11 0-.19.08-.19.19v7.63c0 .11.08.19.19.19h7.63c.11 0 .19-.08.19-.19v-7.63c0-.11-.08-.19-.19-.19h-7.63zm.81 2h6v3h-1l-1 1h-2l-1-1h-1v-3z</Geometry>
+    <Path x:Key="iconic-path-inbox" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-inbox}"/>
+    <!--END inbox-->
+
+    <!--BEGIN infinity-->
+    <Path x:Key="iconic-path-infinity" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-infinity}" RenderTransform="1 0 0 1 0 2"/>
+    <!--END infinity-->
+
+    <!--BEGIN info-->
+    <Geometry x:Key="iconic-geometry-info">M3 0c-.55 0-1 .45-1 1s.45 1 1 1 1-.45 1-1-.45-1-1-1zm-1.5 2.5c-.83 0-1.5.67-1.5 1.5h1c0-.28.22-.5.5-.5s.5.22.5.5-1 1.64-1 2.5c0 .86.67 1.5 1.5 1.5s1.5-.67 1.5-1.5h-1c0 .28-.22.5-.5.5s-.5-.22-.5-.5c0-.36 1-1.84 1-2.5 0-.81-.67-1.5-1.5-1.5z</Geometry>
+    <Path x:Key="iconic-path-info" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-info}" RenderTransform="1 0 0 1 2 0"/>
+    <!--END info-->
+
+    <!--BEGIN italic-->
+    <Geometry x:Key="iconic-geometry-italic">M2 0v1h1.63l-.06.13-2 5-.34.88h-1.22v1h5v-1h-1.63l.06-.13 2-5 .34-.88h1.22v-1h-5z</Geometry>
+    <Path x:Key="iconic-path-italic" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-italic}"/>
+    <!--END italic-->
+
+    <!--BEGIN justify-center-->
+    <Geometry x:Key="iconic-geometry-justify-center">M0 0v1h8v-1h-8zm0 2v1h8v-1h-8zm0 2v1h8v-1h-8zm1 2v1h6v-1h-6z</Geometry>
+    <Path x:Key="iconic-path-justify-center" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-justify-center}"/>
+    <!--END justify-center-->
+
+    <!--BEGIN justify-left-->
+    <Geometry x:Key="iconic-geometry-justify-left">M0 0v1h8v-1h-8zm0 2v1h8v-1h-8zm0 2v1h8v-1h-8zm0 2v1h6v-1h-6z</Geometry>
+    <Path x:Key="iconic-path-justify-left" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-justify-left}"/>
+    <!--END justify-left-->
+
+    <!--BEGIN justify-right-->
+    <Geometry x:Key="iconic-geometry-justify-right">M0 0v1h8v-1h-8zm0 2v1h8v-1h-8zm0 2v1h8v-1h-8zm2 2v1h6v-1h-6z</Geometry>
+    <Path x:Key="iconic-path-justify-right" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-justify-right}"/>
+    <!--END justify-right-->
+
+    <!--BEGIN key-->
+    <Geometry x:Key="iconic-geometry-key">M5.5 0c-1.38 0-2.5 1.12-2.5 2.5 0 .16 0 .32.03.47l-3.03 3.03v2h3v-2h2v-1l.03-.03c.15.03.31.03.47.03 1.38 0 2.5-1.12 2.5-2.5s-1.12-2.5-2.5-2.5zm.5 1c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1z</Geometry>
+    <Path x:Key="iconic-path-key" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-key}"/>
+    <!--END key-->
+
+    <!--BEGIN laptop-->
+    <Geometry x:Key="iconic-geometry-laptop">M1.34 0a.5.5 0 0 0-.34.5v3.5h-1v1.5c0 .28.22.5.5.5h7.010000000000001c.28 0 .5-.22.5-.5v-1.5h-1v-3.5a.5.5 0 0 0-.5-.5h-5a.5.5 0 0 0-.09 0 .5.5 0 0 0-.06 0zm.66 1h4v3h-1v1h-2v-1h-1v-3z</Geometry>
+    <Path x:Key="iconic-path-laptop" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-laptop}" RenderTransform="1 0 0 1 0 1"/>
+    <!--END laptop-->
+
+    <!--BEGIN layers-->
+    <Geometry x:Key="iconic-geometry-layers">M0 0v4h4v-4h-4zm5 2v3h-3v1h4v-4h-1zm2 2v3h-3v1h4v-4h-1z</Geometry>
+    <Path x:Key="iconic-path-layers" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-layers}"/>
+    <!--END layers-->
+
+    <!--BEGIN lightbulb-->
+    <Path x:Key="iconic-path-lightbulb" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-lightbulb}" RenderTransform="1 0 0 1 1 0"/>
+    <!--END lightbulb-->
+
+    <!--BEGIN link-broken-->
+    <Geometry x:Key="iconic-geometry-link-broken">M2 0v1h-1v1h2v-2h-1zm3.88.03c-.18.01-.36.03-.53.09-.27.1-.53.25-.75.47l-.44.44a.5.5 0 1 0 .69.69l.44-.44c.11-.11.24-.17.38-.22.35-.12.78-.07 1.06.22.39.39.39 1.04 0 1.44l-1.5 1.5a.5.5 0 1 0 .69.69l1.5-1.5c.78-.78.78-2.04 0-2.81-.28-.28-.61-.45-.97-.53-.18-.04-.38-.04-.56-.03zm-3.59 2.91a.5.5 0 0 0-.19.16l-1.5 1.5c-.78.78-.78 2.04 0 2.81.56.56 1.36.72 2.06.47.27-.1.53-.25.75-.47l.44-.44a.5.5 0 1 0-.69-.69l-.44.44c-.11.11-.24.17-.38.22-.35.12-.78.07-1.06-.22-.39-.39-.39-1.04 0-1.44l1.5-1.5a.5.5 0 0 0-.44-.84.5.5 0 0 0-.06 0zm2.72 3.06v2h1v-1h1v-1h-2z</Geometry>
+    <Path x:Key="iconic-path-link-broken" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-link-broken}"/>
+    <!--END link-broken-->
+
+    <!--BEGIN link-intact-->
+    <Geometry x:Key="iconic-geometry-link-intact">M5.88.03c-.18.01-.36.03-.53.09-.27.1-.53.25-.75.47a.5.5 0 1 0 .69.69c.11-.11.24-.17.38-.22.35-.12.78-.07 1.06.22.39.39.39 1.04 0 1.44l-1.5 1.5c-.44.44-.8.48-1.06.47-.26-.01-.41-.13-.41-.13a.5.5 0 1 0-.5.88s.34.22.84.25c.5.03 1.2-.16 1.81-.78l1.5-1.5c.78-.78.78-2.04 0-2.81-.28-.28-.61-.45-.97-.53-.18-.04-.38-.04-.56-.03zm-2 2.31c-.5-.02-1.19.15-1.78.75l-1.5 1.5c-.78.78-.78 2.04 0 2.81.56.56 1.36.72 2.06.47.27-.1.53-.25.75-.47a.5.5 0 1 0-.69-.69c-.11.11-.24.17-.38.22-.35.12-.78.07-1.06-.22-.39-.39-.39-1.04 0-1.44l1.5-1.5c.4-.4.75-.45 1.03-.44.28.01.47.09.47.09a.5.5 0 1 0 .44-.88s-.34-.2-.84-.22z</Geometry>
+    <Path x:Key="iconic-path-link-intact" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-link-intact}"/>
+    <!--END link-intact-->
+
+    <!--BEGIN list-rich-->
+    <Geometry x:Key="iconic-geometry-list-rich">M0 0v3h3v-3h-3zm4 0v1h4v-1h-4zm0 2v1h3v-1h-3zm-4 2v3h3v-3h-3zm4 0v1h4v-1h-4zm0 2v1h3v-1h-3z</Geometry>
+    <Path x:Key="iconic-path-list-rich" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-list-rich}"/>
+    <!--END list-rich-->
+
+    <!--BEGIN list-->
+    <Geometry x:Key="iconic-geometry-list">M.5 0c-.28 0-.5.22-.5.5s.22.5.5.5.5-.22.5-.5-.22-.5-.5-.5zm1.5 0v1h6v-1h-6zm-1.5 2c-.28 0-.5.22-.5.5s.22.5.5.5.5-.22.5-.5-.22-.5-.5-.5zm1.5 0v1h6v-1h-6zm-1.5 2c-.28 0-.5.22-.5.5s.22.5.5.5.5-.22.5-.5-.22-.5-.5-.5zm1.5 0v1h6v-1h-6zm-1.5 2c-.28 0-.5.22-.5.5s.22.5.5.5.5-.22.5-.5-.22-.5-.5-.5zm1.5 0v1h6v-1h-6z</Geometry>
+    <Path x:Key="iconic-path-list" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-list}"/>
+    <!--END list-->
+
+    <!--BEGIN location-->
+    <Geometry x:Key="iconic-geometry-location">M8 0l-8 4 3 1 1 3 4-8z</Geometry>
+    <Path x:Key="iconic-path-location" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-location}"/>
+    <!--END location-->
+
+    <!--BEGIN lock-locked-->
+    <Geometry x:Key="iconic-geometry-lock-locked">M3 0c-1.1 0-2 .9-2 2v1h-1v4h6v-4h-1v-1c0-1.1-.9-2-2-2zm0 1c.56 0 1 .44 1 1v1h-2v-1c0-.56.44-1 1-1z</Geometry>
+    <Path x:Key="iconic-path-lock-locked" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-lock-locked}" RenderTransform="1 0 0 1 1 0"/>
+    <!--END lock-locked-->
+
+    <!--BEGIN lock-unlocked-->
+    <Geometry x:Key="iconic-geometry-lock-unlocked">M3 0c-1.1 0-2 .9-2 2h1c0-.56.44-1 1-1s1 .44 1 1v2h-4v4h6v-4h-1v-2c0-1.1-.9-2-2-2z</Geometry>
+    <Path x:Key="iconic-path-lock-unlocked" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-lock-unlocked}" RenderTransform="1 0 0 1 1 0"/>
+    <!--END lock-unlocked-->
+
+    <!--BEGIN loop-circular-->
+    <Geometry x:Key="iconic-geometry-loop-circular">M4 0c-1.65 0-3 1.35-3 3h-1l1.5 2 1.5-2h-1c0-1.11.89-2 2-2v-1zm2.5 1l-1.5 2h1c0 1.11-.89 2-2 2v1c1.65 0 3-1.35 3-3h1l-1.5-2z</Geometry>
+    <Path x:Key="iconic-path-loop-circular" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-loop-circular}" RenderTransform="1 0 0 1 0 1"/>
+    <!--END loop-circular-->
+
+    <!--BEGIN loop-square-->
+    <Geometry x:Key="iconic-geometry-loop-square">M1 0v2h1v-1h4v2h-1l1.5 2.5 1.5-2.5h-1v-3h-6zm.5 2.5l-1.5 2.5h1v3h6v-2h-1v1h-4v-2h1l-1.5-2.5z</Geometry>
+    <Path x:Key="iconic-path-loop-square" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-loop-square}"/>
+    <!--END loop-square-->
+
+    <!--BEGIN loop-->
+    <Geometry x:Key="iconic-geometry-loop">M6 0v1h-5c-.55 0-1 .45-1 1v1h1v-1h5v1l2-1.5-2-1.5zm-4 4l-2 1.5 2 1.5v-1h5c.55 0 1-.45 1-1v-1h-1v1h-5v-1z</Geometry>
+    <Path x:Key="iconic-path-loop" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-loop}"/>
+    <!--END loop-->
+
+    <!--BEGIN magnifying-glass-->
+    <Geometry x:Key="iconic-geometry-magnifying-glass">M3.5 0c-1.93 0-3.5 1.57-3.5 3.5s1.57 3.5 3.5 3.5c.59 0 1.17-.14 1.66-.41a1 1 0 0 0 .13.13l1 1a1.02 1.02 0 1 0 1.44-1.44l-1-1a1 1 0 0 0-.16-.13c.27-.49.44-1.06.44-1.66 0-1.93-1.57-3.5-3.5-3.5zm0 1c1.39 0 2.5 1.11 2.5 2.5 0 .66-.24 1.27-.66 1.72-.01.01-.02.02-.03.03a1 1 0 0 0-.13.13c-.44.4-1.04.63-1.69.63-1.39 0-2.5-1.11-2.5-2.5s1.11-2.5 2.5-2.5z</Geometry>
+    <Path x:Key="iconic-path-magnifying-glass" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-magnifying-glass}"/>
+    <!--END magnifying-glass-->
+
+    <!--BEGIN map-marker-->
+    <Geometry x:Key="iconic-geometry-map-marker">M3 0c-1.66 0-3 1.34-3 3 0 2 3 5 3 5s3-3 3-5c0-1.66-1.34-3-3-3zm0 1c1.11 0 2 .9 2 2 0 1.11-.89 2-2 2-1.1 0-2-.89-2-2 0-1.1.9-2 2-2z</Geometry>
+    <Path x:Key="iconic-path-map-marker" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-map-marker}" RenderTransform="1 0 0 1 1 0"/>
+    <!--END map-marker-->
+
+    <!--BEGIN map-->
+    <Geometry x:Key="iconic-geometry-map">M0 0v8h8v-2.38a.5.5 0 0 0 0-.22v-5.41h-8zm1 1h6v4h-1.5a.5.5 0 0 0-.09 0 .5.5 0 1 0 .09 1h1.5v1h-6v-6zm2.5 1c-.83 0-1.5.67-1.5 1.5 0 1 1.5 2.5 1.5 2.5s1.5-1.5 1.5-2.5c0-.83-.67-1.5-1.5-1.5zm0 1c.28 0 .5.22.5.5s-.22.5-.5.5-.5-.22-.5-.5.22-.5.5-.5z</Geometry>
+    <Path x:Key="iconic-path-map" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-map}"/>
+    <!--END map-->
+
+    <!--BEGIN media-pause-->
+    <Geometry x:Key="iconic-geometry-media-pause">M0 0v6h2v-6h-2zm4 0v6h2v-6h-2z</Geometry>
+    <Path x:Key="iconic-path-media-pause" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-media-pause}" RenderTransform="1 0 0 1 1 1"/>
+    <!--END media-pause-->
+
+    <!--BEGIN media-play-->
+    <Geometry x:Key="iconic-geometry-media-play">M0 0v6l6-3-6-3z</Geometry>
+    <Path x:Key="iconic-path-media-play" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-media-play}" RenderTransform="1 0 0 1 1 1"/>
+    <!--END media-play-->
+
+    <!--BEGIN media-record-->
+    <Geometry x:Key="iconic-geometry-media-record">M3 0c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z</Geometry>
+    <Path x:Key="iconic-path-media-record" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-media-record}" RenderTransform="1 0 0 1 1 1"/>
+    <!--END media-record-->
+
+    <!--BEGIN media-skip-backward-->
+    <Geometry x:Key="iconic-geometry-media-skip-backward">M4 0l-4 3 4 3v-6zm0 3l4 3v-6l-4 3z</Geometry>
+    <Path x:Key="iconic-path-media-skip-backward" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-media-skip-backward}" RenderTransform="1 0 0 1 0 1"/>
+    <!--END media-skip-backward-->
+
+    <!--BEGIN media-skip-forward-->
+    <Geometry x:Key="iconic-geometry-media-skip-forward">M0 0v6l4-3-4-3zm4 3v3l4-3-4-3v3z</Geometry>
+    <Path x:Key="iconic-path-media-skip-forward" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-media-skip-forward}" RenderTransform="1 0 0 1 0 1"/>
+    <!--END media-skip-forward-->
+
+    <!--BEGIN media-step-backward-->
+    <Geometry x:Key="iconic-geometry-media-step-backward">M0 0v6h2v-6h-2zm2 3l5 3v-6l-5 3z</Geometry>
+    <Path x:Key="iconic-path-media-step-backward" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-media-step-backward}" RenderTransform="1 0 0 1 0 1"/>
+    <!--END media-step-backward-->
+
+    <!--BEGIN media-step-forward-->
+    <Geometry x:Key="iconic-geometry-media-step-forward">M0 0v6l5-3-5-3zm5 3v3h2v-6h-2v3z</Geometry>
+    <Path x:Key="iconic-path-media-step-forward" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-media-step-forward}" RenderTransform="1 0 0 1 0 1"/>
+    <!--END media-step-forward-->
+
+    <!--BEGIN media-stop-->
+    <Geometry x:Key="iconic-geometry-media-stop">M0 0v6h6v-6h-6z</Geometry>
+    <Path x:Key="iconic-path-media-stop" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-media-stop}" RenderTransform="1 0 0 1 1 1"/>
+    <!--END media-stop-->
+
+    <!--BEGIN medical-cross-->
+    <Geometry x:Key="iconic-geometry-medical-cross">M2 0v2h-2v4h2v2h4v-2h2v-4h-2v-2h-4z</Geometry>
+    <Path x:Key="iconic-path-medical-cross" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-medical-cross}"/>
+    <!--END medical-cross-->
+
+    <!--BEGIN menu-->
+    <Geometry x:Key="iconic-geometry-menu">M0 0v1h8v-1h-8zm0 2.97v1h8v-1h-8zm0 3v1h8v-1h-8z</Geometry>
+    <Path x:Key="iconic-path-menu" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-menu}" RenderTransform="1 0 0 1 0 1"/>
+    <!--END menu-->
+
+    <!--BEGIN microphone-->
+    <Path x:Key="iconic-path-microphone" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-microphone}" RenderTransform="1 0 0 1 1 0"/>
+    <!--END microphone-->
+
+    <!--BEGIN minus-->
+    <Geometry x:Key="iconic-geometry-minus">M0 0v2h8v-2h-8z</Geometry>
+    <Path x:Key="iconic-path-minus" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-minus}" RenderTransform="1 0 0 1 0 3"/>
+    <!--END minus-->
+
+    <!--BEGIN monitor-->
+    <Geometry x:Key="iconic-geometry-monitor">M.34 0a.5.5 0 0 0-.34.5v5a.5.5 0 0 0 .5.5h2.5v1h-1c-.55 0-1 .45-1 1h6c0-.55-.45-1-1-1h-1v-1h2.5a.5.5 0 0 0 .5-.5v-5a.5.5 0 0 0-.5-.5h-7a.5.5 0 0 0-.09 0 .5.5 0 0 0-.06 0zm.66 1h6v4h-6v-4z</Geometry>
+    <Path x:Key="iconic-path-monitor" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-monitor}"/>
+    <!--END monitor-->
+
+    <!--BEGIN moon-->
+    <Geometry x:Key="iconic-geometry-moon">M2.72 0c-1.58.53-2.72 2.02-2.72 3.78 0 2.21 1.79 4 4 4 1.76 0 3.25-1.14 3.78-2.72-.4.13-.83.22-1.28.22-2.21 0-4-1.79-4-4 0-.45.08-.88.22-1.28z</Geometry>
+    <Path x:Key="iconic-path-moon" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-moon}"/>
+    <!--END moon-->
+
+    <!--BEGIN move-->
+    <Geometry x:Key="iconic-geometry-move">M3.5 0l-1.5 1.5h1v1.5h-1.5v-1l-1.5 1.5 1.5 1.5v-1h1.5v1.5h-1l1.5 1.5 1.5-1.5h-1v-1.5h1.5v1l1.5-1.5-1.5-1.5v1h-1.5v-1.5h1l-1.5-1.5z</Geometry>
+    <Path x:Key="iconic-path-move" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-move}"/>
+    <!--END move-->
+
+    <!--BEGIN musical-note-->
+    <Geometry x:Key="iconic-geometry-musical-note">M8 0c-5 0-6 1-6 1v4.09c-.15-.05-.33-.09-.5-.09-.83 0-1.5.67-1.5 1.5s.67 1.5 1.5 1.5 1.5-.67 1.5-1.5v-3.97c.73-.23 1.99-.44 4-.5v2.06c-.15-.05-.33-.09-.5-.09-.83 0-1.5.67-1.5 1.5s.67 1.5 1.5 1.5 1.5-.67 1.5-1.5v-5.5z</Geometry>
+    <Path x:Key="iconic-path-musical-note" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-musical-note}"/>
+    <!--END musical-note-->
+
+    <!--BEGIN paperclip-->
+    <Geometry x:Key="iconic-geometry-paperclip">M5 0c-.51 0-1.02.21-1.41.59l-2.78 2.72c-1.07 1.07-1.07 2.8 0 3.88 1.07 1.07 2.8 1.07 3.88 0l1.25-1.25-.69-.69-1.16 1.13-.09.13c-.69.69-1.81.69-2.5 0-.68-.68-.66-1.78 0-2.47l2.78-2.75c.39-.39 1.04-.39 1.44 0 .39.39.37 1.01 0 1.41l-2.5 2.47c-.1.1-.27.1-.38 0-.1-.1-.1-.27 0-.38l.06-.03.91-.94-.69-.69-.97.97c-.48.48-.48 1.27 0 1.75s1.27.49 1.75 0l2.5-2.44c.78-.78.78-2.04 0-2.81-.39-.39-.89-.59-1.41-.59z</Geometry>
+    <Path x:Key="iconic-path-paperclip" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-paperclip}"/>
+    <!--END paperclip-->
+
+    <!--BEGIN pencil-->
+    <Geometry x:Key="iconic-geometry-pencil">M6 0l-1 1 2 2 1-1-2-2zm-2 2l-4 4v2h2l4-4-2-2z</Geometry>
+    <Path x:Key="iconic-path-pencil" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-pencil}"/>
+    <!--END pencil-->
+
+    <!--BEGIN people-->
+    <Geometry x:Key="iconic-geometry-people">M5.5 0c-.51 0-.95.35-1.22.88.45.54.72 1.28.72 2.13 0 .29-.03.55-.09.81.19.11.38.19.59.19.83 0 1.5-.9 1.5-2s-.67-2-1.5-2zm-3 1c-.83 0-1.5.9-1.5 2s.67 2 1.5 2 1.5-.9 1.5-2-.67-2-1.5-2zm4.75 3.16c-.43.51-1.02.82-1.69.84.27.38.44.84.44 1.34v.66h2v-1.66c0-.52-.31-.97-.75-1.19zm-6.5 1c-.44.22-.75.67-.75 1.19v1.66h5v-1.66c0-.52-.31-.97-.75-1.19-.45.53-1.06.84-1.75.84s-1.3-.32-1.75-.84z</Geometry>
+    <Path x:Key="iconic-path-people" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-people}"/>
+    <!--END people-->
+
+    <!--BEGIN person-->
+    <Geometry x:Key="iconic-geometry-person">M4 0c-1.1 0-2 1.12-2 2.5s.9 2.5 2 2.5 2-1.12 2-2.5-.9-2.5-2-2.5zm-2.09 5c-1.06.05-1.91.92-1.91 2v1h8v-1c0-1.08-.84-1.95-1.91-2-.54.61-1.28 1-2.09 1-.81 0-1.55-.39-2.09-1z</Geometry>
+    <Path x:Key="iconic-path-person" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-person}"/>
+    <!--END person-->
+
+    <!--BEGIN phone-->
+    <Geometry x:Key="iconic-geometry-phone">M.19 0c-.11 0-.19.08-.19.19v7.63c0 .11.08.19.19.19h4.63c.11 0 .19-.08.19-.19v-7.63c0-.11-.08-.19-.19-.19h-4.63zm.81 1h3v5h-3v-5zm1.5 5.5c.28 0 .5.22.5.5s-.22.5-.5.5-.5-.22-.5-.5.22-.5.5-.5z</Geometry>
+    <Path x:Key="iconic-path-phone" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-phone}" RenderTransform="1 0 0 1 1 0"/>
+    <!--END phone-->
+
+    <!--BEGIN pie-chart-->
+    <Geometry x:Key="iconic-geometry-pie-chart">M3.5 0c-.97 0-1.84.4-2.47 1.03l2.97 2.97v-3.97c-.16-.02-.33-.03-.5-.03zm1.5 1.06v3.41l-2.72 2.72c.61.5 1.37.81 2.22.81 1.93 0 3.5-1.57 3.5-3.5 0-1.76-1.31-3.19-3-3.44zm-4.09 1.31c-.56.54-.91 1.29-.91 2.13 0 .96.46 1.79 1.16 2.34l2.13-2.13-2.38-2.34z</Geometry>
+    <Path x:Key="iconic-path-pie-chart" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-pie-chart}"/>
+    <!--END pie-chart-->
+
+    <!--BEGIN pin-->
+    <Geometry x:Key="iconic-geometry-pin">M1.34 0a.5.5 0 0 0 .16 1h.5v2h-1c-.55 0-1 .45-1 1h3v3l.44 1 .56-1v-3h3c0-.55-.45-1-1-1h-1v-2h.5a.5.5 0 1 0 0-1h-4a.5.5 0 0 0-.09 0 .5.5 0 0 0-.06 0z</Geometry>
+    <Path x:Key="iconic-path-pin" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-pin}"/>
+    <!--END pin-->
+
+    <!--BEGIN play-circle-->
+    <Geometry x:Key="iconic-geometry-play-circle">M4 0c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm-1 2l3 2-3 2v-4z</Geometry>
+    <Path x:Key="iconic-path-play-circle" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-play-circle}"/>
+    <!--END play-circle-->
+
+    <!--BEGIN plus-->
+    <Geometry x:Key="iconic-geometry-plus">M3 0v3h-3v2h3v3h2v-3h3v-2h-3v-3h-2z</Geometry>
+    <Path x:Key="iconic-path-plus" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-plus}"/>
+    <!--END plus-->
+
+    <!--BEGIN power-standby-->
+    <Geometry x:Key="iconic-geometry-power-standby">M3 0v4h1v-4h-1zm-1.28 1.44l-.38.31c-.81.64-1.34 1.64-1.34 2.75 0 1.93 1.57 3.5 3.5 3.5s3.5-1.57 3.5-3.5c0-1.11-.53-2.11-1.34-2.75l-.38-.31-.63.78.38.31c.58.46.97 1.17.97 1.97 0 1.39-1.11 2.5-2.5 2.5s-2.5-1.11-2.5-2.5c0-.8.36-1.51.94-1.97l.41-.31-.63-.78z</Geometry>
+    <Path x:Key="iconic-path-power-standby" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-power-standby}"/>
+    <!--END power-standby-->
+
+    <!--BEGIN print-->
+    <Geometry x:Key="iconic-geometry-print">M2 0v2h4v-2h-4zm-1.91 3c-.06 0-.09.04-.09.09v2.81c0 .05.04.09.09.09h.91v-2h6v2h.91c.05 0 .09-.04.09-.09v-2.81c0-.06-.04-.09-.09-.09h-7.81zm1.91 2v3h4v-3h-4z</Geometry>
+    <Path x:Key="iconic-path-print" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-print}"/>
+    <!--END print-->
+
+    <!--BEGIN project-->
+    <Geometry x:Key="iconic-geometry-project">M0 0v7h1v-7h-1zm7 0v7h1v-7h-1zm-5 1v1h2v-1h-2zm1 2v1h2v-1h-2zm1 2v1h2v-1h-2z</Geometry>
+    <Path x:Key="iconic-path-project" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-project}"/>
+    <!--END project-->
+
+    <!--BEGIN pulse-->
+    <Geometry x:Key="iconic-geometry-pulse">M3.25 0l-.47 1.53-.78 2.56-.03-.06-.09-.34h-1.88v1h1.1600000000000001l.38 1.16.47 1.47.47-1.5.78-2.5.78 2.5.41 1.34.53-1.28.59-1.47.13.28h2.31v-1h-1.69l-.38-.75-.5-.97-.41 1.03-.47 1.19-.84-2.66-.47-1.53z</Geometry>
+    <Path x:Key="iconic-path-pulse" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-pulse}"/>
+    <!--END pulse-->
+
+    <!--BEGIN puzzle-piece-->
+    <Geometry x:Key="iconic-geometry-puzzle-piece">M3 0c-.28 0-.54.1-.72.28-.18.18-.28.44-.28.72 0 .28.18.48.28.72.03.06.03.16.03.28h-2.31v6h2.31c0-.12-.01-.22-.03-.28-.1-.24-.28-.44-.28-.72 0-.28.1-.54.28-.72.18-.18.44-.28.72-.28.28 0 .54.1.72.28.18.18.28.44.28.72 0 .28-.18.48-.28.72-.03.06-.03.16-.03.28h2.31v-2.31c.12 0 .22.01.28.03.24.1.44.28.72.28.28 0 .54-.1.72-.28.18-.18.28-.44.28-.72 0-.28-.1-.54-.28-.72-.18-.18-.44-.28-.72-.28-.28 0-.48.18-.72.28-.06.03-.16.03-.28.03v-2.31h-2.31c0-.12.01-.22.03-.28.1-.24.28-.44.28-.72 0-.28-.1-.54-.28-.72-.18-.18-.44-.28-.72-.28z</Geometry>
+    <Path x:Key="iconic-path-puzzle-piece" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-puzzle-piece}"/>
+    <!--END puzzle-piece-->
+
+    <!--BEGIN question-mark-->
+    <Path x:Key="iconic-path-question-mark" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-question-mark}" RenderTransform="1 0 0 1 2 0"/>
+    <!--END question-mark-->
+
+    <!--BEGIN rain-->
+    <Geometry x:Key="iconic-geometry-rain">M4.5 0c-1.21 0-2.27.86-2.5 2-1.1 0-2 .9-2 2 0 .53.2.99.53 1.34.26-.22.6-.34.97-.34.2 0 .39.05.56.13.17-.64.74-1.13 1.44-1.13.69 0 1.27.49 1.44 1.13.17-.07.36-.13.56-.13.63 0 1.15.39 1.38.94.64-.17 1.13-.75 1.13-1.44 0-.65-.42-1.29-1-1.5v-.5c0-1.38-1.12-2.5-2.5-2.5zm-1.16 5a.5.5 0 0 0-.34.5v2a.5.5 0 1 0 1 0v-2a.5.5 0 0 0-.59-.5.5.5 0 0 0-.06 0zm-2 1a.5.5 0 0 0-.34.5v1a.5.5 0 1 0 1 0v-1a.5.5 0 0 0-.59-.5.5.5 0 0 0-.06 0zm4 0a.5.5 0 0 0-.34.5v1a.5.5 0 1 0 1 0v-1a.5.5 0 0 0-.59-.5.5.5 0 0 0-.06 0z</Geometry>
+    <Path x:Key="iconic-path-rain" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-rain}"/>
+    <!--END rain-->
+
+    <!--BEGIN random-->
+    <Geometry x:Key="iconic-geometry-random">M6 0v1h-.5c-.35 0-.56.1-.78.38l-1.41 1.78-1.53-1.78c-.22-.26-.44-.38-.78-.38h-1v1h1c-.05 0 .01.04.03.03l1.63 1.91-1.66 2.06h-1v1h1c.35 0 .56-.1.78-.38l1.53-1.91 1.66 1.91c.22.26.44.38.78.38h.25v1l2-1.5-2-1.5v1h-.22c-.01-.01-.05-.04-.06-.03l-1.75-2.06 1.53-1.91h.5v1l2-1.5-2-1.5z</Geometry>
+    <Path x:Key="iconic-path-random" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-random}"/>
+    <!--END random-->
+
+    <!--BEGIN reload-->
+    <Geometry x:Key="iconic-geometry-reload">M4 0c-2.2 0-4 1.8-4 4s1.8 4 4 4c1.1 0 2.12-.43 2.84-1.16l-.72-.72c-.54.54-1.29.88-2.13.88-1.66 0-3-1.34-3-3s1.34-3 3-3c.83 0 1.55.36 2.09.91l-1.09 1.09h3v-3l-1.19 1.19c-.72-.72-1.71-1.19-2.81-1.19z</Geometry>
+    <Path x:Key="iconic-path-reload" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-reload}"/>
+    <!--END reload-->
+
+    <!--BEGIN resize-both-->
+    <Geometry x:Key="iconic-geometry-resize-both">M4 0l1.66 1.66-4 4-1.66-1.66v4h4l-1.66-1.66 4-4 1.66 1.66v-4h-4z</Geometry>
+    <Path x:Key="iconic-path-resize-both" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-resize-both}"/>
+    <!--END resize-both-->
+
+    <!--BEGIN resize-height-->
+    <Geometry x:Key="iconic-geometry-resize-height">M2.5 0l-2.5 3h2v2h-2l2.5 3 2.5-3h-2v-2h2l-2.5-3z</Geometry>
+    <Path x:Key="iconic-path-resize-height" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-resize-height}" RenderTransform="1 0 0 1 1 0"/>
+    <!--END resize-height-->
+
+    <!--BEGIN resize-width-->
+    <Geometry x:Key="iconic-geometry-resize-width">M3 0l-3 2.5 3 2.5v-2h2v2l3-2.5-3-2.5v2h-2v-2z</Geometry>
+    <Path x:Key="iconic-path-resize-width" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-resize-width}" RenderTransform="1 0 0 1 0 1"/>
+    <!--END resize-width-->
+
+    <!--BEGIN rss-alt-->
+    <Geometry x:Key="iconic-geometry-rss-alt">M0 0v2c3.33 0 6 2.67 6 6h2c0-4.41-3.59-8-8-8zm0 3v2c1.67 0 3 1.33 3 3h2c0-2.75-2.25-5-5-5zm0 3v2h2c0-1.11-.9-2-2-2z</Geometry>
+    <Path x:Key="iconic-path-rss-alt" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-rss-alt}"/>
+    <!--END rss-alt-->
+
+    <!--BEGIN rss-->
+    <Geometry x:Key="iconic-geometry-rss">M1 0v1c3.32 0 6 2.68 6 6h1c0-3.86-3.14-7-7-7zm0 2v1c2.21 0 4 1.79 4 4h1c0-2.76-2.24-5-5-5zm0 2v1c1.11 0 2 .89 2 2h1c0-1.65-1.35-3-3-3zm0 2c-.55 0-1 .45-1 1s.45 1 1 1 1-.45 1-1-.45-1-1-1z</Geometry>
+    <Path x:Key="iconic-path-rss" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-rss}"/>
+    <!--END rss-->
+
+    <!--BEGIN script-->
+    <Geometry x:Key="iconic-geometry-script">M3 0c-.55 0-1 .45-1 1v5.5c0 .28-.22.5-.5.5s-.5-.22-.5-.5v-1.5h-1v2c0 .55.45 1 1 1h5c.55 0 1-.45 1-1v-3h-4v-2.5c0-.28.22-.5.5-.5s.5.22.5.5v1.5h4v-2c0-.55-.45-1-1-1h-4z</Geometry>
+    <Path x:Key="iconic-path-script" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-script}"/>
+    <!--END script-->
+
+    <!--BEGIN share-boxed-->
+    <Geometry x:Key="iconic-geometry-share-boxed">M.75 0c-.41 0-.75.34-.75.75v5.5c0 .41.34.75.75.75h4.5c.41 0 .75-.34.75-.75v-1.25h-1v1h-4v-5h2v-1h-2.25zm5.25 0v1c-2.05 0-3.7 1.54-3.94 3.53.21-.88.99-1.53 1.94-1.53h2v1l2-2-2-2z</Geometry>
+    <Path x:Key="iconic-path-share-boxed" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-share-boxed}"/>
+    <!--END share-boxed-->
+
+    <!--BEGIN share-->
+    <Geometry x:Key="iconic-geometry-share">M5 0v2c-4 0-5 2.05-5 5 .52-1.98 2-3 4-3h1v2l3-3.16-3-2.84z</Geometry>
+    <Path x:Key="iconic-path-share" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-share}"/>
+    <!--END share-->
+
+    <!--BEGIN shield-->
+    <Geometry x:Key="iconic-geometry-shield">M4 0l-.19.09-3.5 1.47-.31.13v.31c0 1.66.67 3.12 1.47 4.19.4.53.83.97 1.25 1.28.42.31.83.53 1.28.53.46 0 .86-.22 1.28-.53.42-.31.85-.75 1.25-1.28.8-1.07 1.47-2.53 1.47-4.19v-.31l-.31-.13-3.5-1.47-.19-.09zm0 1.09v5.91c-.04 0-.33-.07-.66-.31s-.71-.63-1.06-1.09c-.64-.85-1.14-2.03-1.22-3.28l2.94-1.22z</Geometry>
+    <Path x:Key="iconic-path-shield" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-shield}"/>
+    <!--END shield-->
+
+    <!--BEGIN signal-->
+    <Geometry x:Key="iconic-geometry-signal">M6 0v8h1v-8h-1zm-2 1v7h1v-7h-1zm-2 2v5h1v-5h-1zm-2 2v3h1v-3h-1z</Geometry>
+    <Path x:Key="iconic-path-signal" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-signal}"/>
+    <!--END signal-->
+
+    <!--BEGIN signpost-->
+    <Geometry x:Key="iconic-geometry-signpost">M3 0v1h-2l-1 1 1 1h2v5h1v-4h2l1-1-1-1h-2v-2h-1z</Geometry>
+    <Path x:Key="iconic-path-signpost" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-signpost}"/>
+    <!--END signpost-->
+
+    <!--BEGIN sort-ascending-->
+    <Geometry x:Key="iconic-geometry-sort-ascending">M2 0v6h-2l2.5 2 2.5-2h-2v-6h-1zm2 0v1h2v-1h-2zm0 2v1h3v-1h-3zm0 2v1h4v-1h-4z</Geometry>
+    <Path x:Key="iconic-path-sort-ascending" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-sort-ascending}"/>
+    <!--END sort-ascending-->
+
+    <!--BEGIN sort-descending-->
+    <Geometry x:Key="iconic-geometry-sort-descending">M2 0v6h-2l2.5 2 2.5-2h-2v-6h-1zm2 0v1h4v-1h-4zm0 2v1h3v-1h-3zm0 2v1h2v-1h-2z</Geometry>
+    <Path x:Key="iconic-path-sort-descending" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-sort-descending}"/>
+    <!--END sort-descending-->
+
+    <!--BEGIN spreadsheet-->
+    <Geometry x:Key="iconic-geometry-spreadsheet">M.75 0c-.41 0-.75.34-.75.75v5.5c0 .41.34.75.75.75h6.5c.41 0 .75-.34.75-.75v-5.5c0-.41-.34-.75-.75-.75h-6.5zm.25 1h1v1h-1v-1zm2 0h4v1h-4v-1zm-2 2h1v1h-1v-1zm2 0h4v1h-4v-1zm-2 2h1v1h-1v-1zm2 0h4v1h-4v-1z</Geometry>
+    <Path x:Key="iconic-path-spreadsheet" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-spreadsheet}"/>
+    <!--END spreadsheet-->
+
+    <!--BEGIN star-->
+    <Geometry x:Key="iconic-geometry-star">M4 0l-1 3h-3l2.5 2-1 3 2.5-2 2.5 2-1-3 2.5-2h-3l-1-3z</Geometry>
+    <Path x:Key="iconic-path-star" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-star}"/>
+    <!--END star-->
+
+    <!--BEGIN sun-->
+    <Geometry x:Key="iconic-geometry-sun">M4 0c-.28 0-.5.22-.5.5s.22.5.5.5.5-.22.5-.5-.22-.5-.5-.5zm-2.5 1c-.28 0-.5.22-.5.5s.22.5.5.5.5-.22.5-.5-.22-.5-.5-.5zm5 0c-.28 0-.5.22-.5.5s.22.5.5.5.5-.22.5-.5-.22-.5-.5-.5zm-2.5 1c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm-3.5 1.5c-.28 0-.5.22-.5.5s.22.5.5.5.5-.22.5-.5-.22-.5-.5-.5zm7 0c-.28 0-.5.22-.5.5s.22.5.5.5.5-.22.5-.5-.22-.5-.5-.5zm-6 2.5c-.28 0-.5.22-.5.5s.22.5.5.5.5-.22.5-.5-.22-.5-.5-.5zm5 0c-.28 0-.5.22-.5.5s.22.5.5.5.5-.22.5-.5-.22-.5-.5-.5zm-2.5 1c-.28 0-.5.22-.5.5s.22.5.5.5.5-.22.5-.5-.22-.5-.5-.5z</Geometry>
+    <Path x:Key="iconic-path-sun" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-sun}"/>
+    <!--END sun-->
+
+    <!--BEGIN tablet-->
+    <Geometry x:Key="iconic-geometry-tablet">M.34 0c-.18 0-.34.16-.34.34v7.31c0 .18.16.34.34.34h6.31c.18 0 .34-.16.34-.34v-7.31c0-.18-.16-.34-.34-.34h-6.31zm.66 1h5v5h-5v-5zm2.5 5.5c.38 0 .63.42.44.75s-.68.33-.88 0c-.19-.33.05-.75.44-.75z</Geometry>
+    <Path x:Key="iconic-path-tablet" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-tablet}"/>
+    <!--END tablet-->
+
+    <!--BEGIN tags-->
+    <Geometry x:Key="iconic-geometry-tags">M0 0v2l3 3 1.5-1.5.5-.5-2-2-1-1h-2zm3.41 0l3 3-1.19 1.22.78.78 2-2-3-3h-1.59zm-1.91 1c.28 0 .5.22.5.5s-.22.5-.5.5-.5-.22-.5-.5.22-.5.5-.5z</Geometry>
+    <Path x:Key="iconic-path-tags" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-tags}" RenderTransform="1 0 0 1 0 1"/>
+    <!--END tags-->
+
+    <!--BEGIN tag-->
+    <Geometry x:Key="iconic-geometry-tag">M0 0v3l5 5 3-3-5-5h-3zm2 1c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1z</Geometry>
+    <Path x:Key="iconic-path-tag" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-tag}"/>
+    <!--END tag-->
+
+    <!--BEGIN target-->
+    <Geometry x:Key="iconic-geometry-target">M4 0c-2.2 0-4 1.8-4 4s1.8 4 4 4 4-1.8 4-4-1.8-4-4-4zm0 1c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 1c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 1c.56 0 1 .44 1 1s-.44 1-1 1-1-.44-1-1 .44-1 1-1z</Geometry>
+    <Path x:Key="iconic-path-target" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-target}"/>
+    <!--END target-->
+
+    <!--BEGIN task-->
+    <Geometry x:Key="iconic-geometry-task">M0 0v7h7v-3.59l-1 1v1.59h-5v-5h3.59l1-1h-5.59zm7 0l-3 3-1-1-1 1 2 2 4-4-1-1z</Geometry>
+    <Path x:Key="iconic-path-task" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-task}"/>
+    <!--END task-->
+
+    <!--BEGIN terminal-->
+    <Geometry x:Key="iconic-geometry-terminal">M.09 0c-.06 0-.09.04-.09.09v7.81c0 .05.04.09.09.09h7.81c.05 0 .09-.04.09-.09v-7.81c0-.06-.04-.09-.09-.09h-7.81zm1.41.78l1.72 1.72-1.72 1.72-.72-.72 1-1-1-1 .72-.72zm2.5 2.22h3v1h-3v-1z</Geometry>
+    <Path x:Key="iconic-path-terminal" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-terminal}"/>
+    <!--END terminal-->
+
+    <!--BEGIN text-->
+    <Geometry x:Key="iconic-geometry-text">M0 0v2h.5c0-.55.45-1 1-1h1.5v5.5c0 .28-.22.5-.5.5h-.5v1h4v-1h-.5c-.28 0-.5-.22-.5-.5v-5.5h1.5c.55 0 1 .45 1 1h.5v-2h-8z</Geometry>
+    <Path x:Key="iconic-path-text" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-text}"/>
+    <!--END text-->
+
+    <!--BEGIN thumb-down-->
+    <Geometry x:Key="iconic-geometry-thumb-down">M0 0v4h1v-4h-1zm2 0v4c.28 0 .53.09.72.28.19.19 1.15 2.12 1.28 2.38.13.26.39.39.66.31.26-.08.4-.36.31-.63-.08-.26-.47-1.59-.47-1.84s.22-.5.5-.5h1.5c.28 0 .5-.22.5-.5s-1.03-3.19-1.03-3.19c-.08-.18-.26-.31-.47-.31h-3.5z</Geometry>
+    <Path x:Key="iconic-path-thumb-down" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-thumb-down}"/>
+    <!--END thumb-down-->
+
+    <!--BEGIN thumb-up-->
+    <Geometry x:Key="iconic-geometry-thumb-up">M4.47 0c-.19.02-.37.15-.47.34-.13.26-1.09 2.19-1.28 2.38-.19.19-.44.28-.72.28v4h3.5c.21 0 .39-.13.47-.31 0 0 1.03-2.91 1.03-3.19 0-.28-.22-.5-.5-.5h-1.5c-.28 0-.5-.25-.5-.5s.39-1.58.47-1.84c.08-.26-.05-.54-.31-.63-.07-.02-.12-.04-.19-.03zm-4.47 3v4h1v-4h-1z</Geometry>
+    <Path x:Key="iconic-path-thumb-up" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-thumb-up}"/>
+    <!--END thumb-up-->
+
+    <!--BEGIN timer-->
+    <Geometry x:Key="iconic-geometry-timer">M2 0v1h1v.03c-1.7.24-3 1.71-3 3.47 0 1.93 1.57 3.5 3.5 3.5s3.5-1.57 3.5-3.5c0-.45-.1-.87-.25-1.25l-.91.38c.11.29.16.57.16.88 0 1.39-1.11 2.5-2.5 2.5s-2.5-1.11-2.5-2.5 1.11-2.5 2.5-2.5c.3 0 .59.05.88.16l.34-.94c-.23-.08-.47-.12-.72-.16v-.06h1v-1h-3zm5 1.16s-3.65 2.81-3.84 3c-.19.2-.19.49 0 .69.19.2.49.2.69 0 .2-.2 3.16-3.69 3.16-3.69z</Geometry>
+    <Path x:Key="iconic-path-timer" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-timer}"/>
+    <!--END timer-->
+
+    <!--BEGIN transfer-->
+    <Geometry x:Key="iconic-geometry-transfer">M6 0v1h-6v1h6v1l2-1.5-2-1.5zm-4 4l-2 1.5 2 1.5v-1h6v-1h-6v-1z</Geometry>
+    <Path x:Key="iconic-path-transfer" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-transfer}"/>
+    <!--END transfer-->
+
+    <!--BEGIN trash-->
+    <Geometry x:Key="iconic-geometry-trash">M3 0c-.55 0-1 .45-1 1h-1c-.55 0-1 .45-1 1h7c0-.55-.45-1-1-1h-1c0-.55-.45-1-1-1h-1zm-2 3v4.81c0 .11.08.19.19.19h4.63c.11 0 .19-.08.19-.19v-4.81h-1v3.5c0 .28-.22.5-.5.5s-.5-.22-.5-.5v-3.5h-1v3.5c0 .28-.22.5-.5.5s-.5-.22-.5-.5v-3.5h-1z</Geometry>
+    <Path x:Key="iconic-path-trash" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-trash}"/>
+    <!--END trash-->
+
+    <!--BEGIN underline-->
+    <Geometry x:Key="iconic-geometry-underline">M1 0v4c0 1.1 1.12 2 2.5 2h.5c1.1 0 2-.9 2-2v-4h-1v4c0 .55-.45 1-1 1s-1-.45-1-1v-4h-2zm-1 7v1h7v-1h-7z</Geometry>
+    <Path x:Key="iconic-path-underline" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-underline}"/>
+    <!--END underline-->
+
+    <!--BEGIN vertical-align-bottom-->
+    <Geometry x:Key="iconic-geometry-vertical-align-bottom">M.09 0c-.06 0-.09.04-.09.09v4.81c0 .05.04.09.09.09h1.81c.05 0 .09-.04.09-.09v-4.81c0-.06-.04-.09-.09-.09h-1.81zm6 0c-.05 0-.09.04-.09.09v4.81c0 .05.04.09.09.09h1.81c.05 0 .09-.04.09-.09v-4.81c0-.06-.04-.09-.09-.09h-1.81zm-3 2c-.06 0-.09.04-.09.09v2.81c0 .05.04.09.09.09h1.81c.05 0 .09-.04.09-.09v-2.81c0-.06-.04-.09-.09-.09h-1.81zm-3.09 4v1h8v-1h-8z</Geometry>
+    <Path x:Key="iconic-path-vertical-align-bottom" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-vertical-align-bottom}"/>
+    <!--END vertical-align-bottom-->
+
+    <!--BEGIN vertical-align-center-->
+    <Geometry x:Key="iconic-geometry-vertical-align-center">M.09 0c-.06 0-.09.04-.09.09v1.91h2v-1.91c0-.06-.04-.09-.09-.09h-1.81zm6 0c-.05 0-.09.04-.09.09v1.91h2v-1.91c0-.06-.04-.09-.09-.09h-1.81zm-3 1c-.06 0-.09.04-.09.09v.91h2v-.91c0-.05-.04-.09-.09-.09h-1.81zm-3.09 2v1h8v-1h-8zm0 2v1.91c0 .05.04.09.09.09h1.81c.05 0 .09-.04.09-.09v-1.91h-2zm3 0v.91c0 .05.04.09.09.09h1.81c.05 0 .09-.04.09-.09v-.91h-2zm3 0v1.91c0 .05.04.09.09.09h1.81c.05 0 .09-.04.09-.09v-1.91h-2z</Geometry>
+    <Path x:Key="iconic-path-vertical-align-center" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-vertical-align-center}"/>
+    <!--END vertical-align-center-->
+
+    <!--BEGIN vertical-align-top-->
+    <Geometry x:Key="iconic-geometry-vertical-align-top">M0 0v1h8v-1h-8zm.09 2c-.06 0-.09.04-.09.09v4.81c0 .05.04.09.09.09h1.81c.05 0 .09-.04.09-.09v-4.81c0-.06-.04-.09-.09-.09h-1.81zm3 0c-.06 0-.09.04-.09.09v2.81c0 .05.04.09.09.09h1.81c.05 0 .09-.04.09-.09v-2.81c0-.06-.04-.09-.09-.09h-1.81zm3 0c-.05 0-.09.04-.09.09v4.81c0 .05.04.09.09.09h1.81c.05 0 .09-.04.09-.09v-4.81c0-.06-.04-.09-.09-.09h-1.81z</Geometry>
+    <Path x:Key="iconic-path-vertical-align-top" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-vertical-align-top}"/>
+    <!--END vertical-align-top-->
+
+    <!--BEGIN video-->
+    <Geometry x:Key="iconic-geometry-video">M.5 0c-.28 0-.5.23-.5.5v4c0 .28.23.5.5.5h5c.28 0 .5-.22.5-.5v-1.5l1 1h1v-3h-1l-1 1v-1.5c0-.28-.22-.5-.5-.5h-5z</Geometry>
+    <Path x:Key="iconic-path-video" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-video}" RenderTransform="1 0 0 1 0 1"/>
+    <!--END video-->
+
+    <!--BEGIN volume-high-->
+    <Geometry x:Key="iconic-geometry-volume-high">M3.34 0l-1.34 2h-2v4h2l1.34 2h.66v-8h-.66zm1.66 1v1c.17 0 .34.02.5.06.86.22 1.5 1 1.5 1.94s-.63 1.72-1.5 1.94c-.16.04-.33.06-.5.06v1c.25 0 .48-.04.72-.09h.03c1.3-.33 2.25-1.51 2.25-2.91 0-1.4-.95-2.58-2.25-2.91-.23-.06-.49-.09-.75-.09zm0 2v2c.09 0 .18-.01.25-.03.43-.11.75-.51.75-.97 0-.46-.31-.86-.75-.97-.08-.02-.17-.03-.25-.03z</Geometry>
+    <Path x:Key="iconic-path-volume-high" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-volume-high}"/>
+    <!--END volume-high-->
+
+    <!--BEGIN volume-low-->
+    <Geometry x:Key="iconic-geometry-volume-low">M3.34 0l-1.34 2h-2v4h2l1.34 2h.66v-8h-.66zm1.66 3v2c.09 0 .18-.01.25-.03.43-.11.75-.51.75-.97 0-.46-.31-.86-.75-.97-.08-.02-.17-.03-.25-.03z</Geometry>
+    <Path x:Key="iconic-path-volume-low" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-volume-low}" RenderTransform="1 0 0 1 1 0"/>
+    <!--END volume-low-->
+
+    <!--BEGIN volume-off-->
+    <Geometry x:Key="iconic-geometry-volume-off">M3.34 0l-1.34 2h-2v4h2l1.34 2h.66v-8h-.66z</Geometry>
+    <Path x:Key="iconic-path-volume-off" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-volume-off}" RenderTransform="1 0 0 1 2 0"/>
+    <!--END volume-off-->
+
+    <!--BEGIN warning-->
+    <Geometry x:Key="iconic-geometry-warning">M3.09 0c-.06 0-.1.04-.13.09l-2.94 6.81c-.02.05-.03.13-.03.19v.81c0 .05.04.09.09.09h6.81c.05 0 .09-.04.09-.09v-.81c0-.05-.01-.14-.03-.19l-2.94-6.81c-.02-.05-.07-.09-.13-.09h-.81zm-.09 3h1v2h-1v-2zm0 3h1v1h-1v-1z</Geometry>
+    <Path x:Key="iconic-path-warning" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-warning}"/>
+    <!--END warning-->
+
+    <!--BEGIN wifi-->
+    <Geometry x:Key="iconic-geometry-wifi">M3.75 0c-1.38 0-2.66.4-3.75 1.09l.53.81c.93-.59 2.03-.91 3.22-.91 1.2 0 2.32.31 3.25.91l.53-.81c-1.09-.7-2.4-1.09-3.78-1.09zm0 3c-.79 0-1.5.23-2.13.63l.53.84c.47-.3 1-.47 1.59-.47.59 0 1.16.17 1.63.47l.53-.84c-.62-.39-1.37-.63-2.16-.63zm0 3c-.55 0-1 .45-1 1s.45 1 1 1 1-.45 1-1-.45-1-1-1z</Geometry>
+    <Path x:Key="iconic-path-wifi" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-wifi}"/>
+    <!--END wifi-->
+
+    <!--BEGIN wrench-->
+    <Geometry x:Key="iconic-geometry-wrench">M5.5 0c-1.38 0-2.5 1.12-2.5 2.5 0 .32.08.62.19.91l-2.91 2.88c-.39.39-.39 1.05 0 1.44.2.2.46.28.72.28.26 0 .52-.09.72-.28l2.88-2.91c.28.11.58.19.91.19 1.38 0 2.5-1.12 2.5-2.5 0-.16 0-.32-.03-.47l-.97.97h-2v-2l.97-.97c-.15-.03-.31-.03-.47-.03zm-4.5 6.5c.28 0 .5.22.5.5s-.22.5-.5.5-.5-.22-.5-.5.22-.5.5-.5z</Geometry>
+    <Path x:Key="iconic-path-wrench" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-wrench}"/>
+    <!--END wrench-->
+
+    <!--BEGIN x-->
+    <Geometry x:Key="iconic-geometry-x">M1.41 0l-1.41 1.41.72.72 1.78 1.81-1.78 1.78-.72.69 1.41 1.44.72-.72 1.81-1.81 1.78 1.81.69.72 1.44-1.44-.72-.69-1.81-1.78 1.81-1.81.72-.72-1.44-1.41-.69.72-1.78 1.78-1.81-1.78-.72-.72z</Geometry>
+    <Path x:Key="iconic-path-x" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-x}"/>
+    <!--END x-->
+
+    <!--BEGIN yen-->
+    <Geometry x:Key="iconic-geometry-yen">M0 0l2.25 3h-2.25v1h3v1h-3v1h3v2h1v-2h3v-1h-3v-1h3v-1h-2.25l2.25-3h-1l-2.31 3h-.38l-2.31-3h-1z</Geometry>
+    <Path x:Key="iconic-path-yen" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-yen}"/>
+    <!--END yen-->
+
+    <!--BEGIN zoom-in-->
+    <Geometry x:Key="iconic-geometry-zoom-in">M3.5 0c-1.93 0-3.5 1.57-3.5 3.5s1.57 3.5 3.5 3.5c.61 0 1.19-.16 1.69-.44a1 1 0 0 0 .09.13l1 1.03a1.02 1.02 0 1 0 1.44-1.44l-1.03-1a1 1 0 0 0-.13-.09c.27-.5.44-1.08.44-1.69 0-1.93-1.57-3.5-3.5-3.5zm0 1c1.39 0 2.5 1.11 2.5 2.5 0 .59-.2 1.14-.53 1.56-.01.01-.02.02-.03.03a1 1 0 0 0-.06.03 1 1 0 0 0-.25.28c-.44.37-1.01.59-1.63.59-1.39 0-2.5-1.11-2.5-2.5s1.11-2.5 2.5-2.5zm-.5 1v1h-1v1h1v1h1v-1h1v-1h-1v-1h-1z</Geometry>
+    <Path x:Key="iconic-path-zoom-in" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-zoom-in}"/>
+    <!--END zoom-in-->
+
+    <!--BEGIN zoom-out-->
+    <Geometry x:Key="iconic-geometry-zoom-out">M3.5 0c-1.93 0-3.5 1.57-3.5 3.5s1.57 3.5 3.5 3.5c.61 0 1.19-.16 1.69-.44a1 1 0 0 0 .09.13l1 1.03a1.02 1.02 0 1 0 1.44-1.44l-1.03-1a1 1 0 0 0-.13-.09c.27-.5.44-1.08.44-1.69 0-1.93-1.57-3.5-3.5-3.5zm0 1c1.39 0 2.5 1.11 2.5 2.5 0 .59-.2 1.14-.53 1.56-.01.01-.02.02-.03.03a1 1 0 0 0-.06.03 1 1 0 0 0-.25.28c-.44.37-1.01.59-1.63.59-1.39 0-2.5-1.11-2.5-2.5s1.11-2.5 2.5-2.5zm-1.5 2v1h3v-1h-3z</Geometry>
+    <Path x:Key="iconic-path-zoom-out" Fill="{DynamicResource OpenIconicFill}" Data="{StaticResource iconic-geometry-zoom-out}"/>
+    <!--END zoom-out-->
+
+</ResourceDictionary>

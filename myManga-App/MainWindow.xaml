@@ -100,7 +100,7 @@
                         TextElement.Foreground="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground)}">
                         <Viewbox
                             x:Name="MenuHeaderIcon">
-                            <Path Style="{StaticResource iconic-menu}" Margin="2"
+                            <Path Style="{StaticResource iconic-menu}"
                                   Fill="{Binding Path=Foreground, ElementName=MenuButton, FallbackValue=Red}"/>
                         </Viewbox>
                         <TextBlock
@@ -124,7 +124,7 @@
                         TextElement.Foreground="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground)}">
                         <Viewbox
                             x:Name="HomeHeaderIcon">
-                            <Path Style="{StaticResource iconic-home}" Margin="2"
+                            <Path Style="{StaticResource iconic-home}"
                                   Fill="{Binding Path=Foreground, ElementName=HomeButton, FallbackValue=Red}"/>
                         </Viewbox>
                         <TextBlock
@@ -146,7 +146,7 @@
                         TextElement.Foreground="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground)}">
                         <Viewbox
                             x:Name="SearchHeaderIcon">
-                            <Path Style="{StaticResource iconic-magnifying-glass}" Margin="2"
+                            <Path Style="{StaticResource iconic-magnifying-glass}"
                                   Fill="{Binding Path=Foreground, ElementName=SearchButton, FallbackValue=Red}"/>
                         </Viewbox>
                         <TextBlock
@@ -168,7 +168,7 @@
                         TextElement.Foreground="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground)}">
                         <Viewbox
                             x:Name="ReadHeaderIcon">
-                            <Path Style="{StaticResource iconic-book}" Margin="2"
+                            <Path Style="{StaticResource iconic-book}"
                                   Fill="{Binding Path=Foreground, ElementName=ReadButton, FallbackValue=Red}"/>
                         </Viewbox>
                         <TextBlock
@@ -188,7 +188,6 @@
 
                 <Grid
                     Margin="0,4"
-                    TextElement.FontFamily="{DynamicResource OpenIconic}"
                     TextElement.FontSize="19"
                     Visibility="{Binding ContentViewModel.SupportsViewTypeChange, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
                     <Grid.RowDefinitions>
@@ -204,7 +203,7 @@
                         IsChecked="{Binding ContentViewModel.ViewType, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static MVVM:ViewModelViewType.Normal}, Mode=TwoWay}">
                         <Viewbox
                             x:Name="ListViewIcon">
-                            <Path Style="{StaticResource iconic-list-rich}" Margin="2"
+                            <Path Style="{StaticResource iconic-list-rich}"
                                   Fill="{Binding Path=Foreground, ElementName=ListViewButton, FallbackValue=Red}"/>
                         </Viewbox>
                     </Controls:MetroRadioButton>
@@ -217,7 +216,7 @@
                         IsChecked="{Binding ContentViewModel.ViewType, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static MVVM:ViewModelViewType.Grid}, Mode=TwoWay}">
                         <Viewbox
                             x:Name="GridViewIcon">
-                            <Path Style="{StaticResource iconic-grid-two-up}" Margin="2"
+                            <Path Style="{StaticResource iconic-grid-two-up}"
                                   Fill="{Binding Path=Foreground, ElementName=GridViewButton, FallbackValue=Red}"/>
                         </Viewbox>
                     </Controls:MetroRadioButton>
@@ -235,7 +234,7 @@
                         TextElement.Foreground="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground)}">
                         <Viewbox
                             x:Name="SettingsHeaderIcon">
-                            <Path Style="{StaticResource iconic-cog}" Margin="2"
+                            <Path Style="{StaticResource iconic-cog}"
                                   Fill="{Binding Path=Foreground, ElementName=SettingsButton, FallbackValue=Red}"/>
                         </Viewbox>
                         <TextBlock

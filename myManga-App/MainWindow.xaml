@@ -27,13 +27,12 @@
     <Windows:ThemedWindow.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/myManga;component/Resources/Images/OpenIconic.xaml"/>
                 <ResourceDictionary Source="/myManga;component/Themes/System/Windows/ThemedWindow.xaml"/>
                 <ResourceDictionary Source="/myManga;component/Resources/ViewModel-View-Link.xaml"/>
 
                 <ResourceDictionary Source="/myManga;component/Themes/ProgressBar/ProgressBar.xaml"/>
                 <ResourceDictionary Source="/myManga;component/Themes/ProgressBar/Spinner.xaml"/>
-
-                <ResourceDictionary Source="/myManga;component/Resources/Images/OpenIconic.xaml"/>
             </ResourceDictionary.MergedDictionaries>
             <Converters:ConditionalValueConverter 
                 x:Key="ConditionalValueConverter" 
@@ -101,8 +100,7 @@
                         TextElement.Foreground="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground)}">
                         <Viewbox
                             x:Name="MenuHeaderIcon">
-                            <Path Margin="2"
-                                  Data="{StaticResource iconic-geometry-menu}" 
+                            <Path Style="{StaticResource iconic-menu}" Margin="2"
                                   Fill="{Binding Path=Foreground, ElementName=MenuButton, FallbackValue=Red}"/>
                         </Viewbox>
                         <TextBlock
@@ -126,8 +124,7 @@
                         TextElement.Foreground="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground)}">
                         <Viewbox
                             x:Name="HomeHeaderIcon">
-                            <Path Margin="2" 
-                                  Data="{StaticResource iconic-geometry-home}" 
+                            <Path Style="{StaticResource iconic-home}" Margin="2"
                                   Fill="{Binding Path=Foreground, ElementName=HomeButton, FallbackValue=Red}"/>
                         </Viewbox>
                         <TextBlock
@@ -149,8 +146,7 @@
                         TextElement.Foreground="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground)}">
                         <Viewbox
                             x:Name="SearchHeaderIcon">
-                            <Path Margin="2" 
-                                  Data="{StaticResource iconic-geometry-magnifying-glass}"
+                            <Path Style="{StaticResource iconic-magnifying-glass}" Margin="2"
                                   Fill="{Binding Path=Foreground, ElementName=SearchButton, FallbackValue=Red}"/>
                         </Viewbox>
                         <TextBlock
@@ -172,8 +168,7 @@
                         TextElement.Foreground="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground)}">
                         <Viewbox
                             x:Name="ReadHeaderIcon">
-                            <Path Margin="2" 
-                                  Data="{StaticResource iconic-geometry-book}"
+                            <Path Style="{StaticResource iconic-book}" Margin="2"
                                   Fill="{Binding Path=Foreground, ElementName=ReadButton, FallbackValue=Red}"/>
                         </Viewbox>
                         <TextBlock
@@ -209,8 +204,7 @@
                         IsChecked="{Binding ContentViewModel.ViewType, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static MVVM:ViewModelViewType.Normal}, Mode=TwoWay}">
                         <Viewbox
                             x:Name="ListViewIcon">
-                            <Path Margin="2" 
-                                  Data="{StaticResource iconic-geometry-list-rich}"
+                            <Path Style="{StaticResource iconic-list-rich}" Margin="2"
                                   Fill="{Binding Path=Foreground, ElementName=ListViewButton, FallbackValue=Red}"/>
                         </Viewbox>
                     </Controls:MetroRadioButton>
@@ -223,8 +217,7 @@
                         IsChecked="{Binding ContentViewModel.ViewType, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static MVVM:ViewModelViewType.Grid}, Mode=TwoWay}">
                         <Viewbox
                             x:Name="GridViewIcon">
-                            <Path Margin="2" 
-                                  Data="{StaticResource iconic-geometry-grid-two-up}"
+                            <Path Style="{StaticResource iconic-grid-two-up}" Margin="2"
                                   Fill="{Binding Path=Foreground, ElementName=GridViewButton, FallbackValue=Red}"/>
                         </Viewbox>
                     </Controls:MetroRadioButton>
@@ -242,8 +235,7 @@
                         TextElement.Foreground="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground)}">
                         <Viewbox
                             x:Name="SettingsHeaderIcon">
-                            <Path Margin="2" 
-                                  Data="{StaticResource iconic-geometry-cog}"
+                            <Path Style="{StaticResource iconic-cog}" Margin="2"
                                   Fill="{Binding Path=Foreground, ElementName=SettingsButton, FallbackValue=Red}"/>
                         </Viewbox>
                         <TextBlock

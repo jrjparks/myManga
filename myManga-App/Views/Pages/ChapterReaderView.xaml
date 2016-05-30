@@ -18,6 +18,7 @@
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/myManga;component/Resources/Images/OpenIconic.xaml"/>
                 <ResourceDictionary Source="/myManga;component/Themes/Button/MetroButton.xaml"/>
 
                 <ResourceDictionary Source="/myManga;component/Themes/ListBox/ListBoxes.xaml"/>
@@ -259,20 +260,30 @@
         <Controls:MetroButton
             Grid.Column="0"
             Grid.Row="1"
+            x:Name="PrevButton"
             VerticalContentAlignment="Center"
-            HorizontalContentAlignment="Center" 
-            FontFamily="{DynamicResource OpenIconic}"
-            Content="{DynamicResource oi-arrow-thick-left}"
+            HorizontalContentAlignment="Center"
             Command="{Binding PagePrevCommand}"
-            FontSize="24"/>
+            FontSize="24">
+            <Viewbox
+                x:Name="PrevIcon">
+                <Path Style="{StaticResource iconic-arrow-thick-left}" Margin="2"
+                        Fill="{Binding Path=Foreground, ElementName=PrevButton, FallbackValue=Red}"/>
+            </Viewbox>
+        </Controls:MetroButton>
         <Controls:MetroButton
             Grid.Column="2"
             Grid.Row="1"
+            x:Name="NextButton"
             VerticalContentAlignment="Center"
             HorizontalContentAlignment="Center"
-            FontFamily="{DynamicResource OpenIconic}"
-            Content="{DynamicResource oi-arrow-thick-right}"
             Command="{Binding PageNextCommand}"
-            FontSize="24"/>
+            FontSize="24">
+            <Viewbox
+                x:Name="NextIcon">
+                <Path Style="{StaticResource iconic-arrow-thick-right}" Margin="2"
+                        Fill="{Binding Path=Foreground, ElementName=NextButton, FallbackValue=Red}"/>
+            </Viewbox>
+        </Controls:MetroButton>
     </Grid>
 </UserControl>

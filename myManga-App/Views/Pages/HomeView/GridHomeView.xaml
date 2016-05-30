@@ -13,6 +13,7 @@
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/myManga;component/Resources/Images/OpenIconic.xaml"/>
                 <ResourceDictionary Source="/myManga;component/Themes/Button/MetroButton.xaml"/>
                 <ResourceDictionary Source="/myManga;component/Themes/TextBox/TextBox.xaml"/>
 
@@ -92,12 +93,15 @@
                 <Controls:MetroButton
 				    x:Name="SearchButton"
                     Grid.Column="0"
-				    FontFamily="{DynamicResource OpenIconic}"
-				    Content="{DynamicResource oi-magnifying-glass}"
 				    Command="{Binding ForwardSearchTermCommand}"
                     CommandParameter="{Binding SearchTerm}"
 				    ToolTip="Search"
-				    Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"/>
+				    Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}">
+                    <Viewbox x:Name="SearchIcon">
+                        <Path Style="{StaticResource iconic-magnifying-glass}" Margin="2"
+                              Fill="{Binding Path=Foreground, ElementName=SearchButton, FallbackValue=Red}"/>
+                    </Viewbox>
+                </Controls:MetroButton>
 
                 <TextBox
 				    x:Name="SearchBox"
@@ -112,11 +116,14 @@
                 <Controls:MetroButton
 				    x:Name="ClearSearchButton"
                     Grid.Column="2"
-				    FontFamily="{DynamicResource OpenIconic}"
-				    Content="{DynamicResource oi-delete}"
 				    Command="{Binding ClearSearchTermCommand}"
 				    ToolTip="Clear Search"
-				    Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"/>
+				    Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}">
+                    <Viewbox x:Name="ClearSearchIcon">
+                        <Path Style="{StaticResource iconic-delete}" Margin="2"
+                              Fill="{Binding Path=Foreground, ElementName=ClearSearchButton, FallbackValue=Red}"/>
+                    </Viewbox>
+                </Controls:MetroButton>
 
             </Grid>
 

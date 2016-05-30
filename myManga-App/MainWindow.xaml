@@ -32,6 +32,8 @@
 
                 <ResourceDictionary Source="/myManga;component/Themes/ProgressBar/ProgressBar.xaml"/>
                 <ResourceDictionary Source="/myManga;component/Themes/ProgressBar/Spinner.xaml"/>
+
+                <ResourceDictionary Source="/myManga;component/Resources/Images/OpenIconic.xaml"/>
             </ResourceDictionary.MergedDictionaries>
             <Converters:ConditionalValueConverter 
                 x:Key="ConditionalValueConverter" 
@@ -74,7 +76,8 @@
             x:Name="Menu"
             Grid.Column="0"
             Grid.RowSpan="2"
-            TextBlock.FontSize="16">
+            TextBlock.FontSize="18"
+            TextElement.FontWeight="Bold">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition/>
@@ -91,17 +94,17 @@
                 <Controls:MetroToggleButton
                     x:Name="MenuButton"
                     HorizontalContentAlignment="Left"
-                    Height="{StaticResource MenuButtonSize}">
+                    Height="{StaticResource MenuButtonSize}"
+                    IsChecked="False">
                     <StackPanel 
                         Orientation="Horizontal"
                         TextElement.Foreground="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground)}">
-                        <TextBlock
-                            x:Name="MenuHeaderIcon"
-                            FontFamily="{DynamicResource OpenIconic}"
-                            FontSize="19"
-                            Text="{DynamicResource oi-menu}"
-                            Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"
-                            Padding="5"/>
+                        <Viewbox
+                            x:Name="MenuHeaderIcon">
+                            <Path Margin="2"
+                                  Data="{StaticResource iconic-geometry-menu}" 
+                                  Fill="{Binding Path=Foreground, ElementName=MenuButton, FallbackValue=Red}"/>
+                        </Viewbox>
                         <TextBlock
                             x:Name="MenuHeaderLabel"
                             Text="Menu"
@@ -121,13 +124,12 @@
                     <StackPanel 
                         Orientation="Horizontal"
                         TextElement.Foreground="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground)}">
-                        <TextBlock
-                            x:Name="HomeHeaderIcon"
-                            FontFamily="{DynamicResource OpenIconic}" 
-                            FontSize="19"
-                            Text="{DynamicResource oi-home}"
-                            Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"
-                            Padding="5"/>
+                        <Viewbox
+                            x:Name="HomeHeaderIcon">
+                            <Path Margin="2" 
+                                  Data="{StaticResource iconic-geometry-home}" 
+                                  Fill="{Binding Path=Foreground, ElementName=HomeButton, FallbackValue=Red}"/>
+                        </Viewbox>
                         <TextBlock
                             x:Name="HomeHeaderLabel"
                             Text="Home"
@@ -145,13 +147,12 @@
                     <StackPanel 
                         Orientation="Horizontal"
                         TextElement.Foreground="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground)}">
-                        <TextBlock
-                            x:Name="SearchHeaderIcon"
-                            FontFamily="{DynamicResource OpenIconic}" 
-                            FontSize="19"
-                            Text="{DynamicResource oi-magnifying-glass}"
-                            Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"
-                            Padding="5"/>
+                        <Viewbox
+                            x:Name="SearchHeaderIcon">
+                            <Path Margin="2" 
+                                  Data="{StaticResource iconic-geometry-magnifying-glass}"
+                                  Fill="{Binding Path=Foreground, ElementName=SearchButton, FallbackValue=Red}"/>
+                        </Viewbox>
                         <TextBlock
                             x:Name="SearchHeaderLabel"
                             Text="Search"
@@ -169,13 +170,12 @@
                     <StackPanel 
                         Orientation="Horizontal"
                         TextElement.Foreground="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground)}">
-                        <TextBlock
-                            x:Name="ReadHeaderIcon"
-                            FontFamily="{DynamicResource OpenIconic}" 
-                            FontSize="19"
-                            Text="{DynamicResource oi-book}"
-                            Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"
-                            Padding="5"/>
+                        <Viewbox
+                            x:Name="ReadHeaderIcon">
+                            <Path Margin="2" 
+                                  Data="{StaticResource iconic-geometry-book}"
+                                  Fill="{Binding Path=Foreground, ElementName=ReadButton, FallbackValue=Red}"/>
+                        </Viewbox>
                         <TextBlock
                             x:Name="ReadHeaderLabel"
                             Text="Reader"
@@ -202,31 +202,31 @@
                     </Grid.RowDefinitions>
 
                     <Controls:MetroRadioButton
+                        x:Name="ListViewButton"
                         Grid.Row="0"
                         Grid.Column="0"
                         Height="{StaticResource MenuButtonSize}"
                         IsChecked="{Binding ContentViewModel.ViewType, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static MVVM:ViewModelViewType.Normal}, Mode=TwoWay}">
-                        <TextBlock
-                            x:Name="ListViewIcon"
-                            FontFamily="{DynamicResource OpenIconic}" 
-                            FontSize="19"
-                            Text="{DynamicResource oi-list-rich}"
-                            TextElement.Foreground="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground)}"
-                            Padding="5"/>
+                        <Viewbox
+                            x:Name="ListViewIcon">
+                            <Path Margin="2" 
+                                  Data="{StaticResource iconic-geometry-list-rich}"
+                                  Fill="{Binding Path=Foreground, ElementName=ListViewButton, FallbackValue=Red}"/>
+                        </Viewbox>
                     </Controls:MetroRadioButton>
 
                     <Controls:MetroRadioButton
+                        x:Name="GridViewButton"
                         Grid.Row="1"
                         Grid.Column="1"
                         Height="{StaticResource MenuButtonSize}"
                         IsChecked="{Binding ContentViewModel.ViewType, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static MVVM:ViewModelViewType.Grid}, Mode=TwoWay}">
-                        <TextBlock
-                            x:Name="GridViewIcon"
-                            FontFamily="{DynamicResource OpenIconic}" 
-                            FontSize="19"
-                            Text="{DynamicResource oi-grid-two-up}"
-                            TextElement.Foreground="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground)}"
-                            Padding="5"/>
+                        <Viewbox
+                            x:Name="GridViewIcon">
+                            <Path Margin="2" 
+                                  Data="{StaticResource iconic-geometry-grid-two-up}"
+                                  Fill="{Binding Path=Foreground, ElementName=GridViewButton, FallbackValue=Red}"/>
+                        </Viewbox>
                     </Controls:MetroRadioButton>
 
                 </Grid>
@@ -240,13 +240,12 @@
                     <StackPanel 
                         Orientation="Horizontal"
                         TextElement.Foreground="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground)}">
-                        <TextBlock
-                            x:Name="SettingsHeaderIcon"
-                            FontFamily="{DynamicResource OpenIconic}" 
-                            FontSize="19"
-                            Text="{DynamicResource oi-cog}"
-                            Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"
-                            Padding="5"/>
+                        <Viewbox
+                            x:Name="SettingsHeaderIcon">
+                            <Path Margin="2" 
+                                  Data="{StaticResource iconic-geometry-cog}"
+                                  Fill="{Binding Path=Foreground, ElementName=SettingsButton, FallbackValue=Red}"/>
+                        </Viewbox>
                         <TextBlock
                             x:Name="SettingsHeaderLabel"
                             Text="Settings"

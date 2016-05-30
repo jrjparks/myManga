@@ -184,45 +184,49 @@
             <ScrollViewer.ContextMenu>
                 <ContextMenu>
                     <MenuItem 
+                        x:Name="ReloadPageImageMenuItem"
                         Command="{Binding ReloadPageAsyncCommand}" 
                         CommandParameter="{Binding PageObject}"
                         Header="(F5) Reload Page Image">
                         <MenuItem.Icon>
-                            <TextBlock
-                                Text="{DynamicResource oi-cloud-download}" 
-                                FontFamily="{DynamicResource OpenIconic}" 
-                                HorizontalAlignment="Center" 
-                                VerticalAlignment="Center"/>
+                            <Viewbox>
+                                <Path Style="{StaticResource iconic-cloud-download}"
+                                      Fill="{Binding Path=Foreground, ElementName=ReloadPageImageMenuItem, FallbackValue=Red}"/>
+                            </Viewbox>
                         </MenuItem.Icon>
                     </MenuItem>
                     <Separator/>
                     <MenuItem 
+                        x:Name="ZoomInMenuItem"
                         Command="{Binding IncreasePageZoomCommand}"
                         Header="(Ctrl+=) Zoom In">
                         <MenuItem.Icon>
-                            <TextBlock
-                                Text="{DynamicResource oi-plus}" 
-                                FontFamily="{DynamicResource OpenIconic}" 
-                                HorizontalAlignment="Center" 
-                                VerticalAlignment="Center"/>
+                            <Viewbox>
+                                <Path Style="{StaticResource iconic-plus}"
+                                      Fill="{Binding Path=Foreground, ElementName=ZoomInMenuItem, FallbackValue=Red}"/>
+                            </Viewbox>
                         </MenuItem.Icon>
                     </MenuItem>
-                    <MenuItem Command="{Binding DecreasePageZoomCommand}" Header="(Ctrl+-) Zoom Out">
+                    <MenuItem 
+                        x:Name="ZoomOutMenuItem"
+                        Command="{Binding DecreasePageZoomCommand}" 
+                        Header="(Ctrl+-) Zoom Out">
                         <MenuItem.Icon>
-                            <TextBlock
-                                Text="{DynamicResource oi-minus}" 
-                                FontFamily="{DynamicResource OpenIconic}" 
-                                HorizontalAlignment="Center" 
-                                VerticalAlignment="Center"/>
+                            <Viewbox>
+                                <Path Style="{StaticResource iconic-minus}"
+                                      Fill="{Binding Path=Foreground, ElementName=ZoomOutMenuItem, FallbackValue=Red}"/>
+                            </Viewbox>
                         </MenuItem.Icon>
                     </MenuItem>
-                    <MenuItem Command="{Binding ResetPageZoomCommand}" Header="(Ctrl+0) Reset Zoom">
+                    <MenuItem 
+                        x:Name="ZoomResetMenuItem"
+                        Command="{Binding ResetPageZoomCommand}"
+                        Header="(Ctrl+0) Reset Zoom">
                         <MenuItem.Icon>
-                            <TextBlock
-                                Text="{DynamicResource oi-reload}" 
-                                FontFamily="{DynamicResource OpenIconic}" 
-                                HorizontalAlignment="Center" 
-                                VerticalAlignment="Center"/>
+                            <Viewbox>
+                                <Path Style="{StaticResource iconic-reload}"
+                                      Fill="{Binding Path=Foreground, ElementName=ZoomResetMenuItem, FallbackValue=Red}"/>
+                            </Viewbox>
                         </MenuItem.Icon>
                     </MenuItem>
                 </ContextMenu>

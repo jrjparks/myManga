@@ -256,7 +256,8 @@ namespace MangaPark
             HtmlDocument ChapterObjectDocument = new HtmlDocument();
             ChapterObjectDocument.LoadHtml(Content);
 
-            HtmlNodeCollection PageNodes = ChapterObjectDocument.DocumentNode.SelectNodes("/html/body/section[3]/div/div[10]/div/div[2]/p/a");
+            String PagesSelector = "/html/body/section[3]/div/div[9]/div/div[2]/p/a";
+            HtmlNodeCollection PageNodes = ChapterObjectDocument.DocumentNode.SelectNodes(PagesSelector);
             return new ChapterObject()
             {
                 Pages = (from PageNode in PageNodes

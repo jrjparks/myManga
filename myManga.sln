@@ -51,6 +51,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MangaEden", "myManga-ISiteE
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MangaPark", "myManga-ISiteExtensions\MangaPark\MangaPark.csproj", "{BEEB2FE8-4F95-48C0-B123-41B3C0AB7416}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MangaTown", "myManga-ISiteExtensions\MangaTown\MangaTown.csproj", "{EA040A6F-CBCB-41C4-BCEE-7E6F6A5F69A7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -163,6 +165,14 @@ Global
 		{BEEB2FE8-4F95-48C0-B123-41B3C0AB7416}.Release|Any CPU.Build.0 = Release|Any CPU
 		{BEEB2FE8-4F95-48C0-B123-41B3C0AB7416}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{BEEB2FE8-4F95-48C0-B123-41B3C0AB7416}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{EA040A6F-CBCB-41C4-BCEE-7E6F6A5F69A7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EA040A6F-CBCB-41C4-BCEE-7E6F6A5F69A7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EA040A6F-CBCB-41C4-BCEE-7E6F6A5F69A7}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{EA040A6F-CBCB-41C4-BCEE-7E6F6A5F69A7}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{EA040A6F-CBCB-41C4-BCEE-7E6F6A5F69A7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EA040A6F-CBCB-41C4-BCEE-7E6F6A5F69A7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EA040A6F-CBCB-41C4-BCEE-7E6F6A5F69A7}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{EA040A6F-CBCB-41C4-BCEE-7E6F6A5F69A7}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -180,5 +190,6 @@ Global
 		{E7AF89E1-1359-4F5B-B2EB-A4613BE7C6DF} = {A5464BE9-8F0C-49F8-AFCD-EC17E9B575E1}
 		{1979E349-5CB7-4A9A-BC16-2A3E6E3DFDB6} = {A5464BE9-8F0C-49F8-AFCD-EC17E9B575E1}
 		{BEEB2FE8-4F95-48C0-B123-41B3C0AB7416} = {A5464BE9-8F0C-49F8-AFCD-EC17E9B575E1}
+		{EA040A6F-CBCB-41C4-BCEE-7E6F6A5F69A7} = {A5464BE9-8F0C-49F8-AFCD-EC17E9B575E1}
 	EndGlobalSection
 EndGlobal

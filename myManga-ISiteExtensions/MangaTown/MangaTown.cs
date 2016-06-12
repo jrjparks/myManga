@@ -79,6 +79,7 @@ namespace MangaTown
         #endregion
 
         private Func<HtmlNode, String> GetInnerText = Node => HtmlEntity.DeEntitize(Node.InnerText).Trim();
+        private Func<Uri, Uri> UriStripQuery = Uri => new UriBuilder(Uri.Scheme, Uri.Host, Uri.Port, Uri.AbsolutePath).Uri;
 
         public SearchRequestObject GetSearchRequestObject(String SearchTerm)
         {
@@ -123,7 +124,7 @@ namespace MangaTown
                     {
                         Cover = new LocationObject()
                         {
-                            Url = CoverUrl,
+                            Url = UriStripQuery(new Uri(CoverUrl)).ToString(),
                             ExtensionName = ExtensionDescriptionAttribute.Name,
                             ExtensionLanguage = ExtensionDescriptionAttribute.Language
                         },
@@ -162,7 +163,7 @@ namespace MangaTown
             String CoverUrl = CoverImg.GetAttributeValue("src", String.Format("{0}/media/images/manga_cover.jpg", ExtensionDescriptionAttribute.RootUrl));
             LocationObject Cover = new LocationObject()
             {
-                Url = CoverUrl,
+                Url = UriStripQuery(new Uri(CoverUrl)).ToString(),
                 ExtensionName = ExtensionDescriptionAttribute.Name,
                 ExtensionLanguage = ExtensionDescriptionAttribute.Language
             };
@@ -279,9 +280,8 @@ namespace MangaTown
                 PrevNode = PageNode.SelectSingleNode(".//preceding-sibling::option"),
                 NextNode = PageNode.SelectSingleNode(".//following-sibling::option");
 
-            Uri ImageLink = new Uri(PageObjectDocument.GetElementbyId("image").Attributes["src"].Value);
+            Uri ImageLink = UriStripQuery(new Uri(PageObjectDocument.GetElementbyId("image").Attributes["src"].Value));
             // Remove the URI query
-            ImageLink = new UriBuilder(ImageLink.Scheme, ImageLink.Host, ImageLink.Port, ImageLink.AbsolutePath).Uri;
             String Name = ImageLink.Segments.Last();
 
             return new PageObject()

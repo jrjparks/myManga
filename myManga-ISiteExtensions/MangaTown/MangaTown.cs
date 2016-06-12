@@ -78,8 +78,10 @@ namespace MangaTown
         }
         #endregion
 
-        private Func<HtmlNode, String> GetInnerText = Node => HtmlEntity.DeEntitize(Node.InnerText).Trim();
-        private Func<Uri, Uri> UriStripQuery = Uri => new UriBuilder(Uri.Scheme, Uri.Host, Uri.Port, Uri.AbsolutePath).Uri;
+        private String GetInnerText(HtmlNode Node) => HtmlEntity.DeEntitize(Node.InnerText).Trim();
+        private String GetAttributeText(HtmlNode Node, String Name, String Default = "") => HtmlEntity.DeEntitize(Node.GetAttributeValue(Name, Default)).Trim();
+        private Uri UriStripQuery(Uri Uri) => new UriBuilder(Uri.Scheme, Uri.Host, Uri.Port, Uri.AbsolutePath).Uri;
+        private Uri UriStripQuery(String Uri) => UriStripQuery(new Uri(Uri));
 
         public SearchRequestObject GetSearchRequestObject(String SearchTerm)
         {
@@ -104,8 +106,8 @@ namespace MangaTown
                 {
                     // Name & Link
                     HtmlNode NameLinkNode = SearchResultNode.SelectSingleNode(".//p[contains(@class,'title')]/a[1]");
-                    String Name = GetInnerText(NameLinkNode),
-                        Link = NameLinkNode.Attributes["href"].Value;
+                    String Name = GetAttributeText(NameLinkNode, "title"),
+                        Link = GetAttributeText(NameLinkNode, "href");
 
                     // Cover
                     HtmlNode CoverImg = SearchResultNode.SelectSingleNode(".//a[contains(@class,'manga_cover')]/img[1]");
@@ -118,7 +120,7 @@ namespace MangaTown
 
                     // Author
                     HtmlNode AuthorNode = SearchResultNode.SelectSingleNode(".//p[contains(@class,'view')][1]/a[1]");
-                    List<String> Authors = new List<String>{ GetInnerText(AuthorNode) };
+                    List<String> Authors = new List<String> { GetInnerText(AuthorNode) };
 
                     SearchResults.Add(new SearchResultObject()
                     {
@@ -155,12 +157,13 @@ namespace MangaTown
             List<String> AlternateNames = GetInnerText(MangaInfoNode.SelectSingleNode(".//ul/li[3]/text()")).Split(';').Select(an => an.Trim()).ToList();
 
             // Rating
+            HtmlNode RatingNode = MangaInfoNode.SelectSingleNode(".//span[contains(@class,'scores')]");
             Double Rating;
-            Double.TryParse(GetInnerText(MangaInfoNode.SelectSingleNode(".//span[contains(@class,'scores')]")), out Rating);
+            Double.TryParse(GetInnerText(RatingNode), out Rating);
 
             // Cover
             HtmlNode CoverImg = MangaContentNode.SelectSingleNode(".//img");
-            String CoverUrl = CoverImg.GetAttributeValue("src", String.Format("{0}/media/images/manga_cover.jpg", ExtensionDescriptionAttribute.RootUrl));
+            String CoverUrl = GetAttributeText(CoverImg, "src", String.Format("{0}/media/images/manga_cover.jpg", ExtensionDescriptionAttribute.RootUrl));
             LocationObject Cover = new LocationObject()
             {
                 Url = UriStripQuery(new Uri(CoverUrl)).ToString(),
@@ -258,14 +261,14 @@ namespace MangaTown
         {
             HtmlDocument ChapterObjectDocument = new HtmlDocument();
             ChapterObjectDocument.LoadHtml(Content);
-            
+
             HtmlNodeCollection PageNodes = ChapterObjectDocument.DocumentNode.SelectNodes("//html/head/body/section/div/div[2]/div/select/option");
 
             return new ChapterObject()
             {
                 Pages = PageNodes.Select(PageNode => new PageObject()
                 {
-                    Url = PageNode.GetAttributeValue("value", null),
+                    Url = GetAttributeText(PageNode, "value", null),
                     PageNumber = UInt32.Parse(GetInnerText(PageNode.NextSibling)),
                 }).ToList(),
             };
@@ -280,17 +283,16 @@ namespace MangaTown
                 PrevNode = PageNode.SelectSingleNode(".//preceding-sibling::option"),
                 NextNode = PageNode.SelectSingleNode(".//following-sibling::option");
 
-            Uri ImageLink = UriStripQuery(new Uri(PageObjectDocument.GetElementbyId("image").Attributes["src"].Value));
-            // Remove the URI query
+            Uri ImageLink = UriStripQuery(GetAttributeText(PageObjectDocument.GetElementbyId("image"), "src"));
             String Name = ImageLink.Segments.Last();
 
             return new PageObject()
             {
                 Name = Name,
                 PageNumber = UInt32.Parse(GetInnerText(PageNode.NextSibling)),
-                Url = PageNode.GetAttributeValue("value", null),
-                NextUrl = Equals(NextNode, null) ? null : NextNode.GetAttributeValue("value", null),
-                PrevUrl = Equals(PrevNode, null) ? null : PrevNode.GetAttributeValue("value", null),
+                Url = GetAttributeText(PageNode, "value", null),
+                NextUrl = Equals(NextNode, null) ? null : GetAttributeText(NextNode, "value", null),
+                PrevUrl = Equals(PrevNode, null) ? null : GetAttributeText(PrevNode, "value", null),
                 ImgUrl = ImageLink.ToString()
             };
         }

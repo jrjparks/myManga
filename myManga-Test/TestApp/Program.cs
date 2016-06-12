@@ -49,7 +49,7 @@ namespace TestApp
             decimal perc = (decimal)complete / (decimal)maxVal;
             String percStr = (perc * 100).ToString("F2") + "%";
             text = text.Remove(text.Length - percStr.Length) + percStr;
-            int chars = (int)Math.Ceiling(perc / ((decimal)1 / (decimal)barWidth));
+            int chars = (int)Math.Floor(perc / ((decimal)1 / (decimal)barWidth));
 
             Console.CursorLeft = 0;
             Console.ForegroundColor = ConsoleColor.Black;
@@ -120,7 +120,7 @@ namespace TestApp
         private static readonly CoreManagement CORE = new CoreManagement(logger);
 
         String[] EnabledPlugins = {
-            "MangaPark"
+            "MangaTown"
         };
 
         #region Logging
@@ -144,11 +144,10 @@ namespace TestApp
         {
             CORE.UpdateUserConfiguration(new UserConfigurationObject()
             {
-                EnabledExtensions = (from ext in CORE.Extensions
-                                     select new EnabledExtensionObject(ext)
-                                     {
-                                         Enabled = EnabledPlugins.Contains(ext.ExtensionDescriptionAttribute.Name)
-                                     }).ToList()
+                EnabledExtensions = CORE.Extensions.Select(Extension => new EnabledExtensionObject(Extension)
+                {
+                    Enabled = EnabledPlugins.Contains(Extension.ExtensionDescriptionAttribute.Name)
+                }).ToList()
             });
             logger.InfoFormat("Loading Plugins...");
             foreach (EnabledExtensionObject ee in CORE.UserConfiguration.EnabledExtensions)
@@ -162,20 +161,50 @@ namespace TestApp
 
         private readonly Dictionary<String, Func<String, Task>> TestMethods;
 
+        private List<MangaObject> SearchResults;
+
         public Tests()
         {
             TestMethods = new Dictionary<String, Func<String, Task>>(){
-                {"search", async(SearchTerm) => {
-                    logger.InfoFormat("Searching for {0}...", SearchTerm);
-                    List<MangaObject> results = await Test_Search(SearchTerm);
-                    logger.InfoFormat("Searching for {0}...DONE!", SearchTerm);
+                {
+                    "search",
+                    async (SearchTerm) =>
+                    {
+                        logger.InfoFormat("Searching for {0}...", SearchTerm);
+                        SearchResults = await Test_Search(SearchTerm);
+                        logger.InfoFormat("Searching for {0}...DONE!", SearchTerm);
 
-                    foreach(MangaObject mObj in results) {
-                        logger.InfoFormat("* {0}", mObj.Name);
-                        foreach(LocationObject lObj in mObj.Locations)
-                            logger.InfoFormat("** {0} ({1})", lObj.ExtensionName, lObj.ExtensionLanguage);
+                        Int32 idx = 0;
+                        foreach(MangaObject mObj in SearchResults) {
+                            logger.InfoFormat("* [{0}] {1}", idx++, mObj.Name);
+                            foreach(LocationObject lObj in mObj.Locations)
+                                logger.InfoFormat("** {0} ({1})", lObj.ExtensionName, lObj.ExtensionLanguage);
+                        }
                     }
-                } }
+                },
+                {
+                    "download",
+                    async (SearchIdxStr) =>
+                    {
+                        Int32 SearchIdx = 0;
+                        Int32.TryParse(SearchIdxStr, out SearchIdx);
+                        MangaObject MangaObject = SearchResults[SearchIdx];
+                        logger.InfoFormat("Downloading Manga {0}...", MangaObject.Name);
+                        await Test_DownloadMangaObject(MangaObject);
+
+                        // Reload MangaObject from the download.
+                        Stream MangaObjectStream = await CORE.ZipManager.ReadAsync(
+                            ContentDownloadManager.SavePath(MangaObject),
+                            typeof(MangaObject).Name
+                        ).Retry(TimeSpan.FromMinutes(1));
+                        if (!Equals(MangaObjectStream, null))
+                        { using (MangaObjectStream) { MangaObject = MangaObjectStream.Deserialize<MangaObject>(CORE.UserConfiguration.SerializeType); } }
+
+                        ChapterObject ChapterObject = MangaObject.Chapters.First();
+                        logger.InfoFormat("Downloading Chapter {0}/{1}...", MangaObject.Name, ChapterObject.Name);
+                        await Test_DownloadChapterObject(MangaObject, ChapterObject);
+                    }
+                }
             };
 
             ConfigureLog4Net();
@@ -225,6 +254,20 @@ namespace TestApp
             IProgress<Int32> SearchProgress = new Progress<Int32>(progress => Program.DrawProgressBar("Search: " + SearchTerm, progress, 100));
             CancellationTokenSource cts = new CancellationTokenSource();
             return await ContentDownloadManager.SearchAsync(SearchTerm, cts.Token, SearchProgress);
+        }
+
+        private Task Test_DownloadMangaObject(MangaObject MangaObject)
+        {
+            IProgress<Int32> DownloadProgress = new Progress<Int32>(progress => Program.DrawProgressBar("Downloading Manga: " + MangaObject.Name, progress, 100));
+            CancellationTokenSource cts = new CancellationTokenSource();
+            return ContentDownloadManager.DownloadAsync(MangaObject, Refresh: true, ProgressReporter: DownloadProgress);
+        }
+
+        private Task Test_DownloadChapterObject(MangaObject MangaObject, ChapterObject ChapterObject)
+        {
+            IProgress<Int32> DownloadProgress = new Progress<Int32>(progress => Program.DrawProgressBar("Downloading Chapter: " + MangaObject.Name, progress, 100));
+            CancellationTokenSource cts = new CancellationTokenSource();
+            return ContentDownloadManager.DownloadAsync(MangaObject, ChapterObject, ProgressReporter: DownloadProgress);
         }
 
         public void Dispose()

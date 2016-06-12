@@ -92,12 +92,12 @@ namespace myManga_App
                 // Load BookmarkObject Data
                 Stream BookmarkObjectStream = CORE.ZipManager.UnsafeRead(ArchivePath, typeof(BookmarkObject).Name);
                 if (!Equals(BookmarkObjectStream, null))
-                { using (BookmarkObjectStream) { MangaCacheObject.BookmarkObject = BookmarkObjectStream.Deserialize<BookmarkObject>(SerializeType); } }
+                { using (BookmarkObjectStream) { MangaCacheObject.BookmarkObject = BookmarkObjectStream.Deserialize<BookmarkObject>(CORE.UserConfiguration.SerializeType); } }
 
                 // Load MangaObject Data
                 Stream MangaObjectStream = CORE.ZipManager.UnsafeRead(ArchivePath, typeof(MangaObject).Name);
                 if (!Equals(MangaObjectStream, null))
-                { using (MangaObjectStream) { MangaCacheObject.MangaObject = MangaObjectStream.Deserialize<MangaObject>(SerializeType); } }
+                { using (MangaObjectStream) { MangaCacheObject.MangaObject = MangaObjectStream.Deserialize<MangaObject>(CORE.UserConfiguration.SerializeType); } }
 
                 // Move archive to correct location if needed
                 String CorrectArchivePath = Path.Combine(Path.GetDirectoryName(ArchivePath), MangaCacheObject.ArchiveFileName);
@@ -116,7 +116,7 @@ namespace myManga_App
                     logger.Info(String.Format("MangaObject version was updated for '{0}'.", MangaCacheObject.MangaObject.Name));
                     await CORE.ZipManager.WriteAsync(
                         CorrectArchivePath, typeof(MangaObject).Name,
-                        MangaCacheObject.MangaObject.Serialize(SerializeType)).Retry(TimeSpan.FromMinutes(1));
+                        MangaCacheObject.MangaObject.Serialize(CORE.UserConfiguration.SerializeType)).Retry(TimeSpan.FromMinutes(1));
                 }
 
                 // Load Cover Image
@@ -186,12 +186,12 @@ namespace myManga_App
                 // Load BookmarkObject Data
                 Stream BookmarkObjectStream = await CORE.ZipManager.ReadAsync(ArchivePath, typeof(BookmarkObject).Name).Retry(TimeSpan.FromMinutes(1));
                 if (!Equals(BookmarkObjectStream, null))
-                { using (BookmarkObjectStream) { MangaCacheObject.BookmarkObject = BookmarkObjectStream.Deserialize<BookmarkObject>(SerializeType); } }
+                { using (BookmarkObjectStream) { MangaCacheObject.BookmarkObject = BookmarkObjectStream.Deserialize<BookmarkObject>(CORE.UserConfiguration.SerializeType); } }
 
                 // Load MangaObject Data
                 Stream MangaObjectStream = await CORE.ZipManager.ReadAsync(ArchivePath, typeof(MangaObject).Name).Retry(TimeSpan.FromMinutes(1));
                 if (!Equals(MangaObjectStream, null))
-                { using (MangaObjectStream) { MangaCacheObject.MangaObject = MangaObjectStream.Deserialize<MangaObject>(SerializeType); } }
+                { using (MangaObjectStream) { MangaCacheObject.MangaObject = MangaObjectStream.Deserialize<MangaObject>(CORE.UserConfiguration.SerializeType); } }
 
                 // Move archive to correct location if needed
                 String CorrectArchivePath = Path.Combine(Path.GetDirectoryName(ArchivePath), MangaCacheObject.ArchiveFileName);
@@ -210,7 +210,7 @@ namespace myManga_App
                     logger.Info(String.Format("MangaObject version was updated for '{0}'.", MangaCacheObject.MangaObject.Name));
                     await CORE.ZipManager.WriteAsync(
                         CorrectArchivePath, typeof(MangaObject).Name,
-                        MangaCacheObject.MangaObject.Serialize(SerializeType)).Retry(TimeSpan.FromMinutes(1));
+                        MangaCacheObject.MangaObject.Serialize(CORE.UserConfiguration.SerializeType)).Retry(TimeSpan.FromMinutes(1));
                 }
 
                 if (ReloadCoverImage)

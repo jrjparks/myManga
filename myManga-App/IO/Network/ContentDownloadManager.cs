@@ -119,13 +119,13 @@ namespace myManga_App.IO.Network
         #endregion
 
         #region Save Paths
-        private String SavePath(MangaObject MangaObject)
+        public String SavePath(MangaObject MangaObject)
         {
             String SavePath = Path.Combine(CORE.MANGA_ARCHIVE_DIRECTORY, MangaObject.MangaArchiveName(CORE.MANGA_ARCHIVE_EXTENSION));
             Path.GetDirectoryName(SavePath).SafeFolder(); // Create folder tree if needed.
             return SavePath;
         }
-        private String SavePath(MangaObject MangaObject, ChapterObject ChapterObject)
+        public String SavePath(MangaObject MangaObject, ChapterObject ChapterObject)
         {
             String SavePath = Path.Combine(CORE.CHAPTER_ARCHIVE_DIRECTORY, MangaObject.MangaFileName(), ChapterObject.ChapterArchiveName(CORE.CHAPTER_ARCHIVE_EXTENSION));
             Path.GetDirectoryName(SavePath).SafeFolder(); // Create folder tree if needed.

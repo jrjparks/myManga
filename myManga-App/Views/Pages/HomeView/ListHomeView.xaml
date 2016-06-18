@@ -84,8 +84,8 @@
 				        ToolTip="Search"
 				        Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}">
                         <Viewbox x:Name="SearchIcon">
-                            <Path Style="{StaticResource iconic-magnifying-glass}" Margin="2"
-                                  Fill="{Binding Path=Foreground, ElementName=SearchButton, FallbackValue=Red}"/>
+                            <Path Style="{StaticResource iconic-magnifying-glass}"
+                                  Fill="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground), FallbackValue=Red}"/>
                         </Viewbox>
                     </Controls:MetroButton>
 
@@ -106,8 +106,8 @@
 				        ToolTip="Clear Search"
 				        Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}">
                         <Viewbox x:Name="ClearSearchIcon">
-                            <Path Style="{StaticResource iconic-delete}" Margin="2"
-                                  Fill="{Binding Path=Foreground, ElementName=ClearSearchButton, FallbackValue=Red}"/>
+                            <Path Style="{StaticResource iconic-delete}"
+                                  Fill="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground), FallbackValue=Red}"/>
                         </Viewbox>
                     </Controls:MetroButton>
 
@@ -159,8 +159,8 @@
 			        Height="32"
 			        Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}">
                     <Viewbox x:Name="ReloadMangaIcon">
-                        <Path Style="{StaticResource iconic-reload}" Margin="2"
-                              Fill="{Binding Path=Foreground, ElementName=ReloadMangaButton, FallbackValue=Red}"/>
+                        <Path Style="{StaticResource iconic-reload}"
+                                  Fill="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground), FallbackValue=Red}"/>
                     </Viewbox>
                 </Controls:MetroButton>
                 <Controls:MetroButton
@@ -170,8 +170,8 @@
 			        Height="32"
 			        Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}">
                     <Viewbox x:Name="DeleteMangaIcon">
-                        <Path Style="{StaticResource iconic-trash}" Margin="2"
-                              Fill="{Binding Path=Foreground, ElementName=DeleteMangaButton, FallbackValue=Red}"/>
+                        <Path Style="{StaticResource iconic-trash}"
+                              Fill="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground), FallbackValue=Red}"/>
                     </Viewbox>
                 </Controls:MetroButton>
                 <Controls:MetroButton
@@ -182,8 +182,8 @@
 			        Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"
                     IsEnabled="False">
                     <Viewbox x:Name="EditMangaIcon">
-                        <Path Style="{StaticResource iconic-pencil}" Margin="2"
-                              Fill="{Binding Path=Foreground, ElementName=EditMangaButton, FallbackValue=Red}"/>
+                        <Path Style="{StaticResource iconic-pencil}"
+                              Fill="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground), FallbackValue=Red}"/>
                     </Viewbox>
                 </Controls:MetroButton>
             </StackPanel>

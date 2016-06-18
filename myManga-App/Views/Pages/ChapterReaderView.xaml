@@ -191,7 +191,7 @@
                         <MenuItem.Icon>
                             <Viewbox>
                                 <Path Style="{StaticResource iconic-cloud-download}"
-                                      Fill="{Binding Path=Foreground, ElementName=ReloadPageImageMenuItem, FallbackValue=Red}"/>
+                                      Fill="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground), FallbackValue=Red}"/>
                             </Viewbox>
                         </MenuItem.Icon>
                     </MenuItem>
@@ -203,7 +203,7 @@
                         <MenuItem.Icon>
                             <Viewbox>
                                 <Path Style="{StaticResource iconic-plus}"
-                                      Fill="{Binding Path=Foreground, ElementName=ZoomInMenuItem, FallbackValue=Red}"/>
+                                      Fill="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground), FallbackValue=Red}"/>
                             </Viewbox>
                         </MenuItem.Icon>
                     </MenuItem>
@@ -214,7 +214,7 @@
                         <MenuItem.Icon>
                             <Viewbox>
                                 <Path Style="{StaticResource iconic-minus}"
-                                      Fill="{Binding Path=Foreground, ElementName=ZoomOutMenuItem, FallbackValue=Red}"/>
+                                      Fill="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground), FallbackValue=Red}"/>
                             </Viewbox>
                         </MenuItem.Icon>
                     </MenuItem>
@@ -225,7 +225,7 @@
                         <MenuItem.Icon>
                             <Viewbox>
                                 <Path Style="{StaticResource iconic-reload}"
-                                      Fill="{Binding Path=Foreground, ElementName=ZoomResetMenuItem, FallbackValue=Red}"/>
+                                      Fill="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground), FallbackValue=Red}"/>
                             </Viewbox>
                         </MenuItem.Icon>
                     </MenuItem>
@@ -269,11 +269,14 @@
             HorizontalContentAlignment="Center"
             Command="{Binding PagePrevCommand}"
             FontSize="24">
-            <Viewbox
-                x:Name="PrevIcon">
-                <Path Style="{StaticResource iconic-arrow-thick-left}" Margin="2"
-                        Fill="{Binding Path=Foreground, ElementName=PrevButton, FallbackValue=Red}"/>
-            </Viewbox>
+            <StackPanel 
+                Orientation="Vertical"
+                TextElement.Foreground="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground)}">
+                <Viewbox x:Name="PrevIcon">
+                    <Path Style="{StaticResource iconic-arrow-thick-left}"
+                            Fill="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground), FallbackValue=Red}"/>
+                </Viewbox>
+            </StackPanel>
         </Controls:MetroButton>
         <Controls:MetroButton
             Grid.Column="2"
@@ -283,11 +286,14 @@
             HorizontalContentAlignment="Center"
             Command="{Binding PageNextCommand}"
             FontSize="24">
-            <Viewbox
-                x:Name="NextIcon">
-                <Path Style="{StaticResource iconic-arrow-thick-right}" Margin="2"
-                        Fill="{Binding Path=Foreground, ElementName=NextButton, FallbackValue=Red}"/>
-            </Viewbox>
+            <StackPanel 
+                Orientation="Vertical"
+                TextElement.Foreground="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground)}">
+                <Viewbox x:Name="NextIcon">
+                    <Path Style="{StaticResource iconic-arrow-thick-right}"
+                            Fill="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground), FallbackValue=Red}"/>
+                </Viewbox>
+            </StackPanel>
         </Controls:MetroButton>
     </Grid>
 </UserControl>

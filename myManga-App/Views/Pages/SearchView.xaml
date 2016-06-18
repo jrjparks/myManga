@@ -86,8 +86,8 @@
 				    ToolTip="Search"
 				    Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}">
                     <Viewbox x:Name="SearchIcon">
-                        <Path Style="{StaticResource iconic-magnifying-glass}" Margin="2"
-                                    Fill="{Binding Path=Foreground, ElementName=SearchButton, FallbackValue=Red}"/>
+                        <Path Style="{StaticResource iconic-magnifying-glass}"
+                              Fill="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground), FallbackValue=Red}"/>
                     </Viewbox>
                 </Controls:MetroButton>
 
@@ -108,8 +108,8 @@
 				    ToolTip="Clear Search"
 				    Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}">
                     <Viewbox x:Name="ClearSearchIcon">
-                        <Path Style="{StaticResource iconic-delete}" Margin="2"
-                                  Fill="{Binding Path=Foreground, ElementName=ClearSearchButton, FallbackValue=Red}"/>
+                        <Path Style="{StaticResource iconic-delete}"
+                              Fill="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground), FallbackValue=Red}"/>
                     </Viewbox>
                 </Controls:MetroButton>
 
@@ -134,8 +134,8 @@
                     VerticalAlignment="Center"
                     TextElement.Foreground="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground)}">
                     <Viewbox>
-                        <Path Style="{StaticResource iconic-data-transfer-download}" Margin="2"
-                              Fill="{Binding Path=Foreground, ElementName=AddToLibraryButton, FallbackValue=Red}"/>
+                        <Path Style="{StaticResource iconic-data-transfer-download}"
+                              Fill="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground), FallbackValue=Red}"/>
                     </Viewbox>
                     <TextBlock
                         x:Name="AddToLibraryLabel"
@@ -143,8 +143,8 @@
                         VerticalAlignment="Center"
                         Padding="5"/>
                     <Viewbox>
-                        <Path Style="{StaticResource iconic-data-transfer-download}" Margin="2"
-                              Fill="{Binding Path=Foreground, ElementName=AddToLibraryButton, FallbackValue=Red}"/>
+                        <Path Style="{StaticResource iconic-data-transfer-download}"
+                              Fill="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground), FallbackValue=Red}"/>
                     </Viewbox>
                 </StackPanel>
             </Controls:MetroButton>

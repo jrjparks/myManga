@@ -67,7 +67,7 @@
                             x:Name="ResumeReadingIcon"
                             Width="18">
                             <Path Style="{StaticResource iconic-bookmark}"
-                                  Fill="{Binding Path=Foreground, ElementName=ResumeReadingButton, FallbackValue=Red}"/>
+                                  Fill="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground), FallbackValue=Red}"/>
                         </Viewbox>
                         <TextBlock
                             x:Name="ResumeReadingLabel"
@@ -321,7 +321,7 @@
                                 x:Name="DownloadToLatestIcon"
                                 Width="16">
                                 <Path Style="{StaticResource iconic-cloud-download}"
-                                      Fill="{Binding Path=Foreground, ElementName=DownloadToLatestButton, FallbackValue=Red}"/>
+                                      Fill="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground), FallbackValue=Red}"/>
                             </Viewbox>
                             <TextBlock
                                 x:Name="DownloadToLatestLabel"
@@ -335,12 +335,16 @@
                         Grid.Column="1"
                         Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"
                         IsHitTestVisible="{Binding IsOpen, Converter={StaticResource BooleanInverter}, ElementName=DownloadPopup, Mode=OneWay}">
-                        <Viewbox
-                            x:Name="DownloadDropdownIcon"
-                            Width="18">
-                            <Path Style="{StaticResource iconic-chevron-bottom}"
-                                    Fill="{Binding Path=Foreground, ElementName=DownloadDropdown, FallbackValue=Red}"/>
-                        </Viewbox>
+                        <StackPanel 
+                            Orientation="Horizontal"
+                            TextElement.Foreground="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground)}">
+                            <Viewbox
+                                x:Name="DownloadDropdownIcon"
+                                Width="18">
+                                <Path Style="{StaticResource iconic-chevron-bottom}"
+                                        Fill="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground), FallbackValue=Red}"/>
+                            </Viewbox>
+                        </StackPanel>
                     </Controls:MetroToggleButton>
 
                     <PrimitiveControls:DockingPopup
@@ -369,7 +373,7 @@
                                             x:Name="DownloadSelectedChaptersIcon"
                                             Width="16">
                                             <Path Style="{StaticResource iconic-cloud-download}"
-                                                  Fill="{Binding Path=Foreground, ElementName=DownloadSelectedChaptersButton, FallbackValue=Red}"/>
+                                                  Fill="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground), FallbackValue=Red}"/>
                                         </Viewbox>
                                         <TextBlock
                                             x:Name="DownloadSelectedChaptersLabel"
@@ -389,7 +393,7 @@
                                             x:Name="DownloadAllChaptersIcon"
                                             Width="16">
                                             <Path Style="{StaticResource iconic-cloud-download}"
-                                                  Fill="{Binding Path=Foreground, ElementName=DownloadAllChaptersButton, FallbackValue=Red}"/>
+                                                  Fill="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground), FallbackValue=Red}"/>
                                         </Viewbox>
                                         <TextBlock
                                             x:Name="DownloadAllChaptersLabel"
@@ -436,7 +440,7 @@
                                 x:Name="ReadChapterIcon"
                                 Width="16">
                                 <Path Style="{StaticResource iconic-book}"
-                                      Fill="{Binding Path=Foreground, ElementName=ReadChapterButton, FallbackValue=Red}"/>
+                                      Fill="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground), FallbackValue=Red}"/>
                             </Viewbox>
                             <TextBlock
                                 x:Name="ReadChapterLabel"

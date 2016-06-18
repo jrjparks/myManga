@@ -98,8 +98,8 @@
 				    ToolTip="Search"
 				    Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}">
                     <Viewbox x:Name="SearchIcon">
-                        <Path Style="{StaticResource iconic-magnifying-glass}" Margin="2"
-                              Fill="{Binding Path=Foreground, ElementName=SearchButton, FallbackValue=Red}"/>
+                        <Path Style="{StaticResource iconic-magnifying-glass}"
+                              Fill="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground), FallbackValue=Red}"/>
                     </Viewbox>
                 </Controls:MetroButton>
 
@@ -120,8 +120,8 @@
 				    ToolTip="Clear Search"
 				    Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}">
                     <Viewbox x:Name="ClearSearchIcon">
-                        <Path Style="{StaticResource iconic-delete}" Margin="2"
-                              Fill="{Binding Path=Foreground, ElementName=ClearSearchButton, FallbackValue=Red}"/>
+                        <Path Style="{StaticResource iconic-delete}"
+                              Fill="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground), FallbackValue=Red}"/>
                     </Viewbox>
                 </Controls:MetroButton>
 

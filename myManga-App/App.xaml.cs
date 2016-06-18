@@ -58,7 +58,6 @@ namespace myManga_App
 
         #region Core
         public readonly CoreManagement CORE = new CoreManagement(logger);
-        public readonly SerializeType SerializeType = SerializeType.XML;
         public readonly ContentDownloadManager ContentDownloadManager;
 
         // Used for Bindings
@@ -505,7 +504,6 @@ namespace myManga_App
 
             // Load UserConfig
             LoadUserConfig();
-            SerializeType = CORE.UserConfiguration.SerializeType;
 
             // Initialize the ContentDownloadManager v2
             ContentDownloadManager = new ContentDownloadManager(CORE: CORE);

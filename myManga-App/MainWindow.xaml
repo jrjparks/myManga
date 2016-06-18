@@ -101,7 +101,7 @@
                         <Viewbox
                             x:Name="MenuHeaderIcon">
                             <Path Style="{StaticResource iconic-menu}"
-                                  Fill="{Binding Path=Foreground, ElementName=MenuButton, FallbackValue=Red}"/>
+                                  Fill="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground), FallbackValue=Red}"/>
                         </Viewbox>
                         <TextBlock
                             x:Name="MenuHeaderLabel"
@@ -125,7 +125,7 @@
                         <Viewbox
                             x:Name="HomeHeaderIcon">
                             <Path Style="{StaticResource iconic-home}"
-                                  Fill="{Binding Path=Foreground, ElementName=HomeButton, FallbackValue=Red}"/>
+                                  Fill="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground), FallbackValue=Red}"/>
                         </Viewbox>
                         <TextBlock
                             x:Name="HomeHeaderLabel"
@@ -147,7 +147,7 @@
                         <Viewbox
                             x:Name="SearchHeaderIcon">
                             <Path Style="{StaticResource iconic-magnifying-glass}"
-                                  Fill="{Binding Path=Foreground, ElementName=SearchButton, FallbackValue=Red}"/>
+                                  Fill="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground), FallbackValue=Red}"/>
                         </Viewbox>
                         <TextBlock
                             x:Name="SearchHeaderLabel"
@@ -169,7 +169,7 @@
                         <Viewbox
                             x:Name="ReadHeaderIcon">
                             <Path Style="{StaticResource iconic-book}"
-                                  Fill="{Binding Path=Foreground, ElementName=ReadButton, FallbackValue=Red}"/>
+                                  Fill="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground), FallbackValue=Red}"/>
                         </Viewbox>
                         <TextBlock
                             x:Name="ReadHeaderLabel"
@@ -204,7 +204,7 @@
                         <Viewbox
                             x:Name="ListViewIcon">
                             <Path Style="{StaticResource iconic-list-rich}"
-                                  Fill="{Binding Path=Foreground, ElementName=ListViewButton, FallbackValue=Red}"/>
+                                  Fill="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground), FallbackValue=Red}"/>
                         </Viewbox>
                     </Controls:MetroRadioButton>
 
@@ -217,7 +217,7 @@
                         <Viewbox
                             x:Name="GridViewIcon">
                             <Path Style="{StaticResource iconic-grid-two-up}"
-                                  Fill="{Binding Path=Foreground, ElementName=GridViewButton, FallbackValue=Red}"/>
+                                  Fill="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground), FallbackValue=Red}"/>
                         </Viewbox>
                     </Controls:MetroRadioButton>
 
@@ -235,7 +235,7 @@
                         <Viewbox
                             x:Name="SettingsHeaderIcon">
                             <Path Style="{StaticResource iconic-cog}"
-                                  Fill="{Binding Path=Foreground, ElementName=SettingsButton, FallbackValue=Red}"/>
+                                  Fill="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground), FallbackValue=Red}"/>
                         </Viewbox>
                         <TextBlock
                             x:Name="SettingsHeaderLabel"

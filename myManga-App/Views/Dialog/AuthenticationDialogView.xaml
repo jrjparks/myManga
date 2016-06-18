@@ -154,7 +154,7 @@
                     Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}">
                     <Viewbox x:Name="RememberMeIcon">
                         <Path Style="{StaticResource iconic-check}" Margin="2"
-                              Fill="{Binding Path=Foreground, ElementName=RememberMeToggleButton, FallbackValue=Red}"/>
+                              Fill="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground), FallbackValue=Red}"/>
                     </Viewbox>
                 </Controls:MetroToggleButton>
             </Grid>

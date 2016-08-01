@@ -1,4 +1,4 @@
-﻿using myManga_App.IO.Local;
+﻿using myManga_App.IO.StreamExtensions;
 using myManga_App.IO.Local.Object;
 using myManga_App.Objects.UserConfig;
 using myMangaSiteExtension.Enums;
@@ -7,7 +7,6 @@ using myMangaSiteExtension.Objects;
 using myMangaSiteExtension.Utilities;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -22,7 +21,7 @@ namespace myManga_App.IO.Network
     {
         #region Read-Only
         private readonly TimeSpan FILE_ACCESS_TIMEOUT = TimeSpan.FromMinutes(30);
-        private readonly TimeSpan DOWNLOAD_TIMEOUT = TimeSpan.FromSeconds(10);
+        private readonly TimeSpan DOWNLOAD_TIMEOUT = TimeSpan.FromSeconds(30);
 
         private readonly TimeSpan DEFAULT_DELAY = TimeSpan.FromSeconds(1);
         private readonly TimeSpan DELAY_INCREMENT = TimeSpan.FromSeconds(1);
@@ -383,7 +382,7 @@ namespace myManga_App.IO.Network
             ActiveDownloadsCache.Set(Url, true, DateTimeOffset.MaxValue);
             try
             {
-                using (Stream ImageStream = await ContentTaskFactory.StartNew(() => LoadImageAsync(Url, Referer, Cookies, cts.Token, ProgressReporter)).Unwrap())
+                using (Stream ImageStream = await ContentTaskFactory.StartNew(() => LoadImageAsync(Url, Referer, Cookies, cts.Token, ProgressReporter).Retry(DOWNLOAD_TIMEOUT)).Unwrap())
                 {
                     // Save the Image via Async to Save Path with Retry and Timeout of 30min
                     await StoreImage(ArchiveName, EntryName, ImageStream);
@@ -667,6 +666,7 @@ namespace myManga_App.IO.Network
                 using (WebDownloader WebDownloader = new WebDownloader(Cookies))
                 {
                     WebDownloader.Referer = Referer;
+                    WebDownloader.Timeout = TimeSpan.FromSeconds(15).Milliseconds;
                     DownloadProgressChangedEventHandler ProgressEventHandler = (s, e) =>
                     {
                         if (!Equals(progress, null)) progress.Report(e.ProgressPercentage);
@@ -675,7 +675,15 @@ namespace myManga_App.IO.Network
                     WebDownloader.DownloadProgressChanged += ProgressEventHandler;
                     Stream ImageStream = new MemoryStream();
                     using (Stream WebStream = await WebDownloader.OpenReadTaskAsync(Url))
-                    { await WebStream.CopyToAsync(ImageStream); }
+                    { await WebStream.CopyToAsync(ImageStream, 81920, ct); }
+
+                    if (ImageStream.Length < 96)
+                        throw new EndOfStreamException("Image too small to be complete");
+
+                    // Check if the stream is a known image format.
+                    if (Equals(await ImageStream.CheckImageFileTypeAsync(), ImageStreamExtensions.ImageFormat.UNKNOWN))
+                        throw new FormatException("Unknown file image format.");
+
                     WebDownloader.DownloadProgressChanged -= ProgressEventHandler;
                     ImageStream.Seek(0, SeekOrigin.Begin);
 

@@ -1,5 +1,6 @@
 ﻿using myManga_App.IO.Local.Object;
 using myManga_App.Objects.Cache;
+using myManga_App.IO.StreamExtensions;
 using myMangaSiteExtension.Objects;
 using myMangaSiteExtension.Utilities;
 using System;
@@ -352,7 +353,9 @@ namespace myManga_App.ViewModels.Pages
             {
                 using (Stream PageImageStream = await App.CORE.ZipManager.ReadAsync(ChapterArchiveFilePath, PageObject.Name).Retry(TIMEOUT))
                 {
-                    if (!Equals(PageImageStream, null))
+                    if (Equals(PageImageStream, null) || Equals(await PageImageStream.CheckImageFileTypeAsync(), ImageStreamExtensions.ImageFormat.UNKNOWN))
+                    { if (CanReloadPageAsync(PageObject)) { ReloadPageAsync(PageObject); } } // Reload the image if the local copy is not valid.
+                    else
                     {
                         pageImage = new BitmapImage();
                         pageImage.BeginInit();

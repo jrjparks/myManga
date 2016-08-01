@@ -396,7 +396,7 @@ namespace myManga_App
 
             IEnumerable<Task<MangaCacheObject>> MangaCacheObjectTasksQuery =
                 from MangaArchivePath in MangaArchivePaths
-                // select UnsafeDispatcherLoadMangaCacheObjectAsync(MangaArchivePath);
+                    // select UnsafeDispatcherLoadMangaCacheObjectAsync(MangaArchivePath);
                 select DispatcherReloadMangaCacheObjectAsync(MangaArchivePath, true);
             List<Task<MangaCacheObject>> MangaCacheObjectTasks = MangaCacheObjectTasksQuery.ToList();
 
@@ -524,7 +524,6 @@ namespace myManga_App
         private void App_DispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
         {
             logger.Error(sender.GetType().FullName, e.Exception);
-
 #if !DEBUG
             // Handle error if in release mode.
             e.Handled = true;

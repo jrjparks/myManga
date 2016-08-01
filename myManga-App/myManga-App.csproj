@@ -95,6 +95,7 @@
     <Compile Include="Converters\ConditionalValueConverter.cs" />
     <Compile Include="Converters\ThicknessMathConverter.cs" />
     <Compile Include="CoreManagement.cs" />
+    <Compile Include="IO\Stream\CheckFileType.cs" />
     <Compile Include="Objects\Extensions\ExtensionObject.cs" />
     <Compile Include="Objects\UserConfig\EnabledExtensionObject.cs" />
     <Compile Include="System\Threading\Tasks\ForEach.cs" />

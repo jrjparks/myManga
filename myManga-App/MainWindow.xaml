@@ -97,7 +97,7 @@
                     IsChecked="False">
                     <StackPanel 
                         Orientation="Horizontal"
-                        TextElement.Foreground="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground)}">
+                        TextElement.Foreground="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground), FallbackValue=Red}">
                         <Viewbox
                             x:Name="MenuHeaderIcon">
                             <Path Style="{StaticResource iconic-menu}"
@@ -121,7 +121,7 @@
                     Height="{StaticResource MenuButtonSize}">
                     <StackPanel 
                         Orientation="Horizontal"
-                        TextElement.Foreground="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground)}">
+                        TextElement.Foreground="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground), FallbackValue=Red}">
                         <Viewbox
                             x:Name="HomeHeaderIcon">
                             <Path Style="{StaticResource iconic-home}"
@@ -143,7 +143,7 @@
                     Height="{StaticResource MenuButtonSize}">
                     <StackPanel 
                         Orientation="Horizontal"
-                        TextElement.Foreground="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground)}">
+                        TextElement.Foreground="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground), FallbackValue=Red}">
                         <Viewbox
                             x:Name="SearchHeaderIcon">
                             <Path Style="{StaticResource iconic-magnifying-glass}"
@@ -165,7 +165,7 @@
                     Height="{StaticResource MenuButtonSize}">
                     <StackPanel 
                         Orientation="Horizontal"
-                        TextElement.Foreground="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground)}">
+                        TextElement.Foreground="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground), FallbackValue=Red}">
                         <Viewbox
                             x:Name="ReadHeaderIcon">
                             <Path Style="{StaticResource iconic-book}"
@@ -200,12 +200,21 @@
                         Grid.Row="0"
                         Grid.Column="0"
                         Height="{StaticResource MenuButtonSize}"
-                        IsChecked="{Binding ContentViewModel.ViewType, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static MVVM:ViewModelViewType.Normal}, Mode=TwoWay}">
-                        <Viewbox
-                            x:Name="ListViewIcon">
-                            <Path Style="{StaticResource iconic-list-rich}"
-                                  Fill="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground), FallbackValue=Red}"/>
-                        </Viewbox>
+                        HorizontalContentAlignment="Left"
+                        IsChecked="{Binding ContentViewModel.ViewType, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static MVVM:ViewModelViewType.Normal}, Mode=TwoWay, FallbackValue=False}">
+                        <StackPanel 
+                            Orientation="Horizontal"
+                            TextElement.Foreground="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground), FallbackValue=Red}">
+                            <Viewbox x:Name="ListViewIcon">
+                                <Path Style="{StaticResource iconic-list-rich}"
+                                      Fill="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground), FallbackValue=Red}"/>
+                            </Viewbox>
+                            <TextBlock
+                                x:Name="ListViewLabel"
+                                Text="List"
+                                Padding="5"
+                                Visibility="{Binding IsChecked, Converter={StaticResource BooleanToVisibilityConverter}, ElementName=MenuButton}"/>
+                        </StackPanel>
                     </Controls:MetroRadioButton>
 
                     <Controls:MetroRadioButton
@@ -213,12 +222,21 @@
                         Grid.Row="1"
                         Grid.Column="1"
                         Height="{StaticResource MenuButtonSize}"
-                        IsChecked="{Binding ContentViewModel.ViewType, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static MVVM:ViewModelViewType.Grid}, Mode=TwoWay}">
-                        <Viewbox
-                            x:Name="GridViewIcon">
-                            <Path Style="{StaticResource iconic-grid-two-up}"
-                                  Fill="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground), FallbackValue=Red}"/>
-                        </Viewbox>
+                        HorizontalContentAlignment="Left"
+                        IsChecked="{Binding ContentViewModel.ViewType, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static MVVM:ViewModelViewType.Grid}, Mode=TwoWay, FallbackValue=False}">
+                        <StackPanel 
+                            Orientation="Horizontal"
+                            TextElement.Foreground="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground), FallbackValue=Red}">
+                            <Viewbox x:Name="GridViewIcon">
+                                <Path Style="{StaticResource iconic-grid-two-up}"
+                                      Fill="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground), FallbackValue=Red}"/>
+                            </Viewbox>
+                            <TextBlock
+                                x:Name="GridViewLabel"
+                                Text="Grid"
+                                Padding="5"
+                                Visibility="{Binding IsChecked, Converter={StaticResource BooleanToVisibilityConverter}, ElementName=MenuButton}"/>
+                        </StackPanel>
                     </Controls:MetroRadioButton>
 
                 </Grid>
@@ -231,7 +249,7 @@
                     Height="{StaticResource MenuButtonSize}">
                     <StackPanel 
                         Orientation="Horizontal"
-                        TextElement.Foreground="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground)}">
+                        TextElement.Foreground="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground), FallbackValue=Red}">
                         <Viewbox
                             x:Name="SettingsHeaderIcon">
                             <Path Style="{StaticResource iconic-cog}"

@@ -97,10 +97,14 @@
                     CommandParameter="{Binding SearchTerm}"
 				    ToolTip="Search"
 				    Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}">
-                    <Viewbox x:Name="SearchIcon">
-                        <Path Style="{StaticResource iconic-magnifying-glass}"
-                              Fill="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground), FallbackValue=Red}"/>
-                    </Viewbox>
+                    <StackPanel 
+                        Orientation="Horizontal"
+                        TextElement.Foreground="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground), FallbackValue=Red}">
+                        <Viewbox x:Name="SearchIcon">
+                            <Path Style="{StaticResource iconic-magnifying-glass}"
+                                  Fill="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground), FallbackValue=Red}"/>
+                        </Viewbox>
+                    </StackPanel>
                 </Controls:MetroButton>
 
                 <TextBox
@@ -119,10 +123,14 @@
 				    Command="{Binding ClearSearchTermCommand}"
 				    ToolTip="Clear Search"
 				    Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}">
-                    <Viewbox x:Name="ClearSearchIcon">
-                        <Path Style="{StaticResource iconic-delete}"
-                              Fill="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground), FallbackValue=Red}"/>
-                    </Viewbox>
+                    <StackPanel 
+                        Orientation="Horizontal"
+                        TextElement.Foreground="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground), FallbackValue=Red}">
+                        <Viewbox x:Name="ClearSearchIcon">
+                            <Path Style="{StaticResource iconic-delete}"
+                                  Fill="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground), FallbackValue=Red}"/>
+                        </Viewbox>
+                    </StackPanel>
                 </Controls:MetroButton>
 
             </Grid>

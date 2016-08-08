@@ -52,10 +52,14 @@
                     CommandParameter="{Binding MangaCacheObjectDialog.MangaCacheObjectDetail.MangaCacheObject}"
 			        Height="32"
 			        Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}">
-                    <Viewbox x:Name="ReloadMangaIcon">
-                        <Path Style="{StaticResource iconic-reload}" Margin="2"
-                              Fill="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground), FallbackValue=Red}"/>
-                    </Viewbox>
+                    <StackPanel 
+                        Orientation="Horizontal"
+                        TextElement.Foreground="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground), FallbackValue=Red}">
+                        <Viewbox x:Name="ReloadMangaIcon">
+                            <Path Style="{StaticResource iconic-reload}" Margin="2"
+                                  Fill="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground), FallbackValue=Red}"/>
+                        </Viewbox>
+                    </StackPanel>
                 </Controls:MetroButton>
                 <Controls:MetroButton
 			        x:Name="DeleteMangaButton"

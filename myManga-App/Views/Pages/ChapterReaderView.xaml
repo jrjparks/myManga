@@ -169,6 +169,40 @@
             </StackPanel>
         </PrimitiveControls:DockingPopup>
 
+
+        <ListBox ItemsSource="{Binding VirtualImageCollection}"
+                 Grid.Column="1"
+                 Grid.Row="1" 
+                 
+                 PreviewMouseWheel="ListBox_MouseWheel"
+                 
+                 ScrollViewer.IsDeferredScrollingEnabled="True"                 
+                 ScrollViewer.CanContentScroll="False"
+                 VerticalContentAlignment="Center"
+                 HorizontalContentAlignment="Center">
+            <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <!-- <Image Source="{Binding .}" Margin="3"/> -->
+                    <Image
+                    x:Name="PageImageContent"
+                    Stretch="UniformToFill" 
+                    IsHitTestVisible="False"
+                    Height="{Binding Source.PixelHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"
+                    Width="{Binding Source.PixelWidth, Mode=OneWay, RelativeSource={RelativeSource Self}}"
+                    Margin="3"
+                    Source="{Binding ., NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True, Mode=OneWay}">
+                        <Image.LayoutTransform>
+                            <ScaleTransform
+                            ScaleX="{Binding Path=PageZoom, Mode=OneWay, FallbackValue=1}" 
+                            ScaleY="{Binding Path=PageZoom, Mode=OneWay, FallbackValue=1}"/>
+                        </Image.LayoutTransform>
+                    </Image>
+
+                </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+            
+            <!--
         <ScrollViewer
             x:Name="PageImageContentScrollViewer"
             Grid.Column="1"
@@ -254,25 +288,6 @@
                     </Border.Effect>
                 </Border>
             </Grid>
-        </ScrollViewer>
-
-        <Controls:MetroButton
-            Grid.Column="0"
-            Grid.Row="1"
-            VerticalContentAlignment="Center"
-            HorizontalContentAlignment="Center" 
-            FontFamily="{DynamicResource OpenIconic}"
-            Content="{DynamicResource oi-arrow-thick-left}"
-            Command="{Binding PagePrevCommand}"
-            FontSize="24"/>
-        <Controls:MetroButton
-            Grid.Column="2"
-            Grid.Row="1"
-            VerticalContentAlignment="Center"
-            HorizontalContentAlignment="Center"
-            FontFamily="{DynamicResource OpenIconic}"
-            Content="{DynamicResource oi-arrow-thick-right}"
-            Command="{Binding PageNextCommand}"
-            FontSize="24"/>
+        </ScrollViewer> -->
     </Grid>
 </UserControl>

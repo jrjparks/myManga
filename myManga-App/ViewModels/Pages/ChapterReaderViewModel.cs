@@ -13,9 +13,68 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
+using DataVirtualization;
 
 namespace myManga_App.ViewModels.Pages
 {
+    internal class ChapterImageProvider : IItemsProvider<BitmapImage>
+    {
+        private ChapterObject chapter;
+        private string chapterArchiveFilePath;
+        private readonly TimeSpan TIMEOUT = TimeSpan.FromSeconds(30);
+        protected readonly App App = App.Current as App;
+
+        public ChapterImageProvider(ChapterObject obj, string chArchiveFp)
+        {
+            chapter = obj;
+            chapterArchiveFilePath = chArchiveFp;
+        }
+
+        public int FetchCount()
+        {
+            return chapter.Pages.Count;
+        }
+
+        public IList<BitmapImage> FetchRange(int startIndex, int count)
+        {                        
+            count = Math.Min(count, chapter.Pages.Count - startIndex);
+            var tasks = new Task<BitmapImage>[count];
+            for (int i = 0; i < count; i++)
+                tasks[i] = LoadPageImageAsync(chapter.Pages[startIndex + i].Name);
+
+            Task.WaitAll(tasks);
+
+            return tasks.Select(x => x.Result).ToList();
+        }
+
+        private async Task<BitmapImage> LoadPageImageAsync(string pageName)
+        {
+            BitmapImage pageImage = null;
+            try
+            {
+                using (Stream PageImageStream = await App.CORE.ZipManager.ReadAsync(chapterArchiveFilePath, pageName).Retry(TIMEOUT))
+                {
+                    if (!Equals(PageImageStream, null))
+                    {
+                        pageImage = new BitmapImage();
+                        pageImage.BeginInit();
+                        pageImage.CacheOption = BitmapCacheOption.OnLoad;
+                        pageImage.CreateOptions = BitmapCreateOptions.PreservePixelFormat;
+                        using (pageImage.StreamSource = PageImageStream)
+                        {
+                            pageImage.EndInit();
+                            pageImage.Freeze();
+                        }
+                    }
+                }
+            }
+            catch (OperationCanceledException) { pageImage = null; }
+            catch (Exception ex) { throw ex; }
+            finally { }
+            return pageImage;
+        }
+    }
+
     public sealed class ChapterReaderViewModel : BaseViewModel
     {
         private readonly TimeSpan TIMEOUT = TimeSpan.FromSeconds(30);
@@ -95,7 +154,7 @@ namespace myManga_App.ViewModels.Pages
         #region Constructors
         public ChapterReaderViewModel() : base()
         {
-            PageCacheObjects = new ObservableCollection<PageCacheObject>();
+            PageCacheObjects = new ObservableCollection<PageCacheObject>();            
             if (!IsInDesignMode)
             {
                 Messenger.Instance.RegisterRecipient<ChapterCacheObject>(this, async ChapterCacheObject =>
@@ -299,6 +358,8 @@ namespace myManga_App.ViewModels.Pages
             get { return (BitmapImage)GetValue(PageImageProperty); }
             set { SetValue(PageImageProperty, value); }
         }
+
+
         #endregion
 
         #region Page Zoom
@@ -377,6 +438,17 @@ namespace myManga_App.ViewModels.Pages
 
         #region Load Chapter
 
+        private static readonly DependencyProperty VirtualImageCollectionProperty = DependencyProperty.RegisterAttached(
+            "VirtualImageCollection",
+            typeof(AsyncVirtualizingCollection<BitmapImage>),
+            typeof(ChapterReaderViewModel));
+
+        public AsyncVirtualizingCollection<BitmapImage> VirtualImageCollection
+        {
+            get { return (AsyncVirtualizingCollection<BitmapImage>)GetValue(VirtualImageCollectionProperty); }
+            set { SetValue(VirtualImageCollectionProperty, value); }
+        }
+
         private async Task OpenForReading(ChapterCacheObject ChapterCacheObject)
         {
             await OpenForReading(ChapterCacheObject.MangaObject, ChapterCacheObject.ChapterObject, false, false);
@@ -390,7 +462,7 @@ namespace myManga_App.ViewModels.Pages
         private async Task OpenForReading(MangaObject MangaObject, ChapterObject ChapterObject, Boolean OpeningPreviousChapter = false, Boolean ResumeChapter = false)
         {
             this.MangaObject = MangaObject;
-            this.ChapterObject = ChapterObject;
+            this.ChapterObject = ChapterObject;            
 
             String MangaChaptersDirectory = Path.Combine(
                 App.CORE.CHAPTER_ARCHIVE_DIRECTORY,
@@ -446,6 +518,8 @@ namespace myManga_App.ViewModels.Pages
                 catch (Exception ex) { throw ex; }
                 finally { }
             }
+
+            VirtualImageCollection = new AsyncVirtualizingCollection<BitmapImage>(new ChapterImageProvider(ChapterObject, ChapterArchiveFilePath), 3);
             return ChapterObject;
         }
 

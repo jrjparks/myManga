@@ -94,6 +94,9 @@
     <Compile Include="Controls\ListBoxExtensions.cs" />
     <Compile Include="Converters\ConditionalValueConverter.cs" />
     <Compile Include="CoreManagement.cs" />
+    <Compile Include="Objects\DataVirtualization\AsyncVirtualizingCollection.cs" />
+    <Compile Include="Objects\DataVirtualization\IItemsProvider.cs" />
+    <Compile Include="Objects\DataVirtualization\VirtualizingCollection.cs" />
     <Compile Include="Objects\Extensions\ExtensionObject.cs" />
     <Compile Include="Objects\UserConfig\EnabledExtensionObject.cs" />
     <Compile Include="System\Threading\Tasks\ForEach.cs" />

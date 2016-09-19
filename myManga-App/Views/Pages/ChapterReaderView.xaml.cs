@@ -16,11 +16,11 @@ namespace myManga_App.Views.Pages
 
         private void PageImageContent_SourceUpdated(object sender, DataTransferEventArgs e)
         {
-            /*PageImageContentScrollViewer.ScrollToHome();
+            PageImageContentScrollViewer.ScrollToHome();
             ChapterOverviewList.ScrollToCenterOfView(ChapterOverviewList.SelectedItem);
             if (DataContext is ChapterReaderViewModel)
                 if (Equals((DataContext as ChapterReaderViewModel).MangaObject.MangaType, myMangaSiteExtension.Enums.MangaObjectType.Manga))
-                    PageImageContentScrollViewer.ScrollToRightEnd();*/
+                    PageImageContentScrollViewer.ScrollToRightEnd();
         }
 
         private void ChapterOverviewList_SelectionChanged(object sender, SelectionChangedEventArgs e)

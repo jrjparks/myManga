@@ -21,6 +21,9 @@ Consolidates information from multiple sites.
 * [HtmlAgilityPack](https://htmlagilitypack.codeplex.com/)
 * [log4net](https://logging.apache.org/log4net/)
 
+### Special Thanks
+* Paul McClean for [WPF Data Virtualization](http://www.codeproject.com/Articles/34405/WPF-Data-Virtualization)
+
 ## Features
 * Offline Storage of manga and chapters
 * Asynchronous downloads

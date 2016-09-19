@@ -14,10 +14,11 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
 using DataVirtualization;
+using myManga_App.ViewModels.Objects;
 
 namespace myManga_App.ViewModels.Pages
 {
-    internal class ChapterImageProvider : IItemsProvider<BitmapImage>
+    internal class ChapterImageProvider : IItemsProvider<ChapterPageViewModel>
     {
         private ChapterObject chapter;
         private string chapterArchiveFilePath;
@@ -35,7 +36,7 @@ namespace myManga_App.ViewModels.Pages
             return chapter.Pages.Count;
         }
 
-        public IList<BitmapImage> FetchRange(int startIndex, int count)
+        public IList<ChapterPageViewModel> FetchRange(int startIndex, int count)
         {                        
             count = Math.Min(count, chapter.Pages.Count - startIndex);
             var tasks = new Task<BitmapImage>[count];
@@ -44,7 +45,12 @@ namespace myManga_App.ViewModels.Pages
 
             Task.WaitAll(tasks);
 
-            return tasks.Select(x => x.Result).ToList();
+            var list = new List<ChapterPageViewModel>();
+            for (int i = 0; i < count; i++)
+            {
+                list.Add(new ChapterPageViewModel(tasks[i].Result, chapter.Pages[i + startIndex]));
+            }
+            return list;
         }
 
         private async Task<BitmapImage> LoadPageImageAsync(string pageName)
@@ -154,7 +160,10 @@ namespace myManga_App.ViewModels.Pages
         #region Constructors
         public ChapterReaderViewModel() : base()
         {
-            PageCacheObjects = new ObservableCollection<PageCacheObject>();            
+            PageCacheObjects = new ObservableCollection<PageCacheObject>();
+
+            SetupReaderMode();
+
             if (!IsInDesignMode)
             {
                 Messenger.Instance.RegisterRecipient<ChapterCacheObject>(this, async ChapterCacheObject =>
@@ -440,12 +449,12 @@ namespace myManga_App.ViewModels.Pages
 
         private static readonly DependencyProperty VirtualImageCollectionProperty = DependencyProperty.RegisterAttached(
             "VirtualImageCollection",
-            typeof(AsyncVirtualizingCollection<BitmapImage>),
+            typeof(AsyncVirtualizingCollection<ChapterPageViewModel>),
             typeof(ChapterReaderViewModel));
 
-        public AsyncVirtualizingCollection<BitmapImage> VirtualImageCollection
+        public AsyncVirtualizingCollection<ChapterPageViewModel> VirtualImageCollection
         {
-            get { return (AsyncVirtualizingCollection<BitmapImage>)GetValue(VirtualImageCollectionProperty); }
+            get { return (AsyncVirtualizingCollection<ChapterPageViewModel>)GetValue(VirtualImageCollectionProperty); }
             set { SetValue(VirtualImageCollectionProperty, value); }
         }
 
@@ -461,6 +470,8 @@ namespace myManga_App.ViewModels.Pages
 
         private async Task OpenForReading(MangaObject MangaObject, ChapterObject ChapterObject, Boolean OpeningPreviousChapter = false, Boolean ResumeChapter = false)
         {
+            SetupReaderMode();
+
             this.MangaObject = MangaObject;
             this.ChapterObject = ChapterObject;            
 
@@ -491,7 +502,7 @@ namespace myManga_App.ViewModels.Pages
             PageCacheObjects.Clear();
             (await LoadPageCacheObjectsAsync()).ForEach(_ => PageCacheObjects.Add(_));
 
-            ChapterCleanup(MangaObject, ChapterObject);
+            ChapterCleanup(MangaObject, ChapterObject);            
         }
 
         private CancellationTokenSource LoadChapterObjectAsyncCTS { get; set; }
@@ -519,7 +530,7 @@ namespace myManga_App.ViewModels.Pages
                 finally { }
             }
 
-            VirtualImageCollection = new AsyncVirtualizingCollection<BitmapImage>(new ChapterImageProvider(ChapterObject, ChapterArchiveFilePath), 3);
+            VirtualImageCollection = new AsyncVirtualizingCollection<ChapterPageViewModel>(new ChapterImageProvider(ChapterObject, ChapterArchiveFilePath), 10);
             return ChapterObject;
         }
 
@@ -712,6 +723,39 @@ namespace myManga_App.ViewModels.Pages
                 }
             }
         }
+        #endregion
+
+        #region Control Visibility
+        private static readonly DependencyProperty InfiniteScrollingChapterViewerVisibilityProperty = DependencyProperty.RegisterAttached(
+            "InfiniteScrollingChapterViewerVisibility",
+            typeof(Visibility),
+            typeof(ChapterReaderViewModel),
+            null);
+
+        public Visibility InfiniteScrollingChapterViewerVisibility
+        {
+            get { return (Visibility)GetValue(InfiniteScrollingChapterViewerVisibilityProperty); }
+            set { SetValue(InfiniteScrollingChapterViewerVisibilityProperty, value); }
+        }
+
+        private static readonly DependencyProperty PageImageContentScrollViewerVisibilityProperty = DependencyProperty.RegisterAttached(
+            "PageImageContentScrollViewerVisibility",
+            typeof(Visibility),
+            typeof(ChapterReaderViewModel),
+            null);
+
+        public Visibility PageImageContentScrollViewerVisibility
+        {
+            get { return (Visibility)GetValue(PageImageContentScrollViewerVisibilityProperty); }
+            set { SetValue(PageImageContentScrollViewerVisibilityProperty, value); }
+        }
+
+        private void SetupReaderMode()
+        {
+            InfiniteScrollingChapterViewerVisibility = App.CORE.UserConfiguration.EnableInfiniteScrolling ? Visibility.Visible: Visibility.Hidden;
+            PageImageContentScrollViewerVisibility = App.CORE.UserConfiguration.EnableInfiniteScrolling ? Visibility.Hidden : Visibility.Visible;            
+        }
+
         #endregion
     }
 }

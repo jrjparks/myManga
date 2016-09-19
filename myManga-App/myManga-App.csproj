@@ -157,6 +157,7 @@
     <Compile Include="ViewModels\Dialog\MangaCacheObjectDialogViewModel.cs" />
     <Compile Include="ViewModels\Dialog\MessageDialogViewModel.cs" />
     <Compile Include="ViewModels\Objects\Cache\MangaCacheObjectViewModels\MangaCacheObjectDetailViewModel.cs" />
+    <Compile Include="ViewModels\Objects\ChapterPageViewModel.cs" />
     <Compile Include="ViewModels\Pages\ChapterReaderViewModel.cs" />
     <Compile Include="ViewModels\Pages\HomeViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />

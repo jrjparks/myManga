@@ -211,6 +211,20 @@ namespace myManga_App.Objects.UserConfig
             }
         }
 
+        [XmlIgnore]
+        private Boolean enableInfiniteScrolling = false;
+        [XmlElement]
+        public Boolean EnableInfiniteScrolling
+        {
+            get { return enableInfiniteScrolling; }
+            set
+            {
+                OnPropertyChanging();
+                enableInfiniteScrolling = value;
+                OnPropertyChanged();
+            }
+        }
+
         public UserConfigurationObject()
             : base()
         { CreateEventLinks(); }

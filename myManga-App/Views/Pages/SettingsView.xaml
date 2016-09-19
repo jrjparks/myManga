@@ -205,6 +205,42 @@
                             </StackPanel>
                         </HeaderedContentControl>
 
+                        <HeaderedContentControl Header="Reader" Margin="2,6">
+                            <StackPanel Orientation="Vertical">
+                                <TextBlock
+                                    Text="Changes the behaviour of the chapter reader." 
+                                    FontSize="13"
+                                    FontStyle="Italic"
+                                    TextWrapping="Wrap"
+                                    Foreground="{DynamicResource text-muted}"/>
+                            <Separator/>
+                                <Grid Margin="15, 0, 0, 0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="15"/>
+                                        <ColumnDefinition/>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition/>
+                                    </Grid.RowDefinitions>
+                                    
+                                    <TextBlock 
+                                        Grid.Row="0"
+                                        Text="Infinite Scrolling" 
+                                        VerticalAlignment="Center" 
+                                        TextWrapping="Wrap"/>
+                                    <Controls:MetroToggleButton
+                                        Grid.Row="0"
+                                        Grid.Column="2"                                        
+                                        HorizontalAlignment="Left"
+                                        Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"
+                                        IsChecked="{Binding UserConfiguration.EnableInfiniteScrolling, FallbackValue=False}" 
+                                        FontFamily="{DynamicResource OpenIconic}"
+                                        Content="{DynamicResource oi-check}"/>
+                                </Grid>
+                            </StackPanel>
+                        </HeaderedContentControl>
+
                     </StackPanel>
 
                 </ScrollViewer>

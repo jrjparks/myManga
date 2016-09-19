@@ -47,27 +47,5 @@ namespace myManga_App.Views.Pages
 
             e.Handled = true;
         }
-
-        private void ItemsControl_PreviewMouseWheel(object sender, System.Windows.Input.MouseWheelEventArgs e)
-        {
-            // ugly hack
-            var border = (Border)System.Windows.Media.VisualTreeHelper.GetChild(sender as ItemsControl, 0);
-            var sv = (ScrollViewer)System.Windows.Media.VisualTreeHelper.GetChild(border, 0);
-            var count = 10;
-
-            // boost scrolling
-            if (e.Delta > 0)
-            {
-                for (int i = 0; i < count; i++)
-                    sv.LineUp();
-            }
-            else
-            {
-                for (int i = 0; i < count; i++)
-                    sv.LineDown();
-            }
-
-            e.Handled = true;
-        }
     }
 }

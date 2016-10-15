@@ -53,19 +53,40 @@ Consolidates information from multiple sites.
  * [Baka-Updates](http://www.mangaupdates.com/)
 
 ## Screenshots
+_[Full Album (imgur)](https://imgur.com/a/mAIJB)_
+
 ___Home - Grid___
-![Home View - Grid](https://i.imgur.com/445TSSF.jpg "Home View - Grid")
+
+![Home View - Grid](https://i.imgur.com/kNHjib8.jpg "Home View - Grid")
+
 ___Home - Grid - Information Dialog___
-![Home View - Grid - Information Dialog](https://i.imgur.com/u5CbrpV.jpg "Home View - Grid - Information Dialog")
-![Home View - Grid - Information Dialog](https://i.imgur.com/1bPzjEp.jpg "Home View - Grid - Information Dialog")
+
+![Home View - Grid - Information Dialog](https://i.imgur.com/mhxZnqN.jpg "Home View - Grid - Information Dialog")
+
 ___Home - List___
-![Home View - List](https://i.imgur.com/kBmCA8P.png "Home View - List")
+
+![Home View - List](https://i.imgur.com/2SaYnmc.png "Home View - List")
+
 ___Search___
-![Search View](https://i.imgur.com/lqIekwc.png "Search View")
+
+![Search View](https://i.imgur.com/UTzkIqx.png "Search View")
+
 ___Chapter Reader___
-![Chapter Reader View](https://i.imgur.com/wLt8DI3.jpg "Chapter Reader View")
-![Chapter Reader View - Overview](https://i.imgur.com/Jj8HRUF.jpg "Chapter Reader View - Overview")
+
+![Chapter Reader View](https://i.imgur.com/6NpGXga.jpg "Chapter Reader View")
+
+![Chapter Reader View - Overview](https://i.imgur.com/zlOXZit.jpg "Chapter Reader View - Overview")
+
 ___Settings___
-![Settings View - General](https://i.imgur.com/7uHcusM.png "Settings View - General")
-![Settings View - Extensions](https://i.imgur.com/vCOP0YE.png "Settings View - Extensions")
-![Settings View - Advanced](https://i.imgur.com/FCId2Yw.png "Settings View - Advanced")
+
+![Settings View - General](https://i.imgur.com/CI2exWD.png "Settings View - General")
+
+![Settings View - Extensions](https://i.imgur.com/WU4odSR.png "Settings View - Extensions")
+
+![Settings View - Extensions](https://i.imgur.com/tMXYmwO.png "Settings View - Extensions - Authentication")
+
+![Settings View - Advanced](https://i.imgur.com/Ou0P36B.png "Settings View - Advanced")
+
+![Settings View - Status](https://i.imgur.com/5WZHjcZ.png "Settings View - Status - Refresh All")
+
+![Settings View - Status](https://i.imgur.com/EafzTuz.png "Settings View - Status - Chapter Download")

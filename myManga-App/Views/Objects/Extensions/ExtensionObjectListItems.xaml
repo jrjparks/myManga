@@ -5,7 +5,7 @@
     xmlns:ExtensionObjects="clr-namespace:myManga_App.Objects.Extensions"
     xmlns:Controls="clr-namespace:System.Windows.Controls">
     <ResourceDictionary.MergedDictionaries>
-        <ResourceDictionary Source="/myManga;component/Themes/CoreResourceDictionary.xaml"/>
+        <ResourceDictionary Source="/myManga;component/Resources/Images/OpenIconic.xaml"/>
         <ResourceDictionary Source="/myManga;component/Themes/ListBox/ListBoxItems.xaml"/>
     </ResourceDictionary.MergedDictionaries>
 
@@ -33,10 +33,13 @@
                                     <Controls:MetroToggleButton 
                                         x:Name="EnabledButton"
                                         Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"
-                                        Content="{DynamicResource oi-x}"
-                                        FontFamily="{StaticResource OpenIconic}"
                                         Margin="1,0"
-                                        IsChecked="{Binding Enabled}"/>
+                                        IsChecked="{Binding Enabled}">
+                                        <Viewbox>
+                                            <Path x:Name="EnabledIcon" Style="{StaticResource iconic-x}"
+                                                  Fill="{Binding Path=Foreground, ElementName=EnabledButton, FallbackValue=Red}"/>
+                                        </Viewbox>
+                                    </Controls:MetroToggleButton>
                                     <Image
                                         x:Name="IconImage"
                                         MinHeight="32"
@@ -55,18 +58,17 @@
                                 </StackPanel>
                                 <StackPanel 
                                     Orientation="Horizontal"
-                                    VerticalAlignment="Center"
-                                    HorizontalAlignment="Right"
-                                    TextElement.FontFamily="{StaticResource OpenIconic}"
-                                    TextElement.FontSize="16">
-                                    <TextBlock
-                                        x:Name="AuthenticationWarning"
-                                        Text="{StaticResource oi-check}"
-                                        Foreground="Green"/>
+                                    Height="28"
+                                    HorizontalAlignment="Right">
+                                    <Viewbox
+                                        x:Name="AuthenticationWarningIcon">
+                                        <Path x:Name="AuthenticationWarningIconPath" Style="{StaticResource iconic-check}" Fill="Green"/>
+                                    </Viewbox>
                                     <Rectangle Width="5"/>
-                                    <TextBlock 
-                                        x:Name="Grip"
-                                        Text="{StaticResource oi-menu}"/>
+                                    <Viewbox
+                                        x:Name="GripIcon">
+                                        <Path x:Name="GripIconPath" Style="{StaticResource iconic-menu}" Fill="{TemplateBinding Foreground}"/>
+                                    </Viewbox>
                                 </StackPanel>
                             </Grid>
                         </Grid>
@@ -74,27 +76,27 @@
                     <ControlTemplate.Triggers>
                         <DataTrigger Binding="{Binding Enabled}" Value="True">
                             <Setter TargetName="Name" Property="TextBlock.FontWeight" Value="Bold"/>
-                            <Setter TargetName="EnabledButton" Property="Content" Value="{DynamicResource oi-check}"/>
+                            <Setter TargetName="EnabledIcon" Property="Style" Value="{StaticResource iconic-check}"/>
                         </DataTrigger>
                         <DataTrigger Binding="{Binding Enabled}" Value="False">
                             <Setter Property="Foreground" Value="{DynamicResource text-muted}"/>
                         </DataTrigger>
 
                         <DataTrigger Binding="{Binding AuthenticationState}" Value="{x:Static ExtensionObjects:AuthenticationState.Invalid}">
-                            <Setter TargetName="AuthenticationWarning" Property="Foreground" Value="Red"/>
-                            <Setter TargetName="AuthenticationWarning" Property="Text" Value="{StaticResource oi-circle-x}"/>
+                            <Setter TargetName="AuthenticationWarningIconPath" Property="Fill" Value="Red"/>
+                            <Setter TargetName="AuthenticationWarningIconPath" Property="Style" Value="{StaticResource iconic-circle-x}"/>
                         </DataTrigger>
                         <DataTrigger Binding="{Binding AuthenticationState}" Value="{x:Static ExtensionObjects:AuthenticationState.Required}">
-                            <Setter TargetName="AuthenticationWarning" Property="Foreground" Value="Yellow"/>
-                            <Setter TargetName="AuthenticationWarning" Property="Text" Value="{StaticResource oi-warning}"/>
+                            <Setter TargetName="AuthenticationWarningIconPath" Property="Fill" Value="Yellow"/>
+                            <Setter TargetName="AuthenticationWarningIconPath" Property="Style" Value="{StaticResource iconic-warning}"/>
                         </DataTrigger>
                         <DataTrigger Binding="{Binding AuthenticationState}" Value="{x:Static ExtensionObjects:AuthenticationState.Ignored}">
-                            <Setter TargetName="AuthenticationWarning" Property="Visibility" Value="Hidden"/>
+                            <Setter TargetName="AuthenticationWarningIcon" Property="Visibility" Value="Hidden"/>
                         </DataTrigger>
 
                         <DataTrigger Binding="{Binding IsAuthenticated}" Value="True">
-                            <Setter TargetName="AuthenticationWarning" Property="Foreground" Value="Green"/>
-                            <Setter TargetName="AuthenticationWarning" Property="Text" Value="{StaticResource oi-check}"/>
+                            <Setter TargetName="AuthenticationWarningIconPath" Property="Fill" Value="Green"/>
+                            <Setter TargetName="AuthenticationWarningIconPath" Property="Style" Value="{StaticResource iconic-check}"/>
                         </DataTrigger>
                         <Trigger Property="IsSelected" Value="True">
                             <Setter TargetName="ItemBorder" Property="BorderThickness" Value="{Binding Path=BorderThickness, RelativeSource={RelativeSource AncestorType={x:Type ListBoxItem}}}"/>

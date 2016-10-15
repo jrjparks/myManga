@@ -19,6 +19,7 @@
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/myManga;component/Resources/Images/OpenIconic.xaml"/>
                 <ResourceDictionary Source="/myManga;component/Themes/Button/MetroButton.xaml"/>
 
                 <ResourceDictionary Source="/myManga;component/Themes/ListBox/ListBoxes.xaml"/>
@@ -116,10 +117,14 @@
                                         Grid.Column="2"
                                         x:Name="RemoveBackChaptersToggleButton"
                                         HorizontalAlignment="Left"
+                                        Height="24"
                                         Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"
-                                        IsChecked="{Binding UserConfiguration.RemoveBackChapters, FallbackValue=False}" 
-                                        FontFamily="{DynamicResource OpenIconic}"
-                                        Content="{DynamicResource oi-check}"/>
+                                        IsChecked="{Binding UserConfiguration.RemoveBackChapters, FallbackValue=False}">
+                                        <Viewbox>
+                                            <Path Style="{StaticResource iconic-check}"
+                                                  Fill="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground), FallbackValue=Red}"/>
+                                        </Viewbox>
+                                    </Controls:MetroToggleButton>
 
                                     <TextBlock 
                                         Grid.Row="1"
@@ -462,6 +467,8 @@
             Orientation="Vertical"
             HorizontalAlignment="Left"
             VerticalAlignment="Bottom"
+            TextElement.FontSize="16"
+            TextElement.FontWeight="Bold"
             Width="{Binding ActualWidth, ElementName=tabItem, Mode=OneWay}" Margin="2,0,0,0">
 
             <Controls:MetroButton

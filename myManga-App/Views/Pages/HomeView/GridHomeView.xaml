@@ -13,6 +13,7 @@
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/myManga;component/Resources/Images/OpenIconic.xaml"/>
                 <ResourceDictionary Source="/myManga;component/Themes/Button/MetroButton.xaml"/>
                 <ResourceDictionary Source="/myManga;component/Themes/TextBox/TextBox.xaml"/>
 
@@ -92,12 +93,19 @@
                 <Controls:MetroButton
 				    x:Name="SearchButton"
                     Grid.Column="0"
-				    FontFamily="{DynamicResource OpenIconic}"
-				    Content="{DynamicResource oi-magnifying-glass}"
 				    Command="{Binding ForwardSearchTermCommand}"
                     CommandParameter="{Binding SearchTerm}"
 				    ToolTip="Search"
-				    Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"/>
+				    Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}">
+                    <StackPanel 
+                        Orientation="Horizontal"
+                        TextElement.Foreground="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground), FallbackValue=Red}">
+                        <Viewbox x:Name="SearchIcon">
+                            <Path Style="{StaticResource iconic-magnifying-glass}"
+                                  Fill="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground), FallbackValue=Red}"/>
+                        </Viewbox>
+                    </StackPanel>
+                </Controls:MetroButton>
 
                 <TextBox
 				    x:Name="SearchBox"
@@ -112,11 +120,18 @@
                 <Controls:MetroButton
 				    x:Name="ClearSearchButton"
                     Grid.Column="2"
-				    FontFamily="{DynamicResource OpenIconic}"
-				    Content="{DynamicResource oi-delete}"
 				    Command="{Binding ClearSearchTermCommand}"
 				    ToolTip="Clear Search"
-				    Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"/>
+				    Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}">
+                    <StackPanel 
+                        Orientation="Horizontal"
+                        TextElement.Foreground="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground), FallbackValue=Red}">
+                        <Viewbox x:Name="ClearSearchIcon">
+                            <Path Style="{StaticResource iconic-delete}"
+                                  Fill="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground), FallbackValue=Red}"/>
+                        </Viewbox>
+                    </StackPanel>
+                </Controls:MetroButton>
 
             </Grid>
 

@@ -10,10 +10,15 @@
     xmlns:PrimitiveControls="clr-namespace:System.Windows.Controls.Primitives"
     mc:Ignorable="d" 
     d:DesignHeight="700" 
-    d:DesignWidth="900">
+    d:DesignWidth="900"
+    Background="{DynamicResource window-background}"
+    Foreground="{DynamicResource text-dark}"
+    TextBlock.Foreground="{DynamicResource text-dark}"
+    TextElement.Foreground="{DynamicResource text-dark}">
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/myManga;component/Resources/Images/OpenIconic.xaml"/>
                 <ResourceDictionary Source="/myManga;component/Themes/Button/MetroButton.xaml"/>
 
                 <ResourceDictionary Source="/myManga;component/Themes/ListBox/ListBoxes.xaml"/>
@@ -29,8 +34,7 @@
             <Converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" FalseValue="Collapsed"/>
         </ResourceDictionary>
     </UserControl.Resources>
-    <Grid
-        Background="{DynamicResource window-background}">
+    <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="300"/>
             <RowDefinition/>
@@ -54,13 +58,26 @@
                 VerticalAlignment="Bottom"
                 Opacity="0.75">
                 <Controls:MetroButton
-                    FontFamily="{DynamicResource OpenIconic}"
-                    Content="{DynamicResource oi-bookmark}"
-                    ContentStringFormat="{}{0} Resume Reading"
+                    x:Name="ResumeReadingButton"
                     FontSize="18"
                     Padding="5"
                     Command="{Binding ResumeReadingAsyncCommand}"
-                    CommandParameter="{Binding MangaCacheObject.ResumeChapterCacheObject}"/>
+                    CommandParameter="{Binding MangaCacheObject.ResumeChapterCacheObject}">
+                    <StackPanel 
+                        Orientation="Horizontal"
+                        TextElement.Foreground="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground)}">
+                        <Viewbox
+                            x:Name="ResumeReadingIcon"
+                            Width="18">
+                            <Path Style="{StaticResource iconic-bookmark}"
+                                  Fill="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground), FallbackValue=Red}"/>
+                        </Viewbox>
+                        <TextBlock
+                            x:Name="ResumeReadingLabel"
+                            Text="Resume Reading"
+                            Padding="5"/>
+                    </StackPanel>
+                </Controls:MetroButton>
                 <ProgressBar
                     Height="5"
                     Minimum="0"
@@ -277,11 +294,18 @@
                     VerticalAlignment="Top"
                     TextElement.FontWeight="Bold"
                     TextBlock.FontWeight="Bold" 
-                    TextElement.FontSize="16"
-                    TextElement.FontFamily="{DynamicResource OpenIconic}">
+                    TextElement.FontSize="16">
+                    <Grid.Resources>
+                        <Converters:ThicknessAdditionConverter x:Key="ThicknessAdditionConverter"/>
+                        <Thickness x:Key="ScrollBarThickness" Right="{x:Static SystemParameters.VerticalScrollBarWidth}"/>
+                        <Thickness x:Key="OffsetThickness" Right="2"/>
+                    </Grid.Resources>
 
                     <Grid.Margin>
-                        <Thickness Right="{x:Static SystemParameters.VerticalScrollBarWidth}"/>
+                        <MultiBinding Converter="{StaticResource ThicknessAdditionConverter}">
+                            <Binding Source="{StaticResource ScrollBarThickness}"/>
+                            <Binding Source="{StaticResource OffsetThickness}"/>
+                        </MultiBinding>
                     </Grid.Margin>
 
                     <Grid.ColumnDefinitions>
@@ -292,18 +316,39 @@
                     <Controls:MetroButton
                         x:Name="DownloadToLatestButton"
                         HorizontalContentAlignment="Left"
-                        Content="{DynamicResource oi-cloud-download}"
-                        ContentStringFormat="{}{0} Download To Latest"
-                        Padding="4,8"
-                        Command="{Binding DownloadToLatestChapterAsyncCommand}"/>
+                        Command="{Binding DownloadToLatestChapterAsyncCommand}">
+                        <StackPanel 
+                            Orientation="Horizontal"
+                            TextElement.Foreground="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground), FallbackValue=Orange}">
+                            <Viewbox
+                                x:Name="DownloadToLatestIcon"
+                                Width="16">
+                                <Path Style="{StaticResource iconic-cloud-download}"
+                                      Fill="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground), FallbackValue=Red}"/>
+                            </Viewbox>
+                            <TextBlock
+                                x:Name="DownloadToLatestLabel"
+                                Text="Download To Latest"
+                                Padding="4.5"/>
+                        </StackPanel>
+                    </Controls:MetroButton>
 
                     <Controls:MetroToggleButton
                         x:Name="DownloadDropdown"
                         Grid.Column="1"
-                        Content="{DynamicResource oi-chevron-bottom}"
                         Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"
-                        IsHitTestVisible="{Binding IsOpen, Converter={StaticResource BooleanInverter}, ElementName=DownloadPopup, Mode=OneWay}"
-                        Margin="0,0,1,0"/>
+                        IsHitTestVisible="{Binding IsOpen, Converter={StaticResource BooleanInverter}, ElementName=DownloadPopup, Mode=OneWay}">
+                        <StackPanel 
+                            Orientation="Horizontal"
+                            TextElement.Foreground="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground)}">
+                            <Viewbox
+                                x:Name="DownloadDropdownIcon"
+                                Width="18">
+                                <Path Style="{StaticResource iconic-chevron-bottom}"
+                                        Fill="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground), FallbackValue=Red}"/>
+                            </Viewbox>
+                        </StackPanel>
+                    </Controls:MetroToggleButton>
 
                     <PrimitiveControls:DockingPopup
                         x:Name="DownloadPopup"
@@ -314,27 +359,51 @@
                         PopupAnimation="Fade"
                         StaysOpen="False">
                         <Border
-                            BorderThickness="1,0,1,1"
+                            BorderThickness="2,0,2,2"
                             Background="{DynamicResource window-background}"
                             BorderBrush="{DynamicResource window-theme-primary}">
                             <StackPanel Orientation="Vertical">
 
                                 <Controls:MetroButton
-                                    x:Name="DownloadSelectedChapters"
+                                    x:Name="DownloadSelectedChaptersButton"
                                     HorizontalContentAlignment="Left"
-                                    Content="{DynamicResource oi-cloud-download}"
-                                    ContentStringFormat="{}{0} Download Selected"
-                                    Padding="4,8"
                                     Command="{Binding DownloadSelectedChaptersAsyncCommand}"
-                                    CommandParameter="{Binding SelectedItems, ElementName=ChapterObjects}"/>
+                                    CommandParameter="{Binding SelectedItems, ElementName=ChapterObjects}">
+                                    <StackPanel 
+                                        Orientation="Horizontal"
+                                        TextElement.Foreground="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground), FallbackValue=Orange}">
+                                        <Viewbox
+                                            x:Name="DownloadSelectedChaptersIcon"
+                                            Width="16">
+                                            <Path Style="{StaticResource iconic-cloud-download}"
+                                                  Fill="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground), FallbackValue=Red}"/>
+                                        </Viewbox>
+                                        <TextBlock
+                                            x:Name="DownloadSelectedChaptersLabel"
+                                            Text="Download Selected"
+                                            Padding="4.5"/>
+                                    </StackPanel>
+                                </Controls:MetroButton>
 
                                 <Controls:MetroButton
-                                    x:Name="DownloadAllChapters"
+                                    x:Name="DownloadAllChaptersButton"
                                     HorizontalContentAlignment="Left"
-                                    Content="{DynamicResource oi-cloud-download}"
-                                    ContentStringFormat="{}{0} Download All"
-                                    Padding="4,8"
-                                    Command="{Binding DownloadAllChaptersAsyncCommand}"/>
+                                    Command="{Binding DownloadAllChaptersAsyncCommand}">
+                                    <StackPanel 
+                                        Orientation="Horizontal"
+                                        TextElement.Foreground="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground), FallbackValue=Orange}">
+                                        <Viewbox
+                                            x:Name="DownloadAllChaptersIcon"
+                                            Width="16">
+                                            <Path Style="{StaticResource iconic-cloud-download}"
+                                                  Fill="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground), FallbackValue=Red}"/>
+                                        </Viewbox>
+                                        <TextBlock
+                                            x:Name="DownloadAllChaptersLabel"
+                                            Text="Download All"
+                                            Padding="4.5"/>
+                                    </StackPanel>
+                                </Controls:MetroButton>
 
                             </StackPanel>
                         </Border>
@@ -348,22 +417,40 @@
                     VerticalAlignment="Bottom"
                     TextElement.FontWeight="Bold"
                     TextBlock.FontWeight="Bold" 
-                    TextElement.FontSize="16"
-                    TextElement.FontFamily="{DynamicResource OpenIconic}">
+                    TextElement.FontSize="16">
+                    <Grid.Resources>
+                        <Converters:ThicknessAdditionConverter x:Key="ThicknessAdditionConverter"/>
+                        <Thickness x:Key="ScrollBarThickness" Right="{x:Static SystemParameters.VerticalScrollBarWidth}"/>
+                        <Thickness x:Key="OffsetThickness" Right="2"/>
+                    </Grid.Resources>
 
                     <Grid.Margin>
-                        <Thickness Right="{x:Static SystemParameters.VerticalScrollBarWidth}"/>
+                        <MultiBinding Converter="{StaticResource ThicknessAdditionConverter}">
+                            <Binding Source="{StaticResource ScrollBarThickness}"/>
+                            <Binding Source="{StaticResource OffsetThickness}"/>
+                        </MultiBinding>
                     </Grid.Margin>
 
                     <Controls:MetroButton
                         x:Name="ReadChapterButton"
                         HorizontalContentAlignment="Left"
-                        Padding="4,8"
-                        Content="{DynamicResource oi-book}"
-                        ContentStringFormat="{}{0} Read Selected Chapter"
                         Command="{Binding ReadSelectedChapterAsyncCommand}"
-                        CommandParameter="{Binding SelectedItems, ElementName=ChapterObjects}"
-                        Margin="0,0,1,0"/>
+                        CommandParameter="{Binding SelectedItems, ElementName=ChapterObjects}">
+                        <StackPanel 
+                            Orientation="Horizontal"
+                            TextElement.Foreground="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground)}">
+                            <Viewbox
+                                x:Name="ReadChapterIcon"
+                                Width="16">
+                                <Path Style="{StaticResource iconic-book}"
+                                      Fill="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground), FallbackValue=Red}"/>
+                            </Viewbox>
+                            <TextBlock
+                                x:Name="ReadChapterLabel"
+                                Text="Read Selected Chapter"
+                                Padding="4.5"/>
+                        </StackPanel>
+                    </Controls:MetroButton>
 
                 </Grid>
 

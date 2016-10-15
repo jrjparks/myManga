@@ -4,7 +4,7 @@
     xmlns:local="clr-namespace:myManga_App.Views.Objects.Cache.ChapterCacheObjectViews"
     xmlns:converters="clr-namespace:myManga_App.Converters">
     <ResourceDictionary.MergedDictionaries>
-        <ResourceDictionary Source="/myManga;component/Themes/CoreResourceDictionary.xaml"/>
+        <ResourceDictionary Source="/myManga;component/Resources/Images/OpenIconic.xaml"/>
         <ResourceDictionary Source="/myManga;component/Themes/ListBox/ListBoxItems.xaml"/>
     </ResourceDictionary.MergedDictionaries>
     <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
@@ -75,16 +75,16 @@
 
                             </Grid>
 
-                            <TextBlock
+                            <Viewbox
                                 x:Name="Icon"
                                 Grid.Column="1"
                                 Visibility="Collapsed"
                                 HorizontalAlignment="Right"
                                 VerticalAlignment="Center"
-                                FontFamily="{DynamicResource OpenIconic}"
-                                Text="{DynamicResource oi-folder}"
-                                FontSize="20"
-                                Margin="3"/>
+                                Margin="3">
+                                <Path Style="{StaticResource iconic-folder}"
+                                      Fill="{TemplateBinding Foreground}"/>
+                            </Viewbox>
                         </Grid>
 
                     </Border>

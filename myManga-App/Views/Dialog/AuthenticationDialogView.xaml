@@ -23,6 +23,7 @@
     <Controls:DialogUserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/myManga;component/Resources/Images/OpenIconic.xaml"/>
                 <ResourceDictionary Source="/myManga;component/Themes/System/Windows/Controls/DialogUserControl.xaml"/>
 
                 <ResourceDictionary Source="/myManga;component/Themes/Button/MetroButton.xaml"/>
@@ -146,12 +147,16 @@
                     FontWeight="Bold" 
                     TextAlignment="Center"/>
                 <Controls:MetroToggleButton
+                    x:Name="RememberMeToggleButton"
                     Grid.Column="1"
                     HorizontalAlignment="Right"
                     IsChecked="{Binding AuthenticationRememberMe, FallbackValue=True}"
-                    Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"
-                    FontFamily="{DynamicResource OpenIconic}"
-                    Content="{DynamicResource oi-check}"/>
+                    Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}">
+                    <Viewbox x:Name="RememberMeIcon">
+                        <Path Style="{StaticResource iconic-check}" Margin="2"
+                              Fill="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground), FallbackValue=Red}"/>
+                    </Viewbox>
+                </Controls:MetroToggleButton>
             </Grid>
 
             <Grid
@@ -168,22 +173,16 @@
                     Content="Login"
                     Command="{Binding OKCommand}"/>
 
-                <TextBlock
+                <Viewbox 
+                    x:Name="LoginWarningIcon"
                     Grid.Column="1"
-                    FontSize="36"
-                        Foreground="Orange"
-                    VerticalAlignment="Center"
-                    TextAlignment="Center"
-                    FontFamily="{StaticResource OpenIconic}"
-                    Text="{StaticResource oi-warning}"
                     ToolTip="{Binding AuthenticationError}"
                     Visibility="{Binding AuthenticationError, TargetNullValue=Collapsed, FallbackValue=Visible}">
-                    <TextBlock.BitmapEffect>
-                        <DropShadowBitmapEffect
-                            ShadowDepth="0"
-                            Color="Red"/>
-                    </TextBlock.BitmapEffect>
-                </TextBlock>
+                    <Path Style="{StaticResource iconic-warning}" Fill="{DynamicResource window-theme-primary}"/>
+                    <Viewbox.BitmapEffect>
+                        <DropShadowBitmapEffect ShadowDepth="0" Color="{DynamicResource window-foreground-color}" Softness=".35"/>
+                    </Viewbox.BitmapEffect>
+                </Viewbox>
 
                 <Controls:MetroButton
                     Grid.Column="2"

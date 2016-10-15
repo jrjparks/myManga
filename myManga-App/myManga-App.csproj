@@ -56,9 +56,9 @@
     <RunPostBuildEvent>Always</RunPostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="HtmlAgilityPack">
-      <HintPath>..\packages\HtmlAgilityPack.1.4.9\lib\Net45\HtmlAgilityPack.dll</HintPath>
-      <Private>False</Private>
+    <Reference Include="HtmlAgilityPack, Version=1.4.9.5, Culture=neutral, PublicKeyToken=bd319b19eaf3b43a, processorArchitecture=MSIL">
+      <HintPath>..\packages\HtmlAgilityPack.1.4.9.5\lib\Net45\HtmlAgilityPack.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="log4net, Version=1.2.15.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
       <HintPath>..\packages\log4net.2.0.5\lib\net45-full\log4net.dll</HintPath>
@@ -93,7 +93,9 @@
     <Compile Include="Controls\Extensions\ItemsControlExtensions.cs" />
     <Compile Include="Controls\ListBoxExtensions.cs" />
     <Compile Include="Converters\ConditionalValueConverter.cs" />
+    <Compile Include="Converters\ThicknessMathConverter.cs" />
     <Compile Include="CoreManagement.cs" />
+    <Compile Include="IO\Stream\CheckFileType.cs" />
     <Compile Include="Objects\Extensions\ExtensionObject.cs" />
     <Compile Include="Objects\UserConfig\EnabledExtensionObject.cs" />
     <Compile Include="System\Threading\Tasks\ForEach.cs" />
@@ -201,9 +203,9 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="Resources\Font\Open Iconic\OpenIconicIcons.xaml">
-      <Generator>MSBuild:Compile</Generator>
+    <Page Include="Resources\Images\OpenIconic.xaml">
       <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Resources\Localization\Dictionary_en.xaml">
       <SubType>Designer</SubType>
@@ -214,10 +216,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Themes\CoreResourceDictionary.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Resources\Font\Font Awesome\FontAwesomeIcons.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -383,8 +381,6 @@
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <AppDesigner Include="Properties\" />
-    <Resource Include="Resources\Font\Open Iconic\open-iconic.ttf" />
-    <Resource Include="Resources\Font\Font Awesome\fontawesome-webfont.ttf" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\myManga-Plugin\myMangaSiteExtension\myMangaSiteExtension.csproj">

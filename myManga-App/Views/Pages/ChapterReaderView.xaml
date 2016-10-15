@@ -18,6 +18,7 @@
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/myManga;component/Resources/Images/OpenIconic.xaml"/>
                 <ResourceDictionary Source="/myManga;component/Themes/Button/MetroButton.xaml"/>
 
                 <ResourceDictionary Source="/myManga;component/Themes/ListBox/ListBoxes.xaml"/>
@@ -183,45 +184,49 @@
             <ScrollViewer.ContextMenu>
                 <ContextMenu>
                     <MenuItem 
+                        x:Name="ReloadPageImageMenuItem"
                         Command="{Binding ReloadPageAsyncCommand}" 
                         CommandParameter="{Binding PageObject}"
                         Header="(F5) Reload Page Image">
                         <MenuItem.Icon>
-                            <TextBlock
-                                Text="{DynamicResource oi-cloud-download}" 
-                                FontFamily="{DynamicResource OpenIconic}" 
-                                HorizontalAlignment="Center" 
-                                VerticalAlignment="Center"/>
+                            <Viewbox>
+                                <Path Style="{StaticResource iconic-cloud-download}"
+                                      Fill="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground), FallbackValue=Red}"/>
+                            </Viewbox>
                         </MenuItem.Icon>
                     </MenuItem>
                     <Separator/>
                     <MenuItem 
+                        x:Name="ZoomInMenuItem"
                         Command="{Binding IncreasePageZoomCommand}"
                         Header="(Ctrl+=) Zoom In">
                         <MenuItem.Icon>
-                            <TextBlock
-                                Text="{DynamicResource oi-plus}" 
-                                FontFamily="{DynamicResource OpenIconic}" 
-                                HorizontalAlignment="Center" 
-                                VerticalAlignment="Center"/>
+                            <Viewbox>
+                                <Path Style="{StaticResource iconic-plus}"
+                                      Fill="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground), FallbackValue=Red}"/>
+                            </Viewbox>
                         </MenuItem.Icon>
                     </MenuItem>
-                    <MenuItem Command="{Binding DecreasePageZoomCommand}" Header="(Ctrl+-) Zoom Out">
+                    <MenuItem 
+                        x:Name="ZoomOutMenuItem"
+                        Command="{Binding DecreasePageZoomCommand}" 
+                        Header="(Ctrl+-) Zoom Out">
                         <MenuItem.Icon>
-                            <TextBlock
-                                Text="{DynamicResource oi-minus}" 
-                                FontFamily="{DynamicResource OpenIconic}" 
-                                HorizontalAlignment="Center" 
-                                VerticalAlignment="Center"/>
+                            <Viewbox>
+                                <Path Style="{StaticResource iconic-minus}"
+                                      Fill="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground), FallbackValue=Red}"/>
+                            </Viewbox>
                         </MenuItem.Icon>
                     </MenuItem>
-                    <MenuItem Command="{Binding ResetPageZoomCommand}" Header="(Ctrl+0) Reset Zoom">
+                    <MenuItem 
+                        x:Name="ZoomResetMenuItem"
+                        Command="{Binding ResetPageZoomCommand}"
+                        Header="(Ctrl+0) Reset Zoom">
                         <MenuItem.Icon>
-                            <TextBlock
-                                Text="{DynamicResource oi-reload}" 
-                                FontFamily="{DynamicResource OpenIconic}" 
-                                HorizontalAlignment="Center" 
-                                VerticalAlignment="Center"/>
+                            <Viewbox>
+                                <Path Style="{StaticResource iconic-reload}"
+                                      Fill="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground), FallbackValue=Red}"/>
+                            </Viewbox>
                         </MenuItem.Icon>
                     </MenuItem>
                 </ContextMenu>
@@ -259,20 +264,36 @@
         <Controls:MetroButton
             Grid.Column="0"
             Grid.Row="1"
+            x:Name="PrevButton"
             VerticalContentAlignment="Center"
-            HorizontalContentAlignment="Center" 
-            FontFamily="{DynamicResource OpenIconic}"
-            Content="{DynamicResource oi-arrow-thick-left}"
+            HorizontalContentAlignment="Center"
             Command="{Binding PagePrevCommand}"
-            FontSize="24"/>
+            FontSize="24">
+            <StackPanel 
+                Orientation="Vertical"
+                TextElement.Foreground="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground)}">
+                <Viewbox x:Name="PrevIcon">
+                    <Path Style="{StaticResource iconic-arrow-thick-left}"
+                            Fill="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground), FallbackValue=Red}"/>
+                </Viewbox>
+            </StackPanel>
+        </Controls:MetroButton>
         <Controls:MetroButton
             Grid.Column="2"
             Grid.Row="1"
+            x:Name="NextButton"
             VerticalContentAlignment="Center"
             HorizontalContentAlignment="Center"
-            FontFamily="{DynamicResource OpenIconic}"
-            Content="{DynamicResource oi-arrow-thick-right}"
             Command="{Binding PageNextCommand}"
-            FontSize="24"/>
+            FontSize="24">
+            <StackPanel 
+                Orientation="Vertical"
+                TextElement.Foreground="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground)}">
+                <Viewbox x:Name="NextIcon">
+                    <Path Style="{StaticResource iconic-arrow-thick-right}"
+                            Fill="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground), FallbackValue=Red}"/>
+                </Viewbox>
+            </StackPanel>
+        </Controls:MetroButton>
     </Grid>
 </UserControl>

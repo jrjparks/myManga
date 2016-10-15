@@ -1,7 +1,7 @@
 ﻿<ResourceDictionary 
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="clr-namespace:myManga_App.Themes.System.Windows.Controls"
+    xmlns:local="clr-namespace:myManga_App.System.Windows.Controls"
     xmlns:Controls="clr-namespace:System.Windows.Controls">
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="/myManga;component/Themes/CoreResourceDictionary.xaml"/>

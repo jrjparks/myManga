@@ -11,6 +11,12 @@ namespace myManga_App.IO.Network
         { get; private set; }
         public String Referer
         { get; set; }
+        public Int32 Timeout
+        { get; set; }
+        public Int32 ContinueTimeout
+        { get; set; }
+        public Int32 ReadWriteTimeout
+        { get; set; }
 
         /// <summary>
         /// Empty WebDownloader constructor
@@ -57,6 +63,9 @@ namespace myManga_App.IO.Network
             request.CookieContainer = CookieContainer;
             request.Headers.Add("X-Requested-With", "XMLHttpRequest");
             request.Referer = Referer ?? request.Host;
+            if (Timeout > 0) request.Timeout = Timeout;
+            if (ContinueTimeout > 0) request.ContinueTimeout = ContinueTimeout;
+            if (ReadWriteTimeout > 0) request.ReadWriteTimeout = ReadWriteTimeout;
             return request;
         }
 

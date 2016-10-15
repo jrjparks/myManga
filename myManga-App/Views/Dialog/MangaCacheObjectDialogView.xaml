@@ -21,10 +21,11 @@
     <Controls:DialogUserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="/myManga;component/Themes/System/Windows/Controls/DialogUserControl.xaml"/>
-
+                <ResourceDictionary Source="/myManga;component/Resources/Images/OpenIconic.xaml"/>
                 <ResourceDictionary Source="/myManga;component/Themes/Button/MetroButton.xaml"/>
+
                 <ResourceDictionary Source="/myManga;component/Themes/TextBox/TextBox.xaml"/>
+                <ResourceDictionary Source="/myManga;component/Themes/System/Windows/Controls/DialogUserControl.xaml"/>
             </ResourceDictionary.MergedDictionaries>
             <Converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" TrueValue="Visible" FalseValue="Collapsed"/>
         </ResourceDictionary>
@@ -40,33 +41,58 @@
 			VerticalAlignment="Top"
             Background="{DynamicResource window-background}"
             BorderBrush="{DynamicResource window-theme-primary}"
+            
             BorderThickness="1,1,0,1"
             Margin="-32,0,0,0">
             <StackPanel 
                 Orientation="Vertical"
 			    Grid.Column="2">
                 <Controls:MetroButton
-			        FontFamily="{DynamicResource OpenIconic}"
-			        Content="{DynamicResource oi-reload}"
-			        Command="{Binding RefreshCommand}"
-                    CommandParameter="{Binding MangaCacheObjectDetail.MangaCacheObject}"
+			        x:Name="ReloadMangaButton"
+			        Command="{Binding MangaCacheObjectDialog.RefreshCommand}"
+                    CommandParameter="{Binding MangaCacheObjectDialog.MangaCacheObjectDetail.MangaCacheObject}"
 			        Height="32"
-			        Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"/>
+			        Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}">
+                    <StackPanel 
+                        Orientation="Horizontal"
+                        TextElement.Foreground="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground)}">
+                        <Viewbox x:Name="ReloadMangaIcon">
+                            <Path Style="{StaticResource iconic-reload}" Margin="2"
+                                  Fill="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground), FallbackValue=Red}"/>
+                        </Viewbox>
+                    </StackPanel>
+                </Controls:MetroButton>
                 <Controls:MetroButton
-			        FontFamily="{DynamicResource OpenIconic}"
-			        Content="{DynamicResource oi-trash}"
-			        Command="{Binding DeleteCommand}"
-                    CommandParameter="{Binding MangaCacheObjectDetail.MangaCacheObject}"
+			        x:Name="DeleteMangaButton"
+			        Command="{Binding MangaCacheObjectDialog.DeleteCommand}"
+                    CommandParameter="{Binding MangaCacheObjectDialog.MangaCacheObjectDetail.MangaCacheObject}"
 			        Height="32"
-			        Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"/>
+			        Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}">
+                    <StackPanel 
+                        Orientation="Horizontal"
+                        TextElement.Foreground="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground)}">
+                        <Viewbox x:Name="DeleteMangaIcon">
+                            <Path Style="{StaticResource iconic-trash}" Margin="2"
+                                  Fill="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground), FallbackValue=Red}"/>
+                        </Viewbox>
+                    </StackPanel>
+                </Controls:MetroButton>
                 <Controls:MetroButton
-			        FontFamily="{DynamicResource OpenIconic}"
-			        Content="{DynamicResource oi-pencil}"
-			        Command="{Binding EditCommand}"
-                    CommandParameter="{Binding MangaCacheObjectDetail.MangaCacheObject}"
+			        x:Name="EditMangaButton"
+			        Command="{Binding MangaCacheObjectDialog.EditCommand}"
+                    CommandParameter="{Binding MangaCacheObjectDialog.MangaCacheObjectDetail.MangaCacheObject}"
 			        Height="32"
 			        Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"
-                    IsEnabled="False"/>
+                    IsEnabled="False">
+                    <StackPanel 
+                        Orientation="Horizontal"
+                        TextElement.Foreground="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground)}">
+                        <Viewbox x:Name="EditMangaIcon">
+                            <Path Style="{StaticResource iconic-pencil}" Margin="2"
+                                  Fill="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground), FallbackValue=Red}"/>
+                        </Viewbox>
+                    </StackPanel>
+                </Controls:MetroButton>
             </StackPanel>
         </Border>
     </Grid>

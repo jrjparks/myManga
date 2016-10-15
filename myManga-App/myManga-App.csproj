@@ -96,6 +96,9 @@
     <Compile Include="Converters\ThicknessMathConverter.cs" />
     <Compile Include="CoreManagement.cs" />
     <Compile Include="IO\Stream\CheckFileType.cs" />
+    <Compile Include="Objects\DataVirtualization\AsyncVirtualizingCollection.cs" />
+    <Compile Include="Objects\DataVirtualization\IItemsProvider.cs" />
+    <Compile Include="Objects\DataVirtualization\VirtualizingCollection.cs" />
     <Compile Include="Objects\Extensions\ExtensionObject.cs" />
     <Compile Include="Objects\UserConfig\EnabledExtensionObject.cs" />
     <Compile Include="System\Threading\Tasks\ForEach.cs" />
@@ -156,6 +159,7 @@
     <Compile Include="ViewModels\Dialog\MangaCacheObjectDialogViewModel.cs" />
     <Compile Include="ViewModels\Dialog\MessageDialogViewModel.cs" />
     <Compile Include="ViewModels\Objects\Cache\MangaCacheObjectViewModels\MangaCacheObjectDetailViewModel.cs" />
+    <Compile Include="ViewModels\Objects\ChapterPageViewModel.cs" />
     <Compile Include="ViewModels\Pages\ChapterReaderViewModel.cs" />
     <Compile Include="ViewModels\Pages\HomeViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />

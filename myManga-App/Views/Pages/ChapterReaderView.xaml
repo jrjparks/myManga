@@ -170,8 +170,53 @@
             </StackPanel>
         </PrimitiveControls:DockingPopup>
 
+        <!-- Visibility="{Binding InfiniteScrollingChapterViewerVisibility}" -->
+        <ListBox ItemsSource="{Binding VirtualImageCollection}"                 
+                 Grid.Column="1"
+                 Grid.Row="1" 
+                 Visibility="{Binding InfiniteScrollingChapterViewerVisibility}"
+                 PreviewMouseWheel="ListBox_MouseWheel"
+                 VirtualizingStackPanel.ScrollUnit="Pixel"
+                 VirtualizingPanel.IsVirtualizing="True"
+                 VerticalContentAlignment="Center"
+                 HorizontalContentAlignment="Center"                 
+                 ItemContainerStyle="{StaticResource ChapterReaderView_UnfocusableListBoxItem}">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Orientation="Vertical" Margin="3" Name="Bd">
+                        <Image
+                    x:Name="PageImageContent"
+                    Stretch="UniformToFill" 
+                    IsHitTestVisible="False"
+                    Height="{Binding Source.PixelHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"
+                    Width="{Binding Source.PixelWidth, Mode=OneWay, RelativeSource={RelativeSource Self}}"                    
+                    Source="{Binding Image, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True, Mode=OneWay}">
+                            <Image.LayoutTransform>
+                                <ScaleTransform
+                            ScaleX="{Binding Path=PageZoom, Mode=OneWay, FallbackValue=1}" 
+                            ScaleY="{Binding Path=PageZoom, Mode=OneWay, FallbackValue=1}"/>
+                            </Image.LayoutTransform>
+                        </Image>
+                        <TextBlock 
+                            Text="{Binding PageInfo.PageNumber}" 
+                            Background="Black" 
+                            Foreground="White" 
+                            FontWeight="Bold"
+                            FontSize="14"
+                            HorizontalAlignment="Stretch" TextAlignment="Center"></TextBlock>
+                    </StackPanel>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+            <ListBox.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <VirtualizingStackPanel/>
+                </ItemsPanelTemplate>
+            </ListBox.ItemsPanel>
+        </ListBox>
+
         <ScrollViewer
             x:Name="PageImageContentScrollViewer"
+            Visibility="{Binding PageImageContentScrollViewerVisibility}"
             Grid.Column="1"
             Grid.Row="1" 
             PanningMode="Both" 
@@ -262,6 +307,7 @@
         </ScrollViewer>
 
         <Controls:MetroButton
+            Visibility="{Binding PageImageContentScrollViewerVisibility}"
             Grid.Column="0"
             Grid.Row="1"
             x:Name="PrevButton"
@@ -279,6 +325,7 @@
             </StackPanel>
         </Controls:MetroButton>
         <Controls:MetroButton
+            Visibility="{Binding PageImageContentScrollViewerVisibility}"
             Grid.Column="2"
             Grid.Row="1"
             x:Name="NextButton"

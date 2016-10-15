@@ -30,37 +30,39 @@ namespace myManga_App.IO.Local.Object
             if (!Equals(Object, null))
             {
                 Stream SerializedObjectStream = new MemoryStream();
-
-                using (Stream SerializingStream = new MemoryStream())
+                try
                 {
-
-                    try
+                    switch (SerializeType)
                     {
-                        switch (SerializeType)
-                        {
-                            default:
-                            case SerializeType.XML:
-                                XmlSerializer XmlSerializer = new XmlSerializer(typeof(ObjectType));
+                        default:
+                        case SerializeType.XML:
+                            XmlSerializer XmlSerializer = new XmlSerializer(typeof(ObjectType));
+                            using (Stream SerializingStream = new MemoryStream())
+                            {
                                 XmlSerializer.Serialize(SerializingStream, Object);
-                                XmlSerializer = null;
-                                break;
+                                SerializingStream.Seek(0, SeekOrigin.Begin);
+                                SerializingStream.CopyTo(SerializedObjectStream);
+                            }
+                            XmlSerializer = null;
+                            break;
 
-                            case SerializeType.Binary:
-                                BinaryFormatter BinaryFormatter = new BinaryFormatter();
-                                using (GZipStream GZipSerializeStream = new GZipStream(SerializingStream, CompressionMode.Compress, true))
-                                { BinaryFormatter.Serialize(GZipSerializeStream, Object); }
-                                BinaryFormatter = null;
-                                break;
-                        }
-                        SerializingStream.Seek(0, SeekOrigin.Begin);
-                        SerializingStream.CopyTo(SerializedObjectStream);
+                        case SerializeType.Binary:
+                            BinaryFormatter BinaryFormatter = new BinaryFormatter();
+                            using (GZipStream GZipSerializeStream = new GZipStream(new MemoryStream(), CompressionMode.Compress, true))
+                            {
+                                BinaryFormatter.Serialize(GZipSerializeStream, Object);
+                                GZipSerializeStream.Seek(0, SeekOrigin.Begin);
+                                GZipSerializeStream.CopyTo(SerializedObjectStream);
+                            }
+                            BinaryFormatter = null;
+                            break;
                     }
-                    catch (Exception ex)
-                    {
-                        String ExceptionMessage = String.Format("Error serializing data as {0}.", SerializeType.ToString());
-                        logger.Error(ExceptionMessage, ex);
-                        throw new Exception(ExceptionMessage, ex);
-                    }
+                }
+                catch (Exception ex)
+                {
+                    String ExceptionMessage = String.Format("Error serializing data as {0}.", SerializeType.ToString());
+                    logger.Error(ExceptionMessage, ex);
+                    throw new Exception(ExceptionMessage, ex);
                 }
                 SerializedObjectStream.Seek(0, SeekOrigin.Begin);
                 return SerializedObjectStream;

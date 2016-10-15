@@ -1,12 +1,9 @@
-﻿using myManga_App.IO.DLL;
-using myManga_App.IO.Local;
-using myManga_App.IO.Local.Object;
+﻿using myManga_App.IO.Local.Object;
 using myManga_App.IO.Network;
 using myManga_App.Objects;
 using myManga_App.Objects.About;
 using myManga_App.Objects.Cache;
 using myManga_App.Objects.UserConfig;
-using myMangaSiteExtension.Collections;
 using myMangaSiteExtension.Interfaces;
 using myMangaSiteExtension.Objects;
 using myMangaSiteExtension.Utilities;
@@ -18,7 +15,6 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Runtime.Caching;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -31,7 +27,7 @@ namespace myManga_App
     /// <summary>
     /// Interaction logic for App.xaml
     /// </summary>
-    public partial class App : Application
+    public partial class App : Application, IDisposable
     {
         private Boolean IsRestarting { get; set; }
 
@@ -514,6 +510,12 @@ namespace myManga_App
             InitializeComponent();
         }
 
+        ~App()
+        {
+            // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
+            Dispose(true);
+        }
+
         #region Application Events
 
         private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
@@ -548,9 +550,7 @@ namespace myManga_App
 
         private void App_Exit(object sender, ExitEventArgs e)
         {
-            MangaObjectArchiveWatcher.Dispose();
-            ChapterObjectArchiveWatcher.Dispose();
-            CORE.Dispose();
+            Dispose(true);
             if (IsRestarting) { Process.Start(ResourceAssembly.Location); }
         }
 
@@ -765,5 +765,31 @@ namespace myManga_App
                     Shutdown();
                 });
             }, Delay);
+
+        #region IDisposable Support
+        private bool disposedValue = false; // To detect redundant calls
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    MangaObjectArchiveWatcher.Dispose();
+                    ChapterObjectArchiveWatcher.Dispose();
+                    CORE.Dispose();
+                    ContentDownloadManager.Dispose();
+                }
+
+                disposedValue = true;
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+        #endregion
     }
 }

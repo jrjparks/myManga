@@ -10,7 +10,11 @@
     xmlns:PrimitiveControls="clr-namespace:System.Windows.Controls.Primitives"
     mc:Ignorable="d" 
     d:DesignHeight="700" 
-    d:DesignWidth="900">
+    d:DesignWidth="900"
+    Background="{DynamicResource window-background}"
+    Foreground="{DynamicResource text-dark}"
+    TextBlock.Foreground="{DynamicResource text-dark}"
+    TextElement.Foreground="{DynamicResource text-dark}">
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -30,8 +34,7 @@
             <Converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" FalseValue="Collapsed"/>
         </ResourceDictionary>
     </UserControl.Resources>
-    <Grid
-        Background="{DynamicResource window-background}">
+    <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="300"/>
             <RowDefinition/>
@@ -316,7 +319,7 @@
                         Command="{Binding DownloadToLatestChapterAsyncCommand}">
                         <StackPanel 
                             Orientation="Horizontal"
-                            TextElement.Foreground="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground)}">
+                            TextElement.Foreground="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground), FallbackValue=Orange}">
                             <Viewbox
                                 x:Name="DownloadToLatestIcon"
                                 Width="16">
@@ -368,7 +371,7 @@
                                     CommandParameter="{Binding SelectedItems, ElementName=ChapterObjects}">
                                     <StackPanel 
                                         Orientation="Horizontal"
-                                        TextElement.Foreground="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground)}">
+                                        TextElement.Foreground="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground), FallbackValue=Orange}">
                                         <Viewbox
                                             x:Name="DownloadSelectedChaptersIcon"
                                             Width="16">
@@ -388,7 +391,7 @@
                                     Command="{Binding DownloadAllChaptersAsyncCommand}">
                                     <StackPanel 
                                         Orientation="Horizontal"
-                                        TextElement.Foreground="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground)}">
+                                        TextElement.Foreground="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground), FallbackValue=Orange}">
                                         <Viewbox
                                             x:Name="DownloadAllChaptersIcon"
                                             Width="16">

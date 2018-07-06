@@ -1,6 +1,7 @@
+# I'm no longer maintaing or updating this project
+
 # myManga
 
-[![Gitter](https://img.shields.io/gitter/room/nwjs/nw.js.svg?style=flat-square)](https://gitter.im/jrjparks/myManga?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![Issues](https://img.shields.io/github/issues/jrjparks/myManga.svg?style=flat-square)](https://github.com/jrjparks/myManga/issues)
 [![Stars](https://img.shields.io/github/stars/jrjparks/myManga.svg?style=flat-square)](https://github.com/jrjparks/myManga/stargazers)
 [![Forks](https://img.shields.io/github/forks/jrjparks/myManga.svg?style=flat-square)](https://github.com/jrjparks/myManga/network)
